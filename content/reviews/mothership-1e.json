@@ -1,0 +1,20 @@
+{
+  "slug": "mothership-1e",
+  "t": "Mothership",
+  "ed": "1e",
+  "sys": "Mothership",
+  "type": "System",
+  "stars": 5,
+  "date": "2025-06",
+  "tags": [
+    "sci-fi horror",
+    "lethal",
+    "prep-light"
+  ],
+  "verdict": "The cleanest horror engine on the shelf — the stress economy does all the work for you.",
+  "body": "Nineteen sessions in and I still have not found the seam. Panic is the whole game: you do not need to threaten the players, you just need to let stress accumulate and then ask for a Save at the worst possible moment. Character creation takes eleven minutes and produces someone worth losing.",
+  "used": [
+    "Gradient Descent",
+    "Mondo Carne"
+  ]
+}

@@ -1,0 +1,1192 @@
+{
+  "sessions": [
+    {
+      "n": 1,
+      "d": "2024-07-12",
+      "t": "The Haunting of Castle Ravenloft",
+      "c": "One-Shot",
+      "s": "Knave [1e]",
+      "h": 4,
+      "rt": "04:00"
+    },
+    {
+      "n": 2,
+      "d": "2024-08-01",
+      "t": "When Night Falls on Sunnydale, Part I",
+      "c": "When Night Falls on Sunnydale",
+      "s": "Kids on Bikes [1e]",
+      "h": 4.5,
+      "rt": "04:30"
+    },
+    {
+      "n": 3,
+      "d": "2024-08-15",
+      "t": "When Night Falls on Sunnydale, Part II",
+      "c": "When Night Falls on Sunnydale",
+      "s": "Kids on Bikes [1e]",
+      "h": 4,
+      "rt": "04:00"
+    },
+    {
+      "n": 4,
+      "d": "2024-08-26",
+      "t": "EP00: Tutorial",
+      "c": "Hollowed Roots",
+      "s": "DC20",
+      "h": 4,
+      "rt": "04:00"
+    },
+    {
+      "n": 5,
+      "d": "2024-08-27",
+      "t": "When Night Falls on Sunnydale, Part IIII",
+      "c": "When Night Falls on Sunnydale",
+      "s": "Kids on Bikes [1e]",
+      "h": 2.5,
+      "rt": "02:30"
+    },
+    {
+      "n": 6,
+      "d": "2024-09-09",
+      "t": "EP01: Leaving Blessed Hearts",
+      "c": "Hollowed Roots",
+      "s": "DC20",
+      "h": 4,
+      "rt": "04:00"
+    },
+    {
+      "n": 7,
+      "d": "2024-09-13",
+      "t": "Graves Left Wanting",
+      "c": "One-Shot",
+      "s": "MÖRK BORG",
+      "h": 3.5,
+      "rt": "03:30"
+    },
+    {
+      "n": 8,
+      "d": "2024-09-16",
+      "t": "EP02: Meeting the Firbolgs",
+      "c": "Hollowed Roots",
+      "s": "DC20",
+      "h": 4,
+      "rt": "04:00"
+    },
+    {
+      "n": 9,
+      "d": "2024-09-21",
+      "t": "Clio, Michigan",
+      "c": "Skunks",
+      "s": "Unknown Armies [2e]",
+      "h": 4.5,
+      "rt": "04:30"
+    },
+    {
+      "n": 10,
+      "d": "2024-09-26",
+      "t": "EP03: Banthii and His Merry Boys",
+      "c": "Hollowed Roots",
+      "s": "DC20",
+      "h": 5,
+      "rt": "05:00"
+    },
+    {
+      "n": 11,
+      "d": "2024-10-20",
+      "t": "The Devil of New Orleans",
+      "c": "One-Shot",
+      "s": "Vampire: the Masquerade [5e]",
+      "h": 4.5,
+      "rt": "04:30"
+    },
+    {
+      "n": 12,
+      "d": "2024-10-23",
+      "t": "Leland, Texas",
+      "c": "Skunks",
+      "s": "Unknown Armies [2e]",
+      "h": 4.5,
+      "rt": "04:30"
+    },
+    {
+      "n": 13,
+      "d": "2024-10-31",
+      "t": "One Night at the Shelterwood Inn",
+      "c": "One-Shot",
+      "s": "Liminal Horror",
+      "h": 3.5,
+      "rt": "03:30"
+    },
+    {
+      "n": 14,
+      "d": "2024-11-04",
+      "t": "EP04: The Church of Aurel",
+      "c": "Hollowed Roots",
+      "s": "DC20",
+      "h": 4.5,
+      "rt": "04:30"
+    },
+    {
+      "n": 15,
+      "d": "2024-11-11",
+      "t": "EP05: The Malum Tree",
+      "c": "Hollowed Roots",
+      "s": "DC20",
+      "h": 4.5,
+      "rt": "04:30"
+    },
+    {
+      "n": 16,
+      "d": "2024-11-18",
+      "t": "All Bets Off",
+      "c": "One-Shot",
+      "s": "Everyone is John",
+      "h": 2.5,
+      "rt": "02:30"
+    },
+    {
+      "n": 17,
+      "d": "2024-11-18",
+      "t": "EP06: The Titan's Mouth",
+      "c": "Hollowed Roots",
+      "s": "DC20",
+      "h": 3.5,
+      "rt": "03:30"
+    },
+    {
+      "n": 18,
+      "d": "2024-11-22",
+      "t": "Bahadea, Washington",
+      "c": "Skunks",
+      "s": "Unknown Armies [2e]",
+      "h": 5.5,
+      "rt": "05:30"
+    },
+    {
+      "n": 19,
+      "d": "2024-11-25",
+      "t": "EP07: Elrin's Grave",
+      "c": "Hollowed Roots",
+      "s": "DC20",
+      "h": 4.5,
+      "rt": "04:30"
+    },
+    {
+      "n": 20,
+      "d": "2024-12-02",
+      "t": "S0: Town",
+      "c": "SUB_URBIA",
+      "s": "Kids on Bikes [1e]",
+      "h": 5.5,
+      "rt": "05:30"
+    },
+    {
+      "n": 21,
+      "d": "2024-12-09",
+      "t": "S1: Milk",
+      "c": "SUB_URBIA",
+      "s": "Kids on Bikes [1e]",
+      "h": 5.183,
+      "rt": "05:11"
+    },
+    {
+      "n": 22,
+      "d": "2024-12-13",
+      "t": "Stoon Lake, Minnesota",
+      "c": "Skunks",
+      "s": "Unknown Armies [2e]",
+      "h": 5.5,
+      "rt": "05:30"
+    },
+    {
+      "n": 23,
+      "d": "2024-12-16",
+      "t": "Rotblack Sludge",
+      "c": "One-Shot",
+      "s": "MÖRK BORG",
+      "h": 5,
+      "rt": "05:00"
+    },
+    {
+      "n": 24,
+      "d": "2024-12-30",
+      "t": "S2: Meat",
+      "c": "SUB_URBIA",
+      "s": "Kids on Bikes [1e]",
+      "h": 4.383,
+      "rt": "04:23"
+    },
+    {
+      "n": 25,
+      "d": "2025-01-06",
+      "t": "S0: Hath The Locust Eaten",
+      "c": "The Parthenogenesis of Hungry Hollow",
+      "s": "Liminal Horror",
+      "h": 3.883,
+      "rt": "03:53"
+    },
+    {
+      "n": 26,
+      "d": "2025-01-17",
+      "t": "Geverlon, Maine",
+      "c": "Skunks",
+      "s": "Unknown Armies [2e]",
+      "h": 6.5,
+      "rt": "06:30"
+    },
+    {
+      "n": 27,
+      "d": "2025-01-20",
+      "t": "S1: A Time to Rend",
+      "c": "The Parthenogenesis of Hungry Hollow",
+      "s": "Liminal Horror",
+      "h": 4.483,
+      "rt": "04:29"
+    },
+    {
+      "n": 28,
+      "d": "2025-01-29",
+      "t": "Les Marins de la Mer Éteinte",
+      "c": "Donjons & Catacombes Classique",
+      "s": "Dungeon Crawl Classics",
+      "h": 4.333,
+      "rt": "04:20"
+    },
+    {
+      "n": 29,
+      "d": "2025-02-05",
+      "t": "The Wolf (I)",
+      "c": "One-Shot",
+      "s": "To Change",
+      "h": 1.867,
+      "rt": "01:52"
+    },
+    {
+      "n": 30,
+      "d": "2025-02-05",
+      "t": "S2: Drop As The Honeycomb",
+      "c": "The Parthenogenesis of Hungry Hollow",
+      "s": "Liminal Horror",
+      "h": 5.433,
+      "rt": "05:26"
+    },
+    {
+      "n": 31,
+      "d": "2025-02-12",
+      "t": "The Wolf (II)",
+      "c": "One-Shot",
+      "s": "To Change",
+      "h": 3.667,
+      "rt": "03:40"
+    },
+    {
+      "n": 32,
+      "d": "2025-02-19",
+      "t": "S3: For the Life of the Flesh Is In the Blood",
+      "c": "The Parthenogenesis of Hungry Hollow",
+      "s": "Liminal Horror",
+      "h": 5.617,
+      "rt": "05:37"
+    },
+    {
+      "n": 33,
+      "d": "2025-02-21",
+      "t": "Chicago, Illinois",
+      "c": "Skunks",
+      "s": "Unknown Armies [2e]",
+      "h": 6.5,
+      "rt": "06:30"
+    },
+    {
+      "n": 34,
+      "d": "2025-02-28",
+      "t": "The Pink Stuff",
+      "c": "One-Shot",
+      "s": "To Change",
+      "h": 4.433,
+      "rt": "04:26"
+    },
+    {
+      "n": 35,
+      "d": "2025-03-10",
+      "t": "Le Peuple de la Fosse, Chapitre 1",
+      "c": "Donjons & Catacombes Classique",
+      "s": "Dungeon Crawl Classics",
+      "h": 3.083,
+      "rt": "03:05"
+    },
+    {
+      "n": 36,
+      "d": "2025-03-13",
+      "t": "His Arrival Was Foretold",
+      "c": "One-Shot",
+      "s": "Liminal Horror",
+      "h": 4.533,
+      "rt": "04:32"
+    },
+    {
+      "n": 37,
+      "d": "2025-03-19",
+      "t": "S4: And Then Shall The End Come",
+      "c": "The Parthenogenesis of Hungry Hollow",
+      "s": "Liminal Horror",
+      "h": 3.283,
+      "rt": "03:17"
+    },
+    {
+      "n": 38,
+      "d": "2025-03-22",
+      "t": "Anchorage, Alaska",
+      "c": "Skunks",
+      "s": "Unknown Armies [2e]",
+      "h": 5.183,
+      "rt": "05:11"
+    },
+    {
+      "n": 39,
+      "d": "2025-03-26",
+      "t": "His Arrival Was Foretold",
+      "c": "One-Shot",
+      "s": "Liminal Horror",
+      "h": 4.867,
+      "rt": "04:52"
+    },
+    {
+      "n": 40,
+      "d": "2025-04-02",
+      "t": "Blood Heat",
+      "c": "One-Shot",
+      "s": "They Feed on Fear",
+      "h": 4.417,
+      "rt": "04:25"
+    },
+    {
+      "n": 41,
+      "d": "2025-04-03",
+      "t": "Blood Heat",
+      "c": "One-Shot",
+      "s": "They Feed on Fear",
+      "h": 3.517,
+      "rt": "03:31"
+    },
+    {
+      "n": 42,
+      "d": "2025-04-24",
+      "t": "Greetings From Sunvale!",
+      "c": "One-Shot",
+      "s": "They Feed on Fear",
+      "h": 3.75,
+      "rt": "03:45"
+    },
+    {
+      "n": 43,
+      "d": "2025-04-27",
+      "t": "Cleveland, Ohio",
+      "c": "Skunks",
+      "s": "Unknown Armies [2e]",
+      "h": 4.7,
+      "rt": "04:42"
+    },
+    {
+      "n": 44,
+      "d": "2025-05-07",
+      "t": "Mutantpocalypse: Are We Not Men?",
+      "c": "One-Shot",
+      "s": "Monster of the Week [2e]",
+      "h": 5.867,
+      "rt": "05:52"
+    },
+    {
+      "n": 45,
+      "d": "2025-05-14",
+      "t": "Wildform V",
+      "c": "One-Shot",
+      "s": "To Change",
+      "h": 4,
+      "rt": "04:00"
+    },
+    {
+      "n": 46,
+      "d": "2025-05-17",
+      "t": "Le Réveil du Manoir Willowby",
+      "c": "One-Shot",
+      "s": "Knave [2e]",
+      "h": 5.25,
+      "rt": "05:15"
+    },
+    {
+      "n": 47,
+      "d": "2025-05-24",
+      "t": "Ripple",
+      "c": "One-Shot",
+      "s": "Kids on Bikes [2e]",
+      "h": 4.75,
+      "rt": "04:45"
+    },
+    {
+      "n": 48,
+      "d": "2025-05-28",
+      "t": "Honey in the Rafters",
+      "c": "One-Shot",
+      "s": "Mausritter",
+      "h": 2.5,
+      "rt": "02:30"
+    },
+    {
+      "n": 49,
+      "d": "2025-06-20",
+      "t": "Here it Comes",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 3.1,
+      "rt": "03:06"
+    },
+    {
+      "n": 50,
+      "d": "2025-06-26",
+      "t": "We'd Really Love to Believe You",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 3.483,
+      "rt": "03:29"
+    },
+    {
+      "n": 51,
+      "d": "2025-07-02",
+      "t": "I Am Not Going Back",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 4.233,
+      "rt": "04:14"
+    },
+    {
+      "n": 52,
+      "d": "2025-07-09",
+      "t": "Il Mondo Dei Perduti",
+      "c": "Mondo Carne",
+      "s": "Mothership [1e]",
+      "h": 4.3,
+      "rt": "04:18"
+    },
+    {
+      "n": 53,
+      "d": "2025-07-24",
+      "t": "The Undoing of Brea Gibney",
+      "c": "The Blooming of Hungry Hollow",
+      "s": "Liminal Horror",
+      "h": 4.167,
+      "rt": "04:10"
+    },
+    {
+      "n": 54,
+      "d": "2025-07-28",
+      "t": "Fond-des-Chicots, Chapitre 1",
+      "c": "P'tite Arcadie",
+      "s": "Dungeons & Dragons [0e]",
+      "h": 3.733,
+      "rt": "03:44"
+    },
+    {
+      "n": 55,
+      "d": "2025-07-30",
+      "t": "Rust In My Brain",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 3.833,
+      "rt": "03:50"
+    },
+    {
+      "n": 56,
+      "d": "2025-08-03",
+      "t": "Year of the Rat",
+      "c": "One-Shot",
+      "s": "Mothership [1e]",
+      "h": 3.05,
+      "rt": "03:03"
+    },
+    {
+      "n": 57,
+      "d": "2025-08-06",
+      "t": "Save Yourself The Pain",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 4.783,
+      "rt": "04:47"
+    },
+    {
+      "n": 58,
+      "d": "2025-08-13",
+      "t": "I Never Cared Before",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 4.7,
+      "rt": "04:42"
+    },
+    {
+      "n": 59,
+      "d": "2025-08-20",
+      "t": "The Dust Settles, The Worms Dig",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 4.65,
+      "rt": "04:39"
+    },
+    {
+      "n": 60,
+      "d": "2025-08-24",
+      "t": "Il Segugio Infernale della  Terza Dimensione",
+      "c": "Mondo Carne",
+      "s": "Mothership [1e]",
+      "h": 3.95,
+      "rt": "03:57"
+    },
+    {
+      "n": 61,
+      "d": "2025-08-25",
+      "t": "Fond-des-Chicots, Chapitre 2",
+      "c": "P'tite Arcadie",
+      "s": "Dungeons & Dragons [0e]",
+      "h": 3.833,
+      "rt": "03:50"
+    },
+    {
+      "n": 62,
+      "d": "2025-08-27",
+      "t": "We've Been Stitched Up",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 4.45,
+      "rt": "04:27"
+    },
+    {
+      "n": 63,
+      "d": "2025-08-30",
+      "t": "The Erasing of Brea Gibney",
+      "c": "The Blooming of Hungry Hollow",
+      "s": "Liminal Horror",
+      "h": 3.65,
+      "rt": "03:39"
+    },
+    {
+      "n": 64,
+      "d": "2025-09-03",
+      "t": "I Tumble Like a Clown",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 3.95,
+      "rt": "03:57"
+    },
+    {
+      "n": 65,
+      "d": "2025-09-10",
+      "t": "I Won't Be Around When You Really Need Me",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 3.65,
+      "rt": "03:39"
+    },
+    {
+      "n": 66,
+      "d": "2025-09-11",
+      "t": "Double Trouble at Skateland",
+      "c": "Strange Adventures!",
+      "s": "Kids on Bikes [2e]",
+      "h": 5.717,
+      "rt": "05:43"
+    },
+    {
+      "n": 67,
+      "d": "2025-09-14",
+      "t": "La Luna degli Uomini Dimenticati",
+      "c": "Mondo Carne",
+      "s": "Mothership [1e]",
+      "h": 4.2,
+      "rt": "04:12"
+    },
+    {
+      "n": 68,
+      "d": "2025-09-17",
+      "t": "Come On And Break The Door Down",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 3.7,
+      "rt": "03:42"
+    },
+    {
+      "n": 69,
+      "d": "2025-09-21",
+      "t": "The Dreaming of Brea Gibney",
+      "c": "The Blooming of Hungry Hollow",
+      "s": "Liminal Horror",
+      "h": 4.067,
+      "rt": "04:04"
+    },
+    {
+      "n": 70,
+      "d": "2025-09-24",
+      "t": "So Much of Me Lies in Your Eyes",
+      "c": "Gradient Descent",
+      "s": "Mothership [1e]",
+      "h": 4.033,
+      "rt": "04:02"
+    },
+    {
+      "n": 71,
+      "d": "2025-09-30",
+      "t": "Fond-des-Chicots, Chapitre 3",
+      "c": "P'tite Arcadie",
+      "s": "Dungeons & Dragons [0e]",
+      "h": 3.783,
+      "rt": "03:47"
+    },
+    {
+      "n": 72,
+      "d": "2025-10-17",
+      "t": "A Thousand Moons",
+      "c": "One-Shot",
+      "s": "Dread",
+      "h": 5.417,
+      "rt": "05:25"
+    },
+    {
+      "n": 73,
+      "d": "2025-10-19",
+      "t": "Bound by the Raven",
+      "c": "One-Shot",
+      "s": "Liminal Horror",
+      "h": 4.017,
+      "rt": "04:01"
+    },
+    {
+      "n": 74,
+      "d": "2025-10-22",
+      "t": "Something Is Wrong With This House",
+      "c": "One-Shot",
+      "s": "Something Is Wrong With This House",
+      "h": 3.4,
+      "rt": "03:24"
+    },
+    {
+      "n": 75,
+      "d": "2025-10-29",
+      "t": "Uncle Timothy's Will",
+      "c": "One-Shot",
+      "s": "Call of Cthulhu [5e]",
+      "h": 4.233,
+      "rt": "04:14"
+    },
+    {
+      "n": 76,
+      "d": "2025-11-06",
+      "t": "The Real Ghostbusters of Los Angeles",
+      "c": "One-Shot",
+      "s": "Ghostbusters",
+      "h": 4.05,
+      "rt": "04:03"
+    },
+    {
+      "n": 77,
+      "d": "2025-11-13",
+      "t": "Strange Things Afoot at Circle Q",
+      "c": "Strange Adventures!",
+      "s": "Kids on Bikes [2e]",
+      "h": 4.533,
+      "rt": "04:32"
+    },
+    {
+      "n": 78,
+      "d": "2025-11-16",
+      "t": "???",
+      "c": "Mondo Carne",
+      "s": "Mothership [1e]",
+      "h": 3.833,
+      "rt": "03:50"
+    },
+    {
+      "n": 79,
+      "d": "2025-11-17",
+      "t": "Fond-des-Chicots, Chapitre 4",
+      "c": "P'tite Arcadie",
+      "s": "Dungeons & Dragons [0e]",
+      "h": 3.783,
+      "rt": "03:47"
+    },
+    {
+      "n": 80,
+      "d": "2025-11-19",
+      "t": "Rats! (Pt. 1)",
+      "c": "The Heart of the Mystery",
+      "s": "Glitter Hearts",
+      "h": 4.033,
+      "rt": "04:02"
+    },
+    {
+      "n": 81,
+      "d": "2025-11-26",
+      "t": "The Chair",
+      "c": "One-Shot",
+      "s": "Liminal Horror",
+      "h": 4.85,
+      "rt": "04:51"
+    },
+    {
+      "n": 82,
+      "d": "2025-12-10",
+      "t": "Rats! (Pt. 2)",
+      "c": "The Heart of the Mystery",
+      "s": "Glitter Hearts",
+      "h": 5.417,
+      "rt": "05:25"
+    },
+    {
+      "n": 83,
+      "d": "2025-12-12",
+      "t": "???",
+      "c": "The Blooming of Hungry Hollow",
+      "s": "Liminal Horror",
+      "h": 1.6,
+      "rt": "01:36"
+    },
+    {
+      "n": 84,
+      "d": "2025-12-14",
+      "t": "???",
+      "c": "Mondo Carne",
+      "s": "Mothership [1e]",
+      "h": 4.2,
+      "rt": "04:12"
+    },
+    {
+      "n": 85,
+      "d": "2025-12-19",
+      "t": "Juice!",
+      "c": "The Heart of the Mystery",
+      "s": "Glitter Hearts",
+      "h": 5.417,
+      "rt": "05:25"
+    },
+    {
+      "n": 86,
+      "d": "2026-01-04",
+      "t": "Snowed In at Chanky Cheez",
+      "c": "Strange Adventures!",
+      "s": "Kids on Bikes [2e]",
+      "h": 3.617,
+      "rt": "03:37"
+    },
+    {
+      "n": 87,
+      "d": "2026-01-07",
+      "t": "Gnome!",
+      "c": "The Heart of the Mystery",
+      "s": "Glitter Hearts",
+      "h": 3.967,
+      "rt": "03:58"
+    },
+    {
+      "n": 88,
+      "d": "2026-01-14",
+      "t": "Flowers!",
+      "c": "The Heart of the Mystery",
+      "s": "Glitter Hearts",
+      "h": 3.567,
+      "rt": "03:34"
+    },
+    {
+      "n": 89,
+      "d": "2026-01-15",
+      "t": "Barkeep on the Borderlands",
+      "c": "One-Shot",
+      "s": "Knave [2e]",
+      "h": 4,
+      "rt": "04:00"
+    },
+    {
+      "n": 90,
+      "d": "2026-01-18",
+      "t": "Worm!",
+      "c": "The Heart of the Mystery",
+      "s": "Glitter Hearts",
+      "h": 5.35,
+      "rt": "05:21"
+    },
+    {
+      "n": 91,
+      "d": "2026-02-04",
+      "t": "Jim Henson's Labyrinth",
+      "c": "One-Shot",
+      "s": "Jim Henson's Labyrinth",
+      "h": 6.1,
+      "rt": "06:06"
+    },
+    {
+      "n": 92,
+      "d": "2026-02-10",
+      "t": "Lake Asibikaashi",
+      "c": "Strange Adventures!",
+      "s": "Kids on Bikes [2e]",
+      "h": 4.9,
+      "rt": "04:54"
+    },
+    {
+      "n": 93,
+      "d": "2026-02-11",
+      "t": "Vasca Villa",
+      "c": "One-Shot",
+      "s": "i'm sorry did you say street magic",
+      "h": 3.883,
+      "rt": "03:53"
+    },
+    {
+      "n": 94,
+      "d": "2026-02-18",
+      "t": "Eat the Reich, Part 1",
+      "c": "One-Shot",
+      "s": "Eat the Reich",
+      "h": 3.433,
+      "rt": "03:26"
+    },
+    {
+      "n": 95,
+      "d": "2026-02-25",
+      "t": "Eat the Reich, Part 2",
+      "c": "One-Shot",
+      "s": "Eat the Reich",
+      "h": 5.983,
+      "rt": "05:59"
+    },
+    {
+      "n": 96,
+      "d": "2026-03-05",
+      "t": "Bakto's Terifying Cuisine",
+      "c": "One-Shot",
+      "s": "Knave [2e]",
+      "h": 6.75,
+      "rt": "06:45"
+    },
+    {
+      "n": 97,
+      "d": "2026-03-11",
+      "t": "Copper Heart",
+      "c": "One-Shot",
+      "s": "Grandpa's Farm",
+      "h": 4.85,
+      "rt": "04:51"
+    },
+    {
+      "n": 98,
+      "d": "2026-03-14",
+      "t": "BloodFest '14",
+      "c": "Strange Adventures!",
+      "s": "Kids on Bikes [2e]",
+      "h": 5.1,
+      "rt": "05:06"
+    },
+    {
+      "n": 99,
+      "d": "2026-03-18",
+      "t": "This place sucks.",
+      "c": "The Mall",
+      "s": "Liminal Horror [PE]",
+      "h": 5.217,
+      "rt": "05:13"
+    },
+    {
+      "n": 100,
+      "d": "2026-03-24",
+      "t": "Another Rainy Day / The Witch's Missing Shadow",
+      "c": "Yazeba's Bed & Breakfast",
+      "s": "Yazeba's Bed & Breakfast",
+      "h": 4.333,
+      "rt": "04:20"
+    },
+    {
+      "n": 101,
+      "d": "2026-03-30",
+      "t": "Bloodletting (The Vampire Song)",
+      "c": "bloodletting",
+      "s": "Chronicles of Darkness [VTR]",
+      "h": 4.783,
+      "rt": "04:47"
+    },
+    {
+      "n": 102,
+      "d": "2026-04-01",
+      "t": "Sal Has Written a Play / The Breakfast Feast",
+      "c": "Yazeba's Bed & Breakfast",
+      "s": "Yazeba's Bed & Breakfast",
+      "h": 3.95,
+      "rt": "03:57"
+    },
+    {
+      "n": 103,
+      "d": "2026-04-06",
+      "t": "The Sky is a Poisonous Garden",
+      "c": "bloodletting",
+      "s": "Chronicles of Darkness [VTR]",
+      "h": 4.117,
+      "rt": "04:07"
+    },
+    {
+      "n": 104,
+      "d": "2026-04-08",
+      "t": "People are the worst.",
+      "c": "The Mall",
+      "s": "Liminal Horror [PE]",
+      "h": 4.217,
+      "rt": "04:13"
+    },
+    {
+      "n": 105,
+      "d": "2026-04-13",
+      "t": "Caroline",
+      "c": "bloodletting",
+      "s": "Chronicles of Darkness [VTR]",
+      "h": 4.683,
+      "rt": "04:41"
+    },
+    {
+      "n": 106,
+      "d": "2026-04-15",
+      "t": "I'm out of here.",
+      "c": "The Mall",
+      "s": "Liminal Horror [PE]",
+      "h": 4.417,
+      "rt": "04:25"
+    },
+    {
+      "n": 107,
+      "d": "2026-04-20",
+      "t": "The Darkening of the Light",
+      "c": "bloodletting",
+      "s": "Chronicles of Darkness [VTR]",
+      "h": 3.983,
+      "rt": "03:59"
+    },
+    {
+      "n": 108,
+      "d": "2026-04-22",
+      "t": "This is gonna hurt.",
+      "c": "The Mall",
+      "s": "Liminal Horror [PE]",
+      "h": 4.483,
+      "rt": "04:29"
+    },
+    {
+      "n": 109,
+      "d": "2026-04-27",
+      "t": "I Don't Need a Hero",
+      "c": "bloodletting",
+      "s": "Chronicles of Darkness [VTR]",
+      "h": 4,
+      "rt": "04:00"
+    },
+    {
+      "n": 110,
+      "d": "2026-04-28",
+      "t": "Fond-des-Chicots, Chapitre 5",
+      "c": "P'tite Arcadie",
+      "s": "Dungeons & Dragons [0e]",
+      "h": 3.5,
+      "rt": "03:30"
+    },
+    {
+      "n": 111,
+      "d": "2026-04-29",
+      "t": "Bernard Goes A-Guising",
+      "c": "Yazeba's Bed & Breakfast",
+      "s": "Yazeba's Bed & Breakfast",
+      "h": 2.667,
+      "rt": "02:40"
+    },
+    {
+      "n": 112,
+      "d": "2026-05-06",
+      "t": "Give me a break.",
+      "c": "The Mall",
+      "s": "Liminal Horror [PE]",
+      "h": 3.75,
+      "rt": "03:45"
+    },
+    {
+      "n": 113,
+      "d": "2026-05-11",
+      "t": "Days and Days",
+      "c": "bloodletting",
+      "s": "Chronicles of Darkness [VTR]",
+      "h": 3.5,
+      "rt": "03:30"
+    },
+    {
+      "n": 114,
+      "d": "2026-05-13",
+      "t": "Go to hell.",
+      "c": "The Mall",
+      "s": "Liminal Horror [PE]",
+      "h": 3.5,
+      "rt": "03:30"
+    },
+    {
+      "n": 115,
+      "d": "2026-05-25",
+      "t": "The Beast",
+      "c": "bloodletting",
+      "s": "Chronicles of Darkness [VTR]",
+      "h": 3.667,
+      "rt": "03:40"
+    },
+    {
+      "n": 116,
+      "d": "2026-05-27",
+      "t": "Ichor in the Walls / The Grand Bernard's Hotel",
+      "c": "Yazeba's Bed & Breakfast",
+      "s": "Yazeba's Bed & Breakfast",
+      "h": 3,
+      "rt": "03:00"
+    },
+    {
+      "n": 117,
+      "d": "2026-05-30",
+      "t": "La fille de l'hiver",
+      "c": "One-Shot",
+      "s": "Knave [2e]",
+      "h": 4,
+      "rt": "04:00"
+    },
+    {
+      "n": 118,
+      "d": "2026-06-01",
+      "t": "Lullabye",
+      "c": "bloodletting",
+      "s": "Chronicles of Darkness [VTR]",
+      "h": 3.5,
+      "rt": "03:30"
+    },
+    {
+      "n": 119,
+      "d": "2026-06-03",
+      "t": "L'Ollonaise's Treasure, Chapter 1",
+      "c": "50 Fathoms",
+      "s": "Savage Worlds [Deluxe]",
+      "h": 4,
+      "rt": "04:00"
+    },
+    {
+      "n": 120,
+      "d": "2026-06-04",
+      "t": "The Welling House",
+      "c": "TBD",
+      "s": "Monster of the Week [2e]",
+      "h": 3.917,
+      "rt": "03:55"
+    },
+    {
+      "n": 121,
+      "d": "2026-06-08",
+      "t": "Mind the Gap",
+      "c": "One-Shot",
+      "s": "CBR+PNK",
+      "h": 3.833,
+      "rt": "03:50"
+    },
+    {
+      "n": 122,
+      "d": "2026-06-10",
+      "t": "L'Ollonaise's Treasure, Chapter 2",
+      "c": "50 Fathoms",
+      "s": "Savage Worlds [Deluxe]",
+      "h": 3.417,
+      "rt": "03:25"
+    },
+    {
+      "n": 123,
+      "d": "2026-06-15",
+      "t": "Joey",
+      "c": "bloodletting",
+      "s": "Chronicles of Darkness [VTR]",
+      "h": 4.8,
+      "rt": "04:48"
+    },
+    {
+      "n": 124,
+      "d": "2026-07-17",
+      "t": "L'Ollonaise's Treasure, Chapter 3",
+      "c": "50 Fathoms",
+      "s": "Savage Worlds [Deluxe]",
+      "h": 3,
+      "rt": "03:00"
+    },
+    {
+      "n": 125,
+      "d": "2026-07-21",
+      "t": "Tomorrow, Wendy",
+      "c": "bloodletting",
+      "s": "Chronicles of Darkness [VTR]",
+      "h": 4.95,
+      "rt": "04:57"
+    },
+    {
+      "n": 126,
+      "d": "2026-07-22",
+      "t": "L'Ollonaise's Treasure, Chapter 4",
+      "c": "50 Fathoms",
+      "s": "Savage Worlds [Deluxe]",
+      "h": 3.15,
+      "rt": "03:09"
+    },
+    {
+      "n": 127,
+      "d": "2026-07-29",
+      "t": "Ollie Ollie Oxenfree / After Dinner",
+      "c": "Yazeba's Bed & Breakfast",
+      "s": "Yazeba's Bed & Breakfast",
+      "h": 4.35,
+      "rt": "04:21"
+    },
+    {
+      "n": 128,
+      "d": "2026-08-03",
+      "t": "Bloodletting (The Vampire Song)",
+      "c": "bloodletting",
+      "s": "Chronicles of Darkness [VTR]",
+      "h": 3.983,
+      "rt": "03:59"
+    },
+    {
+      "n": 129,
+      "d": "2026-08-05",
+      "t": "L'Ollonaise's Treasure, Chapter 5",
+      "c": "50 Fathoms",
+      "s": "Savage Worlds [Deluxe]",
+      "h": 4.117,
+      "rt": "04:07"
+    },
+    {
+      "n": 130,
+      "d": "2026-08-10",
+      "t": "ONI",
+      "c": "One-Shot",
+      "s": "Mothership [1e]",
+      "h": 4.75,
+      "rt": "04:45"
+    },
+    {
+      "n": 131,
+      "d": "2026-08-12",
+      "t": "Alphonse & Aria",
+      "c": "One-Shot",
+      "s": "Star Crossed",
+      "h": 3.533,
+      "rt": "03:32"
+    },
+    {
+      "n": 132,
+      "d": "2026-08-17",
+      "t": "Act 1",
+      "c": "Predator: Savage Planet",
+      "s": "Savage Worlds [Deluxe]",
+      "h": 3.667,
+      "rt": "03:40"
+    }
+  ]
+}

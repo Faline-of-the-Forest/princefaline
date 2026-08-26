@@ -1,0 +1,108 @@
+{
+  "dashboards": [
+    {
+      "t": "Kindred Dossier",
+      "c": "bloodletting",
+      "sys": "Chronicles of Darkness [VTR]",
+      "tags": [
+        "character sheet",
+        "4 players",
+        "blood tracker"
+      ],
+      "note": "Vitae, Humanity and Touchstones on one screen, with a live Frenzy prompt for the whole table.",
+      "url": "#",
+      "host": "vercel.app/dash/bloodletting"
+    },
+    {
+      "t": "Crew Terminal",
+      "c": "Gradient Descent",
+      "sys": "Mothership [1e]",
+      "tags": [
+        "character sheet",
+        "stress",
+        "ship log"
+      ],
+      "note": "Stress and Panic rolls resolved in-sheet; the Deep's floor map unlocks as the crew descends.",
+      "url": "#",
+      "host": "vercel.app/dash/gradient-descent"
+    },
+    {
+      "t": "Shift Board",
+      "c": "The Mall",
+      "sys": "Liminal Horror [PE]",
+      "tags": [
+        "group tracker",
+        "infection",
+        "clocks"
+      ],
+      "note": "Six employees, one Infection clock, and a mall directory that loses stores as the campaign goes.",
+      "url": "#",
+      "host": "vercel.app/dash/the-mall"
+    },
+    {
+      "t": "Ship's Log",
+      "c": "50 Fathoms",
+      "sys": "Savage Worlds [Deluxe]",
+      "tags": [
+        "party sheet",
+        "bennies",
+        "naval"
+      ],
+      "note": "Bennies, wounds and the ship's condition, plus a Caribbean-style chart of the flooded world.",
+      "url": "#",
+      "host": "vercel.app/dash/50-fathoms"
+    },
+    {
+      "t": "Chore Chart",
+      "c": "Yazeba's Bed & Breakfast",
+      "sys": "Yazeba's B&B",
+      "tags": [
+        "episodic",
+        "relationship map",
+        "cozy"
+      ],
+      "note": "Tracks which chapters have been played, who owes whom, and the state of every room in the house.",
+      "url": "#",
+      "host": "vercel.app/dash/yazebas"
+    },
+    {
+      "t": "Obsession Grid",
+      "c": "Skunks",
+      "sys": "Unknown Armies [2e]",
+      "tags": [
+        "madness meters",
+        "cabal",
+        "map"
+      ],
+      "note": "Five madness meters per cabal member and a US map that fills in as the crew crosses states.",
+      "url": "#",
+      "host": "vercel.app/dash/skunks"
+    },
+    {
+      "t": "Mystery Board",
+      "c": "The Heart of the Mystery",
+      "sys": "Glitter Hearts",
+      "tags": [
+        "clocks",
+        "transformations",
+        "GM screen"
+      ],
+      "note": "Transformation sequences, hope tokens, and the case board the players actually pin things to.",
+      "url": "#",
+      "host": "vercel.app/dash/heart-of-the-mystery"
+    },
+    {
+      "t": "Hollowed Sheet",
+      "c": "Hollowed Roots",
+      "sys": "DC20",
+      "tags": [
+        "character sheet",
+        "action points",
+        "legacy"
+      ],
+      "note": "The first dashboard I built. Action points, stamina and mana, all calculated. Kept for the record.",
+      "url": "#",
+      "host": "vercel.app/dash/hollowed-roots"
+    }
+  ]
+}

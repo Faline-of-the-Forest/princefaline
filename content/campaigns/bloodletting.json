@@ -1,0 +1,97 @@
+{
+  "slug": "bloodletting",
+  "name": "bloodletting",
+  "sys": "Chronicles of Darkness [VTR]",
+  "status": "running",
+  "banner": "https://princefalinerpgdiaries.vercel.app/img/user/Images/Banners/bnr_bloodletting.jpg",
+  "covers": [
+    "https://princefalinerpgdiaries.vercel.app/img/user/Images/Covers/cover_bloodletting01.jpg",
+    "https://princefalinerpgdiaries.vercel.app/img/user/Images/Covers/cover_bloodletting02.jpg",
+    "https://princefalinerpgdiaries.vercel.app/img/user/Images/Covers/cover_bloodletting03.jpg",
+    "https://princefalinerpgdiaries.vercel.app/img/user/Images/Covers/cover_bloodletting04.jpg",
+    "https://princefalinerpgdiaries.vercel.app/img/user/Images/Covers/cover_bloodletting05.jpg"
+  ],
+  "tags": [
+    "Chronicles of Darkness",
+    "Vampire: the Requiem",
+    "New Orleans",
+    "1990"
+  ],
+  "tagline": "THE DEAD DO NOT REST EASY.",
+  "premise": [
+    "It is Carnival season in New Orleans, 1990, and PRINCE AUGUSTO VIDAL, the Sanctified tyrant who has ruled the city for over centuries, is ready to name his heir and surrender to the long sleep.",
+    "But the Big Easy won't let him go quietly.",
+    "ANTOINE SAVOY, Lord of the French Quarter, is campaigning for the throne — and he alone is keeping the old Prince from slipping into torpor. In the bayou parishes, BARON CIMITIERE moves in silence, working toward something no one can name, and the Prince is afraid.",
+    "Above it all, the living city is bleeding. Cops sweep the Tremé every night, harassing vodouisants; killers gun down officers in the streets; and the HIV crisis has hit New Orleans harder than anywhere else in the country. The Big Easy is sick, and the dead can taste it.",
+    "You are KINDRED — familiar or new to the Big Sleep — and you have arrived at the worst possible time. Three dead men circle each other in the dark, each convinced this city is theirs to claim...",
+    "... AND DAMNED BE NEW ORLEANS FOR IT."
+  ],
+  "influences": "Bloodletting (1990, Concrete Blonde, Album), Succession (2018, Jesse Armstrong, TV Series), Interview with the Vampire (2022, Rolin Jones, TV Series), Blade Runner (1982, Ridley Scott, Film), Mulholland Drive (2001, David Lynch, Film).",
+  "materials": [
+    "Vampire: The Requiem",
+    "City of the Damned: New Orleans"
+  ],
+  "cast": [
+    {
+      "name": "Reginald \"Reggie\" Corrigan",
+      "kind": "Ventrue / Invictus",
+      "player": "Richie-Tozier",
+      "bio": "Reggie runs Blood Haven, a nonprofit blood bank in Mid-City: part genuine civic charity, part feeding operation for the Kindred of New Orleans. He sends the clean blood to medical centers, and keeps the HIV-positive units — blood that would otherwise be incinerated — for himself and vampires in need."
+    },
+    {
+      "name": "Andrew \"Andy\" Deveraux",
+      "kind": "Malkavian / Ordo Dracul",
+      "player": "Geralt-of-Rivia",
+      "bio": "A Vietnam veteran, a former enforcer, and a freelance Kindred bounty hunter with thirteen years of Baton Rouge between him and the city that took everything from him. Embraced in 1975 by Clarence Beaumont, the Invictus Priscus — whom he later killed. Tonight, he is back home on personal business."
+    },
+    {
+      "name": "John \"Elvys\" Dresley",
+      "kind": "Nosferatu / Unaligned",
+      "player": "Reepicheep",
+      "bio": "A working guitarist from Memphis who played rock and roll nobody wanted to hear anymore, until a producer named Shadowman offered him a studio album. It was a lie, and a cruel one. He sulks in the sewers beneath Mid-City, stalking his lost love from afar."
+    },
+    {
+      "name": "Amélie Telfort",
+      "kind": "Daeva / Circle of the Crone",
+      "player": "Puss-in-Boots",
+      "bio": "She has run her store on the same block in the Tremé since she took over from her mother in 1920. The Telfort Herbarium sells medicinal teas and gris-gris bags by day; after dark, preparations incorporating her vitae are available to her Kindred peers."
+    }
+  ],
+  "episodes": [
+    {
+      "n": "01",
+      "date": "2026-03-30",
+      "rt": "04:47",
+      "title": "Bloodletting (The Vampire Song)",
+      "hook": "Carnival season opens in New Orleans: a Nosferatu musician risks everything to see the woman he loved, a charitable Ventrue is offered a deal by the Lord of the French Quarter, a Daeva vodouisant bargains over secrets buried in her grandmother's notes, and a soldier is given a quiet job by the Prince."
+    },
+    {
+      "n": "02",
+      "date": "2026-04-06",
+      "rt": "04:07",
+      "title": "The Sky is a Poisonous Garden",
+      "hook": "Andrew is in the French Quarter on a job that doesn't add up, something has gone wrong in Reggie's home, a dangerous man in a wide leather hat is asking questions in the Tremé, and Elvys is looking for someone who might not exist anymore."
+    },
+    {
+      "n": "03",
+      "date": "2026-04-13",
+      "rt": "04:41",
+      "title": "Caroline",
+      "hook": "A night that should have been quiet turns bloody. Reggie races to contain a crisis he may have caused, Amélie finds herself caught between a dangerous stranger and a debt she can't afford, Elvys tries to get his head back in the game, and Andrew follows a wound that's been open for twenty years."
+    },
+    {
+      "n": "04",
+      "date": "2026-04-20",
+      "rt": "03:59",
+      "title": "The Darkening of the Light",
+      "hook": "Savoy comes knocking at Reggie's door with questions and answers, Elvys plays his first set in two years, Andrew is handed an impossible job, and Amélie finds something ancient and strange beneath the bayou."
+    },
+    {
+      "n": "05",
+      "date": "2026-04-27",
+      "rt": "04:00",
+      "title": "I Don't Need a Hero",
+      "hook": "Amélie leaves the bayou with more questions than she found answers, Reggie checks in with Doc Xola to save his childe, Elvys makes a deal with the Prince that had better pay off, and Andrew finally finds a lead in his hunt for the Prince's former Hound."
+    }
+  ]
+}
