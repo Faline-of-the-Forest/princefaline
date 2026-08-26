@@ -1,0 +1,20 @@
+scripts/__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+.thumbnail
+.claude/scheduled_tasks.lock
+
+# Original PNGs superseded by .webp (kept locally as backups, not deployed)
+assets/portrait.png
+assets/wordmark.png
+uploads/book_*.png
+uploads/faline-s-rpg-guild-icon-1024.png
+uploads/pasted-*.png
+
+# Working files not part of the live site
+uploads/RPG Master.xlsx
+uploads/RPG Mockups.png
+uploads/RPG Mockups.webp
+uploads/RPG Mockups (1).png
+uploads/RPG Mockups (1).webp

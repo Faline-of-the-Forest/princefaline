@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Uncial+Antiqua&display=swap" rel="stylesheet">
+<script src="rpg-data.js"></script>
+<script src="rpg-content.js"></script>
+<style>
+html,body{margin:0;padding:0;background:#F6F1E4;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#A5231F;text-decoration:none}
+a:hover{color:#2F4633;text-decoration:underline}
+::selection{background:#2F4633;color:#F6F1E4}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#F6F1E4;color:#24211B;font-family:'EB Garamond',Georgia,serif">
+
+  <header style="position:sticky;top:0;z-index:30;background:#F6F1E4;border-bottom:2px solid #24211B">
+    <div style="max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 22px">
+      <div onClick="{{ goHome }}" style="display:flex;align-items:center;gap:11px;cursor:pointer;margin-right:auto">
+        <img src="uploads/faline-s-rpg-guild-icon-1024.webp" alt="" style="display:block;width:34px;height:34px">
+      </div>
+      <nav style="display:flex;flex-wrap:wrap;gap:4px">
+        <sc-for list="{{ nav }}" as="item" hint-placeholder-count="4">
+          <div onClick="{{ item.click }}" style="padding:7px 12px;border:1px solid {{ item.bd }};background:{{ item.bg }};color:{{ item.fg }};font:400 18.0px/1 'EB Garamond',serif;cursor:pointer" style-hover="border-color:#24211B">{{ item.label }}</div>
+        </sc-for>
+      </nav>
+      <div style="display:flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid #C8BFA6;color:#5B5648;font:400 17.1px/1 'EB Garamond',serif">
+        <span>Search</span><span style="border:1px solid #C8BFA6;padding:2px 4px">⌘K</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════ HOME ══════════ -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <main style="max-width:1180px;margin:0 auto;padding:0 20px">
+
+    <section style="display:flex;flex-wrap:wrap;gap:36px;padding:46px 0 40px;align-items:flex-start">
+      <div style="flex:999 1 420px;max-width:640px">
+        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:20px">◆ An Archive of Tables, Kept since July 2024</div>
+        <h1 style="font:400 clamp(38px,5.4vw,58px)/1.02 'EB Garamond',serif;margin:0 0 22px;letter-spacing:-.01em">A permanent home<br>for ephemeral games.</h1>
+        <p style="font:400 17.5px/1.68 'EB Garamond',serif;color:#3A362C;margin:0 0 16px;text-wrap:pretty">
+          <span style="float:left;font-family:'Uncial Antiqua',serif;font-size:44px;line-height:.84;color:#F6F1E4;background:#A5231F;border:1px solid #B8892E;padding:8px 10px 6px;margin:4px 12px 0 0">T</span>
+          abletop RPGs are ephemeral by nature: they happen once, at a specific table, between specific people, and are never experienced the same way again. Each session a lightning caught in a bottle. So all we can do is tell their stories as if they were myths.
+        </p>
+        <p style="font:400 17.5px/1.68 'EB Garamond',serif;color:#3A362C;margin:0 0 26px;text-wrap:pretty">This archive chronicles the campaigns I have run, the sessions that made them, the books I have read in pursuit of the hobby, and the dashboards I build to play them. A souvenir for everyone who committed their evenings to these games — and a record, for me, of the work that went in.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <div onClick="{{ goCampaigns }}" style="padding:11px 18px;background:#2F4633;color:#F6F1E4;font:400 18.8px/1 'EB Garamond',serif;cursor:pointer;border:1px solid #24211B" style-hover="background:#24211B">▸ Browse Campaigns</div>
+          <div onClick="{{ goReviews }}" style="padding:11px 18px;border:1px solid #24211B;font:400 18.8px/1 'EB Garamond',serif;cursor:pointer;color:#24211B" style-hover="background:#EDE7D6">▸ The Review Library</div>
+        </div>
+      </div>
+      <div style="flex:1 1 300px;max-width:400px">
+        <img src="assets/portrait.webp" alt="Prince Faline reading beneath a tree" style="display:block;width:100%;height:auto">
+      </div>
+    </section>
+
+    <section style="padding:14px 0 44px">
+      <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 18px">
+        <div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Now Running</div>
+        <div style="flex:1;height:1px;background:#C8BFA6"></div>
+        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648">{{ runningCount }}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px">
+        <sc-for list="{{ running }}" as="c" hint-placeholder-count="4">
+          <div onClick="{{ c.open }}" style="border:2px solid #24211B;background:#FBF8EF;cursor:pointer;display:flex;flex-direction:column" style-hover="background:#F1ECDB">
+            <sc-if value="{{ showBanners }}" hint-placeholder-val="{{ true }}">
+              <div style="height:118px;background:{{ c.bgcss }};border-bottom:1px solid #24211B"></div>
+            </sc-if>
+            <div style="padding:13px 14px 12px;flex:1">
+              <div style="font:400 20px/1.18 'EB Garamond',serif;margin-bottom:7px">{{ c.name }}</div>
+              <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#5B5648">{{ c.sys }}</div>
+              <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#5B5648">{{ c.meta }}</div>
+            </div>
+            <div style="border-top:1px solid #C8BFA6;padding:8px 14px;font:400 16.1px/1 'EB Garamond',serif;color:#A5231F;display:flex;justify-content:space-between">
+              <span>▸ Enter</span><span style="color:#5B5648">{{ c.span }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="padding:0 0 44px">
+      <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 18px">
+        <div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Lifetime Record</div>
+        <div style="flex:1;height:1px;background:#C8BFA6"></div>
+        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648">Since 12 Jul 2024</div>
+      </div>
+      <div style="border:2px solid #24211B;background:#24211B;display:flex;flex-wrap:wrap;gap:1px">
+        <sc-for list="{{ statCells }}" as="s" hint-placeholder-count="7">
+          <div style="flex:1 1 148px;background:#FBF8EF;padding:16px 15px 14px">
+            <div style="font:400 15.4px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:11px">{{ s.label }}</div>
+            <div style="font:400 clamp(26px,3vw,34px)/1 'EB Garamond',serif;margin-bottom:7px">{{ s.value }}</div>
+            <div style="font:400 16.1px/1.35 'EB Garamond',serif;color:#8A836F">{{ s.sub }}</div>
+          </div>
+        </sc-for>
+        <div style="flex:1 1 260px;background:#FBF8EF;padding:16px 15px 14px">
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:14px">Sessions per Year</div>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <sc-for list="{{ yearBars }}" as="y" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648;width:30px">{{ y.year }}</span>
+                <div style="flex:1;height:12px;background:#EDE7D6;border:1px solid #C8BFA6">
+                  <div style="height:100%;width:{{ y.pct }};background:#2F4633"></div>
+                </div>
+                <span style="font:400 17.1px/1 'EB Garamond',serif;color:#24211B;width:22px;text-align:right">{{ y.n }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:0 0 56px">
+      <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 16px">
+        <div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ The Ledger</div>
+        <div style="flex:1;height:1px;background:#C8BFA6"></div>
+        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648">{{ ledgerCount }}</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:14px">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">
+          <span style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-right:4px">Show</span>
+          <sc-for list="{{ lModeChips }}" as="ch" hint-placeholder-count="3">
+            <div onClick="{{ ch.click }}" style="padding:6px 10px;border:1px solid {{ ch.bd }};background:{{ ch.bg }};color:{{ ch.fg }};font:400 16.1px/1 'EB Garamond',serif;cursor:pointer">{{ ch.label }}</div>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">
+          <span style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-right:4px">Year</span>
+          <sc-for list="{{ lYearChips }}" as="ch" hint-placeholder-count="4">
+            <div onClick="{{ ch.click }}" style="padding:6px 10px;border:1px solid {{ ch.bd }};background:{{ ch.bg }};color:{{ ch.fg }};font:400 16.1px/1 'EB Garamond',serif;cursor:pointer">{{ ch.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="border:2px solid #24211B;background:#FBF8EF">
+        <div style="display:flex;flex-wrap:wrap;gap:6px 18px;padding:9px 15px;border-bottom:1px solid #24211B;background:#EDE7D6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">
+          <span style="flex:0 0 86px">Date</span>
+          <span style="flex:0 0 30px">№</span>
+          <span style="flex:999 1 220px">Session</span>
+          <span style="flex:1 1 150px">Campaign</span>
+          <span style="flex:1 1 140px">System</span>
+          <span style="flex:0 0 46px;text-align:right">Time</span>
+        </div>
+        <sc-for list="{{ ledgerRows }}" as="r" hint-placeholder-count="12">
+          <div onClick="{{ r.open }}" style="display:flex;flex-wrap:wrap;gap:4px 18px;padding:9px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline;cursor:{{ r.cursor }}" style-hover="background:{{ r.hoverBg }};color:{{ r.hoverFg }}">
+            <span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">{{ r.d }}</span>
+            <span style="flex:0 0 30px;font:400 17.1px/1.4 'EB Garamond',serif;color:#8A836F">{{ r.n }}</span>
+            <span style="flex:999 1 220px;font:400 16px/1.35 'EB Garamond',serif">{{ r.t }}</span>
+            <span style="flex:1 1 150px;font:400 17.1px/1.4 'EB Garamond',serif">{{ r.c }}</span>
+            <span style="flex:1 1 140px;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">{{ r.s }}</span>
+            <span style="flex:0 0 46px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">{{ r.rt }}</span>
+          </div>
+        </sc-for>
+        <div onClick="{{ toggleLedger }}" style="padding:11px 15px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;cursor:pointer;text-align:center" style-hover="background:#EDE7D6">{{ ledgerToggleLabel }}</div>
+      </div>
+    </section>
+  </main>
+  </sc-if>
+
+  <!-- ══════════ CAMPAIGN LIBRARY ══════════ -->
+  <sc-if value="{{ isCampaigns }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:1180px;margin:0 auto;padding:34px 20px 56px">
+    <div style="margin-bottom:26px">
+      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ Section II</div>
+      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">The Campaign Library</h1>
+      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">Every campaign I have run since 2024, with its system, its length, and the diary that came out of it. One-shots are catalogued separately in the ledger.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:30px">
+      <aside style="flex:1 1 190px;max-width:230px">
+        <div style="border:2px solid #24211B;background:#FBF8EF;padding:15px">
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">Status</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:20px">
+            <sc-for list="{{ cStatusChips }}" as="ch" hint-placeholder-count="4">
+              <div onClick="{{ ch.click }}" style="padding:6px 9px;border:1px solid {{ ch.bd }};background:{{ ch.bg }};color:{{ ch.fg }};font:400 16.1px/1 'EB Garamond',serif;cursor:pointer;display:flex;justify-content:space-between;gap:8px"><span>{{ ch.label }}</span><span>{{ ch.count }}</span></div>
+            </sc-for>
+          </div>
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">System</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:20px">
+            <input value="{{ cSysQuery }}" onChange="{{ setCSysQuery }}" placeholder="Search systems" style="padding:7px 9px;border:1px solid #C8BFA6;background:#F6F1E4;font:400 16.1px/1.2 'EB Garamond',serif;color:#24211B;width:100%">
+            <select value="{{ cSys }}" onChange="{{ setCSys }}" size="6" style="padding:6px;border:1px solid #C8BFA6;background:#F6F1E4;font:400 16.1px/1.5 'EB Garamond',serif;color:#24211B;width:100%">
+              <sc-for list="{{ cSysOpts }}" as="o" hint-placeholder-count="6">
+                <option value="{{ o.v }}">{{ o.l }}</option>
+              </sc-for>
+            </select>
+          </div>
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">Sort by</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <sc-for list="{{ cSortChips }}" as="ch" hint-placeholder-count="4">
+              <div onClick="{{ ch.click }}" style="padding:6px 9px;border:1px solid {{ ch.bd }};background:{{ ch.bg }};color:{{ ch.fg }};font:400 16.1px/1 'EB Garamond',serif;cursor:pointer">{{ ch.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </aside>
+      <div style="flex:999 1 460px">
+        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:12px">{{ campResultLabel }}</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ campRows }}" as="c" hint-placeholder-count="6">
+            <div onClick="{{ c.open }}" style="border:2px solid #24211B;background:#FBF8EF;cursor:pointer;display:flex;flex-wrap:wrap;align-items:stretch" style-hover="background:#F1ECDB">
+              <sc-if value="{{ showBanners }}" hint-placeholder-val="{{ true }}">
+                <div style="flex:0 0 132px;min-height:96px;background:{{ c.bgcss }};border-right:1px solid #24211B"></div>
+              </sc-if>
+              <div style="flex:999 1 260px;padding:13px 16px;display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:10px">
+                  <span style="font:400 22px/1.15 'EB Garamond',serif">{{ c.name }}</span>
+                  <span style="padding:3px 7px;border:1px solid {{ c.pillBd }};background:{{ c.pillBg }};color:{{ c.pillFg }};font:400 14.6px/1 'EB Garamond',serif">{{ c.statusLabel }}</span>
+                </div>
+                <div style="font:400 17.1px/1.5 'EB Garamond',serif;color:#5B5648">{{ c.sys }}</div>
+                <div style="font:400 18.8px/1.5 'EB Garamond',serif;color:#3A362C;max-width:60ch">{{ c.blurb }}</div>
+              </div>
+              <div style="flex:0 0 128px;padding:13px 16px;border-left:1px solid #C8BFA6;display:flex;flex-direction:column;justify-content:space-between;gap:8px">
+                <div>
+                  <div style="font:400 24px/1 'EB Garamond',serif">{{ c.n }}</div>
+                  <div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:4px">Sessions</div>
+                </div>
+                <div>
+                  <div style="font:400 17.1px/1.5 'EB Garamond',serif;color:#5B5648">{{ c.rt }}</div>
+                  <div style="font:400 15.4px/1.5 'EB Garamond',serif;color:#8A836F">{{ c.span }}</div>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- ══════════ CAMPAIGN PAGE ══════════ -->
+  <sc-if value="{{ isCampaign }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:1180px;margin:0 auto;padding:0 20px 56px">
+    <div onClick="{{ goCampaigns }}" style="padding:16px 0 14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;cursor:pointer">◂ The Campaign Library</div>
+    <div style="border:2px solid #24211B;background:#FBF8EF">
+      <sc-if value="{{ showBanners }}" hint-placeholder-val="{{ true }}">
+        <div style="height:clamp(150px,24vw,250px);background:{{ cp.bgcss }};border-bottom:2px solid #24211B"></div>
+      </sc-if>
+      <div style="padding:20px 22px;display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end">
+        <div style="flex:999 1 300px">
+          <h1 style="font:400 clamp(32px,5vw,50px)/1 'EB Garamond',serif;margin:0 0 12px">{{ cp.name }}</h1>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ cp.tags }}" as="t" hint-placeholder-count="4">
+              <span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">{{ t }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="flex:1 1 200px;display:flex;gap:22px;flex-wrap:wrap">
+          <div><div style="font:400 26px/1 'EB Garamond',serif">{{ cp.n }}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:5px">Sessions</div></div>
+          <div><div style="font:400 26px/1 'EB Garamond',serif">{{ cp.rt }}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:5px">At the Table</div></div>
+          <div><div style="font:400 26px/1 'EB Garamond',serif">{{ cp.statusLabel }}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:5px">{{ cp.span }}</div></div>
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ hasDetail }}" hint-placeholder-val="{{ false }}">
+      <section style="padding:40px 0 8px;text-align:center;max-width:66ch;margin:0 auto">
+        <div style="font:500 clamp(15px,2.2vw,19px)/1.4 'EB Garamond',serif;color:#A5231F;margin-bottom:24px">{{ det.tagline }}</div>
+        <sc-for list="{{ det.premise }}" as="p" hint-placeholder-count="5">
+          <p style="font:400 16.5px/1.62 'EB Garamond',serif;color:#3A362C;margin:0 0 15px;text-wrap:pretty">{{ p }}</p>
+        </sc-for>
+      </section>
+      <section style="display:flex;flex-wrap:wrap;gap:26px;padding:26px 0 12px;border-top:1px solid #C8BFA6;margin-top:28px">
+        <div style="flex:999 1 320px">
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:9px">Influences</div>
+          <p style="font:italic 400 15px/1.6 'EB Garamond',serif;color:#3A362C;margin:0">{{ det.influences }}</p>
+        </div>
+        <div style="flex:1 1 220px">
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:9px">Materials</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <sc-for list="{{ detMaterials }}" as="m" hint-placeholder-count="2">
+              <div onClick="{{ m.open }}" style="font:italic 400 15px/1.5 'EB Garamond',serif;color:#A5231F;cursor:pointer">{{ m.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+
+      <section style="padding:34px 0 0">
+        <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 18px">
+          <div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Casting</div>
+          <div style="flex:1;height:1px;background:#C8BFA6"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">
+          <sc-for list="{{ det.cast }}" as="pc" hint-placeholder-count="4">
+            <div style="border:1px solid #24211B;background:#FBF8EF;padding:14px;display:flex;gap:14px">
+              <div style="flex:0 0 66px;height:84px;background:{{ portraitCss }};border:1px solid #C8BFA6;display:grid;place-items:center;font:400 14.5px/1.3 'EB Garamond',serif;color:#8A836F;text-align:center">Portrait</div>
+              <div>
+                <div style="font:400 18px/1.25 'EB Garamond',serif">{{ pc.name }}</div>
+                <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#A5231F;margin:4px 0 2px">{{ pc.kind }}</div>
+                <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#8A836F;margin-bottom:8px">PORTRAYED BY #{{ pc.player }}</div>
+                <p style="font:400 18.1px/1.55 'EB Garamond',serif;color:#3A362C;margin:0;text-wrap:pretty">{{ pc.bio }}</p>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="padding:34px 0 0">
+        <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 16px">
+          <div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Episodes</div>
+          <div style="flex:1;height:1px;background:#C8BFA6"></div>
+        </div>
+        <div style="border:2px solid #24211B;background:#FBF8EF;margin-bottom:26px">
+          <sc-for list="{{ detEpisodes }}" as="e" hint-placeholder-count="5">
+            <a href="{{ e.href }}" style="display:flex;flex-wrap:wrap;gap:4px 16px;padding:10px 15px;border-bottom:1px solid #E6DFCB;cursor:pointer;align-items:baseline;color:inherit;text-decoration:none" style-hover="background:#2F4633;color:#F6F1E4">
+              <span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">{{ e.date }}</span>
+              <span style="flex:0 0 28px;font:400 18.8px/1.4 'EB Garamond',serif">{{ e.n }}</span>
+              <span style="flex:999 1 240px;font:400 17px/1.35 'EB Garamond',serif">{{ e.title }}</span>
+              <span style="flex:0 0 52px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">{{ e.rt }}</span>
+            </a>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <sc-for list="{{ detEpisodes }}" as="e" hint-placeholder-count="5">
+            <div id="{{ e.anchor }}" style="display:flex;flex-wrap:wrap;gap:18px;padding:22px 0;border-top:1px solid #C8BFA6;scroll-margin-top:80px">
+              <div style="flex:0 0 168px">
+                <div style="width:168px;aspect-ratio:1;box-sizing:border-box;background:{{ e.coverCss }};border:1px solid #24211B"></div>
+              </div>
+              <div style="flex:999 1 300px">
+                <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:9px">
+                  <span style="font:500 20.5px/1 'EB Garamond',serif;color:#A5231F">{{ e.n }}.</span>
+                  <span style="font:400 26px/1.1 'EB Garamond',serif">{{ e.title }}</span>
+                </div>
+                <p style="font:400 16px/1.62 'EB Garamond',serif;color:#3A362C;margin:0 0 4px;max-width:68ch;text-wrap:pretty">{{ e.hook }}</p>
+                <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#8A836F">{{ e.date }} · {{ e.rt }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="display:flex;flex-wrap:wrap;gap:14px;padding:34px 0 0">
+        <div style="flex:1 1 280px;border:2px solid #24211B;background:#FBF8EF;padding:16px">
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:9px">Reviewed Materials</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <sc-for list="{{ detMaterials }}" as="m" hint-placeholder-count="2">
+              <div onClick="{{ m.open }}" style="display:flex;justify-content:space-between;gap:10px;cursor:pointer;align-items:baseline">
+                <span style="font:400 16px/1.3 'EB Garamond',serif">{{ m.label }}</span>
+                <span style="font:500 16.4px/1 'EB Garamond',serif;color:#A5231F">{{ m.stars }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ noDetail }}" hint-placeholder-val="{{ false }}">
+      <section style="padding:30px 0 0">
+        <div style="border:1px dashed #C8BFA6;background:#FBF8EF;padding:16px;font:500 16.4px/1.6 'EB Garamond',serif;color:#5B5648;margin-bottom:26px">◆ Diary not yet transcribed — the session log below is drawn from the master ledger. Premise, casting and recaps get written up here.</div>
+        <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 16px">
+          <div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Session Log</div>
+          <div style="flex:1;height:1px;background:#C8BFA6"></div>
+        </div>
+        <div style="border:2px solid #24211B;background:#FBF8EF">
+          <sc-for list="{{ cpSessions }}" as="e" hint-placeholder-count="5">
+            <div style="display:flex;flex-wrap:wrap;gap:4px 16px;padding:10px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline">
+              <span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">{{ e.date }}</span>
+              <span style="flex:0 0 28px;font:400 18.8px/1.4 'EB Garamond',serif">{{ e.n }}</span>
+              <span style="flex:999 1 240px;font:400 17px/1.35 'EB Garamond',serif">{{ e.title }}</span>
+              <span style="flex:0 0 52px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">{{ e.rt }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+  </main>
+  </sc-if>
+
+  <!-- ══════════ REVIEW LIBRARY ══════════ -->
+  <sc-if value="{{ isReviews }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:1180px;margin:0 auto;padding:34px 20px 56px">
+    <div style="margin-bottom:26px">
+      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ Section III</div>
+      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">The Review Library</h1>
+      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">Short notes on every system, module, zine and supplement I have actually put on a table — one verdict, five stars at most, no essays.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:30px">
+      <aside style="flex:1 1 190px;max-width:230px">
+        <div style="border:2px solid #24211B;background:#FBF8EF;padding:15px">
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">Material</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:20px">
+            <sc-for list="{{ rTypeChips }}" as="ch" hint-placeholder-count="5">
+              <div onClick="{{ ch.click }}" style="padding:6px 9px;border:1px solid {{ ch.bd }};background:{{ ch.bg }};color:{{ ch.fg }};font:400 16.1px/1 'EB Garamond',serif;cursor:pointer;display:flex;justify-content:space-between;gap:8px"><span>{{ ch.label }}</span><span>{{ ch.count }}</span></div>
+            </sc-for>
+          </div>
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">Rating</div>
+          <div style="display:flex;gap:3px;margin-bottom:6px">
+            <sc-for list="{{ rStarBtns }}" as="st" hint-placeholder-count="5">
+              <span onClick="{{ st.click }}" style="font:400 23px/1 'EB Garamond',serif;color:{{ st.color }};cursor:pointer">★</span>
+            </sc-for>
+          </div>
+          <div style="font:400 15px/1.4 'EB Garamond',serif;color:#8A836F;margin-bottom:20px">{{ rMinLabel }}</div>
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">Year</div>
+          <div style="display:flex;gap:7px;margin-bottom:20px">
+            <input value="{{ rY1 }}" onChange="{{ setRY1 }}" placeholder="From" style="padding:7px 9px;border:1px solid #C8BFA6;background:#F6F1E4;font:400 16.1px/1.2 'EB Garamond',serif;color:#24211B;width:100%">
+            <input value="{{ rY2 }}" onChange="{{ setRY2 }}" placeholder="To" style="padding:7px 9px;border:1px solid #C8BFA6;background:#F6F1E4;font:400 16.1px/1.2 'EB Garamond',serif;color:#24211B;width:100%">
+          </div>
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">System</div>
+          <select value="{{ rSys }}" onChange="{{ setRSys }}" style="padding:7px 9px;border:1px solid #C8BFA6;background:#F6F1E4;font:400 16.1px/1.2 'EB Garamond',serif;color:#24211B;width:100%;margin-bottom:20px">
+            <sc-for list="{{ rSysOpts }}" as="o" hint-placeholder-count="6">
+              <option value="{{ o.v }}">{{ o.l }}</option>
+            </sc-for>
+          </select>
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">Sort by</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <sc-for list="{{ rSortChips }}" as="ch" hint-placeholder-count="3">
+              <div onClick="{{ ch.click }}" style="padding:6px 9px;border:1px solid {{ ch.bd }};background:{{ ch.bg }};color:{{ ch.fg }};font:400 16.1px/1 'EB Garamond',serif;cursor:pointer">{{ ch.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </aside>
+      <div style="flex:999 1 460px">
+        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:12px">{{ revResultLabel }}</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px">
+          <sc-for list="{{ revCards }}" as="r" hint-placeholder-count="8">
+            <div onClick="{{ r.open }}" style="position:relative;cursor:pointer">
+              <div style="aspect-ratio:3/4;display:grid;place-items:center">
+                <sc-if value="{{ r.hasCover }}" hint-placeholder-val="{{ false }}">
+                  <div style="{{ r.coverStyle }}"></div>
+                </sc-if>
+                <sc-if value="{{ r.noCover }}" hint-placeholder-val="{{ false }}">
+                  <span style="font:400 19px/1.25 'EB Garamond',serif;color:#5B5648;text-align:center;padding:10px">{{ r.title }}</span>
+                </sc-if>
+              </div>
+              <div style="position:absolute;inset:0;background:rgba(36,33,27,.92);color:#F6F1E4;padding:15px;display:flex;flex-direction:column;gap:7px;opacity:0;transition:opacity .15s" style-hover="opacity:1">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                  <span style="font:400 14.6px/1 'EB Garamond',serif;color:#E8C87A">{{ r.type }}</span>
+                  <span style="font:400 14.6px/1 'EB Garamond',serif;color:#9F9887">{{ r.date }}</span>
+                </div>
+                <div style="font:400 19px/1.15 'EB Garamond',serif">{{ r.title }}</div>
+                <div style="font:400 16.1px/1.4 'EB Garamond',serif;color:#C3BCA6">{{ r.sys }}</div>
+                <div style="font:500 17.7px/1 'EB Garamond',serif;color:#E8C87A">{{ r.starsFull }}<span style="color:#6A6455">{{ r.starsEmpty }}</span></div>
+                <p style="font:italic 400 15px/1.5 'EB Garamond',serif;color:#EDE7D6;margin:0;flex:1">{{ r.verdict }}</p>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- ══════════ SINGLE REVIEW ══════════ -->
+  <sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:1180px;margin:0 auto;padding:0 20px 56px">
+    <div onClick="{{ goReviews }}" style="padding:16px 0 14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;cursor:pointer">◂ The Review Library</div>
+    <div style="display:flex;flex-wrap:wrap;gap:30px">
+      <div style="flex:1 1 240px;max-width:290px">
+        <div>
+          <div style="aspect-ratio:3/4;display:grid;place-items:center">
+            <sc-if value="{{ rp.hasCover }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ rp.coverStyle }}"></div>
+            </sc-if>
+            <sc-if value="{{ rp.noCover }}" hint-placeholder-val="{{ false }}">
+              <span style="font:400 19px/1.3 'EB Garamond',serif;color:#5B5648;text-align:center">{{ rp.title }}</span>
+            </sc-if>
+          </div>
+        </div>
+        <div style="border:1px solid #C8BFA6;background:#FBF8EF;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">System</span><span>{{ rp.sys }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Type</span><span>{{ rp.type }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Reviewed</span><span>{{ rp.date }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Rating</span><span style="color:#A5231F">{{ rp.starsFull }}<span style="color:#C8BFA6">{{ rp.starsEmpty }}</span></span></div>
+        </div>
+      </div>
+      <div style="flex:999 1 380px;max-width:68ch">
+        <h1 style="font:400 clamp(32px,4.6vw,46px)/1.04 'EB Garamond',serif;margin:0 0 8px">{{ rp.title }}</h1>
+        <div style="font:400 18.8px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:22px">{{ rp.ed }}</div>
+        <p style="font:italic 500 21px/1.5 'EB Garamond',serif;color:#A5231F;margin:0 0 22px;padding-left:16px;border-left:3px solid #A5231F;text-wrap:pretty">{{ rp.verdict }}</p>
+        <p style="font:400 18px/1.72 'EB Garamond',serif;color:#2E2A22;margin:0 0 26px;text-wrap:pretty">{{ rp.body }}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:26px">
+          <sc-for list="{{ rp.tags }}" as="t" hint-placeholder-count="3">
+            <span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">{{ t }}</span>
+          </sc-for>
+        </div>
+        <div style="border-top:1px solid #C8BFA6;padding-top:16px">
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">Put to the Table in</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ rpUsed }}" as="u" hint-placeholder-count="2">
+              <div onClick="{{ u.open }}" style="padding:7px 11px;border:1px solid #24211B;font:400 18.8px/1 'EB Garamond',serif;cursor:pointer" style-hover="background:#2F4633;color:#F6F1E4">{{ u.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- ══════════ GAME LIBRARY ══════════ -->
+  <sc-if value="{{ isGames }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:1180px;margin:0 auto;padding:34px 20px 56px">
+    <div style="margin-bottom:26px">
+      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ Section IV</div>
+      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">Games</h1>
+      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">The interactive sheets and trackers I build for my own tables. Each one opens in its own tab, live and playable.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:30px 18px">
+      <sc-for list="{{ dashboards }}" as="d" hint-placeholder-count="8">
+        <a href="{{ d.url }}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;color:inherit">
+          <div style="position:relative;width:112px;height:112px">
+            <div style="position:absolute;inset:0;border:2px solid #24211B;border-radius:24px;background:#FBF8EF;box-shadow:4px 4px 0 #24211B;display:grid;place-items:center">
+              <span style="font:400 44px/1 'EB Garamond',serif;color:#A5231F">{{ d.initial }}</span>
+            </div>
+            <div style="position:absolute;inset:0;border-radius:24px;background:rgba(36,33,27,.94);color:#F6F1E4;padding:12px;display:flex;flex-direction:column;justify-content:center;gap:5px;text-align:center;opacity:0;transition:opacity .15s" style-hover="opacity:1">
+              <div style="font:400 15.5px/1.25 'EB Garamond',serif;color:#E8C87A">{{ d.c }}</div>
+              <div style="font:400 14.5px/1.3 'EB Garamond',serif;color:#C3BCA6">{{ d.sys }}</div>
+            </div>
+          </div>
+          <div style="font:400 17px/1.25 'EB Garamond',serif;text-align:center;max-width:140px">{{ d.t }}</div>
+        </a>
+      </sc-for>
+    </div>
+  </main>
+  </sc-if>
+
+  <footer style="border-top:2px solid #24211B;margin-top:20px;background:#EDE7D6">
+    <div style="max-width:1180px;margin:0 auto;padding:26px 20px;display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between;align-items:flex-end">
+      <div>
+        <img src="assets/wordmark.webp" alt="Prince Faline's RPG Diaries" style="display:block;height:44px;width:auto;margin-bottom:11px">
+        <div style="font:400 17.1px/1.6 'EB Garamond',serif;color:#5B5648">Kept by hand since July 2024 · all sessions logged in the master ledger</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <div onClick="{{ goHome }}" style="padding:7px 11px;border:1px solid #C8BFA6;font:400 16.1px/1 'EB Garamond',serif;cursor:pointer;color:#3A362C" style-hover="border-color:#24211B">Home</div>
+        <div onClick="{{ goCampaigns }}" style="padding:7px 11px;border:1px solid #C8BFA6;font:400 16.1px/1 'EB Garamond',serif;cursor:pointer;color:#3A362C" style-hover="border-color:#24211B">Campaigns</div>
+        <div onClick="{{ goReviews }}" style="padding:7px 11px;border:1px solid #C8BFA6;font:400 16.1px/1 'EB Garamond',serif;cursor:pointer;color:#3A362C" style-hover="border-color:#24211B">Reviews</div>
+        <div onClick="{{ goGames }}" style="padding:7px 11px;border:1px solid #C8BFA6;font:400 16.1px/1 'EB Garamond',serif;cursor:pointer;color:#3A362C" style-hover="border-color:#24211B">Games</div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showBanners&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Display&quot;},&quot;ledgerRows&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:14,&quot;min&quot;:6,&quot;max&quot;:40,&quot;step&quot;:2,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Home ledger&quot;}}">
+class Component extends DCLogic {
+  state = { page:'home', arg:null, lMode:'all', lYear:'all', lAll:false,
+    cStatus:'all', cSys:'all', cSort:'recent',
+    rType:'all', rMin:0, rSort:'rating', rY1:'', rY2:'', rSys:'all', cSysQuery:'' };
+
+  componentDidMount(){
+    this._t = setInterval(()=>{ if(window.RPG && window.RPGC){ clearInterval(this._t); this.forceUpdate(); } }, 60);
+  }
+  componentWillUnmount(){ clearInterval(this._t); }
+
+  go(page, arg){ this.setState({page, arg}); try{ window.scrollTo(0,0); }catch(e){} }
+  set(k,v){ this.setState({[k]:v}); }
+  chip(label, val, key, cur, count){
+    const on = String(cur) === String(val);
+    return { label, count: count === undefined ? '' : String(count),
+      bg: on ? '#2F4633' : 'transparent', fg: on ? '#F6F1E4' : '#5B5648', bd: on ? '#2F4633' : '#c8bfa6',
+      click: ()=>this.set(key, val) };
+  }
+  mon(d){ const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return d ? m[+d.slice(5,7)-1] + ' ' + d.slice(0,4) : ''; }
+  stripes(a,b){ return 'repeating-linear-gradient(135deg,'+a+' 0 7px,'+b+' 7px 14px)'; }
+  img(url, fallbackA, fallbackB){ return url ? '#EDE7D6 url('+url+') center/cover no-repeat' : this.stripes(fallbackA||'#e4dcc6', fallbackB||'#f1ecdb'); }
+  hrs(h){ return Math.round(h) + 'h'; }
+
+  banner(name){ const B = (window.RPG||{}).banners || {}; return this.img(B[name]); }
+  cover(campaign, i){ const C = ((window.RPG||{}).covers || {})[campaign]; return this.img(C ? C[i] : null, '#e7dfc9', '#f3eedd'); }
+
+  campaignBlurb(c){
+    const B = {
+      'bloodletting':'New Orleans, 1990. Three dead men circle each other while the living city bleeds.',
+      "Yazeba's Bed & Breakfast":'A house, its residents, and whichever chapter we feel like turning to that night.',
+      'The Mall':'Six retail employees, one dying shopping centre, and an infection nobody clocked out of.',
+      '50 Fathoms':'A drowned world and a privateer crew chasing L\u2019Ollonaise\u2019s treasure across it.',
+      'Predator: Savage Planet':'Just begun \u2014 a hunt where the party is not the one doing the hunting.',
+      "P'tite Arcadie":'Un h\u00e9xacr\u00e2wl acadien, run in French, one chapter of Fond-des-Chicots at a time.',
+      'Gradient Descent':'Twelve descents into the Deep. The station rearranged itself whether we looked or not.',
+      'The Heart of the Mystery':'Magical girls, a small town, and a case board that kept growing new pins.',
+      'Mondo Carne':'Italian-dubbed sci-fi horror, played for the grime and the melodrama.',
+      'Skunks':'A cabal crossing America state by state, one obsession at a time.',
+      'The Blooming of Hungry Hollow':'Brea Gibney, undone, erased, then dreaming. A town that will not stay put.',
+      'The Parthenogenesis of Hungry Hollow':'Five sessions of scripture and rot in the first Hungry Hollow cycle.',
+      'Strange Adventures!':'Skateland, Chanky Cheez and a lake that remembers. Kids on bikes, second edition.',
+      'Hollowed Roots':'The long DC20 playtest campaign: firbolgs, churches, and the Malum Tree.',
+      'SUB_URBIA':'Town, milk, meat. Three sessions of suburban dread.',
+      'Donjons & Catacombes Classique':'Classic DCC in French, played straight and deadly.',
+      'When Night Falls on Sunnydale':'The very first campaign in this archive. Three nights in Sunnydale.',
+      'TBD':'One session in, still unnamed. The Welling House is where it started.'
+    };
+    return B[c.name] || (c.sys + ' \u2014 ' + c.n + ' sessions logged.');
+  }
+  statusStyle(s){
+    if (s === 'running') return { label: 'Running', pillBg:'#2F4633', pillFg:'#F6F1E4', pillBd:'#2F4633' };
+    if (s === 'between arcs') return { label:'Between Arcs', pillBg:'#E8C87A', pillFg:'#3A2E10', pillBd:'#B8892E' };
+    return { label: 'Concluded', pillBg:'transparent', pillFg:'#5B5648', pillBd:'#c8bfa6' };
+  }
+  campaignObj(c){
+    const st = this.statusStyle(c.status);
+    return Object.assign({}, c, st, {
+      bgcss: this.banner(c.name),
+      meta: c.n + (c.n === 1 ? ' session \u00b7 ' : ' sessions \u00b7 ') + this.hrs(c.h),
+      blurb: this.campaignBlurb(c),
+      span: this.mon(c.first) + ' \u2013 ' + (c.status === 'running' ? 'present' : this.mon(c.last)),
+      statusLabel: st.label,
+      open: ()=>this.go('campaign', c.name)
+    });
+  }
+  bookCover(title){
+    const M = {
+      'Gradient Descent':'book_mothership-gradientdescent.webp',
+      'Mothership':'book_mothership-hundreds.webp',
+      'Liminal Horror':'book_liminalhorror.webp',
+      'The Mall':'book_liminalhorror_themall.webp',
+      "Yazeba's Bed & Breakfast":'book_yazeba.webp',
+      'Chronicles of Darkness':'book_cod_chroniclesofdarkness.webp',
+      'Vampire: The Requiem':'book_cod_vampiretherequiem.webp',
+      'City of the Damned: New Orleans':'book_cod_neworleans.webp',
+      'Kids on Bikes':'book_kidsonbikes-deluxe.webp',
+      'Knave':'book_knave.webp',
+      'Apothecaria':'book_apothecaria.webp',
+      'Ravenloft':'book_dnda1-ravenloft.webp',
+      'Dead Planet':'book_mothership-deadplanet.webp'
+    };
+    return M[title] ? 'uploads/' + M[title] : '';
+  }
+  stars(n){ return { starsFull:'\u2605'.repeat(n), starsEmpty:'\u2606'.repeat(5-n) }; }
+  reviewObj(r){
+    return Object.assign({}, r, this.stars(r.stars), {
+      title: r.t, sys: r.ed ? r.sys + ' [' + r.ed + ']' : r.sys,
+      type: r.type,
+      date: this.mon(r.date + '-01'),
+      coverCss: this.stripes('#e4dcc6', '#f3eedd'),
+      cover: this.bookCover(r.t),
+      coverStyle: this.bookCover(r.t) ? 'width:100%;height:100%;background:url(' + this.bookCover(r.t) + ') center/contain no-repeat' : '',
+      hasCover: !!this.bookCover(r.t),
+      noCover: !this.bookCover(r.t),
+      open: ()=>this.go('review', r.t)
+    });
+  }
+  episodeObj(e, i, campaign){
+    return Object.assign({}, e, {
+      coverCss: this.cover(campaign, i),
+      anchor: 'ep-' + e.n,
+      href: '#ep-' + e.n
+    });
+  }
+
+  renderVals(){
+    const D = window.RPG, C = window.RPGC;
+    const s = this.state;
+    const rowsShown = Number(this.props.ledgerRows ?? 14);
+    const v = {
+      showBanners: this.props.showBanners !== false,
+      statusBar: this.props.statusBar !== false,
+      isHome: s.page==='home', isCampaigns: s.page==='campaigns', isCampaign: s.page==='campaign',
+      isReviews: s.page==='reviews', isReview: s.page==='review',
+      isGames: s.page==='games',
+      goHome: ()=>this.go('home'), goCampaigns: ()=>this.go('campaigns'),
+      goReviews: ()=>this.go('reviews'), goGames: ()=>this.go('games'),
+      portraitCss: this.stripes('#e4dcc6', '#f3eedd'),
+      barLeft: "Prince Faline's RPG Diaries", barCenter: '', barRight: '',
+      nav: []
+    };
+    if (!D || !C) return v;
+
+    const pageLabel = { home:'Home', campaigns:'Campaign Library', campaign:'Campaign',
+      reviews:'Review Library', review:'Review', games:'Games' }[s.page];
+    v.barCenter = pageLabel + (s.arg ? ' / ' + String(s.arg) : '');
+    v.barRight = D.stats.games + ' Sessions \u00b7 ' + Math.round(D.stats.hours) + ' Hrs \u00b7 ' + D.stats.systems + ' Systems';
+    v.nav = [
+      this.chip('Home','home','page', s.page),
+      this.chip('Campaigns','campaigns','page', (s.page==='campaign'?'campaigns':s.page)),
+      this.chip('Reviews','reviews','page', (s.page==='review'?'reviews':s.page)),
+      this.chip('Games','games','page', s.page)
+    ].map(c=>{ const target = {Home:'home',Campaigns:'campaigns',Reviews:'reviews',Games:'games'}[c.label];
+      return Object.assign({}, c, { click: ()=>this.go(target) }); });
+
+    // ---------- HOME ----------
+    if (v.isHome) {
+      const st = D.stats;
+      v.running = D.campaigns.filter(c=>c.status==='running').map(c=>this.campaignObj(c));
+      v.runningCount = v.running.length + ' active tables';
+      v.statCells = [
+        { label:'Games Played', value: String(st.games), sub: st.campaigns + ' campaigns + ' + st.oneShots + ' one-shots' },
+        { label:'At the Table', value: Math.round(st.hours) + 'h', sub: 'avg ' + st.avg + ' per session' },
+        { label:'Systems Played', value: String(st.systems), sub: 'distinct rulesets run' },
+        { label:'Campaigns Run', value: String(st.campaigns), sub: v.running.length + ' still running' },
+        { label:'Most Played', value: st.topSystem[1] + '\u00d7', sub: st.topSystem[0] },
+        { label:'Longest Campaign', value: st.longest.n + ' eps', sub: st.longest.name },
+        { label:'One-shots', value: String(st.oneShots), sub: 'single evenings, no strings' }
+      ];
+      const maxY = Math.max.apply(null, Object.values(st.byYear));
+      v.yearBars = Object.keys(st.byYear).sort().map(y=>({ year:y, n:String(st.byYear[y]), pct: Math.round(st.byYear[y]/maxY*100) + '%' }));
+
+      const years = ['all'].concat(Object.keys(st.byYear).sort().reverse());
+      v.lModeChips = [ this.chip('All','all','lMode',s.lMode), this.chip('Campaigns','camp','lMode',s.lMode), this.chip('One-shots','one','lMode',s.lMode) ];
+      v.lYearChips = years.map(y=>this.chip(y==='all'?'All':y, y, 'lYear', s.lYear));
+      let rows = D.sessions.slice().reverse();
+      if (s.lMode==='camp') rows = rows.filter(r=>r.c!=='One-Shot');
+      if (s.lMode==='one') rows = rows.filter(r=>r.c==='One-Shot');
+      if (s.lYear!=='all') rows = rows.filter(r=>r.d.slice(0,4)===s.lYear);
+      v.ledgerCount = rows.length + ' of ' + st.games + ' logged';
+      const total = rows.length;
+      if (!s.lAll) rows = rows.slice(0, rowsShown);
+      v.ledgerRows = rows.map(r=>{
+        const bare = r.s.replace(/\s*\[[^\]]*\]\s*$/, '');
+        const rev = r.c === 'One-Shot' ? (window.RPGC.reviews.find(x=>x.sys === bare || x.t === bare) || null) : null;
+        const live = r.c !== 'One-Shot' || !!rev;
+        return Object.assign({}, r, {
+          n:'#'+r.n,
+          cursor: live ? 'pointer' : 'default',
+          hoverBg: live ? '#2F4633' : 'transparent',
+          hoverFg: live ? '#F6F1E4' : 'inherit',
+          open: ()=> r.c === 'One-Shot' ? (rev ? this.go('review', rev.t) : null) : this.go('campaign', r.c)
+        });
+      });
+      v.ledgerToggleLabel = s.lAll ? '\u25b4 Collapse' : '\u25be Show all ' + total + ' entries';
+      v.toggleLedger = ()=>this.set('lAll', !s.lAll);
+    }
+
+    // ---------- CAMPAIGN LIBRARY ----------
+    if (v.isCampaigns) {
+      const all = D.campaigns;
+      const counts = { all: all.length, running:0, 'between arcs':0, concluded:0 };
+      all.forEach(c=>{ counts[c.status] = (counts[c.status]||0)+1; });
+      v.cStatusChips = [
+        this.chip('All','all','cStatus',s.cStatus,counts.all),
+        this.chip('Running','running','cStatus',s.cStatus,counts.running),
+        this.chip('Concluded','concluded','cStatus',s.cStatus,counts.concluded)
+      ];
+      const q = (s.cSysQuery||'').toLowerCase();
+      const sysNames = Array.from(new Set(all.map(c=>c.sys))).sort().filter(n=>!q || n.toLowerCase().includes(q));
+      v.cSysQuery = s.cSysQuery || '';
+      v.cSys = s.cSys;
+      v.setCSysQuery = (e)=>this.set('cSysQuery', e.target.value);
+      v.setCSys = (e)=>this.set('cSys', e.target.value);
+      v.cSysOpts = [{v:'all', l:'All systems'}].concat(sysNames.map(n=>({v:n, l:n})));
+      v.cSortChips = [
+        this.chip('Most Recent','recent','cSort',s.cSort),
+        this.chip('Most Sessions','sessions','cSort',s.cSort),
+        this.chip('Most Hours','hours','cSort',s.cSort),
+        this.chip('A \u2013 Z','az','cSort',s.cSort)
+      ];
+      let rows = all.slice();
+      if (s.cStatus!=='all') rows = rows.filter(c=>c.status===s.cStatus);
+      if (s.cSys!=='all') rows = rows.filter(c=>c.sys===s.cSys);
+      if (s.cSort==='sessions') rows.sort((a,b)=>b.n-a.n);
+      if (s.cSort==='hours') rows.sort((a,b)=>b.h-a.h);
+      if (s.cSort==='az') rows.sort((a,b)=>a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+      v.campRows = rows.map(c=>this.campaignObj(c));
+      v.campResultLabel = rows.length + ' campaigns \u00b7 ' + D.stats.oneShots + ' one-shots logged separately';
+    }
+
+    // ---------- CAMPAIGN PAGE ----------
+    if (v.isCampaign) {
+      const name = s.arg || 'bloodletting';
+      const rec = D.campaigns.find(c=>c.name===name) || D.campaigns[0];
+      v.cp = this.campaignObj(rec);
+      const det = (C.campaign.title === rec.name) ? C.campaign : null;
+      v.hasDetail = !!det; v.noDetail = !det;
+      if (det) {
+        v.det = det;
+        v.cp.tags = det.tags;
+        v.detEpisodes = det.episodes.map((e,i)=>this.episodeObj(e,i,det.slug));
+        v.detMaterials = det.reviews.map(t=>{
+          const r = C.reviews.find(x=>x.t===t);
+          return { label:t, stars: r ? this.stars(r.stars).starsFull : '', open: ()=> r ? this.go('review', t) : null };
+        });
+      } else {
+        v.cp.tags = [rec.sys, v.cp.statusLabel];
+        v.cpSessions = D.sessions.filter(x=>x.c===rec.name)
+          .map((x,i)=>({ date:x.d, n:String(i+1).padStart(2,'0'), title:x.t, rt:x.rt }));
+      }
+    }
+
+    // ---------- REVIEWS ----------
+    if (v.isReviews) {
+      const all = C.reviews;
+      const core = ['System','Module','Supplement'];
+      const inGroup = (r,g)=> g==='Resource' ? core.indexOf(r.type)<0 : r.type===g;
+      v.rTypeChips = [this.chip('Everything','all','rType',s.rType,all.length)]
+        .concat(['System','Module','Supplement','Resource'].map(g=>
+          this.chip(g==='Resource'?'Resources':g+'s', g, 'rType', s.rType, all.filter(r=>inGroup(r,g)).length)));
+      const min = Number(s.rMin)||0;
+      v.rStarBtns = [1,2,3,4,5].map(n=>({
+        color: n<=min ? '#A5231F' : '#C8BFA6',
+        click: ()=>this.set('rMin', min===n ? 0 : n)
+      }));
+      v.rMinLabel = min ? min + ' stars and up — click again to clear' : 'Any rating';
+      v.rY1 = s.rY1 || ''; v.rY2 = s.rY2 || '';
+      v.setRY1 = (e)=>this.set('rY1', e.target.value);
+      v.setRY2 = (e)=>this.set('rY2', e.target.value);
+      v.rSys = s.rSys || 'all';
+      v.setRSys = (e)=>this.set('rSys', e.target.value);
+      v.rSysOpts = [{v:'all',l:'All systems'}].concat(
+        Array.from(new Set(all.map(r=>r.sys))).sort().map(n=>({v:n,l:n})));
+      v.rSortChips = [ this.chip('Highest Rated','rating','rSort',s.rSort), this.chip('Most Recent','recent','rSort',s.rSort), this.chip('A \u2013 Z','az','rSort',s.rSort) ];
+      let rows = all.slice();
+      if (s.rType!=='all') rows = rows.filter(r=>inGroup(r,s.rType));
+      if (min) rows = rows.filter(r=>r.stars>=min);
+      if (v.rSys!=='all') rows = rows.filter(r=>r.sys===v.rSys);
+      const y1 = parseInt(s.rY1,10), y2 = parseInt(s.rY2,10);
+      if (!isNaN(y1)) rows = rows.filter(r=>Number(r.date.slice(0,4))>=y1);
+      if (!isNaN(y2)) rows = rows.filter(r=>Number(r.date.slice(0,4))<=y2);
+      if (s.rSort==='rating') rows.sort((a,b)=>b.stars-a.stars || a.t.localeCompare(b.t));
+      if (s.rSort==='recent') rows.sort((a,b)=>b.date.localeCompare(a.date));
+      if (s.rSort==='az') rows.sort((a,b)=>a.t.localeCompare(b.t));
+      v.revCards = rows.map(r=>this.reviewObj(r));
+      v.revResultLabel = rows.length + ' of ' + all.length + ' Entries';
+    }
+
+    // ---------- SINGLE REVIEW ----------
+    if (v.isReview) {
+      const r = C.reviews.find(x=>x.t===s.arg) || C.reviews[0];
+      v.rp = Object.assign({}, this.reviewObj(r), { ed: r.ed ? 'Edition ' + r.ed : 'Standalone' });
+      v.rpUsed = r.used.map(u=>({ label:u, open: ()=> u==='One-Shots' ? this.go('home') : this.go('campaign', u) }));
+    }
+
+    // ---------- GAMES ----------
+    if (v.isGames) {
+      v.dashboards = C.dashboards.map(d=>Object.assign({}, d, { initial: d.t.charAt(0) }));
+    }
+    return v;
+  }
+}
+
+</script>
+</body>
+</html>
