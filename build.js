@@ -80,6 +80,7 @@ const CAMPAIGN_BLURBS = {
 };
 function blurb(c) { return CAMPAIGN_BLURBS[c.name] || (c.sys + " — " + c.n + " sessions logged."); }
 function bookCover(review) {
+  if (review.cover) return review.cover;
   // uploads/book_<slug>.webp if it exists locally
   const map = {
     "Gradient Descent": "book_mothership-gradientdescent",
