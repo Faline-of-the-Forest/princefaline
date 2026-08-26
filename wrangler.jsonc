@@ -2,6 +2,9 @@
   "name": "princefaline",
   "compatibility_date": "2025-01-01",
   "main": "worker.js",
+  "vars": {
+    "GITHUB_CLIENT_ID": "Ov23liIOBfKN9Rbtxb4m"
+  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
