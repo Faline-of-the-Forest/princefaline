@@ -17,7 +17,11 @@ collections:
         label: "Session Ledger"
         name: "sessions"
         fields:
-          - { label: "Sessions", name: "sessions", widget: "list", summary: "{{fields.d}} — {{fields.t}}", fields:
+          - label: "Sessions"
+            name: "sessions"
+            widget: "list"
+            summary: "{{fields.d}} — {{fields.t}}"
+            fields:
               - { label: "Session #", name: "n", widget: "number" }
               - { label: "Date", name: "d", widget: "string", hint: "YYYY-MM-DD" }
               - { label: "Title", name: "t", widget: "string" }
@@ -25,7 +29,6 @@ collections:
               - { label: "System", name: "s", widget: "string" }
               - { label: "Hours (decimal)", name: "h", widget: "number", value_type: "float" }
               - { label: "Runtime (HH:MM)", name: "rt", widget: "string" }
-            }
 
   - name: "campaigns"
     label: "Campaigns"
@@ -93,7 +96,11 @@ collections:
         label: "Games List"
         name: "dashboards"
         fields:
-          - { label: "Games", name: "dashboards", widget: "list", summary: "{{fields.t}}", fields:
+          - label: "Games"
+            name: "dashboards"
+            widget: "list"
+            summary: "{{fields.t}}"
+            fields:
               - { label: "Title", name: "t", widget: "string" }
               - { label: "Campaign", name: "c", widget: "string" }
               - { label: "System", name: "sys", widget: "string" }
@@ -101,4 +108,3 @@ collections:
               - { label: "Note", name: "note", widget: "text" }
               - { label: "Live URL", name: "url", widget: "string" }
               - { label: "Host label", name: "host", widget: "string", required: false }
-            }
