@@ -1227,6 +1227,20 @@
       "h": 3.667,
       "rt": "03:40",
       "campaignSlug": "predator-savage-planet"
+    },
+    {
+      "n": 133,
+      "d": "2026-08-27",
+      "t": "TEST ONESHOT TAB DELETE ME",
+      "campaignSlug": "",
+      "s": "Test Sys",
+      "h": 1.5,
+      "rt": "01:30",
+      "slug": "test-oneshot-tab-delete-me",
+      "writeup": [
+        "Para one.",
+        "Para two."
+      ]
     }
   ]
 }
