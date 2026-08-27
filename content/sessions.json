@@ -1210,11 +1210,14 @@
       "n": 131,
       "d": "2026-08-12",
       "t": "Alphonse & Aria",
+      "campaignSlug": "",
       "s": "Star Crossed",
       "h": 3.533,
       "rt": "03:32",
-      "campaignSlug": "",
-      "slug": "alphonse-aria"
+      "slug": "alphonse-aria",
+      "writeup": [
+        "Test write out, test, tex, test."
+      ]
     },
     {
       "n": 132,
