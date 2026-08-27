@@ -164,9 +164,16 @@ async function handleApi(request, env, url) {
       const sessions = file.content.sessions;
       const rec = { d: body.d, t: body.t, campaignSlug: body.campaignSlug || "", s: body.s, h: Number(body.h), rt: body.rt };
       if (!rec.campaignSlug) {
-        // One-shot: optional review page fields
-        if (body.slug) rec.slug = body.slug;
-        else if (body.wantsWriteup) rec.slug = slugify(body.t);
+        // Every one-shot automatically gets its own page.
+        const existingSlugs = sessions.filter(s => !s.campaignSlug && String(s.n) !== String(body.n)).map(s => s.slug).filter(Boolean);
+        if (body.slug) {
+          rec.slug = body.slug;
+        } else {
+          const base = slugify(body.t) || "session";
+          let candidate = base, i = 2;
+          while (existingSlugs.includes(candidate)) { candidate = base + "-" + i; i++; }
+          rec.slug = candidate;
+        }
         if (body.writeup) rec.writeup = body.writeup.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
         if (body.cover) rec.cover = body.cover;
       }
@@ -337,6 +344,7 @@ function adminPage() {
   <div class="tabs">
     <div class="tab active" data-tab="sessions">Sessions</div>
     <div class="tab" data-tab="campaigns">Campaigns</div>
+    <div class="tab" data-tab="oneshots">One-Shots</div>
     <div class="tab" data-tab="reviews">Reviews</div>
     <div class="tab" data-tab="dashboards">Games</div>
   </div>
@@ -344,12 +352,19 @@ function adminPage() {
 
 <div class="panel active" id="panel-sessions">
   <div class="toprow"><h2>Ledger</h2><button data-new="sessions">+ Add Session</button></div>
+  <p style="font-size:13px;color:var(--faint);margin-top:0">Every session played, campaigns and one-shots together. For a one-shot's write-up and cover image, use the One-Shots tab instead.</p>
   <div class="list" id="list-sessions"><div class="empty">Loading…</div></div>
 </div>
 
 <div class="panel" id="panel-campaigns">
   <div class="toprow"><h2>Campaigns</h2><button data-new="campaigns">+ Add Campaign</button></div>
   <div class="list" id="list-campaigns"><div class="empty">Loading…</div></div>
+</div>
+
+<div class="panel" id="panel-oneshots">
+  <div class="toprow"><h2>One-Shots</h2><button data-new="oneshots">+ Add One-Shot</button></div>
+  <p style="font-size:13px;color:var(--faint);margin-top:0">Every one-shot automatically gets its own page. Add the write-up and cover here.</p>
+  <div class="list" id="list-oneshots"><div class="empty">Loading…</div></div>
 </div>
 
 <div class="panel" id="panel-reviews">
@@ -377,14 +392,21 @@ function adminPage() {
       <select name="campaignSlug" id="campaignSelect"><option value="">— One-Shot —</option></select>
       <label>System</label><input name="s" required>
       <label>Hours (decimal, e.g. 4.0)</label><input name="h" type="number" step="0.01" required>
-      <div id="oneshot-extra" class="hidden">
-        <label>Give this One-Shot its own review page?</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:15px;color:var(--ink)"><input type="checkbox" name="wantsWriteup" style="width:auto"> Yes, create a page for it</label>
-        <label>Write-up (separate paragraphs with a blank line)</label><textarea name="writeup"></textarea>
-        <label>Cover image</label>
-        <img class="thumb hidden">
-        <input name="coverFile" type="file" accept="image/*">
+    </form>
+
+    <form id="form-oneshots" class="editform hidden">
+      <div class="row">
+        <div><label>Date</label><input name="d" type="date" required></div>
+        <div><label>Runtime (HH:MM)</label><input name="rt" placeholder="04:00" required></div>
       </div>
+      <label>Title</label><input name="t" required>
+      <label>System</label><input name="s" required>
+      <label>Hours (decimal, e.g. 4.0)</label><input name="h" type="number" step="0.01" required>
+      <label>Slug (leave blank to auto-generate; don't change when editing)</label><input name="slug">
+      <label>Write-up (separate paragraphs with a blank line)</label><textarea name="writeup"></textarea>
+      <label>Cover image (square works best)</label>
+      <img class="thumb hidden">
+      <input name="coverFile" type="file" accept="image/*">
     </form>
 
     <form id="form-campaigns" class="editform hidden">
@@ -461,7 +483,7 @@ async function api(method, url, body) {
 }
 
 function singularEndpoint(type) {
-  return { sessions: "session", campaigns: "campaign", reviews: "review", dashboards: "dashboard" }[type];
+  return { sessions: "session", oneshots: "session", campaigns: "campaign", reviews: "review", dashboards: "dashboard" }[type];
 }
 
 // ---------- tabs ----------
@@ -480,9 +502,10 @@ async function loadList(type) {
   const listEl = el("#list-" + type);
   listEl.innerHTML = '<div class="empty">Loading…</div>';
   try {
-    const res = await api("GET", "/api/list?type=" + type);
-    if (type === "sessions") state.campaigns = res.campaigns || state.campaigns;
-    const items = res.items;
+    const res = await api("GET", "/api/list?type=" + (type === "oneshots" ? "sessions" : type));
+    if (type === "sessions" || type === "oneshots") state.campaigns = res.campaigns || state.campaigns;
+    let items = res.items;
+    if (type === "oneshots") items = items.filter(i => !i.campaignSlug);
     if (!items.length) { listEl.innerHTML = '<div class="empty">Nothing yet.</div>'; return; }
     listEl.innerHTML = "";
     items.forEach(item => listEl.appendChild(renderRow(type, item)));
@@ -496,6 +519,7 @@ function renderRow(type, item) {
   row.className = "list-row";
   let title = "", sub = "", id = "";
   if (type === "sessions") { title = item.t; sub = item.d + " · " + item.campaignName + " · " + item.s; id = item.n; }
+  if (type === "oneshots") { title = item.t; sub = item.d + " · " + item.s + (item.writeup ? " · has write-up" : ""); id = item.n; }
   if (type === "campaigns") { title = item.name; sub = item.sys + " · " + item.status; id = item.slug; }
   if (type === "reviews") { title = item.t; sub = item.type + " · " + "★".repeat(item.stars); id = item.slug; }
   if (type === "dashboards") { title = item.t; sub = item.c + " · " + item.sys; id = item._index; }
@@ -519,11 +543,6 @@ async function populateCampaignSelect() {
     state.campaigns.map(c => '<option value="' + c.slug + '">' + escapeHtml(c.name) + '</option>').join("");
 }
 
-function toggleOneShotExtra() {
-  const sel = el("#campaignSelect");
-  el("#oneshot-extra").classList.toggle("hidden", !!sel.value);
-}
-
 async function openModal(type, id) {
   state.type = type;
   state.editing = id;
@@ -536,17 +555,14 @@ async function openModal(type, id) {
   modalTitle.textContent = (id === null || id === undefined) ? "Add" : "Edit";
   backdrop.classList.add("active");
 
-  if (type === "sessions") {
-    await populateCampaignSelect();
-    el("#campaignSelect").onchange = toggleOneShotExtra;
-    el("#oneshot-extra").classList.add("hidden");
-  }
+  if (type === "sessions") await populateCampaignSelect();
 
   if (id === null || id === undefined) return; // new entry, nothing to prefill
 
   try {
-    let qs = "type=" + type;
-    if (type === "sessions") qs += "&n=" + id;
+    const apiType = type === "oneshots" ? "sessions" : type;
+    let qs = "type=" + apiType;
+    if (apiType === "sessions") qs += "&n=" + id;
     else if (type === "dashboards") qs += "&index=" + id;
     else qs += "&slug=" + encodeURIComponent(id);
     const { item } = await api("GET", "/api/item?" + qs);
@@ -556,11 +572,7 @@ async function openModal(type, id) {
       if (Array.isArray(item[k])) field.value = item[k].join(k === "premise" || k === "writeup" ? "\\n\\n" : ", ");
       else field.value = item[k] == null ? "" : item[k];
     });
-    if (type === "sessions") {
-      el("#campaignSelect").value = item.campaignSlug || "";
-      toggleOneShotExtra();
-      if (item.slug) el('[name="wantsWriteup"]', form).checked = true;
-    }
+    if (type === "sessions") el("#campaignSelect").value = item.campaignSlug || "";
     const thumb = el(".thumb", form);
     if (thumb && (item.banner || item.cover)) {
       thumb.src = item.banner || item.cover;
@@ -587,7 +599,7 @@ async function doDelete(type, id, title) {
   if (!confirm('Delete "' + title + '"? This cannot be undone.')) return;
   try {
     let qs = "";
-    if (type === "sessions") qs = "n=" + id;
+    if (type === "sessions" || type === "oneshots") qs = "n=" + id;
     else if (type === "dashboards") qs = "index=" + id;
     else qs = "slug=" + encodeURIComponent(id);
     await api("DELETE", "/api/" + singularEndpoint(type) + "?" + qs);
@@ -609,8 +621,9 @@ el("#modal-save").addEventListener("click", async () => {
       if (f.type === "checkbox") { data[f.name] = f.checked; return; }
       data[f.name] = f.value;
     });
-    if (type === "sessions" && state.editing) data.n = state.editing;
+    if ((type === "sessions" || type === "oneshots") && state.editing) data.n = state.editing;
     if (type === "dashboards" && state.editing !== null && state.editing !== undefined) data.index = state.editing;
+    if (type === "oneshots") data.campaignSlug = "";
 
     const bannerFile = el('[name="bannerFile"]', form);
     if (bannerFile && bannerFile.files[0]) {

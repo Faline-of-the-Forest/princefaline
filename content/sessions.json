@@ -7,7 +7,8 @@
       "s": "Knave [1e]",
       "h": 4,
       "rt": "04:00",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "the-haunting-of-castle-ravenloft"
     },
     {
       "n": 2,
@@ -61,7 +62,8 @@
       "s": "MÖRK BORG",
       "h": 3.5,
       "rt": "03:30",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "graves-left-wanting"
     },
     {
       "n": 8,
@@ -97,7 +99,8 @@
       "s": "Vampire: the Masquerade [5e]",
       "h": 4.5,
       "rt": "04:30",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "the-devil-of-new-orleans"
     },
     {
       "n": 12,
@@ -115,7 +118,8 @@
       "s": "Liminal Horror",
       "h": 3.5,
       "rt": "03:30",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "one-night-at-the-shelterwood-inn"
     },
     {
       "n": 14,
@@ -142,7 +146,8 @@
       "s": "Everyone is John",
       "h": 2.5,
       "rt": "02:30",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "all-bets-off"
     },
     {
       "n": 17,
@@ -205,7 +210,8 @@
       "s": "MÖRK BORG",
       "h": 5,
       "rt": "05:00",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "rotblack-sludge"
     },
     {
       "n": 24,
@@ -259,7 +265,8 @@
       "s": "To Change",
       "h": 1.867,
       "rt": "01:52",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "the-wolf-i"
     },
     {
       "n": 30,
@@ -277,7 +284,8 @@
       "s": "To Change",
       "h": 3.667,
       "rt": "03:40",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "the-wolf-ii"
     },
     {
       "n": 32,
@@ -304,7 +312,8 @@
       "s": "To Change",
       "h": 4.433,
       "rt": "04:26",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "the-pink-stuff"
     },
     {
       "n": 35,
@@ -322,7 +331,8 @@
       "s": "Liminal Horror",
       "h": 4.533,
       "rt": "04:32",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "his-arrival-was-foretold"
     },
     {
       "n": 37,
@@ -349,7 +359,8 @@
       "s": "Liminal Horror",
       "h": 4.867,
       "rt": "04:52",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "his-arrival-was-foretold-2"
     },
     {
       "n": 40,
@@ -358,7 +369,8 @@
       "s": "They Feed on Fear",
       "h": 4.417,
       "rt": "04:25",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "blood-heat"
     },
     {
       "n": 41,
@@ -367,7 +379,8 @@
       "s": "They Feed on Fear",
       "h": 3.517,
       "rt": "03:31",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "blood-heat-2"
     },
     {
       "n": 42,
@@ -376,7 +389,8 @@
       "s": "They Feed on Fear",
       "h": 3.75,
       "rt": "03:45",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "greetings-from-sunvale"
     },
     {
       "n": 43,
@@ -394,7 +408,8 @@
       "s": "Monster of the Week [2e]",
       "h": 5.867,
       "rt": "05:52",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "mutantpocalypse-are-we-not-men"
     },
     {
       "n": 45,
@@ -403,7 +418,8 @@
       "s": "To Change",
       "h": 4,
       "rt": "04:00",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "wildform-v"
     },
     {
       "n": 46,
@@ -412,7 +428,8 @@
       "s": "Knave [2e]",
       "h": 5.25,
       "rt": "05:15",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "le-r-veil-du-manoir-willowby"
     },
     {
       "n": 47,
@@ -421,7 +438,8 @@
       "s": "Kids on Bikes [2e]",
       "h": 4.75,
       "rt": "04:45",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "ripple"
     },
     {
       "n": 48,
@@ -430,7 +448,8 @@
       "s": "Mausritter",
       "h": 2.5,
       "rt": "02:30",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "honey-in-the-rafters"
     },
     {
       "n": 49,
@@ -502,7 +521,8 @@
       "s": "Mothership [1e]",
       "h": 3.05,
       "rt": "03:03",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "year-of-the-rat"
     },
     {
       "n": 57,
@@ -646,7 +666,8 @@
       "s": "Dread",
       "h": 5.417,
       "rt": "05:25",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "a-thousand-moons"
     },
     {
       "n": 73,
@@ -655,7 +676,8 @@
       "s": "Liminal Horror",
       "h": 4.017,
       "rt": "04:01",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "bound-by-the-raven"
     },
     {
       "n": 74,
@@ -664,7 +686,8 @@
       "s": "Something Is Wrong With This House",
       "h": 3.4,
       "rt": "03:24",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "something-is-wrong-with-this-house"
     },
     {
       "n": 75,
@@ -673,7 +696,8 @@
       "s": "Call of Cthulhu [5e]",
       "h": 4.233,
       "rt": "04:14",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "uncle-timothys-will"
     },
     {
       "n": 76,
@@ -682,7 +706,8 @@
       "s": "Ghostbusters",
       "h": 4.05,
       "rt": "04:03",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "the-real-ghostbusters-of-los-angeles"
     },
     {
       "n": 77,
@@ -727,7 +752,8 @@
       "s": "Liminal Horror",
       "h": 4.85,
       "rt": "04:51",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "the-chair"
     },
     {
       "n": 82,
@@ -799,7 +825,8 @@
       "s": "Knave [2e]",
       "h": 4,
       "rt": "04:00",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "barkeep-on-the-borderlands"
     },
     {
       "n": 90,
@@ -817,7 +844,8 @@
       "s": "Jim Henson's Labyrinth",
       "h": 6.1,
       "rt": "06:06",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "jim-hensons-labyrinth"
     },
     {
       "n": 92,
@@ -835,7 +863,8 @@
       "s": "i'm sorry did you say street magic",
       "h": 3.883,
       "rt": "03:53",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "vasca-villa"
     },
     {
       "n": 94,
@@ -844,7 +873,8 @@
       "s": "Eat the Reich",
       "h": 3.433,
       "rt": "03:26",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "eat-the-reich-part-1"
     },
     {
       "n": 95,
@@ -853,7 +883,8 @@
       "s": "Eat the Reich",
       "h": 5.983,
       "rt": "05:59",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "eat-the-reich-part-2"
     },
     {
       "n": 96,
@@ -862,7 +893,8 @@
       "s": "Knave [2e]",
       "h": 6.75,
       "rt": "06:45",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "baktos-terifying-cuisine"
     },
     {
       "n": 97,
@@ -871,7 +903,8 @@
       "s": "Grandpa's Farm",
       "h": 4.85,
       "rt": "04:51",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "copper-heart"
     },
     {
       "n": 98,
@@ -1051,7 +1084,8 @@
       "s": "Knave [2e]",
       "h": 4,
       "rt": "04:00",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "la-fille-de-lhiver"
     },
     {
       "n": 118,
@@ -1087,7 +1121,8 @@
       "s": "CBR+PNK",
       "h": 3.833,
       "rt": "03:50",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "mind-the-gap"
     },
     {
       "n": 122,
@@ -1168,7 +1203,8 @@
       "s": "Mothership [1e]",
       "h": 4.75,
       "rt": "04:45",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "oni"
     },
     {
       "n": 131,
@@ -1177,7 +1213,8 @@
       "s": "Star Crossed",
       "h": 3.533,
       "rt": "03:32",
-      "campaignSlug": ""
+      "campaignSlug": "",
+      "slug": "alphonse-aria"
     },
     {
       "n": 132,

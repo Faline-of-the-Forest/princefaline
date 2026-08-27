@@ -602,41 +602,82 @@ function renderGames() {
 
 // ---------- ONE-SHOTS ----------
 function renderOneShotsIndex() {
-  const rows = oneShots.slice().sort((a, b) => b.d.localeCompare(a.d)).map(s => {
-    const inner = `<span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${esc(s.d)}</span><span style="flex:999 1 260px;font:400 17px/1.35 'EB Garamond',serif">${esc(s.t)}</span><span style="flex:1 1 180px;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${esc(s.s)}</span><span style="flex:0 0 60px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${s.rt}</span>`;
-    const style = "display:flex;flex-wrap:wrap;gap:4px 16px;padding:10px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline";
-    return s.slug ? `<a href="/one-shots/${s.slug}/" style="${style};color:inherit">${inner}</a>` : `<div style="${style}">${inner}</div>`;
+  const cards = oneShots.slice().sort((a, b) => b.d.localeCompare(a.d)).map(s => {
+    const cover = s.cover || "";
+    return `<div class="os-card" data-sys="${esc(s.s)}" style="position:relative">
+      <a href="/one-shots/${s.slug}/" style="display:block;aspect-ratio:1/1;color:inherit;position:relative;overflow:hidden">
+        ${cover ? `<div style="width:100%;height:100%;background:url(${cover}) center/cover no-repeat"></div>` : `<div style="width:100%;height:100%;background:${stripes("#e4dcc6", "#f3eedd")};display:grid;place-items:center"><span style="font:400 17px/1.25 'EB Garamond',serif;color:#5B5648;text-align:center;padding:10px">${esc(s.t)}</span></div>`}
+        <div class="hover-overlay" style="position:absolute;inset:0;background:rgba(36,33,27,.92);color:#F6F1E4;padding:15px;display:flex;flex-direction:column;gap:7px;opacity:0;transition:opacity .15s">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:400 14.6px/1 'EB Garamond',serif;color:#E8C87A">${esc(s.s)}</span><span style="font:400 14.6px/1 'EB Garamond',serif;color:#9F9887">${mon(s.d)}</span></div>
+          <div style="font:400 19px/1.15 'EB Garamond',serif;flex:1">${esc(s.t)}</div>
+          <div style="font:400 15px/1 'EB Garamond',serif;color:#C3BCA6">${s.rt} at the table</div>
+        </div>
+      </a>
+    </div>`;
   }).join("");
+  const sysNames = Array.from(new Set(oneShots.map(s => s.s))).sort();
+
   const body = `
     <div style="margin:34px 0 26px">
       <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ One-Shots</div>
       <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">One-Shots</h1>
-      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">${oneShots.length} single-evening games. The ones with a write-up are linked below.</p>
+      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">${oneShots.length} single-evening games, each with its own page.</p>
     </div>
-    <div style="border:2px solid #24211B;background:#FBF8EF;margin-bottom:56px">${rows}</div>`;
+    <div style="display:flex;flex-wrap:wrap;gap:30px;padding-bottom:56px">
+      <aside style="flex:1 1 190px;max-width:230px">
+        <div style="border:2px solid #24211B;background:#FBF8EF;padding:15px">
+          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">System</div>
+          <select id="sys-filter" style="padding:7px 9px;border:1px solid #C8BFA6;background:#F6F1E4;font:400 16.1px/1.2 'EB Garamond',serif;color:#24211B;width:100%">
+            <option value="all">All systems</option>
+            ${sysNames.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")}
+          </select>
+        </div>
+      </aside>
+      <div style="flex:999 1 460px">
+        <div id="os-count" style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:12px">${oneShots.length} of ${oneShots.length} Entries</div>
+        <div id="os-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px">${cards}</div>
+      </div>
+    </div>
+    <style>.os-card:hover .hover-overlay{opacity:1}</style>
+    <script>
+      (function(){
+        var sysSel = document.getElementById('sys-filter');
+        var cards = document.querySelectorAll('.os-card');
+        var count = document.getElementById('os-count');
+        sysSel.addEventListener('change', function(){
+          var sys = sysSel.value, shown = 0;
+          cards.forEach(function(c){
+            var ok = sys === 'all' || c.dataset.sys === sys;
+            c.style.display = ok ? '' : 'none';
+            if (ok) shown++;
+          });
+          count.textContent = shown + ' of ${oneShots.length} Entries';
+        });
+      })();
+    </script>`;
   write("one-shots/index.html", layout({ title: "One-Shots — Prince Faline's RPG Diaries", active: "One-Shots", body }));
 }
 
 function renderOneShotDetail(s) {
-  const banner = s.cover ? `background:#EDE7D6 url(${s.cover}) center/cover no-repeat` : stripes("#e4dcc6", "#f3eedd");
+  const cover = s.cover || "";
   const body = `
     <a href="/one-shots/" style="display:block;padding:16px 0 14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F">◂ One-Shots</a>
-    <div style="border:2px solid #24211B;background:#FBF8EF">
-      <div style="height:clamp(150px,24vw,250px);background:${banner};border-bottom:2px solid #24211B"></div>
-      <div style="padding:20px 22px;display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end">
-        <div style="flex:999 1 300px">
-          <h1 style="font:400 clamp(32px,5vw,50px)/1 'EB Garamond',serif;margin:0 0 12px">${esc(s.t)}</h1>
-          <div style="display:flex;flex-wrap:wrap;gap:6px"><span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">${esc(s.s)}</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:30px;padding-bottom:56px">
+      <div style="flex:1 1 240px;max-width:290px">
+        <div style="aspect-ratio:1/1;display:grid;place-items:center;overflow:hidden">
+          ${cover ? `<div style="width:100%;height:100%;background:url(${cover}) center/cover no-repeat"></div>` : `<div style="width:100%;height:100%;background:${stripes("#e4dcc6", "#f3eedd")};display:grid;place-items:center"><span style="font:400 19px/1.3 'EB Garamond',serif;color:#5B5648;text-align:center">${esc(s.t)}</span></div>`}
         </div>
-        <div style="flex:1 1 200px;display:flex;gap:22px;flex-wrap:wrap">
-          <div><div style="font:400 26px/1 'EB Garamond',serif">${mon(s.d)}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:5px">${s.d}</div></div>
-          <div><div style="font:400 26px/1 'EB Garamond',serif">${s.rt}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:5px">At the Table</div></div>
+        <div style="border:1px solid #C8BFA6;background:#FBF8EF;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">System</span><span>${esc(s.s)}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Date</span><span>${mon(s.d)}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">At the Table</span><span>${s.rt}</span></div>
         </div>
       </div>
-    </div>
-    <section style="padding:34px 0 56px;max-width:66ch">
-      ${(s.writeup || []).map(p => `<p style="font:400 16.5px/1.62 'EB Garamond',serif;color:#3A362C;margin:0 0 15px;text-wrap:pretty">${esc(p)}</p>`).join("") || `<p style="font:400 16.5px/1.62 'EB Garamond',serif;color:#8A836F">No write-up yet.</p>`}
-    </section>`;
+      <div style="flex:999 1 380px;max-width:68ch">
+        <h1 style="font:400 clamp(32px,4.6vw,46px)/1.04 'EB Garamond',serif;margin:0 0 22px">${esc(s.t)}</h1>
+        ${(s.writeup || []).map(p => `<p style="font:400 18px/1.72 'EB Garamond',serif;color:#2E2A22;margin:0 0 20px;text-wrap:pretty">${esc(p)}</p>`).join("") || `<p style="font:400 18px/1.72 'EB Garamond',serif;color:#8A836F">No write-up yet.</p>`}
+      </div>
+    </div>`;
   write(`one-shots/${s.slug}/index.html`, layout({ title: s.t + " — Prince Faline's RPG Diaries", active: "One-Shots", body }));
 }
 
@@ -649,7 +690,7 @@ campaigns.forEach(renderCampaignDetail);
 renderReviewsIndex();
 reviews.forEach(renderReviewDetail);
 renderOneShotsIndex();
-oneShots.filter(s => s.slug).forEach(renderOneShotDetail);
+oneShots.forEach(renderOneShotDetail);
 renderGames();
 
 // copy static assets
