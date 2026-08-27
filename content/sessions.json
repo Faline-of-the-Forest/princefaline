@@ -1187,20 +1187,6 @@
       "h": 3.667,
       "rt": "03:40",
       "campaignSlug": "predator-savage-planet"
-    },
-    {
-      "n": 133,
-      "d": "2026-08-27",
-      "t": "TEST ONE-SHOT DELETE ME",
-      "campaignSlug": "",
-      "s": "Test System",
-      "h": 2,
-      "rt": "02:00",
-      "slug": "test-one-shot-delete-me",
-      "writeup": [
-        "First paragraph of the test writeup.",
-        "Second paragraph here."
-      ]
     }
   ]
 }
