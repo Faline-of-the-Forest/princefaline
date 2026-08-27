@@ -15,8 +15,10 @@ const reviews = fs.readdirSync(path.join(CONTENT, "reviews"))
   .map(f => JSON.parse(fs.readFileSync(path.join(CONTENT, "reviews", f), "utf8")));
 
 // ---------- derive stats from the ledger (single source of truth) ----------
-function computeCampaignStats(name) {
-  const rows = sessions.filter(s => s.c === name);
+// Sessions link to campaigns by stable slug (campaignSlug), never by name text —
+// avoids ambiguity if two campaigns ever share a display name.
+function computeCampaignStats(slug) {
+  const rows = sessions.filter(s => s.campaignSlug === slug);
   const h = rows.reduce((a, s) => a + s.h, 0);
   const first = rows.length ? rows[0].d : null;
   const last = rows.length ? rows[rows.length - 1].d : null;
@@ -26,9 +28,10 @@ function hrsToRt(h) {
   const totalMin = Math.round(h * 60);
   return String(Math.floor(totalMin / 60)).padStart(2, "0") + ":" + String(totalMin % 60).padStart(2, "0");
 }
-campaigns.forEach(c => Object.assign(c, computeCampaignStats(c.name)));
+campaigns.forEach(c => Object.assign(c, computeCampaignStats(c.slug)));
+const campaignBySlug = Object.fromEntries(campaigns.map(c => [c.slug, c]));
 
-const oneShots = sessions.filter(s => s.c === "One-Shot");
+const oneShots = sessions.filter(s => !s.campaignSlug);
 const stats = {
   games: sessions.length,
   hours: sessions.reduce((a, s) => a + s.h, 0),
@@ -105,7 +108,7 @@ const FONT_LINK = `<link rel="preconnect" href="https://fonts.googleapis.com"><l
 const BASE_CSS = `html,body{margin:0;padding:0;background:#F6F1E4;-webkit-font-smoothing:antialiased}*{box-sizing:border-box}a{color:#A5231F;text-decoration:none}a:hover{color:#2F4633;text-decoration:underline}::selection{background:#2F4633;color:#F6F1E4}.chip{cursor:pointer}.chip.active{background:#2F4633!important;color:#F6F1E4!important;border-color:#2F4633!important}`;
 
 function nav(active) {
-  const items = [["Home", "/"], ["Campaigns", "/campaigns/"], ["Reviews", "/reviews/"], ["Games", "/games/"]];
+  const items = [["Home", "/"], ["Campaigns", "/campaigns/"], ["One-Shots", "/one-shots/"], ["Reviews", "/reviews/"], ["Games", "/games/"]];
   return items.map(([label, href]) => {
     const on = active === label;
     return `<a href="${href}" style="padding:7px 12px;border:1px solid ${on ? "#2F4633" : "#c8bfa6"};background:${on ? "#2F4633" : "transparent"};color:${on ? "#F6F1E4" : "#5B5648"};font:400 18px/1 'EB Garamond',serif;display:inline-block">${label}</a>`;
@@ -173,11 +176,10 @@ function renderHome() {
 
   const rows = sessions.slice().reverse();
   const ledgerRows = rows.map(r => {
-    const bare = r.s.replace(/\s*\[[^\]]*\]\s*$/, "");
-    const rev = r.c === "One-Shot" ? reviews.find(x => x.sys === bare || x.t === bare) : null;
-    const isCamp = r.c !== "One-Shot";
-    const href = isCamp ? `/campaigns/${slugFor(r.c)}/` : (rev ? `/reviews/${rev.slug}/` : null);
-    const inner = `<span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${esc(r.d)}</span><span style="flex:0 0 30px;font:400 17.1px/1.4 'EB Garamond',serif;color:#8A836F">#${r.n}</span><span style="flex:999 1 220px;font:400 16px/1.35 'EB Garamond',serif">${esc(r.t)}</span><span style="flex:1 1 150px;font:400 17.1px/1.4 'EB Garamond',serif">${esc(r.c)}</span><span style="flex:1 1 140px;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${esc(r.s)}</span><span style="flex:0 0 46px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${r.rt}</span>`;
+    const camp = r.campaignSlug ? campaignBySlug[r.campaignSlug] : null;
+    const campLabel = camp ? camp.name : "One-Shot";
+    const href = camp ? `/campaigns/${camp.slug}/` : (r.slug ? `/one-shots/${r.slug}/` : null);
+    const inner = `<span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${esc(r.d)}</span><span style="flex:0 0 30px;font:400 17.1px/1.4 'EB Garamond',serif;color:#8A836F">#${r.n}</span><span style="flex:999 1 220px;font:400 16px/1.35 'EB Garamond',serif">${esc(r.t)}</span><span style="flex:1 1 150px;font:400 17.1px/1.4 'EB Garamond',serif">${esc(campLabel)}</span><span style="flex:1 1 140px;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${esc(r.s)}</span><span style="flex:0 0 46px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${r.rt}</span>`;
     const style = "display:flex;flex-wrap:wrap;gap:4px 18px;padding:9px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline";
     return href ? `<a href="${href}" style="${style};color:inherit" data-hover>${inner}</a>` : `<div style="${style}">${inner}</div>`;
   }).join("");
@@ -424,7 +426,7 @@ function renderCampaignDetail(c) {
         </div>
       </section>`;
   } else {
-    const sessRows = sessions.filter(s => s.c === c.name).map((s, i) => `<div style="display:flex;flex-wrap:wrap;gap:4px 16px;padding:10px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline">
+    const sessRows = sessions.filter(s => s.campaignSlug === c.slug).map((s, i) => `<div style="display:flex;flex-wrap:wrap;gap:4px 16px;padding:10px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline">
       <span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${s.d}</span>
       <span style="flex:0 0 28px;font:400 18.8px/1.4 'EB Garamond',serif">${String(i+1).padStart(2,"0")}</span>
       <span style="flex:999 1 240px;font:400 17px/1.35 'EB Garamond',serif">${esc(s.t)}</span>
@@ -598,6 +600,46 @@ function renderGames() {
   write("games/index.html", layout({ title: "Games — Prince Faline's RPG Diaries", active: "Games", body }));
 }
 
+// ---------- ONE-SHOTS ----------
+function renderOneShotsIndex() {
+  const rows = oneShots.slice().sort((a, b) => b.d.localeCompare(a.d)).map(s => {
+    const inner = `<span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${esc(s.d)}</span><span style="flex:999 1 260px;font:400 17px/1.35 'EB Garamond',serif">${esc(s.t)}</span><span style="flex:1 1 180px;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${esc(s.s)}</span><span style="flex:0 0 60px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${s.rt}</span>`;
+    const style = "display:flex;flex-wrap:wrap;gap:4px 16px;padding:10px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline";
+    return s.slug ? `<a href="/one-shots/${s.slug}/" style="${style};color:inherit">${inner}</a>` : `<div style="${style}">${inner}</div>`;
+  }).join("");
+  const body = `
+    <div style="margin:34px 0 26px">
+      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ One-Shots</div>
+      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">One-Shots</h1>
+      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">${oneShots.length} single-evening games. The ones with a write-up are linked below.</p>
+    </div>
+    <div style="border:2px solid #24211B;background:#FBF8EF;margin-bottom:56px">${rows}</div>`;
+  write("one-shots/index.html", layout({ title: "One-Shots — Prince Faline's RPG Diaries", active: "One-Shots", body }));
+}
+
+function renderOneShotDetail(s) {
+  const banner = s.cover ? `background:#EDE7D6 url(${s.cover}) center/cover no-repeat` : stripes("#e4dcc6", "#f3eedd");
+  const body = `
+    <a href="/one-shots/" style="display:block;padding:16px 0 14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F">◂ One-Shots</a>
+    <div style="border:2px solid #24211B;background:#FBF8EF">
+      <div style="height:clamp(150px,24vw,250px);background:${banner};border-bottom:2px solid #24211B"></div>
+      <div style="padding:20px 22px;display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end">
+        <div style="flex:999 1 300px">
+          <h1 style="font:400 clamp(32px,5vw,50px)/1 'EB Garamond',serif;margin:0 0 12px">${esc(s.t)}</h1>
+          <div style="display:flex;flex-wrap:wrap;gap:6px"><span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">${esc(s.s)}</span></div>
+        </div>
+        <div style="flex:1 1 200px;display:flex;gap:22px;flex-wrap:wrap">
+          <div><div style="font:400 26px/1 'EB Garamond',serif">${mon(s.d)}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:5px">${s.d}</div></div>
+          <div><div style="font:400 26px/1 'EB Garamond',serif">${s.rt}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:5px">At the Table</div></div>
+        </div>
+      </div>
+    </div>
+    <section style="padding:34px 0 56px;max-width:66ch">
+      ${(s.writeup || []).map(p => `<p style="font:400 16.5px/1.62 'EB Garamond',serif;color:#3A362C;margin:0 0 15px;text-wrap:pretty">${esc(p)}</p>`).join("") || `<p style="font:400 16.5px/1.62 'EB Garamond',serif;color:#8A836F">No write-up yet.</p>`}
+    </section>`;
+  write(`one-shots/${s.slug}/index.html`, layout({ title: s.t + " — Prince Faline's RPG Diaries", active: "One-Shots", body }));
+}
+
 // ---------- run ----------
 fs.rmSync(DIST, { recursive: true, force: true });
 fs.mkdirSync(DIST, { recursive: true });
@@ -606,6 +648,8 @@ renderCampaignsIndex();
 campaigns.forEach(renderCampaignDetail);
 renderReviewsIndex();
 reviews.forEach(renderReviewDetail);
+renderOneShotsIndex();
+oneShots.filter(s => s.slug).forEach(renderOneShotDetail);
 renderGames();
 
 // copy static assets

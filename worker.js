@@ -84,6 +84,14 @@ function slugify(s) {
   return s.toLowerCase().trim().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
+async function loadCampaignsIndex(env) {
+  const entries = await listDir("content/campaigns", env);
+  return Promise.all(entries.filter(e => e.name.endsWith(".json")).map(async e => {
+    const f = await getFile(`content/campaigns/${e.name}`, env);
+    return { slug: f.content.slug, name: f.content.name, status: f.content.status, sys: f.content.sys };
+  }));
+}
+
 async function handleApi(request, env, url) {
   if (!checkAuth(request, env)) return unauthorized();
   const path = url.pathname;
@@ -94,20 +102,20 @@ async function handleApi(request, env, url) {
     if (path === "/api/list" && request.method === "GET") {
       const type = q.get("type");
       if (type === "sessions") {
-        const file = await getFile("content/sessions.json", env);
-        return json({ items: file.content.sessions.slice().reverse() });
+        const [file, camps] = await Promise.all([getFile("content/sessions.json", env), loadCampaignsIndex(env)]);
+        const byId = Object.fromEntries(camps.map(c => [c.slug, c.name]));
+        const items = file.content.sessions.slice().reverse().map(s => ({
+          ...s,
+          campaignName: s.campaignSlug ? (byId[s.campaignSlug] || "(unknown campaign)") : "One-Shot",
+        }));
+        return json({ items, campaigns: camps });
       }
       if (type === "dashboards") {
         const file = await getFile("content/dashboards.json", env);
         return json({ items: file.content.dashboards.map((d, i) => ({ ...d, _index: i })) });
       }
       if (type === "campaigns") {
-        const entries = await listDir("content/campaigns", env);
-        const items = await Promise.all(entries.filter(e => e.name.endsWith(".json")).map(async e => {
-          const f = await getFile(`content/campaigns/${e.name}`, env);
-          return { slug: f.content.slug, name: f.content.name, status: f.content.status, sys: f.content.sys };
-        }));
-        return json({ items });
+        return json({ items: await loadCampaignsIndex(env) });
       }
       if (type === "reviews") {
         const entries = await listDir("content/reviews", env);
@@ -154,7 +162,14 @@ async function handleApi(request, env, url) {
       const body = await request.json();
       const file = await getFile("content/sessions.json", env);
       const sessions = file.content.sessions;
-      const rec = { d: body.d, t: body.t, c: body.c, s: body.s, h: Number(body.h), rt: body.rt };
+      const rec = { d: body.d, t: body.t, campaignSlug: body.campaignSlug || "", s: body.s, h: Number(body.h), rt: body.rt };
+      if (!rec.campaignSlug) {
+        // One-shot: optional review page fields
+        if (body.slug) rec.slug = body.slug;
+        else if (body.wantsWriteup) rec.slug = slugify(body.t);
+        if (body.writeup) rec.writeup = body.writeup.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
+        if (body.cover) rec.cover = body.cover;
+      }
       if (body.n) {
         const idx = sessions.findIndex(s => String(s.n) === String(body.n));
         if (idx === -1) return json({ error: "session not found" }, 404);
@@ -211,7 +226,7 @@ async function handleApi(request, env, url) {
       };
       if (body.tagline) out.tagline = body.tagline;
       if (body.tags) out.tags = body.tags.split(",").map(s => s.trim()).filter(Boolean);
-      if (body.premise) out.premise = body.premise.split("\n\n").map(s => s.trim()).filter(Boolean);
+      if (body.premise) out.premise = body.premise.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
       if (body.influences) out.influences = body.influences;
       if (existing && existing.content.cast) out.cast = existing.content.cast;
       if (existing && existing.content.episodes) out.episodes = existing.content.episodes;
@@ -291,13 +306,9 @@ function adminPage() {
   .list-row:last-child{border-bottom:none}
   .list-row .info{flex:1;min-width:0}
   .list-row .title{font-size:17px} .list-row .sub{font-size:13px;color:var(--faint)}
-  .list-row img{width:40px;height:40px;object-fit:cover;border:1px solid var(--line)}
-  .list-row button{font-size:13px;padding:5px 10px;margin:0}
-  .pill{padding:2px 7px;border:1px solid var(--line);font-size:12px;color:var(--muted)}
+  .list-row button{font-size:13px;padding:5px 10px;margin:0;flex-shrink:0}
   .empty{padding:20px;text-align:center;color:var(--faint)}
-  h2{font-size:18px;margin:0 0 14px;font-weight:400;color:var(--accent)}
-  .formwrap{border:2px solid var(--ink);background:var(--panel);padding:18px;display:none;margin-bottom:20px}
-  .formwrap.active{display:block}
+  h2{font-size:18px;margin:0;font-weight:400;color:var(--accent)}
   label{display:block;margin:12px 0 4px;font-size:13px;color:var(--muted)}
   input,select,textarea{width:100%;padding:8px;border:1px solid var(--line);background:var(--bg);font:inherit;font-size:15px}
   textarea{min-height:80px}
@@ -305,12 +316,19 @@ function adminPage() {
   button:hover{background:var(--ink)}
   button.secondary{background:transparent;color:var(--muted);border-color:var(--line)}
   button.danger{background:transparent;color:var(--accent);border-color:var(--accent)}
-  .actions{display:flex;gap:8px;margin-top:16px}
+  .actions{display:flex;gap:8px;margin-top:20px}
   .msg{margin-top:10px;font-size:14px}
   .msg.ok{color:var(--green)} .msg.err{color:var(--accent)}
   .row{display:flex;gap:10px} .row > div{flex:1}
   .toprow{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-  .thumb{width:60px;height:60px;object-fit:cover;border:1px solid var(--line);margin-bottom:8px;display:block}
+  .thumb{width:100%;max-width:220px;max-height:140px;object-fit:cover;border:1px solid var(--line);margin-bottom:8px;display:block}
+
+  .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(36,33,27,.55);z-index:100;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px}
+  .modal-backdrop.active{display:flex}
+  .modal{background:var(--panel);border:2px solid var(--ink);max-width:560px;width:100%;padding:24px;margin-bottom:40px}
+  .modal-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .modal-close{background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0;line-height:1}
+  .hidden{display:none !important}
 </style>
 </head>
 <body>
@@ -327,88 +345,104 @@ function adminPage() {
 <div class="panel active" id="panel-sessions">
   <div class="toprow"><h2>Ledger</h2><button data-new="sessions">+ Add Session</button></div>
   <div class="list" id="list-sessions"><div class="empty">Loading…</div></div>
-  <div class="formwrap" id="form-sessions">
-    <div class="row">
-      <div><label>Date</label><input name="d" type="date" required></div>
-      <div><label>Runtime (HH:MM)</label><input name="rt" placeholder="04:00" required></div>
-    </div>
-    <label>Title</label><input name="t" required>
-    <label>Campaign (exact name, or "One-Shot")</label><input name="c" required>
-    <label>System</label><input name="s" required>
-    <label>Hours (decimal, e.g. 4.0)</label><input name="h" type="number" step="0.01" required>
-    <div class="actions"><button data-save="sessions">Save</button><button type="button" class="secondary" data-cancel>Cancel</button></div>
-    <div class="msg"></div>
-  </div>
 </div>
 
 <div class="panel" id="panel-campaigns">
   <div class="toprow"><h2>Campaigns</h2><button data-new="campaigns">+ Add Campaign</button></div>
   <div class="list" id="list-campaigns"><div class="empty">Loading…</div></div>
-  <div class="formwrap" id="form-campaigns">
-    <label>Name (must match ledger campaign names exactly)</label><input name="name" required>
-    <label>Slug (leave blank to auto-generate; don't change when editing)</label><input name="slug">
-    <label>System</label><input name="sys" required>
-    <label>Status</label>
-    <select name="status"><option value="running">Running</option><option value="between arcs">Between Arcs</option><option value="concluded">Concluded</option></select>
-    <label>Tagline</label><input name="tagline">
-    <label>Tags (comma-separated)</label><input name="tags">
-    <label>Premise (separate paragraphs with a blank line)</label><textarea name="premise"></textarea>
-    <label>Influences</label><input name="influences">
-    <label>Banner image</label>
-    <img class="thumb" style="display:none">
-    <input name="bannerFile" type="file" accept="image/*">
-    <div class="actions"><button data-save="campaigns">Save</button><button type="button" class="secondary" data-cancel>Cancel</button></div>
-    <div class="msg"></div>
-  </div>
 </div>
 
 <div class="panel" id="panel-reviews">
   <div class="toprow"><h2>Reviews</h2><button data-new="reviews">+ Add Review</button></div>
   <div class="list" id="list-reviews"><div class="empty">Loading…</div></div>
-  <div class="formwrap" id="form-reviews">
-    <div class="row">
-      <div><label>Title</label><input name="t" required></div>
-      <div><label>Edition (optional)</label><input name="ed"></div>
-    </div>
-    <label>Slug (leave blank to auto-generate; don't change when editing)</label><input name="slug">
-    <label>System</label><input name="sys" required>
-    <div class="row">
-      <div><label>Type</label><select name="type"><option>System</option><option>Module</option><option>Supplement</option><option>Resource</option></select></div>
-      <div><label>Stars (1-5)</label><input name="stars" type="number" min="1" max="5" required></div>
-    </div>
-    <label>Date reviewed (YYYY-MM)</label><input name="date" placeholder="2026-08" required>
-    <label>Tags (comma-separated)</label><input name="tags">
-    <label>Verdict (one line)</label><input name="verdict" required>
-    <label>Body</label><textarea name="body" required></textarea>
-    <label>Used in (comma-separated campaign names, or One-Shots)</label><input name="used">
-    <label>Cover image</label>
-    <img class="thumb" style="display:none">
-    <input name="coverFile" type="file" accept="image/*">
-    <div class="actions"><button data-save="reviews">Save</button><button type="button" class="secondary" data-cancel>Cancel</button></div>
-    <div class="msg"></div>
-  </div>
 </div>
 
 <div class="panel" id="panel-dashboards">
   <div class="toprow"><h2>Games</h2><button data-new="dashboards">+ Add Game</button></div>
   <div class="list" id="list-dashboards"><div class="empty">Loading…</div></div>
-  <div class="formwrap" id="form-dashboards">
-    <label>Title</label><input name="t" required>
-    <label>Campaign</label><input name="c" required>
-    <label>System</label><input name="sys" required>
-    <label>Tags (comma-separated)</label><input name="tags">
-    <label>Note</label><textarea name="note"></textarea>
-    <label>Live URL</label><input name="url" required>
-    <div class="actions"><button data-save="dashboards">Save</button><button type="button" class="secondary" data-cancel>Cancel</button></div>
-    <div class="msg"></div>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <div class="modal-head"><h2 id="modal-title">Add</h2><button class="modal-close" id="modal-close">&times;</button></div>
+
+    <form id="form-sessions" class="editform hidden">
+      <div class="row">
+        <div><label>Date</label><input name="d" type="date" required></div>
+        <div><label>Runtime (HH:MM)</label><input name="rt" placeholder="04:00" required></div>
+      </div>
+      <label>Title</label><input name="t" required>
+      <label>Campaign</label>
+      <select name="campaignSlug" id="campaignSelect"><option value="">— One-Shot —</option></select>
+      <label>System</label><input name="s" required>
+      <label>Hours (decimal, e.g. 4.0)</label><input name="h" type="number" step="0.01" required>
+      <div id="oneshot-extra" class="hidden">
+        <label>Give this One-Shot its own review page?</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:15px;color:var(--ink)"><input type="checkbox" name="wantsWriteup" style="width:auto"> Yes, create a page for it</label>
+        <label>Write-up (separate paragraphs with a blank line)</label><textarea name="writeup"></textarea>
+        <label>Cover image</label>
+        <img class="thumb hidden">
+        <input name="coverFile" type="file" accept="image/*">
+      </div>
+    </form>
+
+    <form id="form-campaigns" class="editform hidden">
+      <label>Name (must match ledger campaign names exactly)</label><input name="name" required>
+      <label>Slug (leave blank to auto-generate; don't change when editing)</label><input name="slug">
+      <label>System</label><input name="sys" required>
+      <label>Status</label>
+      <select name="status"><option value="running">Running</option><option value="between arcs">Between Arcs</option><option value="concluded">Concluded</option></select>
+      <label>Tagline</label><input name="tagline">
+      <label>Tags (comma-separated)</label><input name="tags">
+      <label>Premise (separate paragraphs with a blank line)</label><textarea name="premise"></textarea>
+      <label>Influences</label><input name="influences">
+      <label>Banner image</label>
+      <img class="thumb hidden">
+      <input name="bannerFile" type="file" accept="image/*">
+    </form>
+
+    <form id="form-reviews" class="editform hidden">
+      <div class="row">
+        <div><label>Title</label><input name="t" required></div>
+        <div><label>Edition (optional)</label><input name="ed"></div>
+      </div>
+      <label>Slug (leave blank to auto-generate; don't change when editing)</label><input name="slug">
+      <label>System</label><input name="sys" required>
+      <div class="row">
+        <div><label>Type</label><select name="type"><option>System</option><option>Module</option><option>Supplement</option><option>Resource</option></select></div>
+        <div><label>Stars (1-5)</label><input name="stars" type="number" min="1" max="5" required></div>
+      </div>
+      <label>Date reviewed (YYYY-MM)</label><input name="date" placeholder="2026-08" required>
+      <label>Tags (comma-separated)</label><input name="tags">
+      <label>Verdict (one line)</label><input name="verdict" required>
+      <label>Body</label><textarea name="body" required></textarea>
+      <label>Used in (comma-separated campaign names, or One-Shots)</label><input name="used">
+      <label>Cover image</label>
+      <img class="thumb hidden">
+      <input name="coverFile" type="file" accept="image/*">
+    </form>
+
+    <form id="form-dashboards" class="editform hidden">
+      <label>Title</label><input name="t" required>
+      <label>Campaign</label><input name="c" required>
+      <label>System</label><input name="sys" required>
+      <label>Tags (comma-separated)</label><input name="tags">
+      <label>Note</label><textarea name="note"></textarea>
+      <label>Live URL</label><input name="url" required>
+    </form>
+
+    <div class="actions"><button id="modal-save">Save</button><button type="button" class="secondary" id="modal-cancel">Cancel</button></div>
+    <div class="msg" id="modal-msg"></div>
   </div>
 </div>
 
 <script>
-const state = { editing: {} }; // type -> current identifier (n / slug / index) or null for new
+const state = { editing: null, type: null, campaigns: [] };
 
 function el(sel, root) { return (root || document).querySelector(sel); }
 function els(sel, root) { return Array.from((root || document).querySelectorAll(sel)); }
+function escapeHtml(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -424,6 +458,10 @@ async function api(method, url, body) {
   const out = await res.json().catch(() => ({}));
   if (!res.ok || out.error) throw new Error(out.error || (res.status + " error"));
   return out;
+}
+
+function singularEndpoint(type) {
+  return { sessions: "session", campaigns: "campaign", reviews: "review", dashboards: "dashboard" }[type];
 }
 
 // ---------- tabs ----------
@@ -442,7 +480,9 @@ async function loadList(type) {
   const listEl = el("#list-" + type);
   listEl.innerHTML = '<div class="empty">Loading…</div>';
   try {
-    const { items } = await api("GET", "/api/list?type=" + type);
+    const res = await api("GET", "/api/list?type=" + type);
+    if (type === "sessions") state.campaigns = res.campaigns || state.campaigns;
+    const items = res.items;
     if (!items.length) { listEl.innerHTML = '<div class="empty">Nothing yet.</div>'; return; }
     listEl.innerHTML = "";
     items.forEach(item => listEl.appendChild(renderRow(type, item)));
@@ -455,47 +495,55 @@ function renderRow(type, item) {
   const row = document.createElement("div");
   row.className = "list-row";
   let title = "", sub = "", id = "";
-  if (type === "sessions") { title = item.t; sub = item.d + " · " + item.c + " · " + item.s; id = item.n; }
+  if (type === "sessions") { title = item.t; sub = item.d + " · " + item.campaignName + " · " + item.s; id = item.n; }
   if (type === "campaigns") { title = item.name; sub = item.sys + " · " + item.status; id = item.slug; }
   if (type === "reviews") { title = item.t; sub = item.type + " · " + "★".repeat(item.stars); id = item.slug; }
   if (type === "dashboards") { title = item.t; sub = item.c + " · " + item.sys; id = item._index; }
   row.innerHTML = '<div class="info"><div class="title">' + escapeHtml(title) + '</div><div class="sub">' + escapeHtml(sub) + '</div></div>' +
     '<button class="secondary" data-edit>Edit</button><button class="danger" data-del>Delete</button>';
-  el("[data-edit]", row).addEventListener("click", () => openForEdit(type, id));
+  el("[data-edit]", row).addEventListener("click", () => openModal(type, id));
   el("[data-del]", row).addEventListener("click", () => doDelete(type, id, title));
   return row;
 }
 
-function escapeHtml(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+// ---------- modal ----------
+const backdrop = el("#modal-backdrop");
+const modalTitle = el("#modal-title");
 
-// ---------- forms ----------
-function showForm(type) {
-  el("#form-" + type).classList.add("active");
-}
-function hideForm(type) {
-  el("#form-" + type).classList.remove("active");
-  el("#form-" + type).querySelectorAll("input,select,textarea").forEach(i => { if (i.type !== "file") i.value = ""; else i.value = ""; });
-  const thumb = el(".thumb", el("#form-" + type));
-  if (thumb) { thumb.style.display = "none"; thumb.src = ""; }
-  el(".msg", el("#form-" + type)).textContent = "";
-  state.editing[type] = null;
+async function populateCampaignSelect() {
+  const sel = el("#campaignSelect");
+  if (!state.campaigns.length) {
+    try { const r = await api("GET", "/api/list?type=campaigns"); state.campaigns = r.items; } catch (e) {}
+  }
+  sel.innerHTML = '<option value="">— One-Shot —</option>' +
+    state.campaigns.map(c => '<option value="' + c.slug + '">' + escapeHtml(c.name) + '</option>').join("");
 }
 
-els("[data-new]").forEach(btn => btn.addEventListener("click", () => {
-  const type = btn.dataset.new;
-  hideForm(type);
-  showForm(type);
-}));
-els("[data-cancel]").forEach(btn => btn.addEventListener("click", (e) => {
-  const type = e.target.closest(".formwrap").id.replace("form-", "");
-  hideForm(type);
-}));
+function toggleOneShotExtra() {
+  const sel = el("#campaignSelect");
+  el("#oneshot-extra").classList.toggle("hidden", !!sel.value);
+}
 
-async function openForEdit(type, id) {
+async function openModal(type, id) {
+  state.type = type;
+  state.editing = id;
+  els(".editform").forEach(f => f.classList.add("hidden"));
   const form = el("#form-" + type);
-  hideForm(type);
-  showForm(type);
-  state.editing[type] = id;
+  form.classList.remove("hidden");
+  el(".thumb", form) && (el(".thumb", form).classList.add("hidden"));
+  form.reset();
+  el("#modal-msg").textContent = "";
+  modalTitle.textContent = (id === null || id === undefined) ? "Add" : "Edit";
+  backdrop.classList.add("active");
+
+  if (type === "sessions") {
+    await populateCampaignSelect();
+    el("#campaignSelect").onchange = toggleOneShotExtra;
+    el("#oneshot-extra").classList.add("hidden");
+  }
+
+  if (id === null || id === undefined) return; // new entry, nothing to prefill
+
   try {
     let qs = "type=" + type;
     if (type === "sessions") qs += "&n=" + id;
@@ -505,25 +553,40 @@ async function openForEdit(type, id) {
     Object.keys(item).forEach(k => {
       const field = form.querySelector('[name="' + k + '"]');
       if (!field) return;
-      if (Array.isArray(item[k])) field.value = item[k].join(", ");
-      else if (k === "premise" && Array.isArray(item.premise)) field.value = item.premise.join("\\n\\n");
+      if (Array.isArray(item[k])) field.value = item[k].join(k === "premise" || k === "writeup" ? "\\n\\n" : ", ");
       else field.value = item[k] == null ? "" : item[k];
     });
+    if (type === "sessions") {
+      el("#campaignSelect").value = item.campaignSlug || "";
+      toggleOneShotExtra();
+      if (item.slug) el('[name="wantsWriteup"]', form).checked = true;
+    }
     const thumb = el(".thumb", form);
     if (thumb && (item.banner || item.cover)) {
       thumb.src = item.banner || item.cover;
-      thumb.style.display = "block";
+      thumb.classList.remove("hidden");
     }
   } catch (e) {
-    el(".msg", form).textContent = "Error loading: " + e.message;
-    el(".msg", form).className = "msg err";
+    el("#modal-msg").textContent = "Error loading: " + e.message;
+    el("#modal-msg").className = "msg err";
   }
 }
+
+function closeModal() {
+  backdrop.classList.remove("active");
+  state.editing = null;
+  state.type = null;
+}
+el("#modal-close").addEventListener("click", closeModal);
+el("#modal-cancel").addEventListener("click", closeModal);
+backdrop.addEventListener("click", e => { if (e.target === backdrop) closeModal(); });
+
+els("[data-new]").forEach(btn => btn.addEventListener("click", () => openModal(btn.dataset.new, null)));
 
 async function doDelete(type, id, title) {
   if (!confirm('Delete "' + title + '"? This cannot be undone.')) return;
   try {
-    let qs = "type=" + type;
+    let qs = "";
     if (type === "sessions") qs = "n=" + id;
     else if (type === "dashboards") qs = "index=" + id;
     else qs = "slug=" + encodeURIComponent(id);
@@ -533,24 +596,21 @@ async function doDelete(type, id, title) {
     alert("Delete failed: " + e.message);
   }
 }
-function singularEndpoint(type) {
-  return { sessions: "session", campaigns: "campaign", reviews: "review", dashboards: "dashboard" }[type];
-}
 
-els("[data-save]").forEach(btn => btn.addEventListener("click", async () => {
-  const type = btn.dataset.save;
+el("#modal-save").addEventListener("click", async () => {
+  const type = state.type;
   const form = el("#form-" + type);
-  const msg = el(".msg", form);
+  const msg = el("#modal-msg");
   msg.textContent = "Saving…"; msg.className = "msg";
   try {
     const data = {};
     els("input,select,textarea", form).forEach(f => {
       if (f.type === "file") return;
+      if (f.type === "checkbox") { data[f.name] = f.checked; return; }
       data[f.name] = f.value;
     });
-    const editingId = state.editing[type];
-    if (type === "sessions" && editingId) data.n = editingId;
-    if (type === "dashboards" && editingId !== null && editingId !== undefined) data.index = editingId;
+    if (type === "sessions" && state.editing) data.n = state.editing;
+    if (type === "dashboards" && state.editing !== null && state.editing !== undefined) data.index = state.editing;
 
     const bannerFile = el('[name="bannerFile"]', form);
     if (bannerFile && bannerFile.files[0]) {
@@ -568,12 +628,12 @@ els("[data-save]").forEach(btn => btn.addEventListener("click", async () => {
     await api("POST", "/api/" + singularEndpoint(type), data);
     msg.textContent = "Saved. Site will rebuild shortly.";
     msg.className = "msg ok";
-    setTimeout(() => { hideForm(type); loadList(type); }, 700);
+    setTimeout(() => { closeModal(); loadList(type); }, 700);
   } catch (e) {
     msg.textContent = "Error: " + e.message;
     msg.className = "msg err";
   }
-}));
+});
 
 loadList("sessions");
 </script>
