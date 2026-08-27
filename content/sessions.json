@@ -1178,7 +1178,10 @@
       "s": "Star Crossed",
       "h": 3.533,
       "rt": "03:32",
-      "slug": "alphonse-aria"
+      "slug": "alphonse-aria",
+      "writeup": [
+        "Test write out, test, tex, test."
+      ]
     },
     {
       "n": 132,
