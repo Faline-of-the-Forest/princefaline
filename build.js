@@ -169,10 +169,10 @@ function write(relPath, html) {
 function renderHome() {
   const running = campaigns.filter(c => c.status === "running");
   const statCells = [
-    { label: "Games Played", value: stats.games + " games" },
+    { label: "Games Played", value: String(stats.games) },
     { label: "Total Playtime", value: Math.round(stats.hours) + "h" },
-    { label: "Systems Played", value: stats.systems + " systems" },
-    { label: "Campaigns Run", value: stats.campaigns + " campaigns" },
+    { label: "Systems Played", value: String(stats.systems) },
+    { label: "Campaigns Run", value: String(stats.campaigns) },
     { label: "Most Played", value: stats.topSystem[1] + "×", sub: stats.topSystem[0] },
     { label: "Longest Campaign", value: stats.longest.n + " eps", sub: stats.longest.name },
     { label: "One-shots", value: String(stats.oneShots) },
@@ -185,7 +185,7 @@ function renderHome() {
     const camp = r.campaignSlug ? campaignBySlug[r.campaignSlug] : null;
     const campLabel = camp ? camp.name : "One-Shot";
     const href = camp ? `/campaigns/${camp.slug}/` : (r.slug ? `/one-shots/${r.slug}/` : null);
-    const inner = `<span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${esc(r.d)}</span><span style="flex:0 0 30px;font:400 17.1px/1.4 'EB Garamond',serif;color:#8A836F">#${r.n}</span><span style="flex:999 1 220px;font:400 16px/1.35 'EB Garamond',serif">${esc(r.t)}</span><span style="flex:1 1 150px;font:400 17.1px/1.4 'EB Garamond',serif">${esc(campLabel)}</span><span style="flex:1 1 140px">${sysTag(r.s, r.ed, { nameStyle: "font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648" })}</span><span style="flex:0 0 46px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${r.rt}</span>`;
+    const inner = `<span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${esc(r.d)}</span><span style="flex:0 0 30px;font:400 17.1px/1.4 'EB Garamond',serif;color:#8A836F">#${r.n}</span><span style="flex:2 1 160px;font:400 16px/1.35 'EB Garamond',serif">${esc(r.t)}</span><span style="flex:2 1 170px;font:400 17.1px/1.4 'EB Garamond',serif">${esc(campLabel)}</span><span style="flex:2 1 160px">${sysTag(r.s, r.ed, { nameStyle: "font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648" })}</span><span style="flex:0 0 46px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${r.rt}</span>`;
     const style = "display:flex;flex-wrap:wrap;gap:4px 18px;padding:9px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline";
     return href ? `<a href="${href}" style="${style};color:inherit" data-hover>${inner}</a>` : `<div style="${style}">${inner}</div>`;
   }).join("");
@@ -247,7 +247,7 @@ function renderHome() {
       </div>
       <div style="border:2px solid #24211B;background:#FBF8EF">
         <div style="display:flex;flex-wrap:wrap;gap:6px 18px;padding:9px 15px;border-bottom:1px solid #24211B;background:#EDE7D6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">
-          <span style="flex:0 0 86px">Date</span><span style="flex:0 0 30px">№</span><span style="flex:999 1 220px">Session</span><span style="flex:1 1 150px">Campaign</span><span style="flex:1 1 140px">System</span><span style="flex:0 0 46px;text-align:right">Time</span>
+          <span style="flex:0 0 86px">Date</span><span style="flex:0 0 30px">№</span><span style="flex:2 1 160px">Session</span><span style="flex:2 1 170px">Campaign</span><span style="flex:2 1 160px">System</span><span style="flex:0 0 46px;text-align:right">Time</span>
         </div>
         <div id="ledger-rows" style="max-height:900px;overflow:hidden">${ledgerRows}</div>
         <div id="ledger-toggle" style="padding:11px 15px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;cursor:pointer;text-align:center">▾ Show all ${sessions.length} entries</div>
