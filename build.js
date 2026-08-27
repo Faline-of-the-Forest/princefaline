@@ -315,9 +315,9 @@ function renderCampaignsIndex() {
 
   const body = `
     <div style="margin:34px 0 26px">
-      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ Section II</div>
-      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">The Campaign Library</h1>
-      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">Every campaign I have run since 2024, with its system, its length, and the diary that came out of it. One-shots are catalogued separately in the ledger.</p>
+      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${campaigns.length} campaigns</div>
+      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">Campaigns</h1>
+      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">Every campaign I've run since 2024, with its system, its length, and its session diaries.</p>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:30px;padding-bottom:56px">
       <aside style="flex:1 1 190px;max-width:230px">
@@ -448,7 +448,7 @@ function renderCampaignDetail(c) {
   }
 
   const body = `
-    <a href="/campaigns/" style="display:block;padding:16px 0 14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F">◂ The Campaign Library</a>
+    <a href="/campaigns/" style="display:block;padding:16px 0 14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F">◂ Campaigns</a>
     <div style="border:2px solid #24211B;background:#FBF8EF">
       <div style="height:clamp(150px,24vw,250px);background:${banner};border-bottom:2px solid #24211B"></div>
       <div style="padding:20px 22px;display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end">
@@ -491,9 +491,9 @@ function renderReviewsIndex() {
 
   const body = `
     <div style="margin:34px 0 26px">
-      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ Section III</div>
-      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">The Review Library</h1>
-      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">Short notes on every system, module, zine and supplement I have actually put on a table — one verdict, five stars at most, no essays.</p>
+      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${reviews.length} books</div>
+      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">Reviews</h1>
+      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">Short notes on every system, module and supplement I've read.</p>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:30px;padding-bottom:56px">
       <aside style="flex:1 1 190px;max-width:230px">
@@ -556,7 +556,7 @@ function renderReviewDetail(r) {
     return `<a href="${href}" style="padding:7px 11px;border:1px solid #24211B;font:400 18.8px/1 'EB Garamond',serif">${esc(u)}</a>`;
   }).join("");
   const body = `
-    <a href="/reviews/" style="display:block;padding:16px 0 14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F">◂ The Review Library</a>
+    <a href="/reviews/" style="display:block;padding:16px 0 14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F">◂ Reviews</a>
     <div style="display:flex;flex-wrap:wrap;gap:30px;padding-bottom:56px">
       <div style="flex:1 1 240px;max-width:290px">
         <div style="aspect-ratio:3/4;display:grid;place-items:center">
@@ -598,9 +598,9 @@ function renderGames() {
   </a>`).join("");
   const body = `
     <div style="margin:34px 0 26px">
-      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ Section IV</div>
+      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${dashboards.length} apps</div>
       <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">Games</h1>
-      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">The interactive sheets and trackers I build for my own tables. Each one opens in its own tab, live and playable.</p>
+      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">The interactive character sheets, playsets and dashboards I build for the games I run.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:30px 18px;padding-bottom:56px">${tiles}</div>
     <style>a:hover .hover-overlay{opacity:1}</style>`;
@@ -626,9 +626,9 @@ function renderOneShotsIndex() {
 
   const body = `
     <div style="margin:34px 0 26px">
-      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ One-Shots</div>
+      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${oneShots.length} one-shots</div>
       <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">One-Shots</h1>
-      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">${oneShots.length} single-evening games, each with its own page.</p>
+      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">Every single-session game I've run since 2024 with a short entry.</p>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:30px;padding-bottom:56px">
       <aside style="flex:1 1 190px;max-width:230px">
