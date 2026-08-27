@@ -1,8 +1,9 @@
 {
   "slug": "strange-adventures",
   "name": "Strange Adventures!",
-  "sys": "Kids on Bikes [2e]",
+  "sys": "Kids on Bikes",
   "status": "concluded",
   "banner": "",
-  "covers": []
+  "covers": [],
+  "ed": "2e"
 }

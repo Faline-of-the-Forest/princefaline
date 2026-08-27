@@ -1,8 +1,9 @@
 {
   "slug": "50-fathoms",
   "name": "50 Fathoms",
-  "sys": "Savage Worlds [Deluxe]",
+  "sys": "Savage Worlds",
   "status": "running",
   "banner": "",
-  "covers": []
+  "covers": [],
+  "ed": "Deluxe"
 }

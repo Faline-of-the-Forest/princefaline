@@ -1,7 +1,7 @@
 {
   "slug": "bloodletting",
   "name": "bloodletting",
-  "sys": "Chronicles of Darkness [VTR]",
+  "sys": "Chronicles of Darkness",
   "status": "running",
   "banner": "https://princefalinerpgdiaries.vercel.app/img/user/Images/Banners/bnr_bloodletting.jpg",
   "covers": [
@@ -93,5 +93,6 @@
       "title": "I Don't Need a Hero",
       "hook": "Amélie leaves the bayou with more questions than she found answers, Reggie checks in with Doc Xola to save his childe, Elvys makes a deal with the Prince that had better pay off, and Andrew finally finds a lead in his hunt for the Prince's former Hound."
     }
-  ]
+  ],
+  "ed": "VTR"
 }

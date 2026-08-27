@@ -1,8 +1,9 @@
 {
   "slug": "tbd",
   "name": "TBD",
-  "sys": "Monster of the Week [2e]",
+  "sys": "Monster of the Week",
   "status": "between arcs",
   "banner": "",
-  "covers": []
+  "covers": [],
+  "ed": "2e"
 }

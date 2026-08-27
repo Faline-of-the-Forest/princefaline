@@ -1,8 +1,9 @@
 {
   "slug": "sub-urbia",
   "name": "SUB_URBIA",
-  "sys": "Kids on Bikes [1e]",
+  "sys": "Kids on Bikes",
   "status": "concluded",
   "banner": "",
-  "covers": []
+  "covers": [],
+  "ed": "1e"
 }

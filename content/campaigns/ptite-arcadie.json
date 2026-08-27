@@ -1,8 +1,9 @@
 {
   "slug": "ptite-arcadie",
   "name": "P'tite Arcadie",
-  "sys": "Dungeons & Dragons [0e]",
+  "sys": "Dungeons & Dragons",
   "status": "between arcs",
   "banner": "https://princefalinerpgdiaries.vercel.app/img/user/Images/Banners/bnr_ptitearcadie.jpg",
-  "covers": []
+  "covers": [],
+  "ed": "0e"
 }

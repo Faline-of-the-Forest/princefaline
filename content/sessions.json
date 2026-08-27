@@ -4,29 +4,32 @@
       "n": 1,
       "d": "2024-07-12",
       "t": "The Haunting of Castle Ravenloft",
-      "s": "Knave [1e]",
+      "s": "Knave",
       "h": 4,
       "rt": "04:00",
       "campaignSlug": "",
-      "slug": "the-haunting-of-castle-ravenloft"
+      "slug": "the-haunting-of-castle-ravenloft",
+      "ed": "1e"
     },
     {
       "n": 2,
       "d": "2024-08-01",
       "t": "When Night Falls on Sunnydale, Part I",
-      "s": "Kids on Bikes [1e]",
+      "s": "Kids on Bikes",
       "h": 4.5,
       "rt": "04:30",
-      "campaignSlug": "when-night-falls-on-sunnydale"
+      "campaignSlug": "when-night-falls-on-sunnydale",
+      "ed": "1e"
     },
     {
       "n": 3,
       "d": "2024-08-15",
       "t": "When Night Falls on Sunnydale, Part II",
-      "s": "Kids on Bikes [1e]",
+      "s": "Kids on Bikes",
       "h": 4,
       "rt": "04:00",
-      "campaignSlug": "when-night-falls-on-sunnydale"
+      "campaignSlug": "when-night-falls-on-sunnydale",
+      "ed": "1e"
     },
     {
       "n": 4,
@@ -41,10 +44,11 @@
       "n": 5,
       "d": "2024-08-27",
       "t": "When Night Falls on Sunnydale, Part IIII",
-      "s": "Kids on Bikes [1e]",
+      "s": "Kids on Bikes",
       "h": 2.5,
       "rt": "02:30",
-      "campaignSlug": "when-night-falls-on-sunnydale"
+      "campaignSlug": "when-night-falls-on-sunnydale",
+      "ed": "1e"
     },
     {
       "n": 6,
@@ -78,10 +82,11 @@
       "n": 9,
       "d": "2024-09-21",
       "t": "Clio, Michigan",
-      "s": "Unknown Armies [2e]",
+      "s": "Unknown Armies",
       "h": 4.5,
       "rt": "04:30",
-      "campaignSlug": "skunks"
+      "campaignSlug": "skunks",
+      "ed": "2e"
     },
     {
       "n": 10,
@@ -96,20 +101,22 @@
       "n": 11,
       "d": "2024-10-20",
       "t": "The Devil of New Orleans",
-      "s": "Vampire: the Masquerade [5e]",
+      "s": "Vampire: the Masquerade",
       "h": 4.5,
       "rt": "04:30",
       "campaignSlug": "",
-      "slug": "the-devil-of-new-orleans"
+      "slug": "the-devil-of-new-orleans",
+      "ed": "5e"
     },
     {
       "n": 12,
       "d": "2024-10-23",
       "t": "Leland, Texas",
-      "s": "Unknown Armies [2e]",
+      "s": "Unknown Armies",
       "h": 4.5,
       "rt": "04:30",
-      "campaignSlug": "skunks"
+      "campaignSlug": "skunks",
+      "ed": "2e"
     },
     {
       "n": 13,
@@ -162,10 +169,11 @@
       "n": 18,
       "d": "2024-11-22",
       "t": "Bahadea, Washington",
-      "s": "Unknown Armies [2e]",
+      "s": "Unknown Armies",
       "h": 5.5,
       "rt": "05:30",
-      "campaignSlug": "skunks"
+      "campaignSlug": "skunks",
+      "ed": "2e"
     },
     {
       "n": 19,
@@ -180,28 +188,31 @@
       "n": 20,
       "d": "2024-12-02",
       "t": "S0: Town",
-      "s": "Kids on Bikes [1e]",
+      "s": "Kids on Bikes",
       "h": 5.5,
       "rt": "05:30",
-      "campaignSlug": "sub-urbia"
+      "campaignSlug": "sub-urbia",
+      "ed": "1e"
     },
     {
       "n": 21,
       "d": "2024-12-09",
       "t": "S1: Milk",
-      "s": "Kids on Bikes [1e]",
+      "s": "Kids on Bikes",
       "h": 5.183,
       "rt": "05:11",
-      "campaignSlug": "sub-urbia"
+      "campaignSlug": "sub-urbia",
+      "ed": "1e"
     },
     {
       "n": 22,
       "d": "2024-12-13",
       "t": "Stoon Lake, Minnesota",
-      "s": "Unknown Armies [2e]",
+      "s": "Unknown Armies",
       "h": 5.5,
       "rt": "05:30",
-      "campaignSlug": "skunks"
+      "campaignSlug": "skunks",
+      "ed": "2e"
     },
     {
       "n": 23,
@@ -217,10 +228,11 @@
       "n": 24,
       "d": "2024-12-30",
       "t": "S2: Meat",
-      "s": "Kids on Bikes [1e]",
+      "s": "Kids on Bikes",
       "h": 4.383,
       "rt": "04:23",
-      "campaignSlug": "sub-urbia"
+      "campaignSlug": "sub-urbia",
+      "ed": "1e"
     },
     {
       "n": 25,
@@ -235,10 +247,11 @@
       "n": 26,
       "d": "2025-01-17",
       "t": "Geverlon, Maine",
-      "s": "Unknown Armies [2e]",
+      "s": "Unknown Armies",
       "h": 6.5,
       "rt": "06:30",
-      "campaignSlug": "skunks"
+      "campaignSlug": "skunks",
+      "ed": "2e"
     },
     {
       "n": 27,
@@ -300,10 +313,11 @@
       "n": 33,
       "d": "2025-02-21",
       "t": "Chicago, Illinois",
-      "s": "Unknown Armies [2e]",
+      "s": "Unknown Armies",
       "h": 6.5,
       "rt": "06:30",
-      "campaignSlug": "skunks"
+      "campaignSlug": "skunks",
+      "ed": "2e"
     },
     {
       "n": 34,
@@ -347,10 +361,11 @@
       "n": 38,
       "d": "2025-03-22",
       "t": "Anchorage, Alaska",
-      "s": "Unknown Armies [2e]",
+      "s": "Unknown Armies",
       "h": 5.183,
       "rt": "05:11",
-      "campaignSlug": "skunks"
+      "campaignSlug": "skunks",
+      "ed": "2e"
     },
     {
       "n": 39,
@@ -396,20 +411,22 @@
       "n": 43,
       "d": "2025-04-27",
       "t": "Cleveland, Ohio",
-      "s": "Unknown Armies [2e]",
+      "s": "Unknown Armies",
       "h": 4.7,
       "rt": "04:42",
-      "campaignSlug": "skunks"
+      "campaignSlug": "skunks",
+      "ed": "2e"
     },
     {
       "n": 44,
       "d": "2025-05-07",
       "t": "Mutantpocalypse: Are We Not Men?",
-      "s": "Monster of the Week [2e]",
+      "s": "Monster of the Week",
       "h": 5.867,
       "rt": "05:52",
       "campaignSlug": "",
-      "slug": "mutantpocalypse-are-we-not-men"
+      "slug": "mutantpocalypse-are-we-not-men",
+      "ed": "2e"
     },
     {
       "n": 45,
@@ -425,21 +442,23 @@
       "n": 46,
       "d": "2025-05-17",
       "t": "Le Réveil du Manoir Willowby",
-      "s": "Knave [2e]",
+      "s": "Knave",
       "h": 5.25,
       "rt": "05:15",
       "campaignSlug": "",
-      "slug": "le-r-veil-du-manoir-willowby"
+      "slug": "le-r-veil-du-manoir-willowby",
+      "ed": "2e"
     },
     {
       "n": 47,
       "d": "2025-05-24",
       "t": "Ripple",
-      "s": "Kids on Bikes [2e]",
+      "s": "Kids on Bikes",
       "h": 4.75,
       "rt": "04:45",
       "campaignSlug": "",
-      "slug": "ripple"
+      "slug": "ripple",
+      "ed": "2e"
     },
     {
       "n": 48,
@@ -455,37 +474,41 @@
       "n": 49,
       "d": "2025-06-20",
       "t": "Here it Comes",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 3.1,
       "rt": "03:06",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 50,
       "d": "2025-06-26",
       "t": "We'd Really Love to Believe You",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 3.483,
       "rt": "03:29",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 51,
       "d": "2025-07-02",
       "t": "I Am Not Going Back",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 4.233,
       "rt": "04:14",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 52,
       "d": "2025-07-09",
       "t": "Il Mondo Dei Perduti",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 4.3,
       "rt": "04:18",
-      "campaignSlug": "mondo-carne"
+      "campaignSlug": "mondo-carne",
+      "ed": "1e"
     },
     {
       "n": 53,
@@ -500,83 +523,92 @@
       "n": 54,
       "d": "2025-07-28",
       "t": "Fond-des-Chicots, Chapitre 1",
-      "s": "Dungeons & Dragons [0e]",
+      "s": "Dungeons & Dragons",
       "h": 3.733,
       "rt": "03:44",
-      "campaignSlug": "ptite-arcadie"
+      "campaignSlug": "ptite-arcadie",
+      "ed": "0e"
     },
     {
       "n": 55,
       "d": "2025-07-30",
       "t": "Rust In My Brain",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 3.833,
       "rt": "03:50",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 56,
       "d": "2025-08-03",
       "t": "Year of the Rat",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 3.05,
       "rt": "03:03",
       "campaignSlug": "",
-      "slug": "year-of-the-rat"
+      "slug": "year-of-the-rat",
+      "ed": "1e"
     },
     {
       "n": 57,
       "d": "2025-08-06",
       "t": "Save Yourself The Pain",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 4.783,
       "rt": "04:47",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 58,
       "d": "2025-08-13",
       "t": "I Never Cared Before",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 4.7,
       "rt": "04:42",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 59,
       "d": "2025-08-20",
       "t": "The Dust Settles, The Worms Dig",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 4.65,
       "rt": "04:39",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 60,
       "d": "2025-08-24",
       "t": "Il Segugio Infernale della  Terza Dimensione",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 3.95,
       "rt": "03:57",
-      "campaignSlug": "mondo-carne"
+      "campaignSlug": "mondo-carne",
+      "ed": "1e"
     },
     {
       "n": 61,
       "d": "2025-08-25",
       "t": "Fond-des-Chicots, Chapitre 2",
-      "s": "Dungeons & Dragons [0e]",
+      "s": "Dungeons & Dragons",
       "h": 3.833,
       "rt": "03:50",
-      "campaignSlug": "ptite-arcadie"
+      "campaignSlug": "ptite-arcadie",
+      "ed": "0e"
     },
     {
       "n": 62,
       "d": "2025-08-27",
       "t": "We've Been Stitched Up",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 4.45,
       "rt": "04:27",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 63,
@@ -591,46 +623,51 @@
       "n": 64,
       "d": "2025-09-03",
       "t": "I Tumble Like a Clown",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 3.95,
       "rt": "03:57",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 65,
       "d": "2025-09-10",
       "t": "I Won't Be Around When You Really Need Me",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 3.65,
       "rt": "03:39",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 66,
       "d": "2025-09-11",
       "t": "Double Trouble at Skateland",
-      "s": "Kids on Bikes [2e]",
+      "s": "Kids on Bikes",
       "h": 5.717,
       "rt": "05:43",
-      "campaignSlug": "strange-adventures"
+      "campaignSlug": "strange-adventures",
+      "ed": "2e"
     },
     {
       "n": 67,
       "d": "2025-09-14",
       "t": "La Luna degli Uomini Dimenticati",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 4.2,
       "rt": "04:12",
-      "campaignSlug": "mondo-carne"
+      "campaignSlug": "mondo-carne",
+      "ed": "1e"
     },
     {
       "n": 68,
       "d": "2025-09-17",
       "t": "Come On And Break The Door Down",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 3.7,
       "rt": "03:42",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 69,
@@ -645,19 +682,21 @@
       "n": 70,
       "d": "2025-09-24",
       "t": "So Much of Me Lies in Your Eyes",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 4.033,
       "rt": "04:02",
-      "campaignSlug": "gradient-descent"
+      "campaignSlug": "gradient-descent",
+      "ed": "1e"
     },
     {
       "n": 71,
       "d": "2025-09-30",
       "t": "Fond-des-Chicots, Chapitre 3",
-      "s": "Dungeons & Dragons [0e]",
+      "s": "Dungeons & Dragons",
       "h": 3.783,
       "rt": "03:47",
-      "campaignSlug": "ptite-arcadie"
+      "campaignSlug": "ptite-arcadie",
+      "ed": "0e"
     },
     {
       "n": 72,
@@ -693,11 +732,12 @@
       "n": 75,
       "d": "2025-10-29",
       "t": "Uncle Timothy's Will",
-      "s": "Call of Cthulhu [5e]",
+      "s": "Call of Cthulhu",
       "h": 4.233,
       "rt": "04:14",
       "campaignSlug": "",
-      "slug": "uncle-timothys-will"
+      "slug": "uncle-timothys-will",
+      "ed": "5e"
     },
     {
       "n": 76,
@@ -713,28 +753,31 @@
       "n": 77,
       "d": "2025-11-13",
       "t": "Strange Things Afoot at Circle Q",
-      "s": "Kids on Bikes [2e]",
+      "s": "Kids on Bikes",
       "h": 4.533,
       "rt": "04:32",
-      "campaignSlug": "strange-adventures"
+      "campaignSlug": "strange-adventures",
+      "ed": "2e"
     },
     {
       "n": 78,
       "d": "2025-11-16",
       "t": "???",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 3.833,
       "rt": "03:50",
-      "campaignSlug": "mondo-carne"
+      "campaignSlug": "mondo-carne",
+      "ed": "1e"
     },
     {
       "n": 79,
       "d": "2025-11-17",
       "t": "Fond-des-Chicots, Chapitre 4",
-      "s": "Dungeons & Dragons [0e]",
+      "s": "Dungeons & Dragons",
       "h": 3.783,
       "rt": "03:47",
-      "campaignSlug": "ptite-arcadie"
+      "campaignSlug": "ptite-arcadie",
+      "ed": "0e"
     },
     {
       "n": 80,
@@ -777,10 +820,11 @@
       "n": 84,
       "d": "2025-12-14",
       "t": "???",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 4.2,
       "rt": "04:12",
-      "campaignSlug": "mondo-carne"
+      "campaignSlug": "mondo-carne",
+      "ed": "1e"
     },
     {
       "n": 85,
@@ -795,10 +839,11 @@
       "n": 86,
       "d": "2026-01-04",
       "t": "Snowed In at Chanky Cheez",
-      "s": "Kids on Bikes [2e]",
+      "s": "Kids on Bikes",
       "h": 3.617,
       "rt": "03:37",
-      "campaignSlug": "strange-adventures"
+      "campaignSlug": "strange-adventures",
+      "ed": "2e"
     },
     {
       "n": 87,
@@ -822,11 +867,12 @@
       "n": 89,
       "d": "2026-01-15",
       "t": "Barkeep on the Borderlands",
-      "s": "Knave [2e]",
+      "s": "Knave",
       "h": 4,
       "rt": "04:00",
       "campaignSlug": "",
-      "slug": "barkeep-on-the-borderlands"
+      "slug": "barkeep-on-the-borderlands",
+      "ed": "2e"
     },
     {
       "n": 90,
@@ -851,10 +897,11 @@
       "n": 92,
       "d": "2026-02-10",
       "t": "Lake Asibikaashi",
-      "s": "Kids on Bikes [2e]",
+      "s": "Kids on Bikes",
       "h": 4.9,
       "rt": "04:54",
-      "campaignSlug": "strange-adventures"
+      "campaignSlug": "strange-adventures",
+      "ed": "2e"
     },
     {
       "n": 93,
@@ -890,11 +937,12 @@
       "n": 96,
       "d": "2026-03-05",
       "t": "Bakto's Terifying Cuisine",
-      "s": "Knave [2e]",
+      "s": "Knave",
       "h": 6.75,
       "rt": "06:45",
       "campaignSlug": "",
-      "slug": "baktos-terifying-cuisine"
+      "slug": "baktos-terifying-cuisine",
+      "ed": "2e"
     },
     {
       "n": 97,
@@ -910,19 +958,21 @@
       "n": 98,
       "d": "2026-03-14",
       "t": "BloodFest '14",
-      "s": "Kids on Bikes [2e]",
+      "s": "Kids on Bikes",
       "h": 5.1,
       "rt": "05:06",
-      "campaignSlug": "strange-adventures"
+      "campaignSlug": "strange-adventures",
+      "ed": "2e"
     },
     {
       "n": 99,
       "d": "2026-03-18",
       "t": "This place sucks.",
-      "s": "Liminal Horror [PE]",
+      "s": "Liminal Horror",
       "h": 5.217,
       "rt": "05:13",
-      "campaignSlug": "the-mall"
+      "campaignSlug": "the-mall",
+      "ed": "PE"
     },
     {
       "n": 100,
@@ -937,10 +987,11 @@
       "n": 101,
       "d": "2026-03-30",
       "t": "Bloodletting (The Vampire Song)",
-      "s": "Chronicles of Darkness [VTR]",
+      "s": "Chronicles of Darkness",
       "h": 4.783,
       "rt": "04:47",
-      "campaignSlug": "bloodletting"
+      "campaignSlug": "bloodletting",
+      "ed": "VTR"
     },
     {
       "n": 102,
@@ -955,73 +1006,81 @@
       "n": 103,
       "d": "2026-04-06",
       "t": "The Sky is a Poisonous Garden",
-      "s": "Chronicles of Darkness [VTR]",
+      "s": "Chronicles of Darkness",
       "h": 4.117,
       "rt": "04:07",
-      "campaignSlug": "bloodletting"
+      "campaignSlug": "bloodletting",
+      "ed": "VTR"
     },
     {
       "n": 104,
       "d": "2026-04-08",
       "t": "People are the worst.",
-      "s": "Liminal Horror [PE]",
+      "s": "Liminal Horror",
       "h": 4.217,
       "rt": "04:13",
-      "campaignSlug": "the-mall"
+      "campaignSlug": "the-mall",
+      "ed": "PE"
     },
     {
       "n": 105,
       "d": "2026-04-13",
       "t": "Caroline",
-      "s": "Chronicles of Darkness [VTR]",
+      "s": "Chronicles of Darkness",
       "h": 4.683,
       "rt": "04:41",
-      "campaignSlug": "bloodletting"
+      "campaignSlug": "bloodletting",
+      "ed": "VTR"
     },
     {
       "n": 106,
       "d": "2026-04-15",
       "t": "I'm out of here.",
-      "s": "Liminal Horror [PE]",
+      "s": "Liminal Horror",
       "h": 4.417,
       "rt": "04:25",
-      "campaignSlug": "the-mall"
+      "campaignSlug": "the-mall",
+      "ed": "PE"
     },
     {
       "n": 107,
       "d": "2026-04-20",
       "t": "The Darkening of the Light",
-      "s": "Chronicles of Darkness [VTR]",
+      "s": "Chronicles of Darkness",
       "h": 3.983,
       "rt": "03:59",
-      "campaignSlug": "bloodletting"
+      "campaignSlug": "bloodletting",
+      "ed": "VTR"
     },
     {
       "n": 108,
       "d": "2026-04-22",
       "t": "This is gonna hurt.",
-      "s": "Liminal Horror [PE]",
+      "s": "Liminal Horror",
       "h": 4.483,
       "rt": "04:29",
-      "campaignSlug": "the-mall"
+      "campaignSlug": "the-mall",
+      "ed": "PE"
     },
     {
       "n": 109,
       "d": "2026-04-27",
       "t": "I Don't Need a Hero",
-      "s": "Chronicles of Darkness [VTR]",
+      "s": "Chronicles of Darkness",
       "h": 4,
       "rt": "04:00",
-      "campaignSlug": "bloodletting"
+      "campaignSlug": "bloodletting",
+      "ed": "VTR"
     },
     {
       "n": 110,
       "d": "2026-04-28",
       "t": "Fond-des-Chicots, Chapitre 5",
-      "s": "Dungeons & Dragons [0e]",
+      "s": "Dungeons & Dragons",
       "h": 3.5,
       "rt": "03:30",
-      "campaignSlug": "ptite-arcadie"
+      "campaignSlug": "ptite-arcadie",
+      "ed": "0e"
     },
     {
       "n": 111,
@@ -1036,37 +1095,41 @@
       "n": 112,
       "d": "2026-05-06",
       "t": "Give me a break.",
-      "s": "Liminal Horror [PE]",
+      "s": "Liminal Horror",
       "h": 3.75,
       "rt": "03:45",
-      "campaignSlug": "the-mall"
+      "campaignSlug": "the-mall",
+      "ed": "PE"
     },
     {
       "n": 113,
       "d": "2026-05-11",
       "t": "Days and Days",
-      "s": "Chronicles of Darkness [VTR]",
+      "s": "Chronicles of Darkness",
       "h": 3.5,
       "rt": "03:30",
-      "campaignSlug": "bloodletting"
+      "campaignSlug": "bloodletting",
+      "ed": "VTR"
     },
     {
       "n": 114,
       "d": "2026-05-13",
       "t": "Go to hell.",
-      "s": "Liminal Horror [PE]",
+      "s": "Liminal Horror",
       "h": 3.5,
       "rt": "03:30",
-      "campaignSlug": "the-mall"
+      "campaignSlug": "the-mall",
+      "ed": "PE"
     },
     {
       "n": 115,
       "d": "2026-05-25",
       "t": "The Beast",
-      "s": "Chronicles of Darkness [VTR]",
+      "s": "Chronicles of Darkness",
       "h": 3.667,
       "rt": "03:40",
-      "campaignSlug": "bloodletting"
+      "campaignSlug": "bloodletting",
+      "ed": "VTR"
     },
     {
       "n": 116,
@@ -1081,38 +1144,42 @@
       "n": 117,
       "d": "2026-05-30",
       "t": "La fille de l'hiver",
-      "s": "Knave [2e]",
+      "s": "Knave",
       "h": 4,
       "rt": "04:00",
       "campaignSlug": "",
-      "slug": "la-fille-de-lhiver"
+      "slug": "la-fille-de-lhiver",
+      "ed": "2e"
     },
     {
       "n": 118,
       "d": "2026-06-01",
       "t": "Lullabye",
-      "s": "Chronicles of Darkness [VTR]",
+      "s": "Chronicles of Darkness",
       "h": 3.5,
       "rt": "03:30",
-      "campaignSlug": "bloodletting"
+      "campaignSlug": "bloodletting",
+      "ed": "VTR"
     },
     {
       "n": 119,
       "d": "2026-06-03",
       "t": "L'Ollonaise's Treasure, Chapter 1",
-      "s": "Savage Worlds [Deluxe]",
+      "s": "Savage Worlds",
       "h": 4,
       "rt": "04:00",
-      "campaignSlug": "50-fathoms"
+      "campaignSlug": "50-fathoms",
+      "ed": "Deluxe"
     },
     {
       "n": 120,
       "d": "2026-06-04",
       "t": "The Welling House",
-      "s": "Monster of the Week [2e]",
+      "s": "Monster of the Week",
       "h": 3.917,
       "rt": "03:55",
-      "campaignSlug": "tbd"
+      "campaignSlug": "tbd",
+      "ed": "2e"
     },
     {
       "n": 121,
@@ -1128,46 +1195,51 @@
       "n": 122,
       "d": "2026-06-10",
       "t": "L'Ollonaise's Treasure, Chapter 2",
-      "s": "Savage Worlds [Deluxe]",
+      "s": "Savage Worlds",
       "h": 3.417,
       "rt": "03:25",
-      "campaignSlug": "50-fathoms"
+      "campaignSlug": "50-fathoms",
+      "ed": "Deluxe"
     },
     {
       "n": 123,
       "d": "2026-06-15",
       "t": "Joey",
-      "s": "Chronicles of Darkness [VTR]",
+      "s": "Chronicles of Darkness",
       "h": 4.8,
       "rt": "04:48",
-      "campaignSlug": "bloodletting"
+      "campaignSlug": "bloodletting",
+      "ed": "VTR"
     },
     {
       "n": 124,
       "d": "2026-07-17",
       "t": "L'Ollonaise's Treasure, Chapter 3",
-      "s": "Savage Worlds [Deluxe]",
+      "s": "Savage Worlds",
       "h": 3,
       "rt": "03:00",
-      "campaignSlug": "50-fathoms"
+      "campaignSlug": "50-fathoms",
+      "ed": "Deluxe"
     },
     {
       "n": 125,
       "d": "2026-07-21",
       "t": "Tomorrow, Wendy",
-      "s": "Chronicles of Darkness [VTR]",
+      "s": "Chronicles of Darkness",
       "h": 4.95,
       "rt": "04:57",
-      "campaignSlug": "bloodletting"
+      "campaignSlug": "bloodletting",
+      "ed": "VTR"
     },
     {
       "n": 126,
       "d": "2026-07-22",
       "t": "L'Ollonaise's Treasure, Chapter 4",
-      "s": "Savage Worlds [Deluxe]",
+      "s": "Savage Worlds",
       "h": 3.15,
       "rt": "03:09",
-      "campaignSlug": "50-fathoms"
+      "campaignSlug": "50-fathoms",
+      "ed": "Deluxe"
     },
     {
       "n": 127,
@@ -1182,29 +1254,32 @@
       "n": 128,
       "d": "2026-08-03",
       "t": "Bloodletting (The Vampire Song)",
-      "s": "Chronicles of Darkness [VTR]",
+      "s": "Chronicles of Darkness",
       "h": 3.983,
       "rt": "03:59",
-      "campaignSlug": "bloodletting"
+      "campaignSlug": "bloodletting",
+      "ed": "VTR"
     },
     {
       "n": 129,
       "d": "2026-08-05",
       "t": "L'Ollonaise's Treasure, Chapter 5",
-      "s": "Savage Worlds [Deluxe]",
+      "s": "Savage Worlds",
       "h": 4.117,
       "rt": "04:07",
-      "campaignSlug": "50-fathoms"
+      "campaignSlug": "50-fathoms",
+      "ed": "Deluxe"
     },
     {
       "n": 130,
       "d": "2026-08-10",
       "t": "ONI",
-      "s": "Mothership [1e]",
+      "s": "Mothership",
       "h": 4.75,
       "rt": "04:45",
       "campaignSlug": "",
-      "slug": "oni"
+      "slug": "oni",
+      "ed": "1e"
     },
     {
       "n": 131,
@@ -1223,10 +1298,11 @@
       "n": 132,
       "d": "2026-08-17",
       "t": "Act 1",
-      "s": "Savage Worlds [Deluxe]",
+      "s": "Savage Worlds",
       "h": 3.667,
       "rt": "03:40",
-      "campaignSlug": "predator-savage-planet"
+      "campaignSlug": "predator-savage-planet",
+      "ed": "Deluxe"
     }
   ]
 }

@@ -163,6 +163,7 @@ async function handleApi(request, env, url) {
       const file = await getFile("content/sessions.json", env);
       const sessions = file.content.sessions;
       const rec = { d: body.d, t: body.t, campaignSlug: body.campaignSlug || "", s: body.s, h: Number(body.h), rt: body.rt };
+      if (body.ed) rec.ed = body.ed;
       if (!rec.campaignSlug) {
         // Every one-shot automatically gets its own page.
         const existingSlugs = sessions.filter(s => !s.campaignSlug && String(s.n) !== String(body.n)).map(s => s.slug).filter(Boolean);
@@ -231,6 +232,7 @@ async function handleApi(request, env, url) {
         banner: body.banner || (existing ? existing.content.banner : "") || "",
         covers: existing ? existing.content.covers || [] : [],
       };
+      if (body.ed) out.ed = body.ed;
       if (body.tagline) out.tagline = body.tagline;
       if (body.tags) out.tags = body.tags.split(",").map(s => s.trim()).filter(Boolean);
       if (body.premise) out.premise = body.premise.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
@@ -390,7 +392,10 @@ function adminPage() {
       <label>Title</label><input name="t" required>
       <label>Campaign</label>
       <select name="campaignSlug" id="campaignSelect"><option value="">— One-Shot —</option></select>
-      <label>System</label><input name="s" required>
+      <div class="row">
+        <div><label>System</label><input name="s" required></div>
+        <div><label>Edition/Version (optional)</label><input name="ed" placeholder="e.g. 2e, VTR"></div>
+      </div>
       <label>Hours (decimal, e.g. 4.0)</label><input name="h" type="number" step="0.01" required>
     </form>
 
@@ -400,7 +405,10 @@ function adminPage() {
         <div><label>Runtime (HH:MM)</label><input name="rt" placeholder="04:00" required></div>
       </div>
       <label>Title</label><input name="t" required>
-      <label>System</label><input name="s" required>
+      <div class="row">
+        <div><label>System</label><input name="s" required></div>
+        <div><label>Edition/Version (optional)</label><input name="ed" placeholder="e.g. 2e, VTR"></div>
+      </div>
       <label>Hours (decimal, e.g. 4.0)</label><input name="h" type="number" step="0.01" required>
       <label>Slug (leave blank to auto-generate; don't change when editing)</label><input name="slug">
       <label>Write-up (separate paragraphs with a blank line)</label><textarea name="writeup"></textarea>
@@ -412,7 +420,10 @@ function adminPage() {
     <form id="form-campaigns" class="editform hidden">
       <label>Name (must match ledger campaign names exactly)</label><input name="name" required>
       <label>Slug (leave blank to auto-generate; don't change when editing)</label><input name="slug">
-      <label>System</label><input name="sys" required>
+      <div class="row">
+        <div><label>System</label><input name="sys" required></div>
+        <div><label>Edition/Version (optional)</label><input name="ed" placeholder="e.g. Deluxe, VTR"></div>
+      </div>
       <label>Status</label>
       <select name="status"><option value="running">Running</option><option value="between arcs">Between Arcs</option><option value="concluded">Concluded</option></select>
       <label>Tagline</label><input name="tagline">

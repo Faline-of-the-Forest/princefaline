@@ -1,8 +1,9 @@
 {
   "slug": "predator-savage-planet",
   "name": "Predator: Savage Planet",
-  "sys": "Savage Worlds [Deluxe]",
+  "sys": "Savage Worlds",
   "status": "running",
   "banner": "",
-  "covers": []
+  "covers": [],
+  "ed": "Deluxe"
 }

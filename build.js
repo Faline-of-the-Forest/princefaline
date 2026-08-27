@@ -61,6 +61,13 @@ function statusStyle(s) {
   return { label: "Concluded", pillBg: "transparent", pillFg: "#5B5648", pillBd: "#c8bfa6" };
 }
 function stars(n) { return { full: "★".repeat(n), empty: "☆".repeat(5 - n) }; }
+// System name plus an optional small pill for the edition/version played (e.g. "Kids on Bikes" + "2e").
+function sysTag(base, ed, opts) {
+  const o = opts || {};
+  const nameStyle = o.nameStyle || "font:400 16.1px/1.4 'EB Garamond',serif";
+  const pillStyle = o.pillStyle || "font:400 12.5px/1 'EB Garamond',serif;color:#8A836F;border:1px solid #C8BFA6;padding:2px 5px;letter-spacing:.02em";
+  return `<span style="display:inline-flex;align-items:center;gap:6px;vertical-align:middle"><span style="${nameStyle}">${esc(base)}</span>${ed ? `<span style="${pillStyle}">${esc(ed)}</span>` : ""}</span>`;
+}
 const CAMPAIGN_BLURBS = {
   "bloodletting": "New Orleans, 1990. Three dead men circle each other while the living city bleeds.",
   "Yazeba's Bed & Breakfast": "A house, its residents, and whichever chapter we feel like turning to that night.",
@@ -142,8 +149,7 @@ ${body}
   <footer style="border-top:2px solid #24211B;margin-top:20px;background:#EDE7D6">
     <div style="max-width:1180px;margin:0 auto;padding:26px 20px;display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between;align-items:flex-end">
       <div>
-        <img src="/assets/wordmark.webp" alt="Prince Faline's RPG Diaries" style="display:block;height:44px;width:auto;margin-bottom:11px">
-        <div style="font:400 17.1px/1.6 'EB Garamond',serif;color:#5B5648">Kept by hand since July 2024 · all sessions logged in the master ledger</div>
+        <img src="/assets/wordmark.webp" alt="Prince Faline's RPG Diaries" style="display:block;height:44px;width:auto">
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:8px">${nav("").replace(/font:400 18px/g, "font:400 16.1px")}</div>
     </div>
@@ -163,13 +169,13 @@ function write(relPath, html) {
 function renderHome() {
   const running = campaigns.filter(c => c.status === "running");
   const statCells = [
-    { label: "Games Played", value: String(stats.games), sub: stats.campaigns + " campaigns + " + stats.oneShots + " one-shots" },
-    { label: "At the Table", value: Math.round(stats.hours) + "h", sub: "avg " + stats.avg + " per session" },
-    { label: "Systems Played", value: String(stats.systems), sub: "distinct rulesets run" },
-    { label: "Campaigns Run", value: String(stats.campaigns), sub: running.length + " still running" },
+    { label: "Games Played", value: stats.games + " games" },
+    { label: "Total Playtime", value: Math.round(stats.hours) + "h" },
+    { label: "Systems Played", value: stats.systems + " systems" },
+    { label: "Campaigns Run", value: stats.campaigns + " campaigns" },
     { label: "Most Played", value: stats.topSystem[1] + "×", sub: stats.topSystem[0] },
     { label: "Longest Campaign", value: stats.longest.n + " eps", sub: stats.longest.name },
-    { label: "One-shots", value: String(stats.oneShots), sub: "single evenings, no strings" },
+    { label: "One-shots", value: String(stats.oneShots) },
   ];
   const years = Object.keys(byYear).sort();
   const maxY = Math.max(...years.map(y => byYear[y]));
@@ -179,7 +185,7 @@ function renderHome() {
     const camp = r.campaignSlug ? campaignBySlug[r.campaignSlug] : null;
     const campLabel = camp ? camp.name : "One-Shot";
     const href = camp ? `/campaigns/${camp.slug}/` : (r.slug ? `/one-shots/${r.slug}/` : null);
-    const inner = `<span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${esc(r.d)}</span><span style="flex:0 0 30px;font:400 17.1px/1.4 'EB Garamond',serif;color:#8A836F">#${r.n}</span><span style="flex:999 1 220px;font:400 16px/1.35 'EB Garamond',serif">${esc(r.t)}</span><span style="flex:1 1 150px;font:400 17.1px/1.4 'EB Garamond',serif">${esc(campLabel)}</span><span style="flex:1 1 140px;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${esc(r.s)}</span><span style="flex:0 0 46px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${r.rt}</span>`;
+    const inner = `<span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${esc(r.d)}</span><span style="flex:0 0 30px;font:400 17.1px/1.4 'EB Garamond',serif;color:#8A836F">#${r.n}</span><span style="flex:999 1 220px;font:400 16px/1.35 'EB Garamond',serif">${esc(r.t)}</span><span style="flex:1 1 150px;font:400 17.1px/1.4 'EB Garamond',serif">${esc(campLabel)}</span><span style="flex:1 1 140px">${sysTag(r.s, r.ed, { nameStyle: "font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648" })}</span><span style="flex:0 0 46px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${r.rt}</span>`;
     const style = "display:flex;flex-wrap:wrap;gap:4px 18px;padding:9px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline";
     return href ? `<a href="${href}" style="${style};color:inherit" data-hover>${inner}</a>` : `<div style="${style}">${inner}</div>`;
   }).join("");
@@ -189,16 +195,17 @@ function renderHome() {
   const body = `
     <section style="display:flex;flex-wrap:wrap;gap:36px;padding:46px 0 40px;align-items:flex-start">
       <div style="flex:999 1 420px;max-width:640px">
-        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:20px">◆ An Archive of Tables, Kept since July 2024</div>
-        <h1 style="font:400 clamp(38px,5.4vw,58px)/1.02 'EB Garamond',serif;margin:0 0 22px;letter-spacing:-.01em">A permanent home<br>for ephemeral games.</h1>
+        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:20px">◆ ${stats.games} sessions logged since July 2024</div>
+        <h1 style="font:400 clamp(38px,5.4vw,58px)/1.02 'EB Garamond',serif;margin:0 0 22px;letter-spacing:-.01em">Prince Faline's<br>RPG Diaries</h1>
         <p style="font:400 17.5px/1.68 'EB Garamond',serif;color:#3A362C;margin:0 0 16px;text-wrap:pretty">
-          <span style="float:left;font-family:'Uncial Antiqua',serif;font-size:44px;line-height:.84;color:#F6F1E4;background:#A5231F;border:1px solid #B8892E;padding:8px 10px 6px;margin:4px 12px 0 0">T</span>
-          abletop RPGs are ephemeral by nature: they happen once, at a specific table, between specific people, and are never experienced the same way again. Each session a lightning caught in a bottle. So all we can do is tell their stories as if they were myths.
+          <span style="float:left;font-family:'Uncial Antiqua',serif;font-size:44px;line-height:.84;color:#F6F1E4;background:#A5231F;border:1px solid #B8892E;padding:8px 10px 6px;margin:4px 12px 0 0">S</span>
+          ince 2024 I've been obsessed with tabletop RPGs. There's something addictive about running a story I don't know the ending of. The dice decide what happens and I figure out what it means, which makes me less the author of these stories than their oracle. Not being responsible for making the story compelling frees me up to become its audience.
         </p>
-        <p style="font:400 17.5px/1.68 'EB Garamond',serif;color:#3A362C;margin:0 0 26px;text-wrap:pretty">This archive chronicles the campaigns I have run, the sessions that made them, the books I have read in pursuit of the hobby, and the dashboards I build to play them. A souvenir for everyone who committed their evenings to these games — and a record, for me, of the work that went in.</p>
+        <p style="font:400 17.5px/1.68 'EB Garamond',serif;color:#3A362C;margin:0 0 16px;text-wrap:pretty">The list of games I want to play would already take a few lifetimes to play through, and it only ever gets longer, so all I can do is play as much as I can and be grateful for the people who show up every week to see these stories through.</p>
+        <p style="font:400 17.5px/1.68 'EB Garamond',serif;color:#3A362C;margin:0 0 26px;text-wrap:pretty">This site is an archive of every session I've played, along with my thoughts on the books and modules I've read, and the dashboards, playsets and sheets I build for my games.</p>
         <div style="display:flex;flex-wrap:wrap;gap:10px">
           <a href="/campaigns/" style="padding:11px 18px;background:#2F4633;color:#F6F1E4;font:400 18.8px/1 'EB Garamond',serif;border:1px solid #24211B">▸ Browse Campaigns</a>
-          <a href="/reviews/" style="padding:11px 18px;border:1px solid #24211B;font:400 18.8px/1 'EB Garamond',serif;color:#24211B">▸ The Review Library</a>
+          <a href="/reviews/" style="padding:11px 18px;border:1px solid #24211B;font:400 18.8px/1 'EB Garamond',serif;color:#24211B">▸ Review Library</a>
         </div>
       </div>
       <div style="flex:1 1 300px;max-width:400px">
@@ -222,7 +229,7 @@ function renderHome() {
         <div style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648">Since ${stats.since}</div>
       </div>
       <div style="border:2px solid #24211B;background:#24211B;display:flex;flex-wrap:wrap;gap:1px">
-        ${statCells.map(s => `<div style="flex:1 1 148px;background:#FBF8EF;padding:16px 15px 14px"><div style="font:400 15.4px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:11px">${esc(s.label)}</div><div style="font:400 clamp(26px,3vw,34px)/1 'EB Garamond',serif;margin-bottom:7px">${esc(s.value)}</div><div style="font:400 16.1px/1.35 'EB Garamond',serif;color:#8A836F">${esc(s.sub)}</div></div>`).join("")}
+        ${statCells.map(s => `<div style="flex:1 1 148px;background:#FBF8EF;padding:16px 15px 14px"><div style="font:400 15.4px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:11px">${esc(s.label)}</div><div style="font:400 clamp(26px,3vw,34px)/1 'EB Garamond',serif${s.sub ? ";margin-bottom:7px" : ""}">${esc(s.value)}</div>${s.sub ? `<div style="font:400 16.1px/1.35 'EB Garamond',serif;color:#8A836F">${esc(s.sub)}</div>` : ""}</div>`).join("")}
         <div style="flex:1 1 260px;background:#FBF8EF;padding:16px 15px 14px">
           <div style="font:400 15.4px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:14px">Sessions per Year</div>
           <div style="display:flex;flex-direction:column;gap:9px">
@@ -273,7 +280,7 @@ function campaignCard(c) {
     <div style="height:118px;background:${banner};border-bottom:1px solid #24211B"></div>
     <div style="padding:13px 14px 12px;flex:1">
       <div style="font:400 20px/1.18 'EB Garamond',serif;margin-bottom:7px">${esc(c.name)}</div>
-      <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#5B5648">${esc(c.sys)}</div>
+      <div>${sysTag(c.sys, c.ed, { nameStyle: "font:400 16.1px/1.5 'EB Garamond',serif;color:#5B5648" })}</div>
       <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#5B5648">${c.n} session${c.n===1?"":"s"} · ${Math.round(c.h)}h</div>
     </div>
     <div style="border-top:1px solid #C8BFA6;padding:8px 14px;font:400 16.1px/1 'EB Garamond',serif;color:#A5231F;display:flex;justify-content:space-between">
@@ -294,7 +301,7 @@ function renderCampaignsIndex() {
           <a href="/campaigns/${c.slug}/" style="font:400 22px/1.15 'EB Garamond',serif;color:inherit">${esc(c.name)}</a>
           <span style="padding:3px 7px;border:1px solid ${st.pillBd};background:${st.pillBg};color:${st.pillFg};font:400 14.6px/1 'EB Garamond',serif">${st.label}</span>
         </div>
-        <div style="font:400 17.1px/1.5 'EB Garamond',serif;color:#5B5648">${esc(c.sys)}</div>
+        <div>${sysTag(c.sys, c.ed, { nameStyle: "font:400 17.1px/1.5 'EB Garamond',serif;color:#5B5648" })}</div>
         <div style="font:400 18.8px/1.5 'EB Garamond',serif;color:#3A362C;max-width:60ch">${esc(blurb(c))}</div>
       </div>
       <div style="flex:0 0 128px;padding:13px 16px;border-left:1px solid #C8BFA6;display:flex;flex-direction:column;justify-content:space-between;gap:8px">
@@ -472,7 +479,7 @@ function renderReviewsIndex() {
         <div class="hover-overlay" style="position:absolute;inset:0;background:rgba(36,33,27,.92);color:#F6F1E4;padding:15px;display:flex;flex-direction:column;gap:7px;opacity:0;transition:opacity .15s">
           <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:400 14.6px/1 'EB Garamond',serif;color:#E8C87A">${esc(r.type)}</span><span style="font:400 14.6px/1 'EB Garamond',serif;color:#9F9887">${mon(r.date + "-01")}</span></div>
           <div style="font:400 19px/1.15 'EB Garamond',serif">${esc(r.t)}</div>
-          <div style="font:400 16.1px/1.4 'EB Garamond',serif;color:#C3BCA6">${esc(r.sys)}</div>
+          <div>${sysTag(r.sys, r.ed, { nameStyle: "font:400 16.1px/1.4 'EB Garamond',serif;color:#C3BCA6", pillStyle: "font:400 12px/1 'EB Garamond',serif;color:#C3BCA6;border:1px solid #6A6455;padding:2px 5px" })}</div>
           <div style="font:500 17.7px/1 'EB Garamond',serif;color:#E8C87A">${st.full}<span style="color:#6A6455">${st.empty}</span></div>
           <p style="font:italic 400 15px/1.5 'EB Garamond',serif;color:#EDE7D6;margin:0;flex:1">${esc(r.verdict)}</p>
         </div>
@@ -556,7 +563,7 @@ function renderReviewDetail(r) {
           ${cover ? `<div style="width:100%;height:100%;background:url(${cover}) center/contain no-repeat"></div>` : `<span style="font:400 19px/1.3 'EB Garamond',serif;color:#5B5648;text-align:center">${esc(r.t)}</span>`}
         </div>
         <div style="border:1px solid #C8BFA6;background:#FBF8EF;margin-top:12px">
-          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">System</span><span>${esc(r.sys)}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">System</span>${sysTag(r.sys, r.ed)}</div>
           <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Type</span><span>${esc(r.type)}</span></div>
           <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Reviewed</span><span>${mon(r.date + "-01")}</span></div>
           <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Rating</span><span style="color:#A5231F">${st.full}<span style="color:#C8BFA6">${st.empty}</span></span></div>
@@ -608,7 +615,7 @@ function renderOneShotsIndex() {
       <a href="/one-shots/${s.slug}/" style="display:block;aspect-ratio:1/1;color:inherit;position:relative;overflow:hidden">
         ${cover ? `<div style="width:100%;height:100%;background:url(${cover}) center/cover no-repeat"></div>` : `<div style="width:100%;height:100%;background:${stripes("#e4dcc6", "#f3eedd")};display:grid;place-items:center"><span style="font:400 17px/1.25 'EB Garamond',serif;color:#5B5648;text-align:center;padding:10px">${esc(s.t)}</span></div>`}
         <div class="hover-overlay" style="position:absolute;inset:0;background:rgba(36,33,27,.92);color:#F6F1E4;padding:15px;display:flex;flex-direction:column;gap:7px;opacity:0;transition:opacity .15s">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:400 14.6px/1 'EB Garamond',serif;color:#E8C87A">${esc(s.s)}</span><span style="font:400 14.6px/1 'EB Garamond',serif;color:#9F9887">${mon(s.d)}</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">${sysTag(s.s, s.ed, { nameStyle: "font:400 14.6px/1 'EB Garamond',serif;color:#E8C87A", pillStyle: "font:400 11.5px/1 'EB Garamond',serif;color:#E8C87A;border:1px solid #6A6455;padding:1px 4px" })}<span style="font:400 14.6px/1 'EB Garamond',serif;color:#9F9887">${mon(s.d)}</span></div>
           <div style="font:400 19px/1.15 'EB Garamond',serif;flex:1">${esc(s.t)}</div>
           <div style="font:400 15px/1 'EB Garamond',serif;color:#C3BCA6">${s.rt} at the table</div>
         </div>
@@ -668,7 +675,7 @@ function renderOneShotDetail(s) {
           ${cover ? `<div style="width:100%;height:100%;background:url(${cover}) center/cover no-repeat"></div>` : `<div style="width:100%;height:100%;background:${stripes("#e4dcc6", "#f3eedd")};display:grid;place-items:center"><span style="font:400 19px/1.3 'EB Garamond',serif;color:#5B5648;text-align:center">${esc(s.t)}</span></div>`}
         </div>
         <div style="border:1px solid #C8BFA6;background:#FBF8EF;margin-top:12px">
-          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">System</span><span>${esc(s.s)}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">System</span>${sysTag(s.s, s.ed)}</div>
           <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Date</span><span>${mon(s.d)}</span></div>
           <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">At the Table</span><span>${s.rt}</span></div>
         </div>

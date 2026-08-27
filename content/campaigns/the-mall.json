@@ -1,8 +1,9 @@
 {
   "slug": "the-mall",
   "name": "The Mall",
-  "sys": "Liminal Horror [PE]",
+  "sys": "Liminal Horror",
   "status": "concluded",
   "banner": "https://princefalinerpgdiaries.vercel.app/img/user/Images/Banners/bnr_themall.jpg",
-  "covers": []
+  "covers": [],
+  "ed": "PE"
 }

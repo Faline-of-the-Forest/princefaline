@@ -1,8 +1,9 @@
 {
   "slug": "gradient-descent",
   "name": "Gradient Descent",
-  "sys": "Mothership [1e]",
+  "sys": "Mothership",
   "status": "concluded",
   "banner": "",
-  "covers": []
+  "covers": [],
+  "ed": "1e"
 }

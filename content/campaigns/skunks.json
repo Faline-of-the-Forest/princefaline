@@ -1,8 +1,9 @@
 {
   "slug": "skunks",
   "name": "Skunks",
-  "sys": "Unknown Armies [2e]",
+  "sys": "Unknown Armies",
   "status": "concluded",
   "banner": "",
-  "covers": []
+  "covers": [],
+  "ed": "2e"
 }
