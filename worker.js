@@ -678,7 +678,11 @@ export default {
       return adminPage();
     }
 
-    // Everything else: serve the static site build.
-    return env.ASSETS.fetch(request);
+    // Everything else: serve the static site build, but cap edge-cache
+    // lifetime short so admin edits show up without needing a manual purge.
+    const res = await env.ASSETS.fetch(request);
+    const headers = new Headers(res.headers);
+    headers.set("Cache-Control", "public, max-age=60, s-maxage=60, must-revalidate");
+    return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
   },
 };
