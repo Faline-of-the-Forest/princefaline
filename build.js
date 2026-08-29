@@ -128,6 +128,8 @@ function layout({ title, active, body, description }) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="/uploads/faline-s-rpg-guild-icon-1024.png">
+<link rel="apple-touch-icon" href="/uploads/faline-s-rpg-guild-icon-1024.png">
 <title>${esc(title)}</title>
 ${description ? `<meta name="description" content="${esc(description)}">` : ""}
 ${FONT_LINK}
