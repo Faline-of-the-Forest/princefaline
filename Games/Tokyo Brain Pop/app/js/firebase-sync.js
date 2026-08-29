@@ -62,13 +62,23 @@ async function ready() {
 }
 
 // ---------------------------------------------------------------------------
-// Session identity — one persistent random id per browser tab/device.
+// Session identity — one persistent random id per browser TAB.
+//
+// Deliberately sessionStorage, not localStorage: sessionStorage is isolated
+// per tab (survives reloads of that tab, but a new tab never inherits it),
+// so opening five tabs in the same browser gives five independent seats —
+// exactly what letting multiple sessions per device/character requires, and
+// it's also what makes local playtesting from one browser possible without
+// incognito windows or separate profiles. A tab that's duplicated (Ctrl+Shift+T
+// re-opening a closed tab, or a browser's "duplicate tab") DOES inherit the
+// original's sessionStorage — expected, since that's genuinely the same seat
+// continuing, not a new one.
 // ---------------------------------------------------------------------------
 export function getSessionId() {
-  let id = localStorage.getItem("tbp-session-id");
+  let id = sessionStorage.getItem("tbp-session-id");
   if (!id) {
     id = "s-" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-    localStorage.setItem("tbp-session-id", id);
+    sessionStorage.setItem("tbp-session-id", id);
   }
   return id;
 }
