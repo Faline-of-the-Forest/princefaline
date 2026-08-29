@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Zen+Kaku+Gothic+New:wght@500;700;900&family=DotGothic16&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #EEE41B; overflow: hidden; }
+  a { color: #D2232A; text-decoration: none; }
+  a:hover { color: #100D0B; }
+  @keyframes tbp-blink { 0%, 60% { opacity: 1 } 61%, 100% { opacity: .15 } }
+  @keyframes tbp-drift { 0% { transform: translate3d(0,0,0) } 100% { transform: translate3d(-32px,-32px,0) } }
+  @keyframes tbp-bob { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-12px) } }
+  @keyframes tbp-zap { 0%, 100% { transform: rotate(-13deg) scaleX(1) } 50% { transform: rotate(-13deg) scaleX(1.015) } }
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="position: relative; width: 100vw; height: 100vh; overflow: hidden; background: #EEE41B; display: flex; align-items: center; justify-content: center; font-family: 'Zen Kaku Gothic New', system-ui, sans-serif; color: #100D0B; user-select: none;">
+
+  <div style="position: relative; flex: 0 0 auto; width: 1920px; height: 1080px; overflow: hidden; background: #EEE41B; transform: scale(var(--tbp-scale, 1)); transform-origin: center center;">
+
+    <div style="position: absolute; inset: -40px; background-image: radial-gradient(#100D0B 1.8px, transparent 1.9px); background-size: 18px 18px; opacity: var(--tbp-dots, 0.16); animation: tbp-drift 6s linear infinite; pointer-events: none;"></div>
+
+    <div style="position: absolute; left: -180px; top: 470px; width: 2300px; height: 300px; background: var(--tbp-accent, #D2232A); transform: rotate(-13deg); animation: tbp-zap 5s ease-in-out infinite; box-shadow: 0 0 0 9px #100D0B;"></div>
+    <div style="position: absolute; left: -180px; top: 470px; width: 2300px; height: 300px; transform: rotate(-13deg); background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.2) 0 5px, transparent 5px 52px); pointer-events: none;"></div>
+
+    <div style="position: absolute; right: -30px; bottom: -18px; width: 1090px; height: 1048px; z-index: 3;">
+      <div role="img" aria-label="Psi Division 4 squad key art" style="position: absolute; inset: 0; background-image: url('squad-cutout.png'); background-repeat: no-repeat; background-size: contain; background-position: right bottom; animation: tbp-bob 7s ease-in-out infinite; filter: drop-shadow(0 0 3px rgba(238,228,27,.9));"></div>
+    </div>
+
+
+
+    <div style="position: absolute; left: 0; top: 0; width: 1180px; height: 1080px; z-index: 5; display: flex; flex-direction: column; padding: 52px 0 46px 76px; box-sizing: border-box;">
+
+      <div style="margin-top: 2px;">
+        <div style="position: relative; display: inline-block; transform: rotate(-1.8deg);">
+          <div style="background: #100D0B; padding: 34px 52px 40px; border-radius: 56px 56px 56px 12px; box-shadow: 16px 16px 0 var(--tbp-accent, #D2232A);">
+            <img src="logo-title-white.png" alt="Tokyo Brain Pop!?" style="display: block; width: 390px; height: auto;" />
+          </div>
+          <div style="position: absolute; left: 54px; bottom: -32px; width: 54px; height: 48px; background: #100D0B; clip-path: polygon(0 0, 100% 0, 18% 100%);"></div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 34px; width: 700px;">
+
+        <button type="button" onMouseEnter="{{ hover0 }}" onClick="{{ go0 }}" onFocus="{{ hover0 }}" style="all: unset; cursor: pointer; display: block; background: {{ bg0 }}; color: {{ fg0 }}; transform: {{ tf0 }}; box-shadow: {{ sh0 }}; transition: transform .14s cubic-bezier(.2,.9,.3,1.5), background .14s, box-shadow .14s;" style-hover="filter: saturate(1.12)">
+          <div style="display: flex; align-items: center; gap: 22px; padding: 16px 32px 18px 24px; transform: skewX(9deg);">
+            <span style="font-family: 'Anton', sans-serif; font-size: 28px; opacity: .5; min-width: 44px;">01</span>
+            <span style="flex: 1;">
+              <span style="display: block; font-family: 'Anton', sans-serif; font-size: 46px; line-height: 1; letter-spacing: .025em; text-transform: uppercase;">Create Room</span>
+              <span style="display: block; font-family: 'DotGothic16', monospace; font-size: 16px; letter-spacing: .22em; opacity: .7; margin-top: 6px;">ルームを作成</span>
+            </span>
+            <span style="font-family: 'Anton', sans-serif; font-size: 32px; opacity: {{ ar0 }};">▶</span>
+          </div>
+        </button>
+
+        <button type="button" onMouseEnter="{{ hover1 }}" onClick="{{ go1 }}" onFocus="{{ hover1 }}" style="all: unset; cursor: pointer; display: block; background: {{ bg1 }}; color: {{ fg1 }}; transform: {{ tf1 }}; box-shadow: {{ sh1 }}; transition: transform .14s cubic-bezier(.2,.9,.3,1.5), background .14s, box-shadow .14s;" style-hover="filter: saturate(1.12)">
+          <div style="display: flex; align-items: center; gap: 22px; padding: 16px 32px 18px 24px; transform: skewX(9deg);">
+            <span style="font-family: 'Anton', sans-serif; font-size: 28px; opacity: .5; min-width: 44px;">02</span>
+            <span style="flex: 1;">
+              <span style="display: block; font-family: 'Anton', sans-serif; font-size: 46px; line-height: 1; letter-spacing: .025em; text-transform: uppercase;">Join Room</span>
+              <span style="display: block; font-family: 'DotGothic16', monospace; font-size: 16px; letter-spacing: .22em; opacity: .7; margin-top: 6px;">ルームに参加</span>
+            </span>
+            <span style="font-family: 'Anton', sans-serif; font-size: 32px; opacity: {{ ar1 }};">▶</span>
+          </div>
+        </button>
+
+        <button type="button" onMouseEnter="{{ hover2 }}" onClick="{{ go2 }}" onFocus="{{ hover2 }}" style="all: unset; cursor: pointer; display: block; background: {{ bg2 }}; color: {{ fg2 }}; transform: {{ tf2 }}; box-shadow: {{ sh2 }}; transition: transform .14s cubic-bezier(.2,.9,.3,1.5), background .14s, box-shadow .14s;" style-hover="filter: saturate(1.12)">
+          <div style="display: flex; align-items: center; gap: 22px; padding: 16px 32px 18px 24px; transform: skewX(9deg);">
+            <span style="font-family: 'Anton', sans-serif; font-size: 28px; opacity: .5; min-width: 44px;">03</span>
+            <span style="flex: 1;">
+              <span style="display: block; font-family: 'Anton', sans-serif; font-size: 46px; line-height: 1; letter-spacing: .025em; text-transform: uppercase;">Headmaster</span>
+              <span style="display: block; font-family: 'DotGothic16', monospace; font-size: 16px; letter-spacing: .22em; opacity: .7; margin-top: 6px;">校長室へ</span>
+            </span>
+            <span style="font-family: 'Anton', sans-serif; font-size: 32px; opacity: {{ ar2 }};">▶</span>
+          </div>
+        </button>
+
+      </div>
+
+      <div style="display: flex; align-items: stretch; gap: 18px; margin-top: auto; width: 860px;">
+        <div style="flex: 1; background: #FFFDF0; border: 5px solid #100D0B; padding: 16px 20px 18px; box-shadow: 9px 9px 0 #100D0B;">
+          <div style="font-family: 'DotGothic16', monospace; font-size: 15px; letter-spacing: .18em; color: var(--tbp-accent, #D2232A);">{{ descTag }}</div>
+          <div style="font-size: 21px; line-height: 1.35; font-weight: 500; margin-top: 5px; text-wrap: pretty;">{{ descBody }}</div>
+        </div>
+        <div style="flex: 0 0 auto; background: #100D0B; color: #EEE41B; padding: 14px 18px; font-family: 'DotGothic16', monospace; font-size: 15px; letter-spacing: .14em; text-align: right; line-height: 1.8; align-self: center;">
+          <div>↑ ↓ SELECT</div>
+          <div>ENTER CONFIRM</div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div style="position: absolute; inset: 0; background: #fff; pointer-events: none; z-index: 9; opacity: {{ flash }}; transition: opacity .3s ease-out;"></div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1920,&quot;height&quot;:1080},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#D2232A&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#D2232A&quot;,&quot;#E0217E&quot;,&quot;#1F4FD8&quot;,&quot;#0F8F5C&quot;],&quot;section&quot;:&quot;Look&quot;},&quot;showHalftone&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Look&quot;}}">
+const ITEMS = [
+  { tag: "ROOM 作成 / HOST A SORTIE", body: "Open a new containment cell. Set the ward, pick a demon tier, and call in up to three espers." },
+  { tag: "参加 / 6-DIGIT PSI CODE", body: "Drop into a sortie already in progress. Bring a clean uniform — the last one didn't come back." },
+  { tag: "校長室 / PROGRESS & SECRETS", body: "Report to the Headmaster. Ranks, brain-pop upgrades, and the files she keeps in the locked drawer." }
+];
+const ACTIONS = [
+  "CELL OPEN — ROOM CODE PSI-4417 — WAITING FOR ALLIES…",
+  "AWAITING PSI CODE INPUT…",
+  "SUMMONED. THE HEADMASTER IS LISTENING."
+];
+
+class Component extends DCLogic {
+  state = { sel: 0, flash: 0, status: "STANDBY — SELECT A CHANNEL" };
+
+  componentDidMount() {
+    this.fit();
+    this.onResize = () => this.fit();
+    window.addEventListener("resize", this.onResize);
+    if (typeof ResizeObserver !== "undefined" && this.rootEl) {
+      this.ro = new ResizeObserver(() => this.fit());
+      this.ro.observe(this.rootEl);
+    }
+    setTimeout(() => this.fit(), 0);
+    this.onKey = (e) => {
+      const k = e.key;
+      if (k === "ArrowDown" || k === "ArrowRight") { e.preventDefault(); this.move(1); }
+      else if (k === "ArrowUp" || k === "ArrowLeft") { e.preventDefault(); this.move(-1); }
+      else if (k === "Enter" || k === " ") { e.preventDefault(); this.activate(this.state.sel); }
+    };
+    window.addEventListener("keydown", this.onKey);
+  }
+  componentDidUpdate() { this.fit(); }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.onResize);
+    window.removeEventListener("keydown", this.onKey);
+    if (this.ro) this.ro.disconnect();
+    cancelAnimationFrame(this.raf);
+    clearTimeout(this.t);
+  }
+
+  fit() {
+    const el = this.rootEl;
+    if (!el) return;
+    this.applyVars();
+    const r = el.getBoundingClientRect();
+    const w = r.width || window.innerWidth || 0;
+    const h = r.height || window.innerHeight || 0;
+    const scale = Math.min(w / 1920, h / 1080);
+    if (scale > 0) {
+      el.style.setProperty("--tbp-scale", String(scale));
+      return;
+    }
+    cancelAnimationFrame(this.raf);
+    this.raf = requestAnimationFrame(() => this.fit());
+  }
+
+  applyVars() {
+    const el = this.rootEl;
+    if (!el) return;
+    const accent = this.props.accentColor ?? "#D2232A";
+    el.style.setProperty("--tbp-accent", accent);
+    el.style.setProperty("--tbp-dots", (this.props.showHalftone ?? true) ? "0.16" : "0");
+  }
+
+  move(d) { this.setState((s) => ({ sel: (s.sel + d + ITEMS.length) % ITEMS.length })); }
+
+  activate(i) {
+    clearTimeout(this.t);
+    this.setState({ sel: i, flash: 0.9, status: ACTIONS[i] });
+    this.t = setTimeout(() => this.setState({ flash: 0 }), 70);
+  }
+
+  renderVals() {
+    const accent = this.props.accentColor ?? "#D2232A";
+    const sel = this.state.sel;
+    const vals = {
+      rootRef: (el) => { this.rootEl = el; if (el) this.fit(); },
+      flash: this.state.flash,
+      descTag: ITEMS[sel].tag,
+      descBody: ITEMS[sel].body
+    };
+    for (let i = 0; i < ITEMS.length; i++) {
+      const on = i === sel;
+      vals["bg" + i] = on ? accent : "#100D0B";
+      vals["fg" + i] = on ? "#fff" : "#EEE41B";
+      vals["tf" + i] = on ? "skewX(-9deg) translateX(38px) scale(1.035)" : "skewX(-9deg) translateX(0) scale(1)";
+      vals["sh" + i] = on ? "12px 12px 0 #100D0B, inset 0 0 0 5px #100D0B" : "7px 7px 0 rgba(16,13,11,.3)";
+      vals["ar" + i] = on ? 1 : 0;
+      vals["hover" + i] = () => this.setState({ sel: i });
+      vals["go" + i] = () => this.activate(i);
+    }
+    return vals;
+  }
+}
+</script>
+</body>
+</html>
