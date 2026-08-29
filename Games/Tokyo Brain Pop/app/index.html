@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tokyo Brain Pop</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="site-chrome">
+<div class="site-card">
+  <div class="site-eyebrow">◆ Atarashi High School</div>
+  <h1>Tokyo Brain Pop</h1>
+  <p class="site-sub">Enter a room name to join or start a game. Everyone at the table uses the same room name — it's not case sensitive.</p>
+
+  <form id="join-form">
+    <div class="site-field">
+      <label for="room-name">Room name</label>
+      <input class="site-input" id="room-name" name="room-name" autocomplete="off" placeholder="e.g. class-2a" maxlength="40" required>
+    </div>
+    <div class="site-field" style="margin-top:14px">
+      <label for="player-name">Your name (for the table)</label>
+      <input class="site-input" id="player-name" name="player-name" autocomplete="off" placeholder="e.g. Sara" maxlength="30" required>
+    </div>
+    <button type="submit" class="site-btn" id="join-btn">Join Room</button>
+  </form>
+  <div id="join-error" class="site-error" style="display:none"></div>
+
+  <div style="margin-top:22px;text-align:center">
+    <a class="site-link" href="gm.html">Running the game? Go to the Headmaster's Desk →</a>
+  </div>
+</div>
+
+<script type="module">
+  import { connectRoom, joinRoom, getSessionId, normalizeRoomName } from './js/firebase-sync.js';
+
+  const form = document.getElementById('join-form');
+  const err = document.getElementById('join-error');
+  const btn = document.getElementById('join-btn');
+
+  // Remember the last name/room used on this device for convenience.
+  document.getElementById('player-name').value = localStorage.getItem('tbp-player-name') || '';
+  document.getElementById('room-name').value = localStorage.getItem('tbp-room-name') || '';
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    err.style.display = 'none';
+    const roomName = document.getElementById('room-name').value.trim();
+    const playerName = document.getElementById('player-name').value.trim();
+    if (!roomName || !playerName) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Joining…';
+    try {
+      localStorage.setItem('tbp-player-name', playerName);
+      localStorage.setItem('tbp-room-name', roomName);
+      const { id } = await connectRoom(roomName);
+      await joinRoom({ sessionId: getSessionId(), name: playerName, role: 'player' });
+      location.href = 'room.html?r=' + encodeURIComponent(id);
+    } catch (ex) {
+      console.error(ex);
+      err.textContent = ex.message || 'Could not join that room. Try again.';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Join Room';
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
+
+:root {
+  --tbp-bg: #231F20;
+  --tbp-bg-2: #2C2728;
+  --tbp-panel: #2C2728;
+  --tbp-yellow: #EDE31B;
+  --tbp-red: #B4322C;
+  --tbp-cream: #EFE6C8;
+  --tbp-cream-dim: #A9A18B;
+  --tbp-line: #423C3D;
+
+  --site-cream: #FBF8EF;
+  --site-ink: #24211B;
+  --site-red: #A5231F;
+  --site-line: #C8BFA6;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--tbp-bg);
+  color: var(--tbp-cream);
+  font-family: 'Lora', serif;
+  min-height: 100vh;
+}
+
+/* ---------- site-chrome look (join screen, GM room list) ---------- */
+.site-chrome {
+  background: var(--site-cream);
+  color: var(--site-ink);
+  font-family: 'EB Garamond', serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.site-card {
+  width: 100%;
+  max-width: 440px;
+  border: 2px solid var(--site-ink);
+  background: var(--site-cream);
+  box-shadow: 6px 6px 0 var(--site-ink);
+  padding: 34px 32px;
+}
+.site-card h1 {
+  font: 400 34px/1.1 'EB Garamond', serif;
+  margin: 0 0 6px;
+}
+.site-eyebrow {
+  font: 400 15px/1 'EB Garamond', serif;
+  color: var(--site-red);
+  letter-spacing: .04em;
+  margin-bottom: 10px;
+}
+.site-sub {
+  font: 400 16px/1.5 'EB Garamond', serif;
+  color: #5B5648;
+  margin: 0 0 26px;
+}
+.site-field label {
+  display: block;
+  font: 400 14.5px/1 'EB Garamond', serif;
+  color: #8A836F;
+  margin-bottom: 6px;
+}
+.site-input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--site-line);
+  background: #F6F1E4;
+  font: 400 18px/1.2 'EB Garamond', serif;
+  color: var(--site-ink);
+}
+.site-input:focus { outline: 2px solid var(--site-red); outline-offset: 1px; }
+.site-btn {
+  display: inline-block;
+  margin-top: 18px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--site-ink);
+  background: var(--site-ink);
+  color: var(--site-cream);
+  font: 400 17px/1 'EB Garamond', serif;
+  letter-spacing: .02em;
+  cursor: pointer;
+  transition: transform .1s, box-shadow .1s;
+}
+.site-btn:hover { transform: translate(-2px, -2px); box-shadow: 2px 2px 0 var(--site-ink); }
+.site-btn:active { transform: translate(0, 0); box-shadow: none; }
+.site-btn.ghost {
+  background: transparent;
+  color: var(--site-ink);
+}
+.site-btn.danger { background: var(--site-red); border-color: var(--site-red); }
+.site-link {
+  color: var(--site-red);
+  text-decoration: none;
+  font: 400 15px/1 'EB Garamond', serif;
+}
+.site-link:hover { text-decoration: underline; }
+.site-error {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--site-red);
+  background: #F7E7E5;
+  color: var(--site-red);
+  font: 400 15px/1.4 'EB Garamond', serif;
+}
+.site-row { display: flex; gap: 10px; align-items: center; }
+.site-toggle {
+  display: flex;
+  border: 1px solid var(--site-line);
+  overflow: hidden;
+}
+.site-toggle button {
+  flex: 1;
+  padding: 9px;
+  border: none;
+  background: #F6F1E4;
+  font: 400 15px/1 'EB Garamond', serif;
+  cursor: pointer;
+  color: var(--site-ink);
+}
+.site-toggle button.active { background: var(--site-ink); color: var(--site-cream); }
+
+.room-list-item {
+  border: 1px solid var(--site-line);
+  background: #F6F1E4;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.room-list-item .meta { font: 400 14.5px/1.4 'EB Garamond', serif; color: #8A836F; }
+.room-status-pill {
+  font: 400 12.5px/1 'EB Garamond', serif;
+  padding: 3px 8px;
+  border: 1px solid var(--site-line);
+  color: #5B5648;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.room-status-pill.playing { background: #2F4633; color: #F6F1E4; border-color: #2F4633; }
+.room-status-pill.demon-select { background: #B4322C; color: #F6F1E4; border-color: #B4322C; }
+
+/* ---------- Tokyo Brain Pop game chrome ---------- */
+.tbp {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 18px 80px;
+}
+.tbp h1, .tbp h2, .tbp h3 {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 700;
+  color: var(--tbp-yellow);
+  margin: 0 0 12px;
+}
+.tbp-title {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 6vw, 46px);
+  color: var(--tbp-yellow);
+  letter-spacing: .01em;
+  transform: skewX(-4deg);
+  margin: 0 0 18px;
+}
+.tbp-card {
+  border: 2px solid var(--tbp-line);
+  background: var(--tbp-bg-2);
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+.tbp-card.demon { border-color: var(--tbp-red); }
+.tbp-pill {
+  display: inline-block;
+  font: 700 12.5px/1 'Baloo 2', sans-serif;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--tbp-yellow);
+  color: #231F20;
+  letter-spacing: .03em;
+}
+.tbp-pill.red { background: var(--tbp-red); color: #EFE6C8; }
+.tbp-pill.outline { background: transparent; border: 1px solid var(--tbp-cream-dim); color: var(--tbp-cream); }
+.tbp-btn {
+  font: 700 15px/1 'Baloo 2', sans-serif;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 2px solid var(--tbp-yellow);
+  background: var(--tbp-yellow);
+  color: #231F20;
+  cursor: pointer;
+  letter-spacing: .02em;
+}
+.tbp-btn:hover { filter: brightness(1.08); }
+.tbp-btn:disabled { opacity: .35; cursor: not-allowed; }
+.tbp-btn.outline { background: transparent; color: var(--tbp-yellow); }
+.tbp-btn.red { background: var(--tbp-red); border-color: var(--tbp-red); color: #EFE6C8; }
+.tbp-btn.small { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+.tbp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+.tbp-muted { color: var(--tbp-cream-dim); font-size: 14.5px; }
+.tbp-drama-track { display: flex; gap: 5px; }
+.tbp-drama-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--tbp-red);
+  background: transparent;
+}
+.tbp-drama-dot.filled { background: var(--tbp-red); }
+.tbp-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.tbp-tab {
+  font: 700 13.5px/1 'Baloo 2', sans-serif;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--tbp-line);
+  background: var(--tbp-bg-2);
+  color: var(--tbp-cream-dim);
+  cursor: pointer;
+}
+.tbp-tab.active { background: var(--tbp-yellow); color: #231F20; border-color: var(--tbp-yellow); }
+.tbp-log {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 14px;
+  color: var(--tbp-cream-dim);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 4px;
+}
+.tbp-badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+a.tbp-back { color: var(--tbp-cream-dim); text-decoration: none; font-size: 14px; }
+a.tbp-back:hover { color: var(--tbp-yellow); }
+.tbp-flex-between { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tbp-select, .tbp-textinput {
+  font: 400 15px/1.2 'Lora', serif;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--tbp-line);
+  background: var(--tbp-bg);
+  color: var(--tbp-cream);
+}

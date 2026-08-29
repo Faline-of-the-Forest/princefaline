@@ -713,5 +713,6 @@ function copyDir(src, dest) {
 copyDir(path.join(ROOT, "uploads"), path.join(DIST, "uploads"));
 copyDir(path.join(ROOT, "assets"), path.join(DIST, "assets"));
 if (fs.existsSync(path.join(ROOT, "admin"))) copyDir(path.join(ROOT, "admin"), path.join(DIST, "admin"));
+copyDir(path.join(ROOT, "Games", "Tokyo Brain Pop", "app"), path.join(DIST, "games", "tokyo-brain-pop"));
 
 console.log("Built", campaigns.length + 1, "campaign pages,", reviews.length + 1, "review pages, home, games.");

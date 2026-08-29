@@ -103,6 +103,19 @@
       "note": "The first dashboard I built. Action points, stamina and mana, all calculated. Kept for the record.",
       "url": "#",
       "host": "vercel.app/dash/hollowed-roots"
+    },
+    {
+      "t": "Headmaster's Desk",
+      "c": "Tokyo Brain Pop",
+      "sys": "Tokyo Brain Pop",
+      "tags": [
+        "multiplayer",
+        "GM screen",
+        "live sync"
+      ],
+      "note": "A real-time room for the whole table: character select, Demon selection, Scene Control, Drama and the Class Vote, all synced live.",
+      "url": "/games/tokyo-brain-pop/",
+      "host": "princefaline.com/games/tokyo-brain-pop"
     }
   ]
 }
