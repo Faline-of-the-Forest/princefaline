@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html translate="no">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google" content="notranslate">
 <title>Tokyo Brain Pop!?</title>
 <link rel="icon" type="image/png" href="assets/icon_tbp.png">
 <script>window.__TBPNetReady=new Promise(function(r){window.__TBPNetResolve=r;});</script>
@@ -11,7 +12,7 @@
 <script type="module">import { TBPHome } from "./js/tbp-home.js"; window.TBPHome = TBPHome;</script>
 <script src="vendor/dc-runtime.js"></script>
 </head>
-<body>
+<body class="notranslate" translate="no">
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -29,12 +30,12 @@
 </helmet>
 <div ref="{{ rootRef }}" style="position: relative; width: 100vw; height: 100vh; overflow: hidden; background: #EEE41B; display: flex; align-items: center; justify-content: center; font-family: 'Zen Kaku Gothic New', system-ui, sans-serif; color: #100D0B; user-select: none;">
 
-  <div style="position: relative; flex: 0 0 auto; width: 1920px; height: 1080px; overflow: hidden; background: #EEE41B; transform: scale(var(--tbp-scale, 1)); transform-origin: center center;">
+  <div style="position: absolute; inset: -20vmax; background-image: radial-gradient(#100D0B 1.8px, transparent 1.9px); background-size: 18px 18px; opacity: var(--tbp-dots, 0.16); animation: tbp-drift 6s linear infinite; pointer-events: none;"></div>
 
-    <div style="position: absolute; inset: -400px; background-image: radial-gradient(#100D0B 1.8px, transparent 1.9px); background-size: 18px 18px; opacity: var(--tbp-dots, 0.16); animation: tbp-drift 6s linear infinite; pointer-events: none;"></div>
+  <div style="position: absolute; left: -50vw; top: 43.52vh; width: 200vw; height: 15.63vw; background: var(--tbp-accent, #D2232A); transform: rotate(-13deg); animation: tbp-zap 5s ease-in-out infinite; box-shadow: 0 0 0 9px #100D0B;"></div>
+  <div style="position: absolute; left: -50vw; top: 43.52vh; width: 200vw; height: 15.63vw; transform: rotate(-13deg); background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.2) 0 5px, transparent 5px 52px); pointer-events: none;"></div>
 
-    <div style="position: absolute; left: -400px; top: 470px; width: 2800px; height: 300px; background: var(--tbp-accent, #D2232A); transform: rotate(-13deg); animation: tbp-zap 5s ease-in-out infinite; box-shadow: 0 0 0 9px #100D0B;"></div>
-    <div style="position: absolute; left: -400px; top: 470px; width: 2800px; height: 300px; transform: rotate(-13deg); background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.2) 0 5px, transparent 5px 52px); pointer-events: none;"></div>
+  <div style="position: relative; flex: 0 0 auto; width: 1920px; height: 1080px; overflow: hidden; transform: scale(var(--tbp-scale, 1)); transform-origin: center center;">
 
     <div style="position: absolute; right: -30px; bottom: -18px; width: 1090px; height: 1048px; z-index: 3;">
       <div role="img" aria-label="Psi Division 4 squad key art" style="position: absolute; inset: 0; background-image: url('title/squad-cutout.png'); background-repeat: no-repeat; background-size: contain; background-position: right bottom; animation: tbp-bob 7s ease-in-out infinite; filter: drop-shadow(0 0 3px rgba(238,228,27,.9));"></div>
