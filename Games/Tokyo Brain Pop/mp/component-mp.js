@@ -24,9 +24,17 @@ var MP_LOCAL = {
   ui: 1, gmOpen: 1, gmDraft: 1, focusSeat: 1, picking: 1, pickStep: 1,
   speeds: 1, spinning: 1, justCleared: 1, player: 1, debugVisible: 1, chars: 1
 };
-// The durable, shared per-Student fields. Everything else on a char (phase,
-// face, reelY, hover flags) is local animation and stays put.
-var MP_CHAR = ['drama', 'psiCost', 'pop', 'broken', 'psychic', 'votedOnce', 'quirk'];
+// The durable, shared per-Student fields.
+//
+// `face`, `phase`, `psiUsed` and `breakResult` are the OUTCOME of a roll, a PSI
+// use or a Break — table-wide facts, not decoration, so they have to travel:
+// without them a Student's die lands only on her own screen. What stays local
+// is the animation driving them (reelY, reelSpeed, landing) and pure hover
+// state (detail, psiHover, psiExit, iconHover).
+var MP_CHAR = [
+  'drama', 'psiCost', 'pop', 'broken', 'psychic', 'votedOnce', 'quirk',
+  'face', 'phase', 'psiUsed', 'breakResult'
+];
 
 function mpNeuter(v, depth) {
   if (typeof v === 'function') return function () {};
@@ -62,11 +70,18 @@ class Component extends TBPBase {
     return JSON.parse(JSON.stringify(out));
   }
 
+  // True only while a die is physically spinning ON THIS MACHINE.
+  //
+  // Deliberately keyed on reelSpeed rather than phase: reelSpeed is driven by a
+  // local requestAnimationFrame loop and is never synced, so it can only be
+  // non-zero here. Using `phase` would deadlock — we now mirror a remote
+  // player's phase:'rolling', and if their tab died mid-roll every future
+  // update would be deferred forever waiting for a spin that isn't ours.
   mpBusy() {
     var cs = this.state.chars || [];
-    for (var i = 0; i < cs.length; i++) if (cs[i].phase === 'rolling') return true;
+    for (var i = 0; i < cs.length; i++) if (cs[i].reelSpeed > 0) return true;
     var dr = this.state.demonRoll;
-    return !!(dr && dr.phase === 'rolling');
+    return !!(dr && dr.reelSpeed > 0);
   }
 
   mpApplyRemote(shared) {
