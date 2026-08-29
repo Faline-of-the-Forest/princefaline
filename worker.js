@@ -84,6 +84,25 @@ function slugify(s) {
   return s.toLowerCase().trim().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
+// Merges the session ledger into a campaign's episode list: ledger supplies
+// date/rt/n (and a default title) for every logged session; any episode data
+// already written by the admin (title, hook/summary, img) is kept by matching
+// on session order, so re-syncing never clobbers hand-written recaps.
+function syncEpisodes(existing, sessions, slug) {
+  const rows = sessions.filter(s => s.campaignSlug === slug);
+  return rows.map((s, i) => {
+    const prev = existing[i] || {};
+    return {
+      n: String(i + 1).padStart(2, "0"),
+      date: s.d,
+      rt: s.rt,
+      title: prev.title || s.t,
+      hook: prev.hook || "",
+      img: prev.img || "",
+    };
+  });
+}
+
 async function loadCampaignsIndex(env) {
   const entries = await listDir("content/campaigns", env);
   return Promise.all(entries.filter(e => e.name.endsWith(".json")).map(async e => {
@@ -121,9 +140,23 @@ async function handleApi(request, env, url) {
         const entries = await listDir("content/reviews", env);
         const items = await Promise.all(entries.filter(e => e.name.endsWith(".json")).map(async e => {
           const f = await getFile(`content/reviews/${e.name}`, env);
-          return { slug: f.content.slug, t: f.content.t, type: f.content.type, stars: f.content.stars };
+          return { slug: f.content.slug, t: f.content.t, ed: f.content.ed || "", type: f.content.type, sys: f.content.sys, stars: f.content.stars };
         }));
         return json({ items });
+      }
+      if (type === "people") {
+        const entries = await listDir("content/campaigns", env);
+        const camps = await Promise.all(entries.filter(e => e.name.endsWith(".json")).map(async e => {
+          const f = await getFile(`content/campaigns/${e.name}`, env);
+          return f.content;
+        }));
+        const byName = {};
+        camps.forEach(c => (c.cast || []).forEach(pc => {
+          if (!pc.player) return;
+          if (!byName[pc.player]) byName[pc.player] = [];
+          byName[pc.player].push({ campaign: c.name, slug: c.slug, role: pc.role || pc.kind || "" });
+        }));
+        return json({ items: Object.entries(byName).map(([name, appearances]) => ({ name, appearances })) });
       }
       return json({ error: "unknown type" }, 400);
     }
@@ -134,7 +167,9 @@ async function handleApi(request, env, url) {
       if (type === "campaigns") {
         const f = await getFile(`content/campaigns/${slug}.json`, env);
         if (!f) return json({ error: "not found" }, 404);
-        return json({ item: f.content });
+        const sessFile = await getFile("content/sessions.json", env);
+        const episodes = syncEpisodes(f.content.episodes || [], sessFile.content.sessions, slug);
+        return json({ item: { ...f.content, episodes } });
       }
       if (type === "reviews") {
         const f = await getFile(`content/reviews/${slug}.json`, env);
@@ -234,12 +269,19 @@ async function handleApi(request, env, url) {
       };
       if (body.ed) out.ed = body.ed;
       if (body.tagline) out.tagline = body.tagline;
-      if (body.tags) out.tags = body.tags.split(",").map(s => s.trim()).filter(Boolean);
-      if (body.premise) out.premise = body.premise.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
+      if (body.summary) out.summary = body.summary.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
       if (body.influences) out.influences = body.influences;
-      if (existing && existing.content.cast) out.cast = existing.content.cast;
-      if (existing && existing.content.episodes) out.episodes = existing.content.episodes;
-      if (existing && existing.content.materials) out.materials = existing.content.materials;
+      if (body.materials) { try { out.materials = JSON.parse(body.materials); } catch (e) { out.materials = []; } }
+      if (body.cast) { try { out.cast = JSON.parse(body.cast); } catch (e) { out.cast = []; } }
+
+      // Episodes are always re-derived from the session ledger so newly
+      // logged sessions show up automatically; hand-written titles/summaries
+      // sent up from the form (admin edits) are preserved by session order.
+      const sessFile = await getFile("content/sessions.json", env);
+      let incomingEpisodes = [];
+      if (body.episodes) { try { incomingEpisodes = JSON.parse(body.episodes); } catch (e) { incomingEpisodes = []; } }
+      out.episodes = syncEpisodes(incomingEpisodes.length ? incomingEpisodes : (existing ? existing.content.episodes || [] : []), sessFile.content.sessions, slug);
+
       await putFile(`content/campaigns/${slug}.json`, out, existing ? existing.sha : null, `${existing ? "Update" : "Add"} campaign: ${body.name}`, env);
       return json({ ok: true, slug });
     }
@@ -420,19 +462,32 @@ function adminPage() {
     <form id="form-campaigns" class="editform hidden">
       <label>Name (must match ledger campaign names exactly)</label><input name="name" required>
       <label>Slug (leave blank to auto-generate; don't change when editing)</label><input name="slug">
-      <div class="row">
-        <div><label>System</label><input name="sys" required></div>
-        <div><label>Edition/Version (optional)</label><input name="ed" placeholder="e.g. Deluxe, VTR"></div>
-      </div>
+      <label>System (from Reviews marked as "System")</label>
+      <select name="sysReview" id="sysReviewSelect"><option value="">— choose a system —</option></select>
+      <input type="hidden" name="sys"><input type="hidden" name="ed">
       <label>Status</label>
       <select name="status"><option value="running">Running</option><option value="between arcs">Between Arcs</option><option value="concluded">Concluded</option></select>
       <label>Tagline</label><input name="tagline">
-      <label>Tags (comma-separated)</label><input name="tags">
-      <label>Premise (separate paragraphs with a blank line)</label><textarea name="premise"></textarea>
+      <label>Summary (separate paragraphs with a blank line)</label><textarea name="summary"></textarea>
       <label>Influences</label><input name="influences">
+      <label>Materials (search Reviews)</label>
+      <input id="materialsSearch" placeholder="Type to search reviews…" autocomplete="off">
+      <div id="materialsChips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+      <div id="materialsResults" style="border:1px solid var(--line);background:var(--panel);max-height:160px;overflow-y:auto;display:none;margin-top:4px"></div>
+      <input type="hidden" name="materials">
       <label>Banner image</label>
       <img class="thumb hidden">
       <input name="bannerFile" type="file" accept="image/*">
+
+      <label style="margin-top:22px">Cast</label>
+      <div id="castRows"></div>
+      <button type="button" class="secondary" id="addCastRow" style="margin-top:6px">+ Add Character</button>
+      <input type="hidden" name="cast">
+
+      <label style="margin-top:22px">Episodes (from the ledger)</label>
+      <p style="font-size:13px;color:var(--faint);margin:0 0 6px">Date, number and runtime come from logged sessions automatically. Add a title, summary and portrait for each.</p>
+      <div id="episodeRows"></div>
+      <input type="hidden" name="episodes">
     </form>
 
     <form id="form-reviews" class="editform hidden">
@@ -545,6 +600,157 @@ function renderRow(type, item) {
 const backdrop = el("#modal-backdrop");
 const modalTitle = el("#modal-title");
 
+// ---------- campaign form: system / materials / cast / episodes ----------
+state.reviews = null;
+state.people = null;
+state.materials = [];
+state.cast = [];
+state.episodes = [];
+
+async function ensureReviewsAndPeople() {
+  if (!state.reviews) { try { state.reviews = (await api("GET", "/api/list?type=reviews")).items; } catch (e) { state.reviews = []; } }
+  if (!state.people) { try { state.people = (await api("GET", "/api/list?type=people")).items; } catch (e) { state.people = []; } }
+}
+
+async function populateSysSelect(currentSys, currentEd) {
+  await ensureReviewsAndPeople();
+  const sel = el("#sysReviewSelect");
+  const systems = state.reviews.filter(r => r.type === "System");
+  sel.innerHTML = '<option value="">— choose a system —</option>' +
+    systems.map(r => '<option value="' + r.slug + '">' + escapeHtml(r.t) + (r.ed ? ' (' + escapeHtml(r.ed) + ')' : '') + '</option>').join("");
+  const match = systems.find(r => r.t === currentSys && (r.ed || "") === (currentEd || ""));
+  sel.value = match ? match.slug : "";
+}
+el("#sysReviewSelect").addEventListener("change", () => {
+  const r = (state.reviews || []).find(x => x.slug === el("#sysReviewSelect").value);
+  el('#form-campaigns [name="sys"]').value = r ? r.t : "";
+  el('#form-campaigns [name="ed"]').value = r ? (r.ed || "") : "";
+});
+
+function renderMaterialsChips() {
+  const box = el("#materialsChips");
+  box.innerHTML = state.materials.map((t, i) =>
+    '<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--line);font-size:13px">' +
+      escapeHtml(t) + ' <span data-rm="' + i + '" style="cursor:pointer;color:var(--accent)">&times;</span></span>'
+  ).join("");
+  els("[data-rm]", box).forEach(x => x.addEventListener("click", () => { state.materials.splice(Number(x.dataset.rm), 1); renderMaterialsChips(); }));
+  el('#form-campaigns [name="materials"]').value = JSON.stringify(state.materials);
+}
+el("#materialsSearch").addEventListener("input", async () => {
+  await ensureReviewsAndPeople();
+  const q = el("#materialsSearch").value.trim().toLowerCase();
+  const results = el("#materialsResults");
+  if (!q) { results.style.display = "none"; results.innerHTML = ""; return; }
+  const matches = state.reviews.filter(r => r.t.toLowerCase().includes(q) && !state.materials.includes(r.t)).slice(0, 8);
+  if (!matches.length) { results.style.display = "none"; results.innerHTML = ""; return; }
+  results.style.display = "block";
+  results.innerHTML = matches.map(r => '<div data-pick="' + escapeHtml(r.t) + '" style="padding:8px 10px;cursor:pointer;border-bottom:1px solid #E6DFCB">' + escapeHtml(r.t) + '</div>').join("");
+  els("[data-pick]", results).forEach(x => x.addEventListener("click", () => {
+    state.materials.push(x.dataset.pick);
+    renderMaterialsChips();
+    el("#materialsSearch").value = "";
+    results.style.display = "none"; results.innerHTML = "";
+  }));
+});
+
+function showAppearances(name, anchor) {
+  const person = (state.people || []).find(p => p.name === name);
+  const list = person ? person.appearances.map(a => a.campaign + (a.role ? " (" + a.role + ")" : "")).join("\\n") : "No other appearances yet.";
+  alert(name + " has appeared in:\\n" + list);
+}
+
+async function uploadRowImage(fileInput, thumbImg) {
+  if (!fileInput.files[0]) return null;
+  const b64 = await fileToBase64(fileInput.files[0]);
+  const up = await api("POST", "/api/upload-image", { filename: fileInput.files[0].name, base64: b64 });
+  if (thumbImg) { thumbImg.src = up.path; thumbImg.classList.remove("hidden"); }
+  return up.path;
+}
+
+function castRowEl(data) {
+  const row = document.createElement("div");
+  row.style.cssText = "border:1px solid var(--line);padding:10px;margin-bottom:10px;background:var(--panel)";
+  row.innerHTML =
+    '<div class="row"><div><label>Name</label><input data-f="name"></div><div><label>Role</label><input data-f="role"></div></div>' +
+    '<label>Portrayed by</label>' +
+    '<div style="display:flex;gap:6px"><input data-f="player" list="peopleList" style="flex:1"><button type="button" class="secondary" data-view>View</button></div>' +
+    '<label>Description</label><textarea data-f="bio"></textarea>' +
+    '<label>Portrait</label><img class="thumb hidden" data-thumb><input type="file" accept="image/*" data-f="portraitFile">' +
+    '<button type="button" class="danger" data-remove style="margin-top:8px">Remove</button>';
+  row.querySelector('[data-f="name"]').value = data.name || "";
+  row.querySelector('[data-f="role"]').value = data.role || data.kind || "";
+  row.querySelector('[data-f="player"]').value = data.player || "";
+  row.querySelector('[data-f="bio"]').value = data.bio || "";
+  row.dataset.portrait = data.portrait || "";
+  const thumb = row.querySelector('[data-thumb]');
+  if (data.portrait) { thumb.src = data.portrait; thumb.classList.remove("hidden"); }
+  row.querySelector('[data-view]').addEventListener("click", () => showAppearances(row.querySelector('[data-f="player"]').value));
+  row.querySelector('[data-remove]').addEventListener("click", () => row.remove());
+  row.querySelector('[data-f="portraitFile"]').addEventListener("change", async (e) => {
+    const path = await uploadRowImage(e.target, thumb);
+    if (path) row.dataset.portrait = path;
+  });
+  return row;
+}
+
+async function renderCastRows(cast) {
+  await ensureReviewsAndPeople();
+  let dl = el("#peopleList");
+  if (!dl) { dl = document.createElement("datalist"); dl.id = "peopleList"; document.body.appendChild(dl); }
+  dl.innerHTML = state.people.map(p => '<option value="' + escapeHtml(p.name) + '">').join("");
+  const box = el("#castRows");
+  box.innerHTML = "";
+  (cast || []).forEach(pc => box.appendChild(castRowEl(pc)));
+}
+el("#addCastRow").addEventListener("click", () => el("#castRows").appendChild(castRowEl({})));
+
+function collectCastRows() {
+  return els("#castRows > div").map(row => ({
+    name: row.querySelector('[data-f="name"]').value,
+    role: row.querySelector('[data-f="role"]').value,
+    player: row.querySelector('[data-f="player"]').value,
+    bio: row.querySelector('[data-f="bio"]').value,
+    portrait: row.dataset.portrait || "",
+  })).filter(c => c.name);
+}
+
+function episodeRowEl(ep) {
+  const row = document.createElement("div");
+  row.style.cssText = "border:1px solid var(--line);padding:10px;margin-bottom:10px;background:var(--panel)";
+  row.dataset.n = ep.n; row.dataset.date = ep.date; row.dataset.rt = ep.rt;
+  row.innerHTML =
+    '<div style="font-size:13px;color:var(--faint);margin-bottom:6px">Episode ' + escapeHtml(ep.n) + ' · ' + escapeHtml(ep.date) + ' · ' + escapeHtml(ep.rt) + '</div>' +
+    '<label>Title</label><input data-f="title">' +
+    '<label>Summary</label><textarea data-f="hook"></textarea>' +
+    '<label>Portrait</label><img class="thumb hidden" data-thumb><input type="file" accept="image/*" data-f="portraitFile">';
+  row.querySelector('[data-f="title"]').value = ep.title || "";
+  row.querySelector('[data-f="hook"]').value = ep.hook || "";
+  row.dataset.img = ep.img || "";
+  const thumb = row.querySelector('[data-thumb]');
+  if (ep.img) { thumb.src = ep.img; thumb.classList.remove("hidden"); }
+  row.querySelector('[data-f="portraitFile"]').addEventListener("change", async (e) => {
+    const path = await uploadRowImage(e.target, thumb);
+    if (path) row.dataset.img = path;
+  });
+  return row;
+}
+
+function renderEpisodeRows(episodes) {
+  const box = el("#episodeRows");
+  box.innerHTML = "";
+  if (!episodes || !episodes.length) { box.innerHTML = '<div class="empty">No sessions logged for this campaign yet.</div>'; return; }
+  episodes.forEach(ep => box.appendChild(episodeRowEl(ep)));
+}
+
+function collectEpisodeRows() {
+  return els("#episodeRows > div").filter(row => row.dataset.n).map(row => ({
+    n: row.dataset.n, date: row.dataset.date, rt: row.dataset.rt,
+    title: row.querySelector('[data-f="title"]').value,
+    hook: row.querySelector('[data-f="hook"]').value,
+    img: row.dataset.img || "",
+  }));
+}
+
 async function populateCampaignSelect() {
   const sel = el("#campaignSelect");
   if (!state.campaigns.length) {
@@ -568,6 +774,14 @@ async function openModal(type, id) {
 
   if (type === "sessions") await populateCampaignSelect();
 
+  if (type === "campaigns") {
+    state.materials = []; state.cast = []; state.episodes = [];
+    renderMaterialsChips();
+    await renderCastRows([]);
+    renderEpisodeRows([]);
+    await populateSysSelect("", "");
+  }
+
   if (id === null || id === undefined) return; // new entry, nothing to prefill
 
   try {
@@ -580,10 +794,18 @@ async function openModal(type, id) {
     Object.keys(item).forEach(k => {
       const field = form.querySelector('[name="' + k + '"]');
       if (!field) return;
-      if (Array.isArray(item[k])) field.value = item[k].join(k === "premise" || k === "writeup" ? "\\n\\n" : ", ");
+      if (Array.isArray(item[k])) field.value = item[k].join(k === "summary" || k === "premise" || k === "writeup" ? "\\n\\n" : ", ");
       else field.value = item[k] == null ? "" : item[k];
     });
     if (type === "sessions") el("#campaignSelect").value = item.campaignSlug || "";
+    if (type === "campaigns") {
+      if (!item.summary && item.premise) el('#form-campaigns [name="summary"]').value = item.premise.join("\\n\\n");
+      state.materials = (item.materials || []).slice();
+      renderMaterialsChips();
+      await renderCastRows(item.cast || []);
+      renderEpisodeRows(item.episodes || []);
+      await populateSysSelect(item.sys, item.ed);
+    }
     const thumb = el(".thumb", form);
     if (thumb && (item.banner || item.cover)) {
       thumb.src = item.banner || item.cover;
@@ -626,6 +848,11 @@ el("#modal-save").addEventListener("click", async () => {
   const msg = el("#modal-msg");
   msg.textContent = "Saving…"; msg.className = "msg";
   try {
+    if (type === "campaigns") {
+      el('[name="cast"]', form).value = JSON.stringify(collectCastRows());
+      el('[name="episodes"]', form).value = JSON.stringify(collectEpisodeRows());
+      el('[name="materials"]', form).value = JSON.stringify(state.materials);
+    }
     const data = {};
     els("input,select,textarea", form).forEach(f => {
       if (f.type === "file") return;

@@ -371,12 +371,44 @@ function renderCampaignsIndex() {
   write("campaigns/index.html", layout({ title: "Campaign Library — Prince Faline's RPG Diaries", active: "Campaigns", body }));
 }
 
+// ---------- cast grid ----------
+// Groups cast cards into centered rows so the grid never leaves an
+// awkward lone card dangling on the last line.
+const CAST_ROW_PLANS = { 1: [1], 2: [2], 3: [3], 4: [2, 2], 5: [3, 2], 6: [3, 3], 7: [3, 2, 2], 8: [3, 3, 2], 9: [3, 3, 3], 10: [3, 3, 2, 2] };
+function castRows(n) {
+  if (CAST_ROW_PLANS[n]) return CAST_ROW_PLANS[n];
+  const rows = []; let left = n;
+  while (left > 0) { const take = Math.min(3, left); rows.push(take); left -= take; }
+  return rows;
+}
+function castCard(pc) {
+  const portrait = pc.portrait ? `background:url(${pc.portrait}) center/cover no-repeat` : `background:${stripes("#e4dcc6","#f3eedd")}`;
+  return `<div style="flex:1 1 300px;max-width:360px;border:1px solid #24211B;background:#FBF8EF;padding:14px;display:flex;gap:14px">
+    <div style="flex:0 0 66px;height:84px;${portrait};border:1px solid #C8BFA6;display:grid;place-items:center;font:400 14.5px/1.3 'EB Garamond',serif;color:#8A836F;text-align:center">${pc.portrait ? "" : "Portrait"}</div>
+    <div>
+      <div style="font:400 18px/1.25 'EB Garamond',serif">${esc(pc.name)}</div>
+      <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#A5231F;margin:4px 0 2px">${esc(pc.role || pc.kind)}</div>
+      <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#8A836F;margin-bottom:8px">PORTRAYED BY ${esc(pc.player)}</div>
+      <p style="font:400 18.1px/1.55 'EB Garamond',serif;color:#3A362C;margin:0;text-wrap:pretty">${esc(pc.bio)}</p>
+    </div>
+  </div>`;
+}
+function castLayout(cast) {
+  if (!cast.length) return "";
+  const rows = castRows(cast.length);
+  let i = 0;
+  return `<div style="display:flex;flex-direction:column;gap:14px">${rows.map(size => {
+    const chunk = cast.slice(i, i + size); i += size;
+    return `<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px">${chunk.map(castCard).join("")}</div>`;
+  }).join("")}</div>`;
+}
+
 // ---------- CAMPAIGN DETAIL ----------
 function renderCampaignDetail(c) {
   const st = statusStyle(c.status);
   const banner = c.banner ? `background:#EDE7D6 url(${c.banner}) center/cover no-repeat` : stripes("#e4dcc6", "#f3eedd");
-  const hasDetail = !!c.episodes;
-  const tags = c.tags || [c.sys, st.label];
+  const hasDetail = !!c.episodes && c.episodes.length > 0;
+  const summary = c.summary || c.premise || [];
 
   let detailSection = "";
   if (hasDetail) {
@@ -385,33 +417,25 @@ function renderCampaignDetail(c) {
       return `<div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline">${r ? `<a href="/reviews/${r.slug}/" style="font:400 16px/1.3 'EB Garamond',serif">${esc(t)}</a><span style="font:500 16.4px/1 'EB Garamond',serif;color:#A5231F">${stars(r.stars).full}</span>` : `<span style="font:400 16px/1.3 'EB Garamond',serif">${esc(t)}</span>`}</div>`;
     }).join("");
     detailSection = `
-      <section style="padding:40px 0 8px;text-align:center;max-width:66ch;margin:0 auto">
-        <div style="font:500 clamp(15px,2.2vw,19px)/1.4 'EB Garamond',serif;color:#A5231F;margin-bottom:24px">${esc(c.tagline)}</div>
-        ${(c.premise || []).map(p => `<p style="font:400 16.5px/1.62 'EB Garamond',serif;color:#3A362C;margin:0 0 15px;text-wrap:pretty">${esc(p)}</p>`).join("")}
-      </section>
-      <section style="display:flex;flex-wrap:wrap;gap:26px;padding:26px 0 12px;border-top:1px solid #C8BFA6;margin-top:28px">
-        <div style="flex:999 1 320px">
-          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:9px">Influences</div>
-          <p style="font:italic 400 15px/1.6 'EB Garamond',serif;color:#3A362C;margin:0">${esc(c.influences)}</p>
+      <section style="display:flex;flex-wrap:wrap;gap:34px;padding:36px 0 12px">
+        <div style="flex:999 1 340px">
+          <div style="font:500 clamp(15px,2.2vw,19px)/1.4 'EB Garamond',serif;color:#A5231F;margin-bottom:18px">${esc(c.tagline)}</div>
+          ${summary.map(p => `<p style="font:400 16.5px/1.62 'EB Garamond',serif;color:#3A362C;margin:0 0 15px;text-wrap:pretty">${esc(p)}</p>`).join("")}
         </div>
-        <div style="flex:1 1 220px">
-          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:9px">Materials</div>
-          <div style="display:flex;flex-direction:column;gap:5px">${materials}</div>
+        <div style="flex:1 1 240px;display:flex;flex-direction:column;gap:24px">
+          <div>
+            <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:9px">Influences</div>
+            <p style="font:italic 400 15px/1.6 'EB Garamond',serif;color:#3A362C;margin:0">${esc(c.influences)}</p>
+          </div>
+          <div>
+            <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:9px">Materials</div>
+            <div style="display:flex;flex-direction:column;gap:5px">${materials}</div>
+          </div>
         </div>
       </section>
       <section style="padding:34px 0 0">
         <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 18px"><div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Casting</div><div style="flex:1;height:1px;background:#C8BFA6"></div></div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">
-          ${(c.cast || []).map(pc => `<div style="border:1px solid #24211B;background:#FBF8EF;padding:14px;display:flex;gap:14px">
-            <div style="flex:0 0 66px;height:84px;background:${stripes("#e4dcc6","#f3eedd")};border:1px solid #C8BFA6;display:grid;place-items:center;font:400 14.5px/1.3 'EB Garamond',serif;color:#8A836F;text-align:center">Portrait</div>
-            <div>
-              <div style="font:400 18px/1.25 'EB Garamond',serif">${esc(pc.name)}</div>
-              <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#A5231F;margin:4px 0 2px">${esc(pc.kind)}</div>
-              <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#8A836F;margin-bottom:8px">PORTRAYED BY #${esc(pc.player)}</div>
-              <p style="font:400 18.1px/1.55 'EB Garamond',serif;color:#3A362C;margin:0;text-wrap:pretty">${esc(pc.bio)}</p>
-            </div>
-          </div>`).join("")}
-        </div>
+        ${castLayout(c.cast || [])}
       </section>
       <section style="padding:34px 0 0">
         <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 16px"><div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Episodes</div><div style="flex:1;height:1px;background:#C8BFA6"></div></div>
@@ -425,7 +449,7 @@ function renderCampaignDetail(c) {
         </div>
         <div style="display:flex;flex-direction:column;gap:0">
           ${c.episodes.map((e, i) => `<div id="ep-${e.n}" style="display:flex;flex-wrap:wrap;gap:18px;padding:22px 0;border-top:1px solid #C8BFA6;scroll-margin-top:80px">
-            <div style="flex:0 0 168px"><div style="width:168px;aspect-ratio:1;box-sizing:border-box;background:${(c.covers && c.covers[i]) ? `url(${c.covers[i]}) center/cover no-repeat` : stripes("#e4dcc6","#f1ecdb")};border:1px solid #24211B"></div></div>
+            <div style="flex:0 0 168px"><div style="width:168px;aspect-ratio:1;box-sizing:border-box;background:${e.img ? `url(${e.img}) center/cover no-repeat` : ((c.covers && c.covers[i]) ? `url(${c.covers[i]}) center/cover no-repeat` : stripes("#e4dcc6","#f1ecdb"))};border:1px solid #24211B"></div></div>
             <div style="flex:999 1 300px">
               <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:9px"><span style="font:500 20.5px/1 'EB Garamond',serif;color:#A5231F">${e.n}.</span><span style="font:400 26px/1.1 'EB Garamond',serif">${esc(e.title)}</span></div>
               <p style="font:400 16px/1.62 'EB Garamond',serif;color:#3A362C;margin:0 0 4px;max-width:68ch;text-wrap:pretty">${esc(e.hook)}</p>
@@ -456,7 +480,10 @@ function renderCampaignDetail(c) {
       <div style="padding:20px 22px;display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end">
         <div style="flex:999 1 300px">
           <h1 style="font:400 clamp(32px,5vw,50px)/1 'EB Garamond',serif;margin:0 0 12px">${esc(c.name)}</h1>
-          <div style="display:flex;flex-wrap:wrap;gap:6px">${tags.map(t => `<span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">${esc(t)}</span>`).join("")}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">${sysTag(c.sys, c.ed, { nameStyle: "font:400 15.4px/1 'EB Garamond',serif;color:#5B5648", pillStyle: "font:400 12px/1 'EB Garamond',serif;color:#8A836F;border:1px solid #C8BFA6;padding:1px 4px" })}</span>
+            <span style="padding:4px 8px;border:1px solid ${st.pillBd};background:${st.pillBg};color:${st.pillFg};font:400 15.4px/1 'EB Garamond',serif">${st.label}</span>
+          </div>
         </div>
         <div style="flex:1 1 200px;display:flex;gap:22px;flex-wrap:wrap">
           <div><div style="font:400 26px/1 'EB Garamond',serif">${c.n}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:5px">Sessions</div></div>
