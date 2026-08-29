@@ -37,6 +37,14 @@ export const PSI_SHARED = [
   { short: 'POP!', kind: 'SHARED', bg: '#9CB39A', name: 'BRAIN POP!', desc: 'Make someone’s head explode, bursting apart and spraying gore and bone fragments in all directions. Pretty gross.' }
 ];
 
+// Real location photography from the "Table Screen" reference (LOCATIONS array).
+export const LOCATIONS = [
+  { id: 'school', name: 'SCHOOL', img: 'assets/place-school.jpg', subs: ['Class 2-A', 'The Roof, After Bell', 'Old Music Room', 'Nurse’s Office'] },
+  { id: 'city', name: 'CITY', img: 'assets/place-city.jpg', subs: ['Shinjuku, 11pm', 'Under the Overpass', 'Karaoke Booth 4'] },
+  { id: 'mall', name: 'SHOPPING STREET', img: 'assets/place-mall.jpg', subs: ['The Crepe Stand', 'Arcade, Back Row', 'Closing Time'] },
+  { id: 'forest', name: 'FOREST', img: 'assets/place-forest.jpg', subs: ['The Shrine Steps', 'Under the Torii', 'Off the Path'] }
+];
+
 export const POP_TARGETS = { Most: 3, Average: 4, Least: 5 };
 export const POP_LABEL = { Most: 'MOST POPULAR', Average: 'AVERAGE', Least: 'LEAST POPULAR' };
 

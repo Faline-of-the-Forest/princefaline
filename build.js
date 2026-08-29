@@ -713,6 +713,19 @@ function copyDir(src, dest) {
 copyDir(path.join(ROOT, "uploads"), path.join(DIST, "uploads"));
 copyDir(path.join(ROOT, "assets"), path.join(DIST, "assets"));
 if (fs.existsSync(path.join(ROOT, "admin"))) copyDir(path.join(ROOT, "admin"), path.join(DIST, "admin"));
-copyDir(path.join(ROOT, "Games", "Tokyo Brain Pop", "app"), path.join(DIST, "games", "tokyo-brain-pop"));
+
+// copyDirAll: unlike copyDir above, copies every file verbatim (including
+// .png/.jpg) — used for app bundles that ship their own art with no webp
+// pipeline, where copyDir's image filter would silently drop them.
+function copyDirAll(src, dest) {
+  if (!fs.existsSync(src)) return;
+  fs.mkdirSync(dest, { recursive: true });
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const s = path.join(src, entry.name), d = path.join(dest, entry.name);
+    if (entry.isDirectory()) copyDirAll(s, d);
+    else fs.copyFileSync(s, d);
+  }
+}
+copyDirAll(path.join(ROOT, "Games", "Tokyo Brain Pop", "app"), path.join(DIST, "games", "tokyo-brain-pop"));
 
 console.log("Built", campaigns.length + 1, "campaign pages,", reviews.length + 1, "review pages, home, games.");
