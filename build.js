@@ -588,7 +588,7 @@ function renderReviewDetail(r) {
 function renderGames() {
   const tiles = dashboards.map(d => `<a href="${d.url}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;align-items:center;gap:10px;color:inherit">
     <div style="position:relative;width:112px;height:112px">
-      <div style="position:absolute;inset:0;border:2px solid #24211B;border-radius:24px;background:#FBF8EF;box-shadow:4px 4px 0 #24211B;display:grid;place-items:center"><span style="font:400 44px/1 'EB Garamond',serif;color:#A5231F">${esc(d.t.charAt(0))}</span></div>
+      <div style="position:absolute;inset:0;border:2px solid #24211B;border-radius:24px;background:#FBF8EF;box-shadow:4px 4px 0 #24211B;display:grid;place-items:center;overflow:hidden">${d.icon ? `<img src="${d.icon}" alt="" style="width:100%;height:100%;object-fit:cover">` : `<span style="font:400 44px/1 'EB Garamond',serif;color:#A5231F">${esc(d.t.charAt(0))}</span>`}</div>
       <div class="hover-overlay" style="position:absolute;inset:0;border-radius:24px;background:rgba(36,33,27,.94);color:#F6F1E4;padding:12px;display:flex;flex-direction:column;justify-content:center;gap:5px;text-align:center;opacity:0;transition:opacity .15s">
         <div style="font:400 15.5px/1.25 'EB Garamond',serif;color:#E8C87A">${esc(d.c)}</div>
         <div style="font:400 14.5px/1.3 'EB Garamond',serif;color:#C3BCA6">${esc(d.sys)}</div>

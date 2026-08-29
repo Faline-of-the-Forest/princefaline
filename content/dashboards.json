@@ -10,6 +10,7 @@
         "live sync"
       ],
       "note": "A real-time room for the whole table: character select, Demon selection, Scene Control, Drama and the Class Vote, all synced live.",
+      "icon": "/games/tokyo-brain-pop/assets/icon_tbp.png",
       "url": "/games/tokyo-brain-pop/",
       "host": "princefaline.com/games/tokyo-brain-pop"
     }
