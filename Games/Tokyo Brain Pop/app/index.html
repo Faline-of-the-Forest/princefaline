@@ -31,10 +31,10 @@
 
   <div style="position: relative; flex: 0 0 auto; width: 1920px; height: 1080px; overflow: hidden; background: #EEE41B; transform: scale(var(--tbp-scale, 1)); transform-origin: center center;">
 
-    <div style="position: absolute; inset: -40px; background-image: radial-gradient(#100D0B 1.8px, transparent 1.9px); background-size: 18px 18px; opacity: var(--tbp-dots, 0.16); animation: tbp-drift 6s linear infinite; pointer-events: none;"></div>
+    <div style="position: absolute; inset: -400px; background-image: radial-gradient(#100D0B 1.8px, transparent 1.9px); background-size: 18px 18px; opacity: var(--tbp-dots, 0.16); animation: tbp-drift 6s linear infinite; pointer-events: none;"></div>
 
-    <div style="position: absolute; left: -180px; top: 470px; width: 2300px; height: 300px; background: var(--tbp-accent, #D2232A); transform: rotate(-13deg); animation: tbp-zap 5s ease-in-out infinite; box-shadow: 0 0 0 9px #100D0B;"></div>
-    <div style="position: absolute; left: -180px; top: 470px; width: 2300px; height: 300px; transform: rotate(-13deg); background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.2) 0 5px, transparent 5px 52px); pointer-events: none;"></div>
+    <div style="position: absolute; left: -400px; top: 470px; width: 2800px; height: 300px; background: var(--tbp-accent, #D2232A); transform: rotate(-13deg); animation: tbp-zap 5s ease-in-out infinite; box-shadow: 0 0 0 9px #100D0B;"></div>
+    <div style="position: absolute; left: -400px; top: 470px; width: 2800px; height: 300px; transform: rotate(-13deg); background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.2) 0 5px, transparent 5px 52px); pointer-events: none;"></div>
 
     <div style="position: absolute; right: -30px; bottom: -18px; width: 1090px; height: 1048px; z-index: 3;">
       <div role="img" aria-label="Psi Division 4 squad key art" style="position: absolute; inset: 0; background-image: url('title/squad-cutout.png'); background-repeat: no-repeat; background-size: contain; background-position: right bottom; animation: tbp-bob 7s ease-in-out infinite; filter: drop-shadow(0 0 3px rgba(238,228,27,.9));"></div>
@@ -88,19 +88,18 @@
           </div>
         </button>
 
-      </div>
+        <button type="button" onMouseEnter="{{ hover3 }}" onClick="{{ go3 }}" onFocus="{{ hover3 }}" style="all: unset; cursor: pointer; display: block; background: {{ bg3 }}; color: {{ fg3 }}; transform: {{ tf3 }}; box-shadow: {{ sh3 }}; transition: transform .14s cubic-bezier(.2,.9,.3,1.5), background .14s, box-shadow .14s;" style-hover="filter: saturate(1.12)">
+          <div style="display: flex; align-items: center; gap: 22px; padding: 16px 32px 18px 24px; transform: skewX(9deg);">
+            <span style="font-family: 'Anton', sans-serif; font-size: 28px; opacity: .5; min-width: 44px;">04</span>
+            <span style="flex: 1;">
+              <span style="display: block; font-family: 'Anton', sans-serif; font-size: 46px; line-height: 1; letter-spacing: .025em; text-transform: uppercase;">Tutorial</span>
+              <span style="display: block; font-family: 'DotGothic16', monospace; font-size: 16px; letter-spacing: .22em; opacity: .7; margin-top: 6px;">チュートリアル</span>
+            </span>
+            <span style="font-family: 'Anton', sans-serif; font-size: 32px; opacity: {{ ar3 }};">▶</span>
+          </div>
+        </button>
 
-      <div style="display: flex; align-items: stretch; gap: 18px; margin-top: auto; width: 860px;">
-        <div style="flex: 1; background: #FFFDF0; border: 5px solid #100D0B; padding: 16px 20px 18px; box-shadow: 9px 9px 0 #100D0B;">
-          <div style="font-family: 'DotGothic16', monospace; font-size: 15px; letter-spacing: .18em; color: var(--tbp-accent, #D2232A);">{{ descTag }}</div>
-          <div style="font-size: 21px; line-height: 1.35; font-weight: 500; margin-top: 5px; text-wrap: pretty;">{{ descBody }}</div>
-        </div>
-        <div style="flex: 0 0 auto; background: #100D0B; color: #EEE41B; padding: 14px 18px; font-family: 'DotGothic16', monospace; font-size: 15px; letter-spacing: .14em; text-align: right; line-height: 1.8; align-self: center;">
-          <div>↑ ↓ SELECT</div>
-          <div>ENTER CONFIRM</div>
-        </div>
       </div>
-
 
     </div>
 
@@ -113,12 +112,14 @@
 const ITEMS = [
   { tag: "ROOM 作成 / HOST A SORTIE", body: "Open a new containment cell. Set the ward, pick a demon tier, and call in up to three espers." },
   { tag: "参加 / 6-DIGIT PSI CODE", body: "Drop into a sortie already in progress. Bring a clean uniform — the last one didn't come back." },
-  { tag: "校長室 / PROGRESS & SECRETS", body: "Report to the Headmaster. Ranks, brain-pop upgrades, and the files she keeps in the locked drawer." }
+  { tag: "校長室 / PROGRESS & SECRETS", body: "Report to the Headmaster. Ranks, brain-pop upgrades, and the files she keeps in the locked drawer." },
+  { tag: "チュートリアル / ORIENTATION", body: "Learn the ropes before your first sortie." }
 ];
 const ACTIONS = [
   "CELL OPEN — ROOM CODE PSI-4417 — WAITING FOR ALLIES…",
   "AWAITING PSI CODE INPUT…",
-  "SUMMONED. THE HEADMASTER IS LISTENING."
+  "SUMMONED. THE HEADMASTER IS LISTENING.",
+  "ORIENTATION COMING SOON."
 ];
 
 class TBPHomeBase extends DCLogic {
@@ -187,9 +188,7 @@ class TBPHomeBase extends DCLogic {
     const sel = this.state.sel;
     const vals = {
       rootRef: (el) => { this.rootEl = el; if (el) this.fit(); },
-      flash: this.state.flash,
-      descTag: ITEMS[sel].tag,
-      descBody: ITEMS[sel].body
+      flash: this.state.flash
     };
     for (let i = 0; i < ITEMS.length; i++) {
       const on = i === sel;
@@ -222,7 +221,8 @@ class Component extends TBPHomeBase {
       if (!H) return;             // network layer still loading
       if (i === 0) H.createRoom();
       else if (i === 1) H.joinRoom();
-      else H.headmaster();
+      else if (i === 2) H.headmaster();
+      // i === 3: Tutorial — coming soon, no destination yet.
     }, 90);
   }
 }
