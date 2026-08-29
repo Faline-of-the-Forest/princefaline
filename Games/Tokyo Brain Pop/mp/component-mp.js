@@ -33,8 +33,31 @@ var MP_LOCAL = {
 // state (detail, psiHover, psiExit, iconHover).
 var MP_CHAR = [
   'drama', 'psiCost', 'pop', 'broken', 'psychic', 'votedOnce', 'quirk',
-  'face', 'phase', 'psiUsed', 'breakResult'
+  'face', 'phase', 'psiUsed', 'breakResult', 'quirks'
 ];
+
+// Character Select writes a Student's chosen Quirks and Goals onto the
+// module-level SEATS/BIOS constants rather than into state, so those edits are
+// invisible to every other browser. The picks themselves (quirkPicks/goalPicks)
+// do sync, so we replay them here exactly the way advancePicker()/confirmGoals()
+// do locally. Without this, everyone else keeps the default Quirks and Goals.
+function mpReplayPicks(shared) {
+  var qp = shared.quirkPicks || {};
+  Object.keys(qp).forEach(function (k) {
+    var idx = qp[k];
+    if (!idx || idx.length !== 2) return;
+    var who = SEATS[k].who;
+    SEATS[k].quirks = idx.map(function (i) { return QUIRK_POOL[who][i]; });
+  });
+  var gp = shared.goalPicks || {};
+  Object.keys(gp).forEach(function (k) {
+    var idx = gp[k];
+    if (!idx || idx.length !== 2) return;
+    var who = SEATS[k].who, pool = GOAL_POOL[who];
+    BIOS[who].goals = idx.map(function (gi) { return pool[gi]; });
+    SEATS[k].goal = '“' + pool[idx[0]] + '”';
+  });
+}
 
 function mpNeuter(v, depth) {
   if (typeof v === 'function') return function () {};
@@ -108,8 +131,21 @@ class Component extends TBPBase {
         return merged;
       });
     }
+    mpReplayPicks(shared);
     // super.setState so our own push hook doesn't echo this straight back out.
     super.setState(patch);
+  }
+
+  // Claiming a Student: clicking a girl on the original Character Select is
+  // what binds this session to a seat. The screen itself is untouched — we just
+  // notice which one you opened.
+  openGoalPicker(k) {
+    var Net = window.TBPNet;
+    if (Net && Net.role === 'player' && Net.seat == null) {
+      Net.claimSeat(k);
+      super.setState({ player: k });
+    }
+    super.openGoalPicker(k);
   }
 
   mpPush() {
@@ -175,11 +211,12 @@ class Component extends TBPBase {
     if (!f || !Net || !Net.role) return out;
 
     if (Net.role !== 'gm') {
-      // Scene Control, the New Game/setup flow and the end-screen triggers are
-      // the Headmaster's alone. Hidden, not restyled — the markup is untouched.
+      // Scene Control and NEW GAME are the Headmaster's alone. Character Select
+      // is NOT gated — it is where a Student claims her girl, so every player
+      // needs it while the room is still in setup. Hidden, not restyled: the
+      // markup is untouched.
       f.gm = Object.assign({}, f.gm, { show: false, open: function () {}, dotBg: 'transparent' });
       f.newGame = { open: function () {} };
-      f.setup = Object.assign({}, f.setup, { open: false });
       if (f.gearToggle) f.gearToggle = mpNeuter(f.gearToggle);
     }
 

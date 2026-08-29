@@ -10,7 +10,15 @@
  * to the shipped template are:
  *   1. uuid references -> real relative file paths
  *   2. the logic class declaration renamed so mp/component-mp.js can subclass it
- *   3. three <script> tags added for the network layer and the room gate
+ *   3. added <title>, favicon and the script tags for the network layer + gate
+ *
+ * The title screen in "title screen/" gets the same treatment (its support.js is
+ * byte-identical to the game's dc-runtime, so they share one copy).
+ *
+ * Emits three pages:
+ *   index.html  the title screen — Create Room / Join Room / Headmaster
+ *   play.html   the game itself
+ *   rooms.html  the Headmaster's back office, behind the code
  *
  * Run: node unpack.js
  */
@@ -100,7 +108,7 @@ logic += '\n' + fs.readFileSync('mp/component-mp.js', 'utf8');
 template = template.slice(0, bodyStart) + logic + template.slice(bodyEnd);
 
 // ---- copy the multiplayer sources in and add their script tags --------------
-for (const f of ['tbp-net.js', 'tbp-gate.js']) {
+for (const f of ['tbp-net.js', 'tbp-gate.js', 'tbp-home.js', 'tbp-rooms.js']) {
   fs.copyFileSync(path.join('mp', f), path.join(OUT, 'js', f));
 }
 // Only the CDN libs belong in __resources. Identity entries for local assets
@@ -121,10 +129,56 @@ template = template.replace('<script src="vendor/dc-runtime.js"></script>',
 // brand art that isn't part of the original bundle (app/ is regenerated wholesale)
 fs.copyFileSync(path.join('brand', 'icon_tbp.png'), path.join(OUT, 'assets', 'icon_tbp.png'));
 
-fs.writeFileSync(path.join(OUT, 'index.html'), template);
+// The game now lives at play.html; index.html is the title screen.
+fs.writeFileSync(path.join(OUT, 'play.html'), template);
+
+// ---------------------------------------------------------------------------
+// Title screen — used as authored. Its support.js is byte-identical to the
+// game's dc-runtime, so it shares vendor/dc-runtime.js. Only three edits: asset
+// paths, the class rename so mp/home-mp.js can subclass it, and the script tags.
+// ---------------------------------------------------------------------------
+const TITLE_DIR = 'title screen';
+fs.mkdirSync(path.join(OUT, 'title'), { recursive: true });
+for (const f of fs.readdirSync(TITLE_DIR)) {
+  const src = path.join(TITLE_DIR, f);
+  if (!fs.statSync(src).isFile()) continue;
+  if (/\.(png|jpe?g)$/i.test(f)) fs.copyFileSync(src, path.join(OUT, 'title', f));
+}
+
+let home = fs.readFileSync(path.join(TITLE_DIR, 'Tokyo Brain Pop - Home.dc.html'), 'utf8');
+home = home.replace('<script src="./support.js"></script>',
+  '<title>Tokyo Brain Pop!?</title>\n' +
+  '<link rel="icon" type="image/png" href="assets/icon_tbp.png">\n' +
+  '<script>window.__TBPNetReady=new Promise(function(r){window.__TBPNetResolve=r;});</script>\n' +
+  '<script>window.__resources = ' + JSON.stringify(VENDOR) + ';</script>\n' +
+  '<script type="module" src="js/tbp-net.js"></script>\n' +
+  '<script type="module">import { TBPHome } from "./js/tbp-home.js"; window.TBPHome = TBPHome;</script>\n' +
+  '<script src="vendor/dc-runtime.js"></script>');
+// art sits under title/
+home = home.replace("url('squad-cutout.png')", "url('title/squad-cutout.png')")
+           .replace('src="logo-title-white.png"', 'src="title/logo-title-white.png"');
+if (!/class Component extends DCLogic/.test(home)) throw new Error('title screen logic class not found');
+home = home.replace('class Component extends DCLogic', 'class TBPHomeBase extends DCLogic');
+home = home.replace('</script>\n</body>', fs.readFileSync('mp/home-mp.js', 'utf8') + '\n</script>\n</body>');
+fs.writeFileSync(path.join(OUT, 'index.html'), home);
+
+// ---- the Headmaster's back office ------------------------------------------
+fs.writeFileSync(path.join(OUT, 'rooms.html'),
+  '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n' +
+  '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+  '<title>Headmaster — Tokyo Brain Pop!?</title>\n' +
+  '<link rel="icon" type="image/png" href="assets/icon_tbp.png">\n' +
+  '<link rel="preconnect" href="https://fonts.googleapis.com">\n' +
+  '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
+  '<link href="https://fonts.googleapis.com/css2?family=Anton&family=Zen+Kaku+Gothic+New:wght@500;700;900&family=DotGothic16&display=swap" rel="stylesheet">\n' +
+  '<style>html,body{margin:0;padding:0;background:#EEE41B}</style>\n' +
+  '<script>window.__TBPNetReady=new Promise(function(r){window.__TBPNetResolve=r;});</script>\n' +
+  '<script type="module" src="js/tbp-net.js"></script>\n' +
+  '</head>\n<body>\n<div id="app"></div>\n' +
+  '<script type="module" src="js/tbp-rooms.js"></script>\n</body>\n</html>\n');
 
 const stray = new RegExp('(^|[^/\\w-])[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?![.\\w-])', 'g');
 console.log('local files', uuid2path.size - fontCount, '| fonts', fontCount, '| vendor', Object.keys(VENDOR).length + 1);
 console.log('unresolved uuid refs:', (template.match(stray) || []).length);
 console.log('logic class grafted:', /class Component extends TBPBase/.test(template));
-console.log('index.html bytes:', template.length);
+console.log('pages: index.html (title), play.html (game), rooms.html (headmaster)');

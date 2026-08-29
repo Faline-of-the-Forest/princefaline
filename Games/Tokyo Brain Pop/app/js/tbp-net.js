@@ -104,6 +104,23 @@ const Net = {
     });
   },
 
+  // Bind this session to a Student mid-session (used when you claim a girl on
+  // the original Character Select rather than through the join screen).
+  async claimSeat(seat) {
+    this.seat = (seat == null ? null : +seat);
+    if (!this.roomId) return;
+    await updateDoc(doc(db, "rooms", this.roomId), {
+      ["players." + this.session + ".seat"]: this.seat
+    });
+  },
+
+  // Has play actually begun? A room that still has Character Select open is
+  // "not started" — you join it straight into that screen.
+  isStarted(data) {
+    if (!data || typeof data.sharedJson !== "string") return false;
+    try { return JSON.parse(data.sharedJson).setupOpen === false; } catch (e) { return false; }
+  },
+
   // Room management for the Headmaster's room list.
   listRooms(cb) {
     return onSnapshot(collection(db, "rooms"), (qs) => {
