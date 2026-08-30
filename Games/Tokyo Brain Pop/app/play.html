@@ -5023,8 +5023,10 @@
             <sc-for list="{{ f.setup.seats }}" as="s" hint-placeholder-count="4">
               <div sc-camel-on-mouse-enter="{{ s.focus }}" sc-camel-on-mouse-leave="{{ s.blur }}" sc-camel-on-click="{{ s.choose }}" style="cursor:pointer; position:relative; min-width:0; min-height:0; box-sizing:border-box; border:5px solid {{ s.border }}; border-radius:14px; overflow:hidden; background:{{ s.tone }}; box-shadow:0 7px 0 rgba(0,0,0,.45); transform:{{ s.lift }}">
                 <div style="position:absolute; inset:0; background-image:radial-gradient(#231F20 1.7px, transparent 2.2px); background-size:11px 11px; opacity:.22"></div>
-                <img src="{{ s.portrait }}" alt="student portrait" style="position:absolute; left:0; right:0; top:0; bottom:56px; width:100%; height:calc(100% - 56px); object-fit:cover; object-position:50% 6%; filter:{{ s.artFilter }}">
-                <div style="position:absolute; left:0; right:0; top:0; bottom:56px; background:{{ s.artWash }}"></div>
+                <sc-if value="{{ s.showPortrait }}" hint-placeholder-val="{{ true }}">
+                  <img src="{{ s.portrait }}" alt="student portrait" style="position:absolute; left:0; right:0; top:0; bottom:56px; width:100%; height:calc(100% - 56px); object-fit:cover; object-position:50% 6%; filter:{{ s.artFilter }}">
+                  <div style="position:absolute; left:0; right:0; top:0; bottom:56px; background:{{ s.artWash }}"></div>
+                </sc-if>
 
                 <div style="position:absolute; left:0; right:0; top:0; bottom:56px; box-sizing:border-box; background:rgba(27,24,25,.93); opacity:{{ s.infoOpacity }}; pointer-events:none; padding:14px 16px 12px; display:flex; flex-direction:column; gap:10px; overflow-y:auto">
                   <div style="flex:none; font-family:'Lora',serif; font-size:13.5px; line-height:1.36; color:#EFE6C8; text-wrap:pretty">{{ s.bio }}</div>
@@ -5408,15 +5410,15 @@ const SEATS = [
   {label:'KOTORI', who:'midori', pop:'Most', friend:2, rival:3,
    quirks:['“I’m Class President. If I tell you to do something, you’ll do it.”', '“Nobody on the track team can outrun me.”'],
    goal:'“I want to be elected Class President, unanimously.”',
-   psi:{short:'CRUSH!', name:'PSI CRUSH!', desc:'A burst of invisible force that pushes straight down or straight out. It is imprecise, and controlling its size and direction is nearly impossible, but whatever stands in its path is crushed under unbearable weight. It turns a body to pulp and pounds bone into the wall behind it. It is also horribly prone to collateral damage.'}},
+   psi:{short:'CRUSH!', name:'PSI CRUSH!', desc:'A burst of invisible force that pushes straight down or straight out. It is imprecise, but whatever stands in its path is crushed under unbearable weight. It turns a body to pulp and pounds bone into the wall behind it. It is also horribly prone to collateral damage.'}},
   {label:'UME', who:'ao', pop:'Least', friend:3, rival:0,
    quirks:['“Sometimes, spirits talk to me, and I always follow their guidance.”', '“I will never let any Demon best me in a duel.”'],
    goal:'“I want one real friend who knows what I can do.”',
-   psi:{short:'BLEED!', name:'PSI BLEED!', desc:'Take hold of the blood inside a body, yours or someone else’s, and move it. Blood can be drawn out through pores in a fine red mist, or torn free and held in the air as a blade. It is also possible to take a person by the arteries and puppet them from the inside. Manipulating blood is always messy, though, and it is hard to use on someone else without killing them, especially when they fight it.'}},
+   psi:{short:'BLEED!', name:'PSI BLEED!', desc:'Take hold of the blood inside a body, yours or someone else’s, and move it. Blood can be drawn out through pores in a fine red mist, or torn free and held in the air as a blade. It is also possible to take a person by the arteries and puppet them from the inside. Manipulating blood is always messy, and it is hard to use on someone else without killing them.'}},
   {label:'YUMI', who:'murasaki', pop:'Average', friend:0, rival:1,
    quirks:['“An eye for an eye... I always have my revenge.”', '“I would kill to protect my little sister.”'],
    goal:'“I want to find out what happened to my sister at Atarashi High.”',
-   psi:{short:'BURN!', name:'PSI BURN!', desc:'Create a pocket of burning heat in the open air, inside an object, or inside a person. You can spark a flame from nothing, boil water, warp steel, or cook the blood in someone’s veins until it steams out of them. The fire has a mind of its own, though, and it will happily take far more than it was meant to.'}}
+   psi:{short:'BURN!', name:'PSI BURN!', desc:'Create a pocket of burning heat in the open air, inside an object, or inside a person. You can spark a flame from nothing, boil water, warp steel, or cook the blood in someone’s veins until it steams out of them. However, the fire has a mind of its own, and it takes far more than it was meant to.'}}
 ];
 const PSI_SHARED = [
   {short:'STORM!', kind:'SHARED', bg:'#A9BEDC', name:'PSI STORM!', desc:'Levitate in the air, slowly spinning as psychic lightning fills the space around you. Terrifying to anyone watching.'},
@@ -5426,7 +5428,7 @@ const PSI_SHARED = [
 const BIOS = {
   momo: {goals:['Start a demon-hunting club before the term ends.', 'Prove to Kotori that my boyfriend is real.'], bio:'Sitting at the back of Class 2-B, Hiromi is a kind girl who apologizes when other people bump into her. She wears her uniform a size too large and keeps her cardigan on through the summer, and she gets anxious when her classmates look at her too long. Her parents are strict: a rigid curfew, a punishing diet, and grades that must never slip. Secretly, she is in love with her best friend, Kotori, but she will never muster the courage to tell her.'},
   midori: {goals:['Be elected Class President — unanimously.', 'Keep my diary of everyone’s secrets out of the wrong hands.'], bio:'President of Class 3-A, Kotori is a member of eleven clubs and counting. She works hard to be liked, remembering everyone’s birthday, covering other people’s committee work, and on top of all that she runs the fastest 400m in the prefecture while posting the top marks in every subject. The truth is that when Kotori decides she wants something, she finds a way to get it. She has three older sisters who all graduated at the top of their year before moving abroad, and a workaholic mother who is hardly ever home.'},
-  ao: {goals:['Find one real friend who knows what I can do.', 'Figure out what’s really living in my locker.'], bio:'The loneliest student in Class 2-B, Ume doesn’t have many friends, although it doesn’t seem to bother her. She spends every hour she isn’t required to be in class at the small shrine four streets from the school, keeping it tidy on her own. She carries a sword she found there, and she is certain it is her destiny to protect the world from the demons that terrorize Atarashi High. Her parents are humble people who run a small corner store and are too busy to keep track of their daughter’s whereabouts.'},
+  ao: {goals:['Find one real friend who knows what I can do.', 'Figure out what’s really living in my locker.'], bio:'The loneliest student in Class 2-B, Ume doesn’t have many friends, although it doesn’t seem to bother her. She spends every hour she isn’t required to be in class at the local shrine, keeping it tidy on her own. She carries a sword she found there, and she is certain it is her destiny to protect the world from Demons. Her parents are humble people who run a small corner store and are too busy to keep track of their daughter’s whereabouts.'},
   murasaki: {goals:['Find out what happened to my sister at Atarashi.', 'Win my twelfth fight.'], bio:'People tend to avoid the strange girl from 1-D. Yumi knows how unpleasant she can be and can’t be bothered to care what anyone thinks of her. She is cruel, petty, and vindictive, and it doesn’t take much to end up on her long list of enemies. The one person she softens around is her little sister, who goes to the middle school across the road. Her classmates would be shocked at how responsible she is at home, where she handles the housework and the cooking while her mother is away at work.'}
 };
 
@@ -6843,6 +6845,7 @@ class TBPBase extends DCLogic {
           btnInk: lk ? '#231F20' : 'rgba(239,230,200,.7)',
           btnLabel: lk ? 'CHOSEN' : 'CHOOSE',
           pickedByOther: false,
+          showPortrait: !allLocked,
           choose: () => { if (!allLocked) this.openGoalPicker(k); },
           focus: () => { if (this.state.picking == null && !allLocked) this.setState({focusSeat: k}); }
         };
@@ -7356,7 +7359,8 @@ class Component extends TBPBase {
             btnLabel: (locks[k] && mySeat) ? 'UNSELECT' : s.btnLabel,
             pickedByOther: pickedByOther,
             artFilter: pickedByOther ? 'grayscale(.9) brightness(.55)' : s.artFilter,
-            border: pickedByOther ? 'rgba(226,58,58,.5)' : s.border
+            border: pickedByOther ? 'rgba(226,58,58,.5)' : s.border,
+            showPortrait: !ready
           });
         }),
         // The Demon-roll step: everyone sees the same name/goal fields and the
