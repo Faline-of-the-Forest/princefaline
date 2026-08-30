@@ -4933,7 +4933,7 @@
                 <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:22px; letter-spacing:.24em; color:#E23A3A">TODAY'S DEMON</div>
                 <div style="flex:1; height:3px; background:linear-gradient(90deg, rgba(226,58,58,.7), rgba(239,230,200,0))"></div>
                 <sc-if value="{{ f.setup.rolledAny }}" hint-placeholder-val="{{ false }}">
-                  <div sc-camel-on-click="{{ f.setup.rerollAll }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.12em; color:rgba(239,230,200,.55); border:2px solid rgba(239,230,200,.22); border-radius:7px; padding:7px 11px">ROLL IT ALL AGAIN</div>
+                  <div data-mp="reroll-all" sc-camel-on-click="{{ f.setup.rerollAll }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.12em; color:rgba(239,230,200,.55); border:2px solid rgba(239,230,200,.22); border-radius:7px; padding:7px 11px">ROLL IT ALL AGAIN</div>
                 </sc-if>
               </div>
 
@@ -4968,13 +4968,13 @@
               <div style="flex:none; display:flex; align-items:flex-end; gap:12px">
                 <div style="flex:none; width:250px; display:flex; flex-direction:column; gap:6px">
                   <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">HEADMASTER — DEMON NAME</div>
-                  <input value="{{ f.setup.name }}" sc-camel-on-change="{{ f.setup.setName }}" placeholder="Gashadokuro" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:17px; letter-spacing:.04em; color:#EFE6C8; outline:none">
+                  <input data-mp="demon-name" value="{{ f.setup.name }}" sc-camel-on-change="{{ f.setup.setName }}" placeholder="Gashadokuro" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:17px; letter-spacing:.04em; color:#EFE6C8; outline:none">
                 </div>
                 <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:6px">
                   <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">HEADMASTER — WHAT IT WANTS</div>
-                  <input value="{{ f.setup.goalText }}" sc-camel-on-change="{{ f.setup.setGoal }}" placeholder="Feed on the school's despair before the term ends." style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:16px; color:#EFE6C8; outline:none">
+                  <input data-mp="demon-goal" value="{{ f.setup.goalText }}" sc-camel-on-change="{{ f.setup.setGoal }}" placeholder="Feed on the school's despair before the term ends." style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:16px; color:#EFE6C8; outline:none">
                 </div>
-                <div sc-camel-on-click="{{ f.setup.start }}" style="flex:none; cursor:pointer; opacity:{{ f.setup.startOpacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:21px; letter-spacing:.09em; color:#EFE6C8; background:#B4322C; border:4px solid #E23A3A; border-radius:11px; padding:12px 40px; box-shadow:0 6px 0 rgba(0,0,0,.45)">PLAY</div>
+                <div data-mp="play-btn" sc-camel-on-click="{{ f.setup.start }}" style="flex:none; cursor:pointer; opacity:{{ f.setup.startOpacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:21px; letter-spacing:.09em; color:#EFE6C8; background:#B4322C; border:4px solid #E23A3A; border-radius:11px; padding:12px 40px; box-shadow:0 6px 0 rgba(0,0,0,.45)">PLAY</div>
               </div>
             </div>
           </sc-if>
@@ -5037,6 +5037,11 @@
                 <sc-if value="{{ s.locked }}" hint-placeholder-val="{{ false }}">
                   <div style="position:absolute; top:14px; right:-6px; transform:skewX(-8deg) rotate(3deg); background:#EDE31B; border:4px solid #231F20; padding:3px 13px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); animation:tbp-land .4s cubic-bezier(.2,1.5,.4,1) both">
                     <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; color:#231F20">{{ s.playerName }}</div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ s.pickedByOther }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute; top:14px; right:-6px; transform:skewX(-8deg) rotate(3deg); background:#E23A3A; border:4px solid #231F20; padding:3px 13px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); animation:tbp-land .4s cubic-bezier(.2,1.5,.4,1) both">
+                    <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; color:#EFE6C8">PICKING…</div>
                   </div>
                 </sc-if>
 
@@ -6095,7 +6100,10 @@ class TBPBase extends DCLogic {
     const wasAll = locks.every(Boolean);
     locks[k] = true;
     this.setState({locks, picking: null}, () => {
-      if (locks.every(Boolean) && !wasAll) this.startRoll();
+      // In multiplayer the Headmaster starts the roll herself when she hits
+      // READY (which can happen at 3 of 4), not automatically on the 4th lock.
+      const mp = window.TBPNet && window.TBPNet.roomId;
+      if (locks.every(Boolean) && !wasAll && !mp) this.startRoll();
     });
   }
   openSetup() { this.setState({setupOpen: true, setupStep: 'select', locks: [false,false,false,false], picking: null, goalPicks: {}, rolled: {type:[],power:[],complication:[],goal:[]}, spinning: {type:false,power:false,complication:false,goal:false}}); }
@@ -6834,6 +6842,7 @@ class TBPBase extends DCLogic {
           btnBg: lk ? '#EDE31B' : 'rgba(239,230,200,.13)',
           btnInk: lk ? '#231F20' : 'rgba(239,230,200,.7)',
           btnLabel: lk ? 'CHOSEN' : 'CHOOSE',
+          pickedByOther: false,
           choose: () => { if (!allLocked) this.openGoalPicker(k); },
           focus: () => { if (this.state.picking == null && !allLocked) this.setState({focusSeat: k}); }
         };
@@ -6904,9 +6913,12 @@ class TBPBase extends DCLogic {
 
 // Keys that are purely this-browser UI and must never travel: overlays you have
 // open, what you're hovering, which seat *you* are, animation scratch space.
+// `speeds`/`spinning` DO travel (unlike the in-game die animation further
+// down) so the Demon roll plays the same for everyone at the table, not just
+// whoever the Headmaster is looking at when she rolls it.
 var MP_LOCAL = {
   ui: 1, gmOpen: 1, gmDraft: 1, focusSeat: 1, picking: 1, pickStep: 1,
-  speeds: 1, spinning: 1, justCleared: 1, player: 1, debugVisible: 1, chars: 1
+  justCleared: 1, player: 1, debugVisible: 1, chars: 1
 };
 // The durable, shared per-Student fields.
 //
@@ -7026,7 +7038,10 @@ class Component extends TBPBase {
 
   // Claiming a Student: clicking a girl on the original Character Select is
   // what binds this session to a seat. The screen itself is untouched — we just
-  // notice which one you opened.
+  // notice which one you opened. `pickingBy` is the shared claim that greys
+  // the seat out for everyone else the instant she opens the picker — she
+  // isn't "locked in" until quirks AND goals are both confirmed, but nobody
+  // else can start picking the same girl out from under her in the meantime.
   openGoalPicker(k) {
     var Net = window.TBPNet;
     if (Net && Net.role === 'player') {
@@ -7034,19 +7049,23 @@ class Component extends TBPBase {
         Net.claimSeat(k);
         super.setState({ player: k });
       }
+      var pickingBy = Object.assign({}, this.state.pickingBy, { [k]: Net.session });
       // No separate "Player name" field to fill in — she already gave her
       // name when she logged into the room.
       var myName = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('tbp-name')) || '';
-      if (myName && (this.state.playerNames || {})[k] !== myName) {
-        this.setState({ playerNames: Object.assign({}, this.state.playerNames, { [k]: myName }) });
+      var playerNames = this.state.playerNames;
+      if (myName && (playerNames || {})[k] !== myName) {
+        playerNames = Object.assign({}, playerNames, { [k]: myName });
       }
+      this.setState({ pickingBy: pickingBy, playerNames: playerNames });
     }
     super.openGoalPicker(k);
   }
 
   // Character Select tap-target for multiplayer: locked seats are read-only to
   // everyone except the Student who locked them, who can tap again to free it
-  // up and pick someone else. The Headmaster can't choose at all.
+  // up and pick someone else. A seat someone else is actively picking is
+  // read-only too, same as a locked one. The Headmaster can't choose at all.
   mpChoose(k) {
     var Net = window.TBPNet;
     if (!Net || Net.role !== 'player') return;
@@ -7055,7 +7074,9 @@ class Component extends TBPBase {
       if (Net.seat === k) this.mpUnchoose(k);
       return;
     }
-    if (Net.seat != null && Net.seat !== k) return;   // already locked into a different seat
+    var pickingBy = this.state.pickingBy || {};
+    if (pickingBy[k] && pickingBy[k] !== Net.session) return;   // someone else is mid-pick
+    if (Net.seat != null && Net.seat !== k) return;             // already locked into a different seat
     this.openGoalPicker(k);
   }
 
@@ -7069,12 +7090,14 @@ class Component extends TBPBase {
     delete quirkPicks[k];
     var goalPicks = Object.assign({}, this.state.goalPicks);
     delete goalPicks[k];
-    this.setState({ locks: locks, playerNames: playerNames, quirkPicks: quirkPicks, goalPicks: goalPicks });
+    var pickingBy = Object.assign({}, this.state.pickingBy);
+    delete pickingBy[k];
+    this.setState({ locks: locks, playerNames: playerNames, quirkPicks: quirkPicks, goalPicks: goalPicks, pickingBy: pickingBy });
     if (Net && Net.seat === k) Net.claimSeat(null);
   }
 
-  // The Headmaster removing a player from the room. If she'd claimed a Student,
-  // that seat is freed the same way mpUnchoose does it locally.
+  // The Headmaster removing a player from the room. If she'd claimed or was
+  // mid-picking a Student, that seat is freed the same way mpUnchoose does it.
   mpKick(sessionId, seat) {
     var Net = window.TBPNet;
     if (!Net) return;
@@ -7082,13 +7105,39 @@ class Component extends TBPBase {
     if (seat != null && seat !== '') this.mpUnchoose(+seat);
   }
 
+  // Firestore writes are independent network round-trips; two of them fired
+  // close together (open a picker, then cancel it a beat later; or the Demon
+  // roll's staggered spin/settle steps) can land at the server out of order
+  // and let a stale write clobber a fresher one. Chaining each push after the
+  // last one settles keeps them landing in the order they were made in.
   mpPush() {
     if (!window.TBPNet || !window.TBPNet.roomId) return;
     if (window.TBPNet.role === 'spectator') return;
-    try { window.TBPNet.push(this.mpShared()); } catch (e) { console.error('[tbp] push failed', e); }
+    var Net = window.TBPNet;
+    var shared = this.mpShared();
+    var run = function () { return Net.push(shared).catch(function (e) { console.error('[tbp] push failed', e); }); };
+    this.mpPushChain = (this.mpPushChain || Promise.resolve()).then(run, run);
   }
 
+  // Backing all the way out of the picker (BACK on the Quirks step — going
+  // back from Goals just returns to Quirks, still mid-pick) is the game's own
+  // `{picking: null}` transition, wherever it's triggered from. Catching it
+  // here — rather than trying to wrap the goalPicker's `cancel` handler,
+  // which the template doesn't rebind on every render — drops the shared
+  // claim on the seat the same way mpUnchoose does, so she's exactly as if
+  // she'd never touched the card.
   setState(update, cb) {
+    if (update && typeof update === 'object' && update.picking === null &&
+        this.state.picking != null && this.state.pickStep === 'quirks' &&
+        window.TBPNet && window.TBPNet.role === 'player') {
+      var k = this.state.picking, Net = window.TBPNet;
+      if ((this.state.pickingBy || {})[k] === Net.session) {
+        var pickingBy = Object.assign({}, this.state.pickingBy);
+        delete pickingBy[k];
+        update = Object.assign({}, update, { pickingBy: pickingBy });
+      }
+      if (Net.seat === k && !(this.state.locks || [])[k]) Net.claimSeat(null);
+    }
     super.setState(update, cb);
     if (this.mpApplying) return;
     if (!window.TBPNet || !window.TBPNet.roomId) return;
@@ -7103,6 +7152,11 @@ class Component extends TBPBase {
     var css = '';
     if (role !== 'gm') {
       css += '[title^="Start a new game"],[title^="Scene Control"]{display:none !important}';
+      // Demon-roll controls stay visible to everyone (so the roll and the
+      // Demon's name/goal are readable) but only the Headmaster can use them.
+      css += '[data-mp="reroll-all"],[title="Reroll this whole line"],[title="Click to reroll just this one"],' +
+        '[data-mp="play-btn"]{pointer-events:none !important; opacity:.35 !important}';
+      css += '[data-mp="demon-name"],[data-mp="demon-goal"]{pointer-events:none !important}';
     }
     if (role === 'spectator') {
       css += '#dc-root{pointer-events:none}';
@@ -7142,17 +7196,27 @@ class Component extends TBPBase {
       return;
     }
 
-    // Headmaster: the pill IS the roster.
+    // Headmaster: the pill IS the roster — collapsible, so it doesn't have to
+    // sit over the table all session.
     el.style.border = '2px solid #EDE31B';
     el.style.pointerEvents = 'auto';
+    var ps = this._mpPlayers || {};
+    var ids = Object.keys(ps);
+    var self = this;
+    var collapsed = !!this._mpRosterCollapsed;
+    var header = '<div data-toggle style="cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11px; letter-spacing:.12em; color:#EDE31B' + (collapsed ? '' : '; margin-bottom:6px') + '">' +
+      '<span>★ HEADMASTER — LOGGED IN (' + ids.length + ')</span><span style="opacity:.7">' + (collapsed ? '▾' : '▴') + '</span></div>';
+    if (collapsed) {
+      el.innerHTML = header;
+      el.querySelector('[data-toggle]').onclick = function () { self._mpRosterCollapsed = false; self.mpUpdateStatus(); };
+      return;
+    }
     var seatLabel = function (p) {
       if (p.role === 'gm') return 'Headmaster';
       if (p.role === 'spectator') return 'Spectating';
       if (p.role === 'player' && p.seat != null && SEATS[p.seat]) return SEATS[p.seat].label;
       return 'No seat yet';
     };
-    var ps = this._mpPlayers || {};
-    var ids = Object.keys(ps);
     var confirming = this._mpKickConfirm;
     var rows = ids.map(function (sid) {
       var p = ps[sid] || {};
@@ -7167,9 +7231,8 @@ class Component extends TBPBase {
         '<span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' + (isSelf ? '★ ' : '') + mpEsc(p.name || 'Unnamed') + (isSelf ? ' (you)' : '') +
         '<br><span style="opacity:.55; font-size:10.5px">' + seatLabel(p) + '</span></span>' + kick + '</div>';
     }).join('');
-    el.innerHTML = '<div style="font-size:11px; letter-spacing:.12em; color:#EDE31B; margin-bottom:6px; text-align:center">★ HEADMASTER — LOGGED IN (' + ids.length + ')</div>' +
-      (rows || '<div style="font-size:11.5px; color:rgba(239,230,200,.5)">Nobody yet.</div>');
-    var self = this;
+    el.innerHTML = header + (rows || '<div style="font-size:11.5px; color:rgba(239,230,200,.5)">Nobody yet.</div>');
+    el.querySelector('[data-toggle]').onclick = function () { self._mpRosterCollapsed = true; self.mpUpdateStatus(); };
     // Two-tap kick (tap once to arm, tap again within 3s to confirm) rather
     // than a native confirm() — it matches the game's own custom dialogs, and
     // never gets silently blocked by a browser's popup/dialog settings.
@@ -7258,16 +7321,18 @@ class Component extends TBPBase {
     }
 
     // Character Select: the Headmaster only watches (and kicks, via the
-    // roster panel); a Student can only touch her own seat, locked or not;
-    // spectators can't touch any of it. Everyone starts once she hits READY
-    // with 3 or 4 seats filled — the original "all four locked" auto-start is
-    // replaced by her call.
+    // roster panel) — she can still hover a card to read it, just not choose
+    // one. A Student can only touch her own seat, locked or not; a seat
+    // someone else is actively picking is off-limits too, same as a locked
+    // one. Everyone starts once she hits READY with 3 or 4 seats filled — the
+    // original "all four locked" auto-start is replaced by her call.
     if (f.setup && f.setup.seats) {
       var locks = this.state.locks || [false, false, false, false];
       var lockCount = locks.filter(Boolean).length;
       var ready = !!this.state.mpReady;
       var isGm = Net.role === 'gm';
       var canReady = isGm && !ready && lockCount >= 3;
+      var pickingBy = this.state.pickingBy || {};
       f.setup = Object.assign({}, f.setup, {
         topOpen: ready && this.state.picking == null,
         demonOpen: ready && this.state.picking == null,
@@ -7277,15 +7342,36 @@ class Component extends TBPBase {
           label: ready ? 'STARTING…' : ('READY (' + lockCount + '/4)'),
           cursor: canReady ? 'pointer' : 'default',
           opacity: canReady ? 1 : 0.45,
-          click: canReady ? function () { self.setState({ mpReady: true }); } : function () {}
+          click: canReady ? function () { self.setState({ mpReady: true }); self.startRoll(); } : function () {}
         },
         seats: f.setup.seats.map(function (s, k) {
           var mySeat = Net.role === 'player' && Net.seat === k;
-          var canTouch = Net.role === 'player' && !ready && (locks[k] ? mySeat : (Net.seat == null || Net.seat === k));
+          var pickedByOther = !locks[k] && pickingBy[k] && pickingBy[k] !== Net.session;
+          var canChoose = Net.role === 'player' && !ready && !pickedByOther &&
+            (locks[k] ? mySeat : (Net.seat == null || Net.seat === k));
+          var canFocus = isGm || canChoose;
           return Object.assign({}, s, {
-            choose: canTouch ? function () { self.mpChoose(k); } : function () {},
-            focus: canTouch ? s.focus : function () {},
-            btnLabel: (locks[k] && mySeat) ? 'UNSELECT' : s.btnLabel
+            choose: canChoose ? function () { self.mpChoose(k); } : function () {},
+            focus: canFocus ? s.focus : function () {},
+            btnLabel: (locks[k] && mySeat) ? 'UNSELECT' : s.btnLabel,
+            pickedByOther: pickedByOther,
+            artFilter: pickedByOther ? 'grayscale(.9) brightness(.55)' : s.artFilter,
+            border: pickedByOther ? 'rgba(226,58,58,.5)' : s.border
+          });
+        }),
+        // The Demon-roll step: everyone sees the same name/goal fields and the
+        // same rolling categories (both now sync — see MP_LOCAL above), but
+        // only the Headmaster can type into them, reroll, or hit PLAY.
+        setName: isGm ? f.setup.setName : function () {},
+        setGoal: isGm ? f.setup.setGoal : function () {},
+        start: isGm ? f.setup.start : function () {},
+        rerollAll: isGm ? f.setup.rerollAll : function () {},
+        categories: (f.setup.categories || []).map(function (cat) {
+          return Object.assign({}, cat, {
+            reroll: isGm ? cat.reroll : function () {},
+            slots: (cat.slots || []).map(function (sl) {
+              return Object.assign({}, sl, { reroll: isGm ? sl.reroll : function () {} });
+            })
           });
         })
       });
