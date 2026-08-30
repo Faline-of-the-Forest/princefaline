@@ -76,20 +76,17 @@ function busy(msg, text) { msg.style.color = INK; msg.textContent = text; }
 
 export const TBPHome = {
   // Whoever creates a room is its Headmaster (admin) for that room: she never
-  // picks a Student, but she can see the roster and remove people from it.
+  // picks a Student and never gives a name — she's just "Headmaster" — but
+  // she can see the roster and remove people from it.
   createRoom() {
     panel({
-      tag: 'ルーム作成 / NEW CELL', title: 'Create Room',
-      fields: [{ id: 'room', placeholder: 'room name' }, { id: 'name', placeholder: 'your name (Headmaster)' }],
-      confirm: 'Open', onConfirm: async ([roomRaw, nameRaw], msg) => {
+      tag: 'ルーム作成 / NEW CELL', title: 'Create Room', placeholder: 'room name',
+      confirm: 'Open', onConfirm: async ([roomRaw], msg) => {
         const id = Net.normalize(roomRaw);
         if (!id) { msg.textContent = 'TYPE A ROOM NAME.'; return; }
-        const name = String(nameRaw || '').trim();
-        if (!name) { msg.textContent = 'ENTER YOUR NAME.'; return; }
         busy(msg, 'OPENING…');
         const existing = await Net.peek(id);
         if (existing) { msg.style.color = RED; msg.textContent = 'THAT ROOM EXISTS — USE JOIN.'; return; }
-        sessionStorage.setItem('tbp-name', name);
         location.href = 'play.html?room=' + encodeURIComponent(id) + '&gm=1';
       }
     });

@@ -4917,8 +4917,6 @@
         <div style="position:absolute; inset:0; background-image:radial-gradient(rgba(239,230,200,.09) 1.6px, transparent 2.1px); background-size:14px 14px; pointer-events:none"></div>
         <div style="position:absolute; inset:0; background:radial-gradient(90% 70% at 50% 8%, rgba(226,58,58,.2), rgba(35,31,32,0) 62%); pointer-events:none"></div>
 
-        <div sc-camel-on-click="{{ f.setup.close }}" style="position:absolute; top:20px; right:24px; z-index:5; cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.14em; color:rgba(239,230,200,.45); border:2px solid rgba(239,230,200,.2); border-radius:7px; padding:8px 12px">SKIP TO DASHBOARD</div>
-
         <div style="position:relative; flex:none; box-sizing:border-box; padding:22px 40px 0; display:flex; align-items:center; gap:18px">
           <div style="transform:skewX(-8deg); background:#F6A7CA; padding:3px 18px 6px; box-shadow:5px 5px 0 rgba(0,0,0,.45)">
             <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:40px; line-height:1; color:#231F20">CHARACTER SELECT</div>
@@ -4993,7 +4991,6 @@
                 </div>
                 <div style="font-family:'Lora',serif; font-style:italic; font-size:17px; color:rgba(239,230,200,.6)">{{ f.setup.goalPicker.hint }}</div>
                 <div style="flex:1"></div>
-                <input value="{{ f.setup.goalPicker.playerName }}" sc-camel-on-change="{{ f.setup.goalPicker.setPlayerName }}" placeholder="Player name" style="flex:none; width:180px; box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:9px 12px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; color:#EFE6C8; outline:none">
                 <div sc-camel-on-click="{{ f.setup.goalPicker.confirm }}" style="cursor:pointer; opacity:{{ f.setup.goalPicker.confirmOpacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:16px; letter-spacing:.1em; color:#231F20; background:#EDE31B; border:4px solid #231F20; border-radius:10px; padding:10px 26px; box-shadow:0 5px 0 rgba(0,0,0,.45)">CONFIRM</div>
                 <div sc-camel-on-click="{{ f.setup.goalPicker.cancel }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.12em; color:rgba(239,230,200,.5); border:2px solid rgba(239,230,200,.22); border-radius:8px; padding:9px 13px">BACK</div>
               </div>
@@ -5029,11 +5026,11 @@
                 <img src="{{ s.portrait }}" alt="student portrait" style="position:absolute; left:0; right:0; top:0; bottom:56px; width:100%; height:calc(100% - 56px); object-fit:cover; object-position:50% 6%; filter:{{ s.artFilter }}">
                 <div style="position:absolute; left:0; right:0; top:0; bottom:56px; background:{{ s.artWash }}"></div>
 
-                <div style="position:absolute; left:0; right:0; top:0; bottom:56px; box-sizing:border-box; background:rgba(27,24,25,.93); opacity:{{ s.infoOpacity }}; pointer-events:none; padding:20px 20px 18px; display:flex; flex-direction:column; gap:16px; overflow:hidden">
-                  <div style="font-family:'Lora',serif; font-size:19px; line-height:1.45; color:#EFE6C8; text-wrap:pretty">{{ s.bio }}</div>
-                  <div style="display:flex; flex-direction:column; gap:6px; background:rgba(237,227,27,.12); border-left:5px solid #EDE31B; padding:10px 13px">
-                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:17px; letter-spacing:.09em; color:#EDE31B">{{ s.psiName }}</div>
-                    <div style="font-family:'Lora',serif; font-size:17px; line-height:1.4; color:rgba(239,230,200,.82); text-wrap:pretty">{{ s.psiDesc }}</div>
+                <div style="position:absolute; left:0; right:0; top:0; bottom:56px; box-sizing:border-box; background:rgba(27,24,25,.93); opacity:{{ s.infoOpacity }}; pointer-events:none; padding:14px 16px 12px; display:flex; flex-direction:column; gap:10px; overflow-y:auto">
+                  <div style="flex:none; font-family:'Lora',serif; font-size:13.5px; line-height:1.36; color:#EFE6C8; text-wrap:pretty">{{ s.bio }}</div>
+                  <div style="flex:none; display:flex; flex-direction:column; gap:4px; background:rgba(237,227,27,.12); border-left:4px solid #EDE31B; padding:8px 10px">
+                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; color:#EDE31B">{{ s.psiName }}</div>
+                    <div style="font-family:'Lora',serif; font-size:12.5px; line-height:1.32; color:rgba(239,230,200,.82); text-wrap:pretty">{{ s.psiDesc }}</div>
                   </div>
                 </div>
 
@@ -5400,19 +5397,19 @@ function pipsFor(n, dot) {
 }
 const SEATS = [
   {label:'HIROMI', who:'momo', pop:'Average', friend:1, rival:2,
-   quirks:['“I have a secret boyfriend, and he is two years older.”', '“I once beat the Demon Prince of Shinjuku in a duel!”'],
+   quirks:['“People often forget I’m there, but it’s fine... I don’t mind being ignored.”', '“I know good places to hide at school, and some places I don’t think anyone else knows about.”'],
    goal:'“I want to start a demon hunting club before the term ends.”',
    psi:{short:'GROW!', name:'PSI GROW!', desc:'Force your own flesh to grow. Muscle bulges out in tumorous ropes under your skin, doubling in thickness and giving you strength enough to tear a door off its frame. Once it starts, it’s hard to stop, and when pushed too far the skin splits along the strain lines. For you it is excruciating, but for everyone else, it’s the sight of it — enough to make one vomit.'}},
   {label:'KOTORI', who:'midori', pop:'Most', friend:2, rival:3,
-   quirks:['“Everyone copies my hair ribbons, and I pretend not to notice.”', '“I keep a diary of everybody’s worst secrets.”'],
+   quirks:['“I’m Class President. If I tell you to do something, you’ll do it.”', '“Nobody on the track team can outrun me.”'],
    goal:'“I want to be elected Class President, unanimously.”',
    psi:{short:'CRUSH!', name:'PSI CRUSH!', desc:'A burst of invisible force that pushes straight down or straight out. It is imprecise, and controlling its size and direction is nearly impossible, but whatever stands in its path is crushed under unbearable weight. It turns a body to pulp and pounds bone into the wall behind it. It is also horribly prone to collateral damage.'}},
   {label:'UME', who:'ao', pop:'Least', friend:3, rival:0,
-   quirks:['“I eat lunch on the roof so nobody has to sit with me.”', '“There is something living in my locker and I feed it.”'],
+   quirks:['“Sometimes, spirits talk to me, and I always follow their guidance.”', '“I will never let any Demon best me in a duel.”'],
    goal:'“I want one real friend who knows what I can do.”',
    psi:{short:'BLEED!', name:'PSI BLEED!', desc:'Take hold of the blood inside a body, yours or someone else’s, and move it. Blood can be drawn out through pores in a fine red mist, or torn free and held in the air as a blade. It is also possible to take a person by the arteries and puppet them from the inside. Manipulating blood is always messy, though, and it is hard to use on someone else without killing them, especially when they fight it.'}},
   {label:'YUMI', who:'murasaki', pop:'Average', friend:0, rival:1,
-   quirks:['“My mother thinks I am in the tea ceremony club.”', '“I have never lost a fight, and I have had eleven.”'],
+   quirks:['“An eye for an eye... I always have my revenge.”', '“I would kill to protect my little sister.”'],
    goal:'“I want to find out what happened to my sister at Atarashi High.”',
    psi:{short:'BURN!', name:'PSI BURN!', desc:'Create a pocket of burning heat in the open air, inside an object, or inside a person. You can spark a flame from nothing, boil water, warp steel, or cook the blood in someone’s veins until it steams out of them. The fire has a mind of its own, though, and it will happily take far more than it was meant to.'}}
 ];
@@ -5495,10 +5492,10 @@ const DIM = 'grayscale(.7) opacity(.85) drop-shadow(0 2px 1px rgba(35,31,32,.45)
 const SEAT_TONE = {momo:'#F6A7CA', midori:'#9CB39A', ao:'#A9BEDC', murasaki:'#C8A8D8'};
 const DEMON = {name:'GASHADOKURO', goal:'“Feed on the school’s despair before the term ends.”'};
 const QUIRK_POOL = {
-  momo: ['“I have a secret boyfriend, and he is two years older.”','“I once beat the Demon Prince of Shinjuku in a duel!”','“I can hold my breath for six whole minutes.”','“My father is a very famous man. I cannot say who.”','“I never lose at cards, and I never explain why.”','“I have a scar I tell four different stories about.”','“I have read every issue of every magazine in the library.”','“I know a shortcut through the school nobody else knows.”','“I can eat anything on a dare. Anything.”','“I keep a sword in my locker. For practice.”'],
-  midori: ['“Everyone copies my hair ribbons, and I pretend not to notice.”','“I keep a diary of everybody’s worst secrets.”','“I have never once been late, and I never will be.”','“Teachers ask me what the class is thinking.”','“I can cry on command, convincingly.”','“I remember every name, every birthday, every slight.”','“My handwriting has won three prefectural prizes.”','“I always know who is about to be dumped.”','“I have a key to a room I should not have a key to.”','“I have never been photographed badly.”'],
-  ao: ['“I eat lunch on the roof so nobody has to sit with me.”','“There is something living in my locker and I feed it.”','“I hear the school talking when it is empty.”','“I have not spoken in class since the first term.”','“I draw everyone I meet, without asking.”','“Animals follow me home and I let them.”','“I know every hiding place in this building.”','“I can go a whole day without being noticed.”','“I collect things other people throw away.”','“I sleep with the light on. It matters.”'],
-  murasaki: ['“My mother thinks I am in the tea ceremony club.”','“I have never lost a fight, and I have had eleven.”','“I smoke behind the gym and I am never caught.”','“I have my sister’s jacket and I never take it off.”','“I can pick any lock in this school.”','“I do not run from anything. Ever.”','“I owe somebody dangerous a favour.”','“I know which teachers are afraid of me.”','“I have broken three noses and regret one.”','“I ride a motorcycle I am too young to ride.”']
+  momo: ['“People often forget I’m there, but it’s fine... I don’t mind being ignored.”','“I know good places to hide at school, and some places I don’t think anyone else knows about.”','“Animals tend to like me more than people do.”','“I don’t lie, and I can always tell when someone else is.”','“When people are panicked or upset, I’m good at calming them down.”','“I’m in love with Kotori, and would do anything for her.”','“While I have a hard time standing up for myself, I’ll always stand up for others.”','“I’m good at finding things that have been lost, or hidden.”','“I always have a gut feeling before something bad happens.”','“People tell me I’m a good artist, but I mostly draw doujinshi that I’ll never show anyone...”'],
+  midori: ['“I’m Class President. If I tell you to do something, you’ll do it.”','“Nobody on the track team can outrun me.”','“Teachers adore me. If I ask for something, they’ll give it to me.”','“I’m signed into every club in school, even the weird ones.”','“I hear all the rumours, and I know everyone’s secrets.”','“Half the school owes me a favour, and I keep track of all of them.”','“Put me in a competition and I’ll win it. Whatever that takes.”','“Science, maths, history, languages. There’s no subject I’m not good at.”','“I’m the captain of the school’s volleyball, basketball and football teams.”','“In a crisis, people look to me to take the lead, and I always know what to do.”'],
+  ao: ['“Sometimes, spirits talk to me, and I always follow their guidance.”','“I will never let any Demon best me in a duel.”','“My ancient blade was given to me to defeat the forces of Evil.”','“I know the shrine better than anyone else. It is like a second home to me.”','“I’ve studied Demons and know all about their secrets.”','“My martial arts training lets me push my body beyond its limits.”','“I know rites and blessings to ward rooms, exorcise Demons or purify the wicked.”','“My will can’t be broken. Every time I’m struck down, I get back up.”','“It’s my duty to protect the innocent. I’ll put my own life in danger to protect someone else.”','“My reflexes are perfect. Good luck landing a hit on me in a fight.”'],
+  murasaki: ['“An eye for an eye... I always have my revenge.”','“I would kill to protect my little sister.”','“Demons don’t scare me. In fact, they should be scared of me.”','“I have my mother’s credit card if I ever need anything.”','“People know to stay out of my way.”','“I’m good at pushing someone until they break.”','“Blood and guts don’t bother me. If anything, I’m better when I’m covered in it.”','“I’m good at getting into places I’m not supposed to be.”','“A good threat goes a long way. And if not, torture never fails.”','“I can stalk someone for hours without being noticed.”']
 };
 const GOAL_POOL = {
   momo: ['Start a demon-hunting club before the term ends.','Prove to Kotori that my boyfriend is real.','Get my name in the school paper — for something heroic.','Win a duel in front of a crowd.','Recruit one Student into my club, by any means.','Find proof that the old music room is haunted.','Beat the fastest time on the roof stair climb.','Get out of remedial class without studying.','Make a rival admit I was right about something.','Keep a promise I already regret making.'],
@@ -6796,10 +6793,8 @@ class TBPBase extends DCLogic {
         const picks = ((onQuirks ? this.state.quirkPicks : this.state.goalPicks) || {})[k] || [];
         const pool = onQuirks ? QUIRK_POOL[SEATS[k].who] : GOAL_POOL[SEATS[k].who];
         return {
-          title: SEATS[k].label + (onQuirks ? ' — PICK TWO QUIRKS' : ' — PICK TWO GOALS'),
+          title: onQuirks ? 'PICK TWO QUIRKS' : 'PICK TWO GOALS',
           hint: picks.length + ' of 2 chosen',
-          playerName: (this.state.playerNames || {})[k] || '',
-          setPlayerName: e => this.setState({playerNames: Object.assign({}, this.state.playerNames, {[k]: e.target.value})}),
           confirmOpacity: picks.length === 2 ? 1 : 0.4,
           confirm: () => this.advancePicker(k),
           cancel: () => this.setState(onQuirks ? {picking: null} : {pickStep: 'quirks'}),
@@ -7034,9 +7029,17 @@ class Component extends TBPBase {
   // notice which one you opened.
   openGoalPicker(k) {
     var Net = window.TBPNet;
-    if (Net && Net.role === 'player' && Net.seat == null) {
-      Net.claimSeat(k);
-      super.setState({ player: k });
+    if (Net && Net.role === 'player') {
+      if (Net.seat == null) {
+        Net.claimSeat(k);
+        super.setState({ player: k });
+      }
+      // No separate "Player name" field to fill in — she already gave her
+      // name when she logged into the room.
+      var myName = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('tbp-name')) || '';
+      if (myName && (this.state.playerNames || {})[k] !== myName) {
+        this.setState({ playerNames: Object.assign({}, this.state.playerNames, { [k]: myName }) });
+      }
     }
     super.openGoalPicker(k);
   }
@@ -7111,50 +7114,48 @@ class Component extends TBPBase {
     document.head.appendChild(el);
   }
 
-  // A small always-on badge (outside the game's own DOM tree, so it survives
-  // every re-render) reminding you who you're logged in as, and flagging the
-  // Headmaster specifically since she can't be told apart by a Student card.
-  mpInjectIdentity(role, name) {
-    var el = document.getElementById('tbp-identity');
+  // A single always-on status panel, top-center (outside the game's own DOM
+  // tree, so it survives every re-render): a small "logged in as" pill for
+  // everyone, which becomes the full roster — with kick buttons — for the
+  // Headmaster, since she's the only one who needs to see who's in the room.
+  mpUpdateStatus(players) {
+    var Net = window.TBPNet;
+    if (!Net || !Net.role) return;
+    if (players) this._mpPlayers = players;
+    var role = Net.role, name = this._mpName || '';
+    var el = document.getElementById('tbp-status');
     if (!el) {
       el = document.createElement('div');
-      el.id = 'tbp-identity';
-      el.style.cssText = 'position:fixed; top:10px; left:10px; z-index:100000; ' +
-        "font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; letter-spacing:.07em; " +
-        'color:#EFE6C8; background:rgba(35,31,32,.9); border-radius:9px; padding:7px 12px; ' +
-        'pointer-events:none; display:flex; align-items:center; gap:7px';
+      el.id = 'tbp-status';
+      el.style.cssText = 'position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:100000; ' +
+        "font-family:'Baloo 2',sans-serif; background:rgba(35,31,32,.92); border-radius:10px; padding:8px 12px; " +
+        'max-width:min(90vw,260px)';
       document.body.appendChild(el);
     }
-    el.style.border = '2px solid ' + (role === 'gm' ? '#EDE31B' : 'rgba(239,230,200,.35)');
-    var roleLabel = role === 'gm' ? '★ HEADMASTER' : (role === 'spectator' ? 'WATCHING' : 'LOGGED IN');
-    el.innerHTML = '<span style="' + (role === 'gm' ? 'color:#EDE31B' : 'opacity:.6') + '">' + roleLabel + '</span>' +
-      (name ? '<span>' + mpEsc(name) + '</span>' : '');
-  }
 
-  // The Headmaster's roster: everyone currently in the room, with a KICK button
-  // on everyone but herself. Built with plain DOM too, and only shown to her.
-  mpUpdateRoster(players) {
-    var Net = window.TBPNet;
-    if (!Net || Net.role !== 'gm') return;
-    var root = document.getElementById('tbp-roster');
-    if (!root) {
-      root = document.createElement('div');
-      root.id = 'tbp-roster';
-      root.style.cssText = 'position:fixed; top:10px; right:10px; z-index:100000; ' +
-        "font-family:'Baloo 2',sans-serif; background:rgba(35,31,32,.94); border:2px solid #EDE31B; " +
-        'border-radius:10px; padding:10px 12px; min-width:190px; max-width:250px';
-      document.body.appendChild(root);
+    if (role !== 'gm') {
+      el.style.border = '2px solid rgba(239,230,200,.35)';
+      el.style.pointerEvents = 'none';
+      var roleLabel = role === 'spectator' ? 'WATCHING' : 'LOGGED IN';
+      el.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; gap:7px; font-size:12px; font-weight:800; letter-spacing:.07em; color:#EFE6C8">' +
+        '<span style="opacity:.6">' + roleLabel + '</span>' + (name ? '<span>' + mpEsc(name) + '</span>' : '') + '</div>';
+      return;
     }
+
+    // Headmaster: the pill IS the roster.
+    el.style.border = '2px solid #EDE31B';
+    el.style.pointerEvents = 'auto';
     var seatLabel = function (p) {
       if (p.role === 'gm') return 'Headmaster';
       if (p.role === 'spectator') return 'Spectating';
       if (p.role === 'player' && p.seat != null && SEATS[p.seat]) return SEATS[p.seat].label;
       return 'No seat yet';
     };
-    var ids = Object.keys(players);
+    var ps = this._mpPlayers || {};
+    var ids = Object.keys(ps);
     var confirming = this._mpKickConfirm;
     var rows = ids.map(function (sid) {
-      var p = players[sid] || {};
+      var p = ps[sid] || {};
       var isSelf = sid === Net.session;
       var isConfirming = confirming === sid;
       var kick = (p.role === 'gm' || isSelf) ? '' :
@@ -7163,16 +7164,16 @@ class Component extends TBPBase {
           'font-size:10px; letter-spacing:.06em; border:1px solid #E23A3A; border-radius:5px; padding:2px 6px; margin-left:6px; flex:none">' +
           (isConfirming ? 'SURE?' : 'KICK') + '</span>';
       return '<div style="display:flex; align-items:center; justify-content:space-between; gap:6px; padding:5px 0; border-bottom:1px solid rgba(239,230,200,.12); font-size:12px; color:#EFE6C8">' +
-        '<span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' + mpEsc(p.name || 'Unnamed') + (isSelf ? ' (you)' : '') +
+        '<span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' + (isSelf ? '★ ' : '') + mpEsc(p.name || 'Unnamed') + (isSelf ? ' (you)' : '') +
         '<br><span style="opacity:.55; font-size:10.5px">' + seatLabel(p) + '</span></span>' + kick + '</div>';
     }).join('');
-    root.innerHTML = '<div style="font-size:11px; letter-spacing:.12em; color:#EDE31B; margin-bottom:6px">LOGGED IN (' + ids.length + ')</div>' +
+    el.innerHTML = '<div style="font-size:11px; letter-spacing:.12em; color:#EDE31B; margin-bottom:6px; text-align:center">★ HEADMASTER — LOGGED IN (' + ids.length + ')</div>' +
       (rows || '<div style="font-size:11.5px; color:rgba(239,230,200,.5)">Nobody yet.</div>');
     var self = this;
     // Two-tap kick (tap once to arm, tap again within 3s to confirm) rather
     // than a native confirm() — it matches the game's own custom dialogs, and
     // never gets silently blocked by a browser's popup/dialog settings.
-    Array.prototype.forEach.call(root.querySelectorAll('[data-kick]'), function (btn) {
+    Array.prototype.forEach.call(el.querySelectorAll('[data-kick]'), function (btn) {
       btn.onclick = function () {
         var sid = btn.getAttribute('data-kick');
         if (self._mpKickConfirm === sid) {
@@ -7182,12 +7183,11 @@ class Component extends TBPBase {
         } else {
           self._mpKickConfirm = sid;
           clearTimeout(self._mpKickConfirmT);
-          self._mpKickConfirmT = setTimeout(function () { self._mpKickConfirm = null; self.mpUpdateRoster(self._mpPlayers || {}); }, 3000);
-          self.mpUpdateRoster(self._mpPlayers || players);
+          self._mpKickConfirmT = setTimeout(function () { self._mpKickConfirm = null; self.mpUpdateStatus(); }, 3000);
+          self.mpUpdateStatus();
         }
       };
     });
-    this._mpPlayers = players;
   }
 
   // Your own session vanished from the players map: the Headmaster kicked you.
@@ -7213,15 +7213,16 @@ class Component extends TBPBase {
     var Net = window.TBPNet;
     window.__tbp = this;                        // debug handle for the console
     this.mpInjectRoleCss(joined.role);
-    var myName = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('tbp-name')) || '';
-    this.mpInjectIdentity(joined.role, myName);
+    this._mpName = joined.role === 'gm' ? '' :
+      ((typeof sessionStorage !== 'undefined' && sessionStorage.getItem('tbp-name')) || '');
+    this.mpUpdateStatus({});
     if (joined.role === 'player' && joined.seat != null) {
       super.setState({ player: joined.seat });  // your card is the one that's "you"
     }
     var first = true;
     var self = this;
     Net.subscribe(function (shared, players) {
-      self.mpUpdateRoster(players || {});
+      self.mpUpdateStatus(players || {});
       if (joined.role !== 'gm' && !first && players && !players[Net.session]) {
         self.mpShowKicked();
       }
@@ -7270,9 +7271,7 @@ class Component extends TBPBase {
       f.setup = Object.assign({}, f.setup, {
         topOpen: ready && this.state.picking == null,
         demonOpen: ready && this.state.picking == null,
-        rosterHint: isGm
-          ? (lockCount + ' of 4 chosen' + (lockCount >= 3 ? ' — you can hit READY.' : ' — need at least 3.'))
-          : (ready ? 'The Headmaster is starting the game…' : (lockCount + ' of 4 chosen — the Headmaster starts when ready.')),
+        rosterHint: '',
         readyBtn: {
           show: isGm,
           label: ready ? 'STARTING…' : ('READY (' + lockCount + '/4)'),

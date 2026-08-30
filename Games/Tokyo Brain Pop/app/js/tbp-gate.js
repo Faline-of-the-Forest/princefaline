@@ -44,9 +44,11 @@ function fail(msg) {
 }
 
 function storedName(role) {
+  // The Headmaster is never named — even if this tab has a leftover name
+  // from an earlier Student session, she's just "Headmaster".
+  if (role === 'gm') return 'Headmaster';
   const n = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('tbp-name')) || '';
-  if (n) return n;
-  return role === 'gm' ? 'Headmaster' : (role === 'spectator' ? 'Spectator' : 'Player');
+  return n || (role === 'spectator' ? 'Spectator' : 'Player');
 }
 
 async function enter(role, seat) {
