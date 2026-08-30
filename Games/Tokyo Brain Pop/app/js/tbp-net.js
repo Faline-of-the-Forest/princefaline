@@ -10,7 +10,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot,
+  getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField, onSnapshot,
   collection, runTransaction, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
@@ -134,6 +134,16 @@ const Net = {
     }, (e) => console.error("[tbp] rooms error", e));
   },
   async deleteRoom(id) { await authReady; await deleteDoc(doc(db, "rooms", id)); },
+
+  // The Headmaster removing one player from a live room, without deleting the
+  // whole thing. Freeing whatever Student she'd claimed is the caller's job
+  // (it lives in the shared game state, not in the players map).
+  async kickPlayer(sessionId) {
+    if (!this.roomId) return;
+    await updateDoc(doc(db, "rooms", this.roomId), {
+      ["players." + sessionId]: deleteField()
+    });
+  },
   async peek(id) { await authReady; const s = await getDoc(doc(db, "rooms", normalize(id))); return s.exists() ? s.data() : null; }
 };
 

@@ -4912,7 +4912,7 @@
 
   <sc-if value="{{ f.setup.open }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed; inset:0; z-index:80; background:#1b1819; display:flex; align-items:center; justify-content:center; overflow:hidden; font-family:'Zen Kaku Gothic New',system-ui,sans-serif">
-      <div style="position:relative; width:1560px; height:950px; flex:none; transform:scale({{ f.setup.scale }}); box-sizing:border-box; overflow:hidden; background:#231F20; display:flex; flex-direction:column">
+      <div style="position:relative; width:100vw; height:100vh; flex:none; box-sizing:border-box; overflow:hidden; background:#231F20; display:flex; flex-direction:column">
 
         <div style="position:absolute; inset:0; background-image:radial-gradient(rgba(239,230,200,.09) 1.6px, transparent 2.1px); background-size:14px 14px; pointer-events:none"></div>
         <div style="position:absolute; inset:0; background:radial-gradient(90% 70% at 50% 8%, rgba(226,58,58,.2), rgba(35,31,32,0) 62%); pointer-events:none"></div>
@@ -5010,11 +5010,16 @@
           </div>
         </sc-if>
 
-        <div style="position:relative; flex:1; min-height:0; box-sizing:border-box; padding:16px 40px 30px; display:flex; flex-direction:column; gap:10px">
-          <div style="flex:none; display:flex; align-items:center">
+        <div style="position:relative; flex:1; min-height:0; box-sizing:border-box; padding:16px 24px 24px; display:flex; flex-direction:column; gap:10px">
+          <div style="flex:none; display:flex; align-items:center; gap:16px">
             <div style="transform:skewX(-8deg); background:#EDE31B; padding:2px 14px 4px; box-shadow:4px 4px 0 rgba(0,0,0,.45)">
               <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:22px; line-height:1; color:#231F20">CHOOSE YOUR STUDENT</div>
             </div>
+            <div style="flex:1; height:3px; background:linear-gradient(90deg, rgba(237,227,27,.4), rgba(239,230,200,0))"></div>
+            <div style="flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12.5px; letter-spacing:.1em; color:rgba(239,230,200,.6)">{{ f.setup.rosterHint }}</div>
+            <sc-if value="{{ f.setup.readyBtn.show }}" hint-placeholder-val="{{ false }}">
+              <div sc-camel-on-click="{{ f.setup.readyBtn.click }}" style="cursor:{{ f.setup.readyBtn.cursor }}; flex:none; opacity:{{ f.setup.readyBtn.opacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:16px; letter-spacing:.09em; color:#231F20; background:#EDE31B; border:4px solid #231F20; border-radius:10px; padding:9px 22px; box-shadow:0 5px 0 rgba(0,0,0,.45)">{{ f.setup.readyBtn.label }}</div>
+            </sc-if>
           </div>
 
           <div style="flex:1; min-height:0; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px">
@@ -5038,8 +5043,9 @@
                   </div>
                 </sc-if>
 
-                <div style="position:absolute; left:0; right:0; bottom:0; height:56px; background:#231F20; display:flex; align-items:center; padding:0 14px">
+                <div style="position:absolute; left:0; right:0; bottom:0; height:56px; background:#231F20; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 14px">
                   <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:30px; line-height:1; color:{{ s.nameInk }}">{{ s.label }}</div>
+                  <div style="flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; color:#EDE31B; border:2px solid #EDE31B; border-radius:7px; padding:4px 8px">{{ s.psiShort }}</div>
                 </div>
               </div>
             </sc-for>
@@ -5396,19 +5402,19 @@ const SEATS = [
   {label:'HIROMI', who:'momo', pop:'Average', friend:1, rival:2,
    quirks:['“I have a secret boyfriend, and he is two years older.”', '“I once beat the Demon Prince of Shinjuku in a duel!”'],
    goal:'“I want to start a demon hunting club before the term ends.”',
-   psi:{short:'BURN!', name:'PSI BURN!', desc:'Create a pocket of burning heat or spark a flame. Boil water, make metal glow, or cook the blood inside someone’s veins. Wild and hard to keep under control.'}},
+   psi:{short:'GROW!', name:'PSI GROW!', desc:'Force your own flesh to grow. Muscle bulges out in tumorous ropes under your skin, doubling in thickness and giving you strength enough to tear a door off its frame. Once it starts, it’s hard to stop, and when pushed too far the skin splits along the strain lines. For you it is excruciating, but for everyone else, it’s the sight of it — enough to make one vomit.'}},
   {label:'KOTORI', who:'midori', pop:'Most', friend:2, rival:3,
    quirks:['“Everyone copies my hair ribbons, and I pretend not to notice.”', '“I keep a diary of everybody’s worst secrets.”'],
    goal:'“I want to be elected Class President, unanimously.”',
-   psi:{short:'CRUSH!', name:'PSI CRUSH!', desc:'A burst of invisible force that pushes straight down or straight out. Whatever’s in the way goes through the floor, through the wall, or apart.'}},
+   psi:{short:'CRUSH!', name:'PSI CRUSH!', desc:'A burst of invisible force that pushes straight down or straight out. It is imprecise, and controlling its size and direction is nearly impossible, but whatever stands in its path is crushed under unbearable weight. It turns a body to pulp and pounds bone into the wall behind it. It is also horribly prone to collateral damage.'}},
   {label:'UME', who:'ao', pop:'Least', friend:3, rival:0,
    quirks:['“I eat lunch on the roof so nobody has to sit with me.”', '“There is something living in my locker and I feed it.”'],
    goal:'“I want one real friend who knows what I can do.”',
-   psi:{short:'BLEED!', name:'PSI BLEED!', desc:'Take hold of the blood inside a body, yours or someone else’s, and move it. You can slash blood like a blade, or even puppet a person by dragging them from the inside. Excruciatingly painful.'}},
+   psi:{short:'BLEED!', name:'PSI BLEED!', desc:'Take hold of the blood inside a body, yours or someone else’s, and move it. Blood can be drawn out through pores in a fine red mist, or torn free and held in the air as a blade. It is also possible to take a person by the arteries and puppet them from the inside. Manipulating blood is always messy, though, and it is hard to use on someone else without killing them, especially when they fight it.'}},
   {label:'YUMI', who:'murasaki', pop:'Average', friend:0, rival:1,
    quirks:['“My mother thinks I am in the tea ceremony club.”', '“I have never lost a fight, and I have had eleven.”'],
    goal:'“I want to find out what happened to my sister at Atarashi High.”',
-   psi:{short:'GROW!', name:'PSI GROW!', desc:'Force your own flesh to grow. Muscle bulges out in tumorous ropes and gives you immense strength. You can grow seemingly infinitely, and become a mass of muscle and skin. Once it starts to grow, it’s hard to put a stop to it.'}}
+   psi:{short:'BURN!', name:'PSI BURN!', desc:'Create a pocket of burning heat in the open air, inside an object, or inside a person. You can spark a flame from nothing, boil water, warp steel, or cook the blood in someone’s veins until it steams out of them. The fire has a mind of its own, though, and it will happily take far more than it was meant to.'}}
 ];
 const PSI_SHARED = [
   {short:'STORM!', kind:'SHARED', bg:'#A9BEDC', name:'PSI STORM!', desc:'Levitate in the air, slowly spinning as psychic lightning fills the space around you. Terrifying to anyone watching.'},
@@ -5416,10 +5422,10 @@ const PSI_SHARED = [
 ];
 
 const BIOS = {
-  momo: {goals:['Start a demon-hunting club before the term ends.', 'Prove to Kotori that my boyfriend is real.'], bio:'Second-year transfer, all confidence and no receipts. Tells tall tales about demon duels nobody witnessed, and carries a charm bag of salt she refuses to explain. New enough that she still thinks she can fix Atarashi.'},
-  midori: {goals:['Be elected Class President — unanimously.', 'Keep my diary of everyone’s secrets out of the wrong hands.'], bio:'Third-year class idol and president of everything worth presiding over. Smiles like she means it, remembers every favour owed, and knows exactly what you did last summer — it’s written down.'},
-  ao: {goals:['Find one real friend who knows what I can do.', 'Figure out what’s really living in my locker.'], bio:'First-year loner who eats lunch on the roof and talks to something no one else can see. Kind to stray cats and stray monsters alike. Wants, more than anything, to be wanted.'},
-  murasaki: {goals:['Find out what happened to my sister at Atarashi.', 'Win my twelfth fight.'], bio:'Second-year, undefeated, allegedly a member of the tea ceremony club. Came to Atarashi chasing a ghost that wears her sister’s face. Fists first, questions later.'}
+  momo: {goals:['Start a demon-hunting club before the term ends.', 'Prove to Kotori that my boyfriend is real.'], bio:'Sitting at the back of Class 2-B, Hiromi is a kind girl who apologizes when other people bump into her. She wears her uniform a size too large and keeps her cardigan on through the summer, and she gets anxious when her classmates look at her too long. Her parents are strict: a rigid curfew, a punishing diet, and grades that must never slip. Secretly, she is in love with her best friend, Kotori, but she will never muster the courage to tell her.'},
+  midori: {goals:['Be elected Class President — unanimously.', 'Keep my diary of everyone’s secrets out of the wrong hands.'], bio:'President of Class 3-A, Kotori is a member of eleven clubs and counting. She works hard to be liked, remembering everyone’s birthday, covering other people’s committee work, and on top of all that she runs the fastest 400m in the prefecture while posting the top marks in every subject. The truth is that when Kotori decides she wants something, she finds a way to get it. She has three older sisters who all graduated at the top of their year before moving abroad, and a workaholic mother who is hardly ever home.'},
+  ao: {goals:['Find one real friend who knows what I can do.', 'Figure out what’s really living in my locker.'], bio:'The loneliest student in Class 2-B, Ume doesn’t have many friends, although it doesn’t seem to bother her. She spends every hour she isn’t required to be in class at the small shrine four streets from the school, keeping it tidy on her own. She carries a sword she found there, and she is certain it is her destiny to protect the world from the demons that terrorize Atarashi High. Her parents are humble people who run a small corner store and are too busy to keep track of their daughter’s whereabouts.'},
+  murasaki: {goals:['Find out what happened to my sister at Atarashi.', 'Win my twelfth fight.'], bio:'People tend to avoid the strange girl from 1-D. Yumi knows how unpleasant she can be and can’t be bothered to care what anyone thinks of her. She is cruel, petty, and vindictive, and it doesn’t take much to end up on her long list of enemies. The one person she softens around is her little sister, who goes to the middle school across the road. Her classmates would be shocked at how responsible she is at home, where she handles the housework and the cooking while her mother is away at work.'}
 };
 
 const RULES = [
@@ -6814,13 +6820,14 @@ class TBPBase extends DCLogic {
       rerollAll: () => this.startRoll(),
       lockPips: locks.map(l => ({bg: l ? '#EDE31B' : 'rgba(239,230,200,.16)'})),
       rosterHint: allLocked ? 'All four chosen — the Demon has been rolled above.' : (lockCount + ' of 4 chosen — tap a Student to pick her Goals.'),
+      readyBtn: {show: false, label: 'READY', cursor: 'default', opacity: 1, click: () => {}},
       seats: SEATS.map((s, k) => {
         const lk = !!locks[k];
         return {
           label: s.label,
           portrait: 'assets/portrait-' + s.who + '.png', tone: SEAT_TONE[s.who],
           playerName: ((this.state.playerNames || {})[k] || 'PLAYER ' + (k + 1)).toUpperCase(),
-          bio: BIOS[s.who].bio, psiName: s.psi.name, psiDesc: s.psi.desc,
+          bio: BIOS[s.who].bio, psiName: s.psi.name, psiDesc: s.psi.desc, psiShort: s.psi.short,
           infoOpacity: (fSeat === k && !allLocked && this.state.picking == null) ? 1 : 0,
           blur: () => { if (this.state.picking == null && this.state.focusSeat === k) this.setState({focusSeat: -1}); },
           locked: lk,
@@ -6941,6 +6948,10 @@ function mpReplayPicks(shared) {
   });
 }
 
+function mpEsc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function mpNeuter(v, depth) {
   if (typeof v === 'function') return function () {};
   if (!v || typeof v !== 'object' || (depth || 0) > 3) return v;
@@ -7030,6 +7041,44 @@ class Component extends TBPBase {
     super.openGoalPicker(k);
   }
 
+  // Character Select tap-target for multiplayer: locked seats are read-only to
+  // everyone except the Student who locked them, who can tap again to free it
+  // up and pick someone else. The Headmaster can't choose at all.
+  mpChoose(k) {
+    var Net = window.TBPNet;
+    if (!Net || Net.role !== 'player') return;
+    var locks = this.state.locks || [false, false, false, false];
+    if (locks[k]) {
+      if (Net.seat === k) this.mpUnchoose(k);
+      return;
+    }
+    if (Net.seat != null && Net.seat !== k) return;   // already locked into a different seat
+    this.openGoalPicker(k);
+  }
+
+  mpUnchoose(k) {
+    var Net = window.TBPNet;
+    var locks = (this.state.locks || [false, false, false, false]).slice();
+    locks[k] = false;
+    var playerNames = Object.assign({}, this.state.playerNames);
+    delete playerNames[k];
+    var quirkPicks = Object.assign({}, this.state.quirkPicks);
+    delete quirkPicks[k];
+    var goalPicks = Object.assign({}, this.state.goalPicks);
+    delete goalPicks[k];
+    this.setState({ locks: locks, playerNames: playerNames, quirkPicks: quirkPicks, goalPicks: goalPicks });
+    if (Net && Net.seat === k) Net.claimSeat(null);
+  }
+
+  // The Headmaster removing a player from the room. If she'd claimed a Student,
+  // that seat is freed the same way mpUnchoose does it locally.
+  mpKick(sessionId, seat) {
+    var Net = window.TBPNet;
+    if (!Net) return;
+    Net.kickPlayer(sessionId);
+    if (seat != null && seat !== '') this.mpUnchoose(+seat);
+  }
+
   mpPush() {
     if (!window.TBPNet || !window.TBPNet.roomId) return;
     if (window.TBPNet.role === 'spectator') return;
@@ -7062,24 +7111,128 @@ class Component extends TBPBase {
     document.head.appendChild(el);
   }
 
+  // A small always-on badge (outside the game's own DOM tree, so it survives
+  // every re-render) reminding you who you're logged in as, and flagging the
+  // Headmaster specifically since she can't be told apart by a Student card.
+  mpInjectIdentity(role, name) {
+    var el = document.getElementById('tbp-identity');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'tbp-identity';
+      el.style.cssText = 'position:fixed; top:10px; left:10px; z-index:100000; ' +
+        "font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; letter-spacing:.07em; " +
+        'color:#EFE6C8; background:rgba(35,31,32,.9); border-radius:9px; padding:7px 12px; ' +
+        'pointer-events:none; display:flex; align-items:center; gap:7px';
+      document.body.appendChild(el);
+    }
+    el.style.border = '2px solid ' + (role === 'gm' ? '#EDE31B' : 'rgba(239,230,200,.35)');
+    var roleLabel = role === 'gm' ? '★ HEADMASTER' : (role === 'spectator' ? 'WATCHING' : 'LOGGED IN');
+    el.innerHTML = '<span style="' + (role === 'gm' ? 'color:#EDE31B' : 'opacity:.6') + '">' + roleLabel + '</span>' +
+      (name ? '<span>' + mpEsc(name) + '</span>' : '');
+  }
+
+  // The Headmaster's roster: everyone currently in the room, with a KICK button
+  // on everyone but herself. Built with plain DOM too, and only shown to her.
+  mpUpdateRoster(players) {
+    var Net = window.TBPNet;
+    if (!Net || Net.role !== 'gm') return;
+    var root = document.getElementById('tbp-roster');
+    if (!root) {
+      root = document.createElement('div');
+      root.id = 'tbp-roster';
+      root.style.cssText = 'position:fixed; top:10px; right:10px; z-index:100000; ' +
+        "font-family:'Baloo 2',sans-serif; background:rgba(35,31,32,.94); border:2px solid #EDE31B; " +
+        'border-radius:10px; padding:10px 12px; min-width:190px; max-width:250px';
+      document.body.appendChild(root);
+    }
+    var seatLabel = function (p) {
+      if (p.role === 'gm') return 'Headmaster';
+      if (p.role === 'spectator') return 'Spectating';
+      if (p.role === 'player' && p.seat != null && SEATS[p.seat]) return SEATS[p.seat].label;
+      return 'No seat yet';
+    };
+    var ids = Object.keys(players);
+    var confirming = this._mpKickConfirm;
+    var rows = ids.map(function (sid) {
+      var p = players[sid] || {};
+      var isSelf = sid === Net.session;
+      var isConfirming = confirming === sid;
+      var kick = (p.role === 'gm' || isSelf) ? '' :
+        '<span data-kick="' + sid + '" data-seat="' + (p.seat == null ? '' : p.seat) + '" ' +
+          'style="cursor:pointer; color:' + (isConfirming ? '#231F20' : '#E23A3A') + '; background:' + (isConfirming ? '#E23A3A' : 'transparent') + '; ' +
+          'font-size:10px; letter-spacing:.06em; border:1px solid #E23A3A; border-radius:5px; padding:2px 6px; margin-left:6px; flex:none">' +
+          (isConfirming ? 'SURE?' : 'KICK') + '</span>';
+      return '<div style="display:flex; align-items:center; justify-content:space-between; gap:6px; padding:5px 0; border-bottom:1px solid rgba(239,230,200,.12); font-size:12px; color:#EFE6C8">' +
+        '<span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' + mpEsc(p.name || 'Unnamed') + (isSelf ? ' (you)' : '') +
+        '<br><span style="opacity:.55; font-size:10.5px">' + seatLabel(p) + '</span></span>' + kick + '</div>';
+    }).join('');
+    root.innerHTML = '<div style="font-size:11px; letter-spacing:.12em; color:#EDE31B; margin-bottom:6px">LOGGED IN (' + ids.length + ')</div>' +
+      (rows || '<div style="font-size:11.5px; color:rgba(239,230,200,.5)">Nobody yet.</div>');
+    var self = this;
+    // Two-tap kick (tap once to arm, tap again within 3s to confirm) rather
+    // than a native confirm() — it matches the game's own custom dialogs, and
+    // never gets silently blocked by a browser's popup/dialog settings.
+    Array.prototype.forEach.call(root.querySelectorAll('[data-kick]'), function (btn) {
+      btn.onclick = function () {
+        var sid = btn.getAttribute('data-kick');
+        if (self._mpKickConfirm === sid) {
+          self._mpKickConfirm = null;
+          clearTimeout(self._mpKickConfirmT);
+          self.mpKick(sid, btn.getAttribute('data-seat'));
+        } else {
+          self._mpKickConfirm = sid;
+          clearTimeout(self._mpKickConfirmT);
+          self._mpKickConfirmT = setTimeout(function () { self._mpKickConfirm = null; self.mpUpdateRoster(self._mpPlayers || {}); }, 3000);
+          self.mpUpdateRoster(self._mpPlayers || players);
+        }
+      };
+    });
+    this._mpPlayers = players;
+  }
+
+  // Your own session vanished from the players map: the Headmaster kicked you.
+  // Freeze the page behind a full-screen notice rather than leaving you able
+  // to keep clicking around in a room you're no longer part of.
+  mpShowKicked() {
+    if (document.getElementById('tbp-kicked')) return;
+    var el = document.createElement('div');
+    el.id = 'tbp-kicked';
+    el.style.cssText = 'position:fixed; inset:0; z-index:200000; background:rgba(27,24,25,.94); ' +
+      'display:flex; align-items:center; justify-content:center; text-align:center; padding:24px';
+    el.innerHTML = '<div>' +
+      '<div style="display:inline-block; transform:skewX(-8deg); background:#E23A3A; padding:3px 15px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); margin-bottom:16px">' +
+        '<div style="transform:skewX(8deg); font-family:\'Baloo 2\',sans-serif; font-weight:800; font-size:24px; color:#231F20">REMOVED</div></div>' +
+      '<div style="font-family:\'Lora\',serif; font-style:italic; font-size:17px; color:rgba(239,230,200,.75); margin-bottom:20px">The Headmaster removed you from this room.</div>' +
+      '<a href="index.html" style="font-family:\'Baloo 2\',sans-serif; font-weight:800; font-size:15px; letter-spacing:.08em; color:#231F20; background:#EDE31B; border:4px solid #231F20; box-shadow:0 5px 0 rgba(0,0,0,.45); border-radius:11px; padding:12px 24px; text-decoration:none; display:inline-block">BACK TO TITLE</a>' +
+    '</div>';
+    document.body.appendChild(el);
+  }
+
   async mpStart() {
     var joined = await window.__TBPJoined;      // resolved by the room gate
     var Net = window.TBPNet;
     window.__tbp = this;                        // debug handle for the console
     this.mpInjectRoleCss(joined.role);
+    var myName = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('tbp-name')) || '';
+    this.mpInjectIdentity(joined.role, myName);
     if (joined.role === 'player' && joined.seat != null) {
       super.setState({ player: joined.seat });  // your card is the one that's "you"
     }
     var first = true;
-    Net.subscribe(function (shared) {
+    var self = this;
+    Net.subscribe(function (shared, players) {
+      self.mpUpdateRoster(players || {});
+      if (joined.role !== 'gm' && !first && players && !players[Net.session]) {
+        self.mpShowKicked();
+      }
       if (shared === undefined) return;          // the echo of our own write
       if (shared) {
-        this.mpApplyRemote(shared);
+        self.mpApplyRemote(shared);
       } else if (first && joined.role === 'gm') {
-        this.mpPush();                           // seed a brand-new room
+        self.mpPush();                           // seed a brand-new room
       }
       first = false;
-    }.bind(this));
+    });
   }
 
   // ---- role gating ----------------------------------------------------------
@@ -7091,6 +7244,7 @@ class Component extends TBPBase {
     var f = out && out.f;
     var Net = window.TBPNet;
     if (!f || !Net || !Net.role) return out;
+    var self = this;
 
     if (Net.role !== 'gm') {
       // Scene Control and NEW GAME are the Headmaster's alone. Character Select
@@ -7100,6 +7254,42 @@ class Component extends TBPBase {
       f.gm = Object.assign({}, f.gm, { show: false, open: function () {}, dotBg: 'transparent' });
       f.newGame = { open: function () {} };
       if (f.gearToggle) f.gearToggle = mpNeuter(f.gearToggle);
+    }
+
+    // Character Select: the Headmaster only watches (and kicks, via the
+    // roster panel); a Student can only touch her own seat, locked or not;
+    // spectators can't touch any of it. Everyone starts once she hits READY
+    // with 3 or 4 seats filled — the original "all four locked" auto-start is
+    // replaced by her call.
+    if (f.setup && f.setup.seats) {
+      var locks = this.state.locks || [false, false, false, false];
+      var lockCount = locks.filter(Boolean).length;
+      var ready = !!this.state.mpReady;
+      var isGm = Net.role === 'gm';
+      var canReady = isGm && !ready && lockCount >= 3;
+      f.setup = Object.assign({}, f.setup, {
+        topOpen: ready && this.state.picking == null,
+        demonOpen: ready && this.state.picking == null,
+        rosterHint: isGm
+          ? (lockCount + ' of 4 chosen' + (lockCount >= 3 ? ' — you can hit READY.' : ' — need at least 3.'))
+          : (ready ? 'The Headmaster is starting the game…' : (lockCount + ' of 4 chosen — the Headmaster starts when ready.')),
+        readyBtn: {
+          show: isGm,
+          label: ready ? 'STARTING…' : ('READY (' + lockCount + '/4)'),
+          cursor: canReady ? 'pointer' : 'default',
+          opacity: canReady ? 1 : 0.45,
+          click: canReady ? function () { self.setState({ mpReady: true }); } : function () {}
+        },
+        seats: f.setup.seats.map(function (s, k) {
+          var mySeat = Net.role === 'player' && Net.seat === k;
+          var canTouch = Net.role === 'player' && !ready && (locks[k] ? mySeat : (Net.seat == null || Net.seat === k));
+          return Object.assign({}, s, {
+            choose: canTouch ? function () { self.mpChoose(k); } : function () {},
+            focus: canTouch ? s.focus : function () {},
+            btnLabel: (locks[k] && mySeat) ? 'UNSELECT' : s.btnLabel
+          });
+        })
+      });
     }
 
     if (Array.isArray(f.cards)) {

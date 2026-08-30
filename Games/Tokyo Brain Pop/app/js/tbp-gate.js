@@ -43,8 +43,14 @@ function fail(msg) {
   document.body.appendChild(root);
 }
 
+function storedName(role) {
+  const n = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('tbp-name')) || '';
+  if (n) return n;
+  return role === 'gm' ? 'Headmaster' : (role === 'spectator' ? 'Spectator' : 'Player');
+}
+
 async function enter(role, seat) {
-  await Net.join(roomName, role, seat, null);
+  await Net.join(roomName, role, seat, storedName(role));
   window.__TBPJoinedResolve({ role, seat, room: Net.roomId });
 }
 
