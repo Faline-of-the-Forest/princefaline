@@ -5021,9 +5021,9 @@
 
           <div style="flex:1; min-height:0; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px">
             <sc-for list="{{ f.setup.seats }}" as="s" hint-placeholder-count="4">
-              <div sc-camel-on-mouse-enter="{{ s.focus }}" sc-camel-on-mouse-leave="{{ s.blur }}" sc-camel-on-click="{{ s.choose }}" style="cursor:pointer; position:relative; min-width:0; min-height:0; box-sizing:border-box; border:5px solid {{ s.border }}; border-radius:14px; overflow:hidden; background:{{ s.tone }}; box-shadow:0 7px 0 rgba(0,0,0,.45); transform:{{ s.lift }}">
-                <div style="position:absolute; inset:0; background-image:radial-gradient(#231F20 1.7px, transparent 2.2px); background-size:11px 11px; opacity:.22"></div>
+              <div sc-camel-on-mouse-enter="{{ s.focus }}" sc-camel-on-mouse-leave="{{ s.blur }}" sc-camel-on-click="{{ s.choose }}" style="cursor:pointer; position:relative; min-width:0; min-height:0; box-sizing:border-box; border:5px solid {{ s.border }}; border-radius:14px; overflow:hidden; background:{{ s.cardBg }}; box-shadow:0 7px 0 rgba(0,0,0,.45); transform:{{ s.lift }}">
                 <sc-if value="{{ s.showPortrait }}" hint-placeholder-val="{{ true }}">
+                  <div style="position:absolute; inset:0; background-image:radial-gradient(#231F20 1.7px, transparent 2.2px); background-size:11px 11px; opacity:.22"></div>
                   <img src="{{ s.portrait }}" alt="student portrait" style="position:absolute; left:0; right:0; top:0; bottom:56px; width:100%; height:calc(100% - 56px); object-fit:cover; object-position:50% 6%; filter:{{ s.artFilter }}">
                   <div style="position:absolute; left:0; right:0; top:0; bottom:56px; background:{{ s.artWash }}"></div>
                 </sc-if>
@@ -5036,19 +5036,26 @@
                   </div>
                 </div>
 
-                <sc-if value="{{ s.locked }}" hint-placeholder-val="{{ false }}">
-                  <div style="position:absolute; top:14px; right:-6px; transform:skewX(-8deg) rotate(3deg); background:#EDE31B; border:4px solid #231F20; padding:3px 13px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); animation:tbp-land .4s cubic-bezier(.2,1.5,.4,1) both">
-                    <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; color:#231F20">{{ s.playerName }}</div>
-                  </div>
-                </sc-if>
-                <sc-if value="{{ s.pickedByOther }}" hint-placeholder-val="{{ false }}">
-                  <div style="position:absolute; top:14px; right:-6px; transform:skewX(-8deg) rotate(3deg); background:#E23A3A; border:4px solid #231F20; padding:3px 13px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); animation:tbp-land .4s cubic-bezier(.2,1.5,.4,1) both">
-                    <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; color:#EFE6C8">PICKING…</div>
-                  </div>
+                <sc-if value="{{ s.showPortrait }}" hint-placeholder-val="{{ true }}">
+                  <sc-if value="{{ s.locked }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute; top:14px; right:-6px; transform:skewX(-8deg) rotate(3deg); background:#EDE31B; border:4px solid #231F20; padding:3px 13px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); animation:tbp-land .4s cubic-bezier(.2,1.5,.4,1) both">
+                      <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; color:#231F20">{{ s.playerName }}</div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ s.pickedByOther }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute; top:14px; right:-6px; transform:skewX(-8deg) rotate(3deg); background:#E23A3A; border:4px solid #231F20; padding:3px 13px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); animation:tbp-land .4s cubic-bezier(.2,1.5,.4,1) both">
+                      <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; color:#EFE6C8">PICKING…</div>
+                    </div>
+                  </sc-if>
                 </sc-if>
 
                 <div style="position:absolute; left:0; right:0; bottom:0; height:56px; background:#231F20; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 14px">
-                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:30px; line-height:1; color:{{ s.nameInk }}">{{ s.label }}</div>
+                  <div style="min-width:0; overflow:hidden">
+                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:30px; line-height:1; color:{{ s.nameInk }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ s.label }}</div>
+                    <sc-if value="{{ s.compactTag }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.06em; color:{{ s.compactTagInk }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ s.compactTag }}</div>
+                    </sc-if>
+                  </div>
                   <div style="flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; color:#EDE31B; border:2px solid #EDE31B; border-radius:7px; padding:4px 8px">{{ s.psiShort }}</div>
                 </div>
               </div>
@@ -6846,6 +6853,9 @@ class TBPBase extends DCLogic {
           btnLabel: lk ? 'CHOSEN' : 'CHOOSE',
           pickedByOther: false,
           showPortrait: !allLocked,
+          cardBg: allLocked ? '#231F20' : SEAT_TONE[s.who],
+          compactTag: allLocked && lk ? ((this.state.playerNames || {})[k] || 'PLAYER ' + (k + 1)).toUpperCase() : '',
+          compactTagInk: '#EDE31B',
           choose: () => { if (!allLocked) this.openGoalPicker(k); },
           focus: () => { if (this.state.picking == null && !allLocked) this.setState({focusSeat: k}); }
         };
@@ -7360,7 +7370,9 @@ class Component extends TBPBase {
             pickedByOther: pickedByOther,
             artFilter: pickedByOther ? 'grayscale(.9) brightness(.55)' : s.artFilter,
             border: pickedByOther ? 'rgba(226,58,58,.5)' : s.border,
-            showPortrait: !ready
+            showPortrait: !ready,
+            cardBg: ready ? '#231F20' : s.cardBg,
+            compactTag: ready && locks[k] ? s.playerName : ''
           });
         }),
         // The Demon-roll step: everyone sees the same name/goal fields and the
