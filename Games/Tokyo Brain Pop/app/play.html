@@ -4325,18 +4325,18 @@
 
     <div style="flex:0 1 min(24vw,300px); min-width:min(15vw,178px); box-sizing:border-box; border-radius:14px; box-shadow:6px 6px 0 rgba(35,31,32,.28); border:4px solid #231F20; background:{{ f.me.tone }}; position:relative; overflow:hidden; display:flex; align-items:center; gap:min(1.1vw,13px); padding:11px min(1.1vw,13px)">
       <div style="position:absolute; inset:0; background-image:radial-gradient(#231F20 1.65px, transparent 2.1px); background-size:12px 12px; opacity:.16; pointer-events:none"></div>
-      <div style="position:relative; width:min(4.6vw,58px); height:min(4.6vw,58px); flex:none">
+      <div style="position:relative; width:min(4.6vw,58px); height:min(4.6vw,58px); flex:none; opacity:{{ f.me.portraitOpacity }}">
         <img src="assets/head-momo-cut.png" alt="portrait, Hiromi" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 0 rgba(35,31,32,.3)); opacity:{{ f.me.oMomo }}">
         <img src="assets/head-midori-cut.png" alt="portrait, Kotori" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 0 rgba(35,31,32,.3)); opacity:{{ f.me.oMidori }}">
         <img src="assets/head-ao-cut.png" alt="portrait, Ume" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 0 rgba(35,31,32,.3)); opacity:{{ f.me.oAo }}">
         <img src="assets/head-murasaki-cut.png" alt="portrait, Yumi" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 0 rgba(35,31,32,.3)); opacity:{{ f.me.oMurasaki }}">
       </div>
       <div style="position:relative; flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px">
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.16em; line-height:1; color:#231F20; opacity:.62">SAM</div>
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:min(1.75vw,25px); line-height:1; color:#231F20; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; -webkit-text-stroke:2px #FDFCFC; paint-order:stroke fill">{{ f.me.name }}</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.16em; line-height:1; color:#231F20; opacity:.62">{{ f.me.playerLabel }}</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(16px,1.75vw + 9px,25px); line-height:1; color:#231F20; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; -webkit-text-stroke:2px #FDFCFC; paint-order:stroke fill">{{ f.me.name }}</div>
       </div>
       <div style="position:relative; flex:none; display:flex; align-items:center; gap:8px">
-        <div sc-camel-on-click="{{ f.me.openDiary }}" sc-camel-on-mouse-enter="{{ f.me.diaryEnter }}" sc-camel-on-mouse-leave="{{ f.me.diaryLeave }}" title="Character Diary" style="position:relative; cursor:pointer; width:min(3.64vw,42px); height:min(3.64vw,42px); display:grid; place-items:center; transform:{{ f.me.diaryPress }}; transition:transform .09s ease-out">
+        <div sc-camel-on-click="{{ f.me.openDiary }}" sc-camel-on-mouse-enter="{{ f.me.diaryEnter }}" sc-camel-on-mouse-leave="{{ f.me.diaryLeave }}" title="Character Diary" style="position:relative; cursor:pointer; width:min(3.64vw,42px); height:min(3.64vw,42px); display:{{ f.me.diaryDisplay }}; place-items:center; transform:{{ f.me.diaryPress }}; transition:transform .09s ease-out">
           <img src="assets/icon-diary-cut.png" alt="diary" style="width:min(3.1vw,36px); height:min(3.1vw,36px); object-fit:contain; pointer-events:none; filter:drop-shadow(0 2px 0 rgba(35,31,32,.3))">
         </div>
         <div sc-camel-on-click="{{ f.me.openRulebook }}" sc-camel-on-mouse-enter="{{ f.me.helpEnter }}" sc-camel-on-mouse-leave="{{ f.me.helpLeave }}" title="Rulebook" style="position:relative; cursor:pointer; width:min(3.64vw,42px); height:min(3.64vw,42px); display:grid; place-items:center; transform:{{ f.me.helpPress }}; transition:transform .09s ease-out">
@@ -4347,8 +4347,8 @@
 
     <div style="flex:1 1 auto; min-width:0; box-sizing:border-box; background:#231F20; border-radius:14px; padding:12px min(1vw,18px); box-shadow:6px 6px 0 rgba(35,31,32,.28); display:flex; align-items:center; justify-content:center; gap:min(.5vw,11px); overflow:hidden">
       <div ref="{{ f.anchors.good }}" style="display:flex; flex-direction:column; align-items:center; gap:1px; flex:none">
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:min(.82vw,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:#9CB39A">GOOD END</div>
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:min(1.85vw,26px); line-height:1; color:#9CB39A; text-align:center">{{ f.rail.goodCount }}</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.82vw + 5px,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:#9CB39A">GOOD END</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.85vw + 11px,26px); line-height:1; color:#9CB39A; text-align:center">{{ f.rail.goodCount }}</div>
       </div>
       <div style="display:flex; align-items:center; gap:min(.43vw,7px); flex:none">
         <sc-for list="{{ f.rail.goodSquares }}" as="g" hint-placeholder-count="3">
@@ -4363,13 +4363,13 @@
         </sc-for>
       </div>
       <div style="display:flex; flex-direction:column; align-items:center; gap:1px; flex:none">
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:min(.82vw,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:#E23A3A">BAD END</div>
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:min(1.85vw,26px); line-height:1; color:#E23A3A; text-align:center">{{ f.rail.badCount }}</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.82vw + 5px,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:#E23A3A">BAD END</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.85vw + 11px,26px); line-height:1; color:#E23A3A; text-align:center">{{ f.rail.badCount }}</div>
       </div>
       <div ref="{{ f.anchors.scene }}" style="flex:none; display:flex; flex-direction:column; align-items:center; gap:1px; margin-left:min(.9vw,14px); padding-left:min(.9vw,16px); border-left:3px solid rgba(239,230,200,.18)">
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:min(.82vw,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:rgba(239,230,200,.55)">SCENES LEFT</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.82vw + 5px,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:rgba(239,230,200,.55)">SCENES LEFT</div>
         <div style="display:flex; align-items:center; gap:min(.5vw,8px)">
-          <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:min(1.85vw,26px); line-height:1; color:{{ f.rail.sceneInk }}">{{ f.rail.scenesLeft }}</div>
+          <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.85vw + 11px,26px); line-height:1; color:{{ f.rail.sceneInk }}">{{ f.rail.scenesLeft }}</div>
           <sc-if value="{{ f.rail.demonWarn }}" hint-placeholder-val="{{ false }}">
             <img src="assets/icon-demon.png" alt="demon lead warning" title="Not enough Scenes left — the next Scene is Demon-led." style="width:min(1.9vw,27px); height:min(1.9vw,27px); object-fit:contain; animation:tbp-breakblink2 .85s ease-in-out infinite">
           </sc-if>
@@ -4379,7 +4379,7 @@
 
     <div style="flex:none; box-sizing:border-box; background:#231F20; border-radius:14px; padding:10px min(1.4vw,20px); box-shadow:6px 6px 0 rgba(35,31,32,.28); display:flex; align-items:center; gap:min(1.4vw,20px)">
       <sc-for list="{{ f.rail.seats }}" as="s" hint-placeholder-count="4">
-        <div sc-camel-on-click="{{ s.click }}" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:7px; opacity:{{ s.opacity }}">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:7px; opacity:{{ s.opacity }}">
           <div style="position:relative; width:min(4.6vw,62px); height:min(4.6vw,62px)">
             <div style="position:absolute; inset:0; border-radius:11px; background:{{ s.tone }}; border:4px solid {{ s.ring }}; box-sizing:border-box; overflow:hidden">
               <img src="assets/head-momo.png" alt="portrait, Hiromi" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:{{ s.oMomo }}">
@@ -4418,21 +4418,28 @@
 
   <div data-tbp="stage" style="flex:1 1 auto; min-height:0; width:100%; position:relative; z-index:6; display:flex; align-items:center; justify-content:center; overflow:visible">
 
+    <sc-if value="{{ f.firstVote.show }}" hint-placeholder-val="{{ false }}">
+      <div sc-camel-on-click="{{ f.firstVote.start }}" title="Call the first Class Vote — Headmaster only" style="cursor:pointer; box-sizing:border-box; border:5px solid #231F20; border-radius:16px; box-shadow:10px 10px 0 rgba(35,31,32,.28); background:#EDE31B; padding:34px 46px; display:flex; flex-direction:column; align-items:center; gap:10px">
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.16em; color:rgba(35,31,32,.6)">BEFORE THE FIRST SCENE</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:26px; letter-spacing:.04em; color:#231F20">CALL THE CLASS VOTE</div>
+      </div>
+    </sc-if>
+
     <sc-if value="{{ f.loc.show }}" hint-placeholder-val="{{ true }}">
       <div style="width:760px; height:320px; flex:none; transform:scale({{ f.stage.locScale }}); pointer-events:auto; box-sizing:border-box; border:5px solid #231F20; border-radius:16px; box-shadow:10px 10px 0 rgba(35,31,32,.28); background:#231F20; overflow:hidden; display:flex; align-items:stretch">
-        <div sc-camel-on-click="{{ f.loc.cyclePlace }}" title="Change location" style="position:relative; height:100%; aspect-ratio:1/1; flex:none; cursor:pointer; overflow:hidden; background:#EFE6C8">
+        <div style="position:relative; height:100%; aspect-ratio:1/1; flex:none; overflow:hidden; background:#EFE6C8">
           <img src="{{ f.loc.img }}" alt="scene location" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 45%">
           <div style="position:absolute; inset:0; box-shadow:inset 0 0 0 4px rgba(35,31,32,.18)"></div>
         </div>
         <div style="flex:1 1 auto; min-width:0; display:flex; flex-direction:column; justify-content:space-between; gap:16px; padding:19px 22px 18px">
           <div sc-camel-on-click="{{ f.loc.cycleSub }}" title="Edit sub-location" style="cursor:text; display:flex; flex-direction:column; align-items:flex-start; gap:10px; min-width:0">
             <div style="transform:skewX(-7deg); background:#EDE31B; padding:2px 13px 6px; box-shadow:5px 5px 0 rgba(0,0,0,.4)">
-              <div style="transform:skewX(7deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:32px; letter-spacing:.03em; line-height:1.05; color:#231F20; white-space:nowrap">{{ f.loc.name }}</div>
+              <div style="transform:skewX(7deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(22px,1.4vw + 22px,32px); letter-spacing:.03em; line-height:1.05; color:#231F20; white-space:nowrap">{{ f.loc.name }}</div>
             </div>
-            <div style="font-family:'Lora',serif; font-style:italic; font-size:21px; line-height:1.25; color:#EFE6C8; text-wrap:pretty">{{ f.loc.sub }}</div>
+            <div style="font-family:'Lora',serif; font-style:italic; font-size:clamp(15px,.9vw + 15px,21px); line-height:1.25; color:#EFE6C8; text-wrap:pretty">{{ f.loc.sub }}</div>
           </div>
           <div style="display:flex; flex-direction:column; gap:11px; border-top:3px solid rgba(239,230,200,.22); padding-top:14px">
-            <div sc-camel-on-click="{{ f.loc.cycleFocus }}" title="Lead: Student, vs the Demon, or the Demon itself" style="cursor:pointer; display:flex; align-items:center; gap:13px; min-width:0">
+            <div title="Lead: Student, vs the Demon, or the Demon itself" style="display:flex; align-items:center; gap:13px; min-width:0">
               <div style="position:relative; flex:none; width:54px; height:54px; border-radius:11px; background:{{ f.loc.focusChipBg }}; overflow:hidden">
                 <img src="assets/head-momo.png" alt="portrait, Hiromi" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:{{ f.loc.oMomo }}">
                 <img src="assets/head-midori.png" alt="portrait, Kotori" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:{{ f.loc.oMidori }}">
@@ -4454,7 +4461,7 @@
                 </sc-if>
                 <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.16em; line-height:1; color:{{ f.loc.goalKindInk }}; white-space:nowrap">{{ f.loc.goalKind }}</div>
               </div>
-              <div style="font-family:'Lora',serif; font-size:16.5px; line-height:1.32; color:#EFE6C8; text-wrap:pretty">{{ f.loc.goalText }}</div>
+              <div style="font-family:'Lora',serif; font-size:clamp(12px,.7vw + 12px,16.5px); line-height:1.32; color:#EFE6C8; text-wrap:pretty">{{ f.loc.goalText }}</div>
             </div>
           </div>
         </div>
@@ -4482,7 +4489,7 @@
             <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; letter-spacing:.2em; line-height:1; color:#231F20">TIME</div>
           </div>
           <div style="flex:1 1 0; min-width:0; display:flex; justify-content:flex-end">
-            <div sc-camel-on-click="{{ f.voteBar.ready }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:23px; letter-spacing:.06em; color:#231F20; background:#EFE6C8; border:4px solid #231F20; border-radius:12px; padding:14px 42px; line-height:1; box-shadow:5px 5px 0 #231F20; animation:tbp-ready 1.4s ease-in-out infinite">READY!</div>
+            <div sc-camel-on-click="{{ f.voteBar.ready }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:23px; letter-spacing:.06em; color:#231F20; background:#EFE6C8; border:4px solid #231F20; border-radius:12px; padding:14px 42px; line-height:1; box-shadow:5px 5px 0 #231F20; animation:tbp-ready 1.4s ease-in-out infinite">{{ f.voteBar.readyLabel }}</div>
           </div>
         </div>
         <div style="display:flex; flex-direction:column; align-items:center; gap:14px">
@@ -4490,6 +4497,24 @@
             <div style="transform:skewX(7deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:104px; letter-spacing:.02em; line-height:1; color:#EDE31B; text-align:center; white-space:nowrap">Class Vote!</div>
           </div>
           <div style="font-family:'Lora',serif; font-style:italic; font-size:28px; line-height:1; color:#231F20">Spend your Drama!</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ f.voteHeadmaster.show }}" hint-placeholder-val="{{ false }}">
+      <div style="width:640px; flex:none; box-sizing:border-box; background:#231F20; border-radius:18px; padding:26px 30px; box-shadow:10px 10px 0 rgba(35,31,32,.35); display:flex; flex-direction:column; gap:14px">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:6px">
+          <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:44px; letter-spacing:.02em; line-height:1; color:#EDE31B">Class Vote!</div>
+          <div style="font-family:'Lora',serif; font-style:italic; font-size:17px; color:rgba(239,230,200,.7)">Waiting on the Students to spend their Drama.</div>
+          <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.1em; color:#EFE6C8">{{ f.voteHeadmaster.readyCount }} / {{ f.voteHeadmaster.readyTotal }} READY</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px">
+          <sc-for list="{{ f.voteHeadmaster.rows }}" as="r" hint-placeholder-count="4">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 12px; border-radius:9px; background:rgba(239,230,200,.06)">
+              <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:16px; color:#EFE6C8">{{ r.label }}</div>
+              <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.1em; color:{{ r.tagInk }}; background:{{ r.tagBg }}; border-radius:7px; padding:4px 10px">{{ r.tag }}</div>
+            </div>
+          </sc-for>
         </div>
       </div>
     </sc-if>
@@ -4602,7 +4627,7 @@
         <div style="position:absolute; left:50%; top:-16px; z-index:14; transform:translateX(-50%) rotate(-4deg); pointer-events:none; white-space:nowrap; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:32px; letter-spacing:.02em; line-height:1; color:#EDE31B; -webkit-text-stroke:8px #231F20; paint-order:stroke fill; animation:tbp-goalshout 2.6s ease-out forwards">GOAL COMPLETED!</div>
       </sc-if>
       <div style="position:absolute; left:-39px; top:24px; width:39px; z-index:5">
-        <div sc-camel-on-pointer-down="{{ c.bumpDrama }}" sc-camel-on-mouse-enter="{{ c.dramaEnter }}" sc-camel-on-mouse-leave="{{ c.dramaLeave }}" style="cursor:help; position:relative; display:flex; flex-direction:column; align-items:stretch; animation:{{ c.gaugeAnim }}">
+        <div sc-camel-on-pointer-down="{{ c.bumpDrama }}" sc-camel-on-context-menu="{{ c.dropDrama }}" sc-camel-on-mouse-enter="{{ c.dramaEnter }}" sc-camel-on-mouse-leave="{{ c.dramaLeave }}" style="cursor:help; position:relative; display:flex; flex-direction:column; align-items:stretch; animation:{{ c.gaugeAnim }}">
           <sc-if value="{{ c.dramaPop }}" hint-placeholder-val="{{ false }}">
             <div style="position:absolute; left:50%; transform:translateX(-50%); bottom:calc(100% + 3px); z-index:14; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:19.5px; line-height:1; color:#E23A3A; white-space:nowrap; animation:tbp-dramapop .8s ease-out forwards; pointer-events:none">+1 ✦</div>
           </sc-if>
@@ -4633,7 +4658,7 @@
 
       <div style="position:absolute; left:-39px; top:186px; width:39px; z-index:6; display:flex; flex-direction:column; gap:6px; animation:{{ c.panelAnim }}">
         <sc-for list="{{ c.bonds }}" as="b" hint-placeholder-count="2">
-          <div sc-camel-on-mouse-enter="{{ b.enter }}" sc-camel-on-mouse-leave="{{ b.leave }}" style="position:relative; width:45px; height:45px; cursor:help">
+          <div sc-camel-on-click="{{ b.click }}" sc-camel-on-mouse-enter="{{ b.enter }}" sc-camel-on-mouse-leave="{{ b.leave }}" style="position:relative; width:45px; height:45px; cursor:{{ b.cursor }}">
             <div style="position:absolute; inset:0; overflow:hidden">
               <img src="assets/head-momo.png" alt="portrait, Hiromi" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; opacity:{{ b.oMomo }}">
               <img src="assets/head-midori.png" alt="portrait, Kotori" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; opacity:{{ b.oMidori }}">
@@ -4706,7 +4731,7 @@
       </sc-if>
       <div sc-camel-on-click="{{ c.boxClick }}" style="width:300px; box-sizing:border-box; background:#231F20; border:4.5px solid {{ c.cardBorder }}; border-radius:9px; box-shadow:9px 9px 0 rgba(35,31,32,.35); padding:12px; display:flex; gap:9px; cursor:{{ c.boxCursor }}; animation:{{ c.pickGlow }}, {{ c.boxAnim }}, {{ c.brokenGlow }}, {{ c.brokenLevitate }}, {{ c.brokenShudder }}">
 
-        <div style="position:relative; width:126px; height:267px; flex:none; box-sizing:border-box; border:4.5px solid #FDFCFC; overflow:hidden; background:#FDFCFC">
+        <div style="position:relative; width:126px; height:291px; flex:none; box-sizing:border-box; border:4.5px solid #FDFCFC; overflow:hidden; background:#FDFCFC">
           <div style="position:absolute; inset:0; background:{{ c.bgColor }}"></div>
           <div style="position:absolute; inset:0; background-image:radial-gradient(#231F20 1.65px, transparent 2.1px); background-size:12px 12px; opacity:.16"></div>
 
@@ -4820,7 +4845,7 @@
      </div>
     </sc-for>
 
-     <div style="order:2; display:flex; flex-direction:column; gap:24px; width:300px">
+     <div style="order:{{ f.demon.order }}; display:flex; flex-direction:column; gap:24px; width:300px">
       <div style="width:300px; height:195px"></div>
       <div style="position:relative; height:300px">
         <sc-if value="{{ f.demon.showArrow }}" hint-placeholder-val="{{ false }}">
@@ -4967,12 +4992,12 @@
 
               <div style="flex:none; display:flex; align-items:flex-end; gap:12px">
                 <div style="flex:none; width:250px; display:flex; flex-direction:column; gap:6px">
-                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">HEADMASTER — DEMON NAME</div>
-                  <input data-mp="demon-name" value="{{ f.setup.name }}" sc-camel-on-change="{{ f.setup.setName }}" placeholder="Gashadokuro" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:17px; letter-spacing:.04em; color:#EFE6C8; outline:none">
+                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S NAME</div>
+                  <input data-mp="demon-name" value="{{ f.setup.name }}" sc-camel-on-change="{{ f.setup.setName }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:17px; letter-spacing:.04em; color:#EFE6C8; outline:none">
                 </div>
                 <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:6px">
-                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">HEADMASTER — WHAT IT WANTS</div>
-                  <input data-mp="demon-goal" value="{{ f.setup.goalText }}" sc-camel-on-change="{{ f.setup.setGoal }}" placeholder="Feed on the school's despair before the term ends." style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:16px; color:#EFE6C8; outline:none">
+                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S GOAL</div>
+                  <input data-mp="demon-goal" value="{{ f.setup.goalText }}" sc-camel-on-change="{{ f.setup.setGoal }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:16px; color:#EFE6C8; outline:none">
                 </div>
                 <div data-mp="play-btn" sc-camel-on-click="{{ f.setup.start }}" style="flex:none; cursor:pointer; opacity:{{ f.setup.startOpacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:21px; letter-spacing:.09em; color:#EFE6C8; background:#B4322C; border:4px solid #E23A3A; border-radius:11px; padding:12px 40px; box-shadow:0 6px 0 rgba(0,0,0,.45)">PLAY</div>
               </div>
@@ -5019,7 +5044,7 @@
             </sc-if>
           </div>
 
-          <div style="flex:1; min-height:0; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px">
+          <div style="flex:{{ f.setup.rosterFlex }}; min-height:0; max-height:{{ f.setup.rosterMaxHeight }}; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px">
             <sc-for list="{{ f.setup.seats }}" as="s" hint-placeholder-count="4">
               <div sc-camel-on-mouse-enter="{{ s.focus }}" sc-camel-on-mouse-leave="{{ s.blur }}" sc-camel-on-click="{{ s.choose }}" style="cursor:pointer; position:relative; min-width:0; min-height:0; box-sizing:border-box; border:5px solid {{ s.border }}; border-radius:14px; overflow:hidden; background:{{ s.cardBg }}; box-shadow:0 7px 0 rgba(0,0,0,.45); transform:{{ s.lift }}">
                 <sc-if value="{{ s.showPortrait }}" hint-placeholder-val="{{ true }}">
@@ -5029,10 +5054,10 @@
                 </sc-if>
 
                 <div style="position:absolute; left:0; right:0; top:0; bottom:56px; box-sizing:border-box; background:rgba(27,24,25,.93); opacity:{{ s.infoOpacity }}; pointer-events:none; padding:14px 16px 12px; display:flex; flex-direction:column; gap:10px; overflow-y:auto">
-                  <div style="flex:none; font-family:'Lora',serif; font-size:13.5px; line-height:1.36; color:#EFE6C8; text-wrap:pretty">{{ s.bio }}</div>
+                  <div style="flex:none; font-family:'Lora',serif; font-size:clamp(12px,.55vw + 11.5px,13.5px); line-height:1.36; color:#EFE6C8; text-wrap:pretty">{{ s.bio }}</div>
                   <div style="flex:none; display:flex; flex-direction:column; gap:4px; background:rgba(237,227,27,.12); border-left:4px solid #EDE31B; padding:8px 10px">
-                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; color:#EDE31B">{{ s.psiName }}</div>
-                    <div style="font-family:'Lora',serif; font-size:12.5px; line-height:1.32; color:rgba(239,230,200,.82); text-wrap:pretty">{{ s.psiDesc }}</div>
+                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(11.5px,.45vw + 11.3px,13px); letter-spacing:.08em; color:#EDE31B">{{ s.psiName }}</div>
+                    <div style="font-family:'Lora',serif; font-size:clamp(11px,.4vw + 10.7px,12.5px); line-height:1.32; color:rgba(239,230,200,.82); text-wrap:pretty">{{ s.psiDesc }}</div>
                   </div>
                 </div>
 
@@ -5520,8 +5545,8 @@ const GOAL_POOL = {
 const DEMON_TABLES = {
   type: ['A new student','A teacher','A family member','A government agent','A mysterious group','An animal or beast','A shapeshifter','A ghost or spirit','The undead','A cryptid or urban legend','An evil plant','An experiment or machine','A thing from outer space','A cursed or haunted place','A hideous monster','An actual demon','A natural disaster','A legendary villain','A god or demi-god','Roll twice and combine'],
   power: ['Weapons (guns / swords)','Animal features (teeth / claws / tentacles)','A swarm / a mob','Poison / disease','Stalking / going unseen','Unnatural beauty / charm / influence','Draining blood / draining energy','Fire','A mutation / extra limbs','Multiplying / spreading','Enormous size','Weird science','Dark magic (spells / potions)','Possession','Telepathy / mind control','Memories / dreams','Immortality / invulnerability','Time loop / time travel','PSI','Roll twice and combine'],
-  complication: ['It only appears at a certain time','It can only be defeated by one specific weakness','Its lair must be found to defeat it','It looks normal, except for one tell-tale feature','It has a secret ally / minion','It has a hostage','It is being used / controlled by someone else','It has already infiltrated the school under a false identity','It already has a group of followers','It answers to a powerful master / patron','A ritual or invention is needed to defeat it','A curse must be broken before it can be defeated','It is being hunted by something worse','A deal / promise must be made to defeat it','Hurting it hurts someone else','Defeating it will cause a disaster','It is found at the end of a long journey','The Students already defeated it, but it\u2019s back in a new form','It shares a history with one of the Students','Roll twice and combine'],
-  goal: ['To eat someone, or something','To find something it lost','To take revenge on someone','To steal something','To take a mate','To kill a specific person','To move in','To feed on fear','To summon something worse','To rise to power / take over','To spread misery and chaos','To protect someone / something','To repay a debt / keep a promise','To gather enough followers','To become immortal / young again','To be challenged','To capture a Student','To kill every psychic girl','To turn a Student to evil','Roll twice and combine']
+  complication: ['It only appears at a certain time','It can only be defeated by one specific weakness','Its lair must be found to defeat it','It looks normal, except for one tell-tale feature','It has a secret ally / minion','It has a hostage','It is being used / controlled by someone else','It has already infiltrated the school under a false identity','It already has a group of followers','It answers to a powerful master / patron','A ritual or invention is needed to defeat it','A curse must be broken before it can be defeated','It is being hunted by something worse','A deal / promise must be made to defeat it','Hurting it hurts someone else','Defeating it will cause a disaster','It is found at the end of a long journey','It has been defeated in the past, but it\u2019s back in a new form.','It shares a history with one of the Students','Roll twice and combine'],
+  goal: ['To eat someone, or something','To find something it lost','To take revenge on someone','To steal something','To take a mate','To kill a specific person','To move in','To feed on fear','To summon something worse','To rise to power / take over','To spread misery and chaos','To protect someone / something','To repay a debt / keep a promise','To gather enough followers','To become immortal / young again','To play a game / to win a contest','To capture a Student','To kill every psychic girl','To turn a Student to evil','Roll twice and combine']
 };
 
 const EG_GIRLS = [
@@ -5582,7 +5607,7 @@ function faceOf(who) {
 }
 
 class TBPBase extends DCLogic {
-  state = {endKind: null, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, spinning: {type:false,power:false,complication:false,goal:false}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[true,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonLockLead: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:0, psiCost:2, votedOnce:false}))};
+  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, spinning: {type:false,power:false,complication:false,goal:false}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[true,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonLockLead: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false}))};
 
   measureAnchors = () => {
     const g = this._goodEl, c = this._sceneEl;
@@ -5739,7 +5764,7 @@ class TBPBase extends DCLogic {
 
     let raw;
     if (dl) {
-      raw = [{tag:'THE DEMON LEADS', text:DEMON.goal, on:true, red:true, pick: () => {}}];
+      raw = [{tag:'THE DEMON LEADS', text:this.state.demonGoal, on:true, red:true, pick: () => {}}];
     } else {
       raw = BIOS[lead.who].goals.map((g, k) => ({
         tag: d.done[d.leadIdx][k] ? 'GOAL ' + (k + 1) + ' · COMPLETED' : 'GOAL ' + (k + 1),
@@ -5748,7 +5773,7 @@ class TBPBase extends DCLogic {
         pick: () => this.gmSet({focusIdx:0, goalIdx:k}),
         toggleDone: () => this.gmToggleDone(d.leadIdx, k)
       }));
-      raw.push({tag:'AGAINST THE DEMON', text:'“Defeat the ' + DEMON.name + '.”', red:true, on:vs, pick: () => this.gmSet({focusIdx:1})});
+      raw.push({tag:'AGAINST THE DEMON', text:'“Defeat the ' + this.state.demonName + '.”', red:true, on:vs, pick: () => this.gmSet({focusIdx:1})});
     }
     const focusOptions = raw.map(o => {
       const hue = o.red ? '#E23A3A' : ACC;
@@ -5777,7 +5802,7 @@ class TBPBase extends DCLogic {
       chipBg: dl ? '#B4322C' : SEAT_TONE[lead.who],
       kind: dl ? 'LEAD · THE DEMON' : (vs ? 'LEAD · ' + lead.label + ' · VS THE DEMON' : 'LEAD · ' + lead.label),
       kindInk: dl || vs ? '#E23A3A' : ACC,
-      goal: dl ? DEMON.goal : (vs ? '“Defeat the ' + DEMON.name + '.”' : '“' + BIOS[lead.who].goals[d.goalIdx % 2] + '”')
+      goal: dl ? this.state.demonGoal : (vs ? '“Defeat the ' + this.state.demonName + '.”' : '“' + BIOS[lead.who].goals[d.goalIdx % 2] + '”')
     };
 
     const jc = this.state.justCleared;
@@ -5840,10 +5865,18 @@ class TBPBase extends DCLogic {
   setUi(obj) { this.setState(s => ({ui: Object.assign({}, s.ui, obj)})); }
 
   bumpDrama(i) {
+    if (window.TBPNet && window.TBPNet.role && window.TBPNet.role !== 'gm') return;
     const c = this.state.chars[i];
     const cur = Number(c.drama) || 0;
     if (cur >= 5) this.patch(i, {drama: 0, broken: true});
     else this.patch(i, {drama: cur + 1});
+  }
+
+  dropDrama(i) {
+    if (window.TBPNet && window.TBPNet.role && window.TBPNet.role !== 'gm') return;
+    const c = this.state.chars[i];
+    const cur = Number(c.drama) || 0;
+    this.patch(i, {drama: Math.max(0, cur - 1)});
   }
 
   addDrama(i, n) {
@@ -5875,6 +5908,28 @@ class TBPBase extends DCLogic {
     this.setState({rollMode: null, challenge: {by: i, phase: 'pick', resolved: false}});
   }
 
+  // Calling a Challenge directly against a known target — clicking the
+  // BEST FRIEND / RIVAL chip on a character card, rather than the generic
+  // "Call a Challenge" icon (which goes through the pick phase). Skips
+  // straight to what selectTarget() would do once a target is chosen.
+  callChallengeOn(i, target) {
+    if (this.state.vote) return;
+    const ch = this.state.challenge;
+    if (ch && !ch.resolved) return;
+    const active = this.state.rollMode;
+    if (active !== null) {
+      const ap = this.state.chars[active].phase;
+      if (ap !== 'result' && ap !== 'psychic') return;
+      this.reset(active, {});
+    }
+    const rel = target === SEATS[i].friend ? 'friend' : (target === SEATS[i].rival ? 'rival' : null);
+    if (!rel) return;
+    this.reset(target, {quirk: null, psychic: false});
+    this.setState({rollMode: target, challenge: {by: i, rel, phase: 'active', resolved: false}});
+    if (rel === 'friend' && this.state.demonLockLead !== this.curLead()) this.setState({demonIn: true});
+    this.addDrama(i, 1);
+  }
+
   startVote(caller) {
     if (this.state.vote || !this.state.voteEnabled) return;
     const ch = this.state.challenge;
@@ -5892,8 +5947,24 @@ class TBPBase extends DCLogic {
       }
       return m;
     });
-    this.setState({rollMode: null, challenge: null, vote: {phase: 'assign', alloc, tick: [0,0,0,0], totals: null, most: null, least: null, tieMost: false, tieLeast: false, clock: 60}});
+    this.setState({rollMode: null, challenge: null, firstSceneStarted: true, voteReady: {}, vote: {phase: 'assign', alloc, tick: [0,0,0,0], totals: null, most: null, least: null, tieMost: false, tieLeast: false, clock: 60}});
     this.startVoteClock();
+  }
+
+  // Players toggle Ready during the assign phase (to revise their vote up
+  // until the moment everyone locks in); the Headmaster never votes and never
+  // readies up herself — she only watches the count. Once every seat is
+  // Ready the vote finalizes immediately via the same tally logic the clock
+  // uses when it runs out (finishVote).
+  toggleVoteReady(i) {
+    const v = this.state.vote;
+    if (!v || v.phase !== 'assign') return;
+    if (typeof i !== 'number') return;
+    const voteReady = Object.assign({}, this.state.voteReady, {[i]: !this.state.voteReady[i]});
+    this.setState({voteReady});
+    const activeSeats = this.state.activeSeats || [0,1,2,3];
+    const readyCount = activeSeats.filter(k => voteReady[k]).length;
+    if (readyCount >= activeSeats.length) this.finishVote();
   }
 
   startVoteClock() {
@@ -6122,9 +6193,37 @@ class TBPBase extends DCLogic {
     const cats = ['type','power','complication','goal'];
     const ready = cats.every(c => !this.state.spinning[c] && (this.state.rolled[c] || []).length > 0);
     if (!ready || !this.state.demonNameDraft.trim() || !this.state.demonGoalDraft.trim()) return;
-    DEMON.name = this.state.demonNameDraft.trim().toUpperCase();
-    DEMON.goal = '\u201c' + this.state.demonGoalDraft.trim() + '\u201d';
-    this.setState({setupOpen: false});
+    const locks = this.state.locks || [true,true,true,true];
+    const activeSeats = locks.map((l, k) => l ? k : -1).filter(k => k >= 0);
+    let chars = this.state.chars;
+    // 3-player games get a randomized Best Friend / Rival assignment instead
+    // of the fixed 4-cycle baked onto SEATS (which assumes all four seats are
+    // in play). Two independent derangements of the 3 active seats \u2014 every
+    // seat targets exactly one other seat and is targeted by exactly one
+    // other seat, nobody targets herself.
+    if (activeSeats.length === 3) {
+      const friendMap = this.randomDerangement3(activeSeats);
+      const rivalMap = this.randomDerangement3(activeSeats);
+      chars = chars.map((c, k) => activeSeats.indexOf(k) < 0 ? c :
+        Object.assign({}, c, {friend: friendMap[k], rival: rivalMap[k]}));
+    }
+    this.setState({
+      demonName: this.state.demonNameDraft.trim().toUpperCase(),
+      demonGoal: '\u201c' + this.state.demonGoalDraft.trim() + '\u201d',
+      activeSeats: activeSeats.length === 3 ? activeSeats : [0,1,2,3],
+      chars,
+      setupOpen: false
+    });
+  }
+
+  // A random derangement of a 3-element seat list: exactly one of the two
+  // possible 3-cycles (there is no other derangement of 3 items), so this is
+  // automatically fixed-point-free \u2014 nobody is assigned to herself.
+  randomDerangement3(seats) {
+    const dir = Math.random() < 0.5;
+    const map = {};
+    seats.forEach((seat, i) => { map[seat] = dir ? seats[(i + 1) % 3] : seats[(i + 2) % 3]; });
+    return map;
   }
 
   cancelChallenge() {
@@ -6281,6 +6380,7 @@ class TBPBase extends DCLogic {
   }
 
   renderVals() {
+    const isHeadmaster = !!(window.TBPNet && window.TBPNet.role === 'gm');
     const active = this.state.rollMode;
     const ch = this.state.challenge;
     const vote = this.state.vote;
@@ -6294,7 +6394,7 @@ class TBPBase extends DCLogic {
     const cards = this.state.chars.map((c, i) => {
       const rollMode = active === i;
       const shout = this.state.shoutSeat === i;
-      const isTarget = pickPhase && (i === SEATS[ch.by].friend || i === SEATS[ch.by].rival);
+      const isTarget = pickPhase && (i === this.state.chars[ch.by].friend || i === this.state.chars[ch.by].rival);
       const dvNow = Number(c.drama) || 0;
       const canCall = (!ch || ch.resolved) && !voteActive && !rollerBusy && dvNow < 5;
       const canVote = (!ch || ch.resolved) && !voteActive && !rollerBusy && this.state.voteEnabled && !c.votedOnce;
@@ -6338,7 +6438,7 @@ class TBPBase extends DCLogic {
         showExclaim: !!ch && !ch.resolved && i === ch.by,
         showCancel: pickPhase && i === ch.by,
         showArrow: isTarget,
-        arrowRel: pickPhase && isTarget ? (i === SEATS[ch.by].friend ? 'BEST FRIEND' : 'RIVAL') : '',
+        arrowRel: pickPhase && isTarget ? (i === this.state.chars[ch.by].friend ? 'BEST FRIEND' : 'RIVAL') : '',
         pickGlow: isTarget ? 'tbp-pickglow 1s ease-in-out infinite' : 'none',
         boxCursor: isTarget ? 'pointer' : 'default',
         boxClick: () => { if (isTarget) this.selectTarget(i); },
@@ -6406,8 +6506,8 @@ class TBPBase extends DCLogic {
         rollHoverInk: '#231F20',
         targetDice: [1,2,3,4,5,6].filter(n => n >= t).map(n => ({n, pips: pipsFor(n, '#231F20')})),
         bonds: [
-          Object.assign(faceOf(SEATS[c.friend].who), {name: SEATS[c.friend].label, tag: 'BEST FRIEND', tagInk: '#F0A8B8', icon: '💗', open: c.bondHover === 0, enter: () => this.patch(i, {bondHover: 0}), leave: () => this.patch(i, {bondHover: null})}),
-          Object.assign(faceOf(SEATS[c.rival].who), {name: SEATS[c.rival].label, tag: 'RIVAL', tagInk: '#A9BEDC', icon: '💔', open: c.bondHover === 1, enter: () => this.patch(i, {bondHover: 1}), leave: () => this.patch(i, {bondHover: null})})
+          Object.assign(faceOf(SEATS[c.friend].who), {name: SEATS[c.friend].label, tag: 'BEST FRIEND', tagInk: '#F0A8B8', icon: '💗', open: c.bondHover === 0, cursor: canCall ? 'pointer' : 'help', click: () => { if (canCall) this.callChallengeOn(i, c.friend); }, enter: () => this.patch(i, {bondHover: 0}), leave: () => this.patch(i, {bondHover: null})}),
+          Object.assign(faceOf(SEATS[c.rival].who), {name: SEATS[c.rival].label, tag: 'RIVAL', tagInk: '#A9BEDC', icon: '💔', open: c.bondHover === 1, cursor: canCall ? 'pointer' : 'help', click: () => { if (canCall) this.callChallengeOn(i, c.rival); }, enter: () => this.patch(i, {bondHover: 1}), leave: () => this.patch(i, {bondHover: null})})
         ],
         psiAfford: dv >= (Number(c.psiCost) || 2),
         psiSlots: [
@@ -6505,6 +6605,7 @@ class TBPBase extends DCLogic {
         venting: c.venting,
         ventGlow: c.venting ? '0 0 12px rgba(226,58,58,.85)' : 'none',
         bumpDrama: () => this.bumpDrama(i),
+        dropDrama: (e) => { if (e && e.preventDefault) e.preventDefault(); this.dropDrama(i); },
         roll: needsBreak ? (() => this.breakOut(i)) : (() => this.roll(i)),
         cyclePop: () => this.reset(i, {pop: ORDER[(ORDER.indexOf(c.pop) + 1) % 3]}),
         toggleDetail: () => this.reset(i, {detail: !c.detail}),
@@ -6519,6 +6620,13 @@ class TBPBase extends DCLogic {
         closeResult: () => { this.reset(i, {}); this.setState({rollMode: null, challenge: null}); }
       };
     });
+    // In a 3-player game only the joined seats' cards render, renumbered
+    // 0..2 so they sit flush together (no gap where the 4th card would be);
+    // the Demon slot (built below) then gets order:3 — last, rightmost.
+    const activeSeats = this.state.activeSeats || [0,1,2,3];
+    const cardsActive = activeSeats.length >= 4 ? cards :
+      activeSeats.map((seatIdx, pos) => Object.assign({}, cards[seatIdx], {order: pos}));
+    const demonOrder = activeSeats.length >= 4 ? 2 : activeSeats.length;
     const rollPicker = [{label:'NONE', idx:null}].concat(SEATS.map((s, k) => ({label: s.label, idx: k}))).map(o => {
       const on = active === o.idx;
       return {
@@ -6544,7 +6652,7 @@ class TBPBase extends DCLogic {
     const remaining = playerCap - playerSpent;
     const secs = voteActive && vote.clock != null ? vote.clock : 60;
     const voteBar = {
-      show: voteActive && vote.phase === 'assign',
+      show: voteActive && vote.phase === 'assign' && !isHeadmaster,
       remaining,
       remainingLabel: remaining + ' LEFT',
       pips: Array.from({length: Math.max(playerCap, 1)}, (_, k) => ({
@@ -6557,7 +6665,22 @@ class TBPBase extends DCLogic {
       cap: playerCap,
       topOffset: '160px',
       playerLabel: SEATS[player].label,
-      ready: () => this.finishVote()
+      readyOn: !!(voteActive && this.state.voteReady[player]),
+      readyLabel: (voteActive && this.state.voteReady[player]) ? 'READY ✓' : 'READY!',
+      ready: () => this.toggleVoteReady(player)
+    };
+    const voteActiveSeats = this.state.activeSeats || [0,1,2,3];
+    const voteHeadmaster = {
+      show: voteActive && vote.phase === 'assign' && isHeadmaster,
+      readyCount: voteActiveSeats.filter(k => this.state.voteReady[k]).length,
+      readyTotal: voteActiveSeats.length,
+      rows: voteActiveSeats.map(k => ({
+        label: SEATS[k].label,
+        ready: !!this.state.voteReady[k],
+        tagBg: this.state.voteReady[k] ? '#9CB39A' : 'rgba(239,230,200,.14)',
+        tagInk: this.state.voteReady[k] ? '#231F20' : 'rgba(239,230,200,.6)',
+        tag: this.state.voteReady[k] ? 'READY' : 'WAITING…'
+      }))
     };
     const TONE = {momo:'#F6A7CA', midori:'#9CB39A', ao:'#A9BEDC', murasaki:'#C8A8D8'};
     const rTick = voteActive && vote.tick ? vote.tick : [0,0,0,0];
@@ -6609,13 +6732,14 @@ class TBPBase extends DCLogic {
     const demonPick = pickPhase && demonIn;
     const demonChallenged = !!ch && ch.rel === 'demon' && !ch.resolved;
     const demon = {
+      order: demonOrder,
       present: demonIn, absent: !demonIn,
-      name: DEMON.name, goal: DEMON.goal,
+      name: this.state.demonName, goal: this.state.demonGoal,
       status: demonChallenged ? 'CHALLENGED' : 'DEMON',
       cursor: demonPick ? 'pointer' : 'pointer',
       glow: demonPick ? 'tbp-pickglowred 1s ease-in-out infinite' : (demonChallenged ? 'tbp-active 1.1s ease-in-out infinite' : 'none'),
       showArrow: demonPick,
-      click: () => { if (demonPick) this.selectTarget('demon'); else if (!dLead) this.toggleDemon(); }
+      click: () => { if (demonPick) this.selectTarget('demon'); else if (!dLead && (!window.TBPNet || !window.TBPNet.role || window.TBPNet.role === 'gm')) this.toggleDemon(); }
     };
 
     const dr = this.state.demonRoll;
@@ -6668,15 +6792,15 @@ class TBPBase extends DCLogic {
       scenesLeft: scenesLeft,
       sceneInk: demonWarn ? '#E23A3A' : '#EFE6C8',
       demonWarn: demonWarn,
-      demonName: DEMON.name, demonGoal: DEMON.goal,
+      demonName: this.state.demonName, demonGoal: this.state.demonGoal,
       goodCount: good, badCount: bad,
-      goodSquares: [1,2,3].map(k => ({bg: good >= k ? '#9CB39A' : 'rgba(239,230,200,.14)', click: () => this.setEnd('good', k)})),
-      badSquares: [3,2,1].map(k => ({bg: bad >= k ? '#B4322C' : 'rgba(239,230,200,.14)', click: () => this.setEnd('bad', k)})),
+      goodSquares: [1,2,3].map(k => ({bg: good >= k ? '#9CB39A' : 'rgba(239,230,200,.14)', click: () => {}})),
+      badSquares: [3,2,1].map(k => ({bg: bad >= k ? '#B4322C' : 'rgba(239,230,200,.14)', click: () => {}})),
       bigBg: good > 3 ? '#9CB39A' : (bad > 3 ? '#B4322C' : 'rgba(239,230,200,.14)'),
       bigBorder: good > 3 ? '#9CB39A' : (bad > 3 ? '#E23A3A' : '#EFE6C8'),
       bigGoodOpacity: good > 3 ? 1 : 0,
       bigBadOpacity: bad > 3 ? 1 : 0,
-      bigClick: () => { if (good === 3) this.setEnd('good', 4); else if (bad === 3) this.setEnd('bad', 4); else if (good > 3) this.setEnd('good', 4); else if (bad > 3) this.setEnd('bad', 4); },
+      bigClick: () => {},
       seats: SEATS.map((s, k) => {
         const scenesDone = ledCounts[k];
         const cleared = doneMap[k].filter(Boolean).length;
@@ -6690,16 +6814,21 @@ class TBPBase extends DCLogic {
             bg: scenesDone >= n ? (leadIdx === k ? '#EDE31B' : '#EFE6C8') : 'transparent',
             border: leadIdx === k ? '#EDE31B' : '#EFE6C8'
           })),
-          click: () => this.setState({leadOverride: k})
+          click: () => {}
         }, faceOf(s.who));
-      })
+      }).filter((s, k) => (this.state.activeSeats || [0,1,2,3]).indexOf(k) >= 0)
     };
     const ui = this.state.ui;
     const stop = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
     const pc = this.state.chars[player];
     const me = Object.assign(faceOf(pc.who), {
       tone: SEAT_TONE[pc.who],
-      name: pc.label,
+      name: isHeadmaster ? 'HEADMASTER' : pc.label,
+      playerLabel: isHeadmaster ? '' : (this._mpName || ''),
+      isHeadmaster,
+      portraitOpacity: isHeadmaster ? 0 : 1,
+      diaryOpacity: isHeadmaster ? 0 : 1,
+      diaryDisplay: isHeadmaster ? 'none' : 'grid',
       openDiary: () => this.setUi({diary: true}),
       openRulebook: () => this.setUi({rulebook: true}),
       diaryPress: ui.diaryPress ? 'scale(1.08)' : 'scale(1)',
@@ -6743,21 +6872,21 @@ class TBPBase extends DCLogic {
     const vsDemon = fi === 1, demonLead = fi === 2;
     const demonFocus = demonLead;
     const loc = Object.assign(faceOf(demonLead ? '' : leadSeat.who), {
-      show: !voteBar.show && !voteResult.show,
+      show: !voteBar.show && !voteResult.show && this.state.firstSceneStarted,
       img: lc.img, name: lc.name,
       sub: this.state.subText == null ? subs[this.state.subIdx % subs.length] : this.state.subText,
-      cyclePlace: () => this.setState(s => ({locIdx: (s.locIdx + 1) % LOCATIONS.length, subIdx: 0, subText: null})),
+      cyclePlace: () => {},
       cycleSub: () => this.setState(s => ({subIdx: (s.subIdx + 1) % LOCATIONS[s.locIdx % LOCATIONS.length].subs.length, subText: null})),
-      cycleFocus: () => this.setState(s => ({focusIdx: (s.focusIdx + 1) % 3})),
+      cycleFocus: () => {},
       focusKind: demonLead ? 'LEAD · THE DEMON' : 'LEAD',
-      focusName: demonLead ? DEMON.name : leadSeat.label,
+      focusName: demonLead ? this.state.demonName : leadSeat.label,
       focusInk: demonLead ? '#E23A3A' : '#EDE31B',
       focusChipBg: demonLead ? '#B4322C' : SEAT_TONE[leadSeat.who],
       focusDemon: demonLead, focusGoal: !demonLead,
       goalKind: vsDemon ? 'GOAL · THE DEMON' : 'GOAL',
       goalKindInk: vsDemon ? '#E23A3A' : 'rgba(239,230,200,.6)',
       goalDemon: vsDemon,
-      goalText: demonLead ? DEMON.goal : (vsDemon ? '“Defeat the ' + DEMON.name + '.”' : '“' + BIOS[leadSeat.who].goals[this.state.goalIdx % 2] + '”'),
+      goalText: demonLead ? this.state.demonGoal : (vsDemon ? '“Defeat the ' + this.state.demonName + '.”' : '“' + BIOS[leadSeat.who].goals[this.state.goalIdx % 2] + '”'),
       cycleGoal: () => this.setState(s => ({goalIdx: (s.goalIdx + 1) % 2})),
     });
     const stage = {
@@ -6831,6 +6960,13 @@ class TBPBase extends DCLogic {
       rolledAny: allLocked && ['type','power','complication','goal'].every(c => !this.state.spinning[c] && (this.state.rolled[c] || []).length > 0),
       rerollAll: () => this.startRoll(),
       lockPips: locks.map(l => ({bg: l ? '#EDE31B' : 'rgba(239,230,200,.16)'})),
+      // Collapse the roster to a slim name-bar row once everyone's locked in
+      // and the Demon roll is underway — at EVERY viewport width, not just
+      // mobile. A fixed px cap (not vw-based) is what keeps this consistent
+      // from ~375px to ~1920px.
+      compact: allLocked,
+      rosterFlex: allLocked ? 'none' : '1',
+      rosterMaxHeight: allLocked ? '78px' : 'none',
       rosterHint: allLocked ? 'All four chosen — the Demon has been rolled above.' : (lockCount + ' of 4 chosen — tap a Student to pick her Goals.'),
       readyBtn: {show: false, label: 'READY', cursor: 'default', opacity: 1, click: () => {}},
       seats: SEATS.map((s, k) => {
@@ -6859,7 +6995,7 @@ class TBPBase extends DCLogic {
           choose: () => { if (!allLocked) this.openGoalPicker(k); },
           focus: () => { if (this.state.picking == null && !allLocked) this.setState({focusSeat: k}); }
         };
-      }),
+      }).filter((s, k) => !allLocked || lockCount >= 4 || !!locks[k]),
       detail: {
         label: fs.label, tone: SEAT_TONE[fs.who],
         psiName: fs.psi.name, psiDesc: fs.psi.desc, bio: BIOS[fs.who].bio,
@@ -6899,7 +7035,11 @@ class TBPBase extends DCLogic {
       goodX: (this.state.goodX || 0) + 'px',
       sceneX: (this.state.sceneX || 0) + 'px'
     };
-    return {f: {anchors, gm, end, setup, newGame, cards, rollPicker, playerPicker, psiCostPicker, voteBar, voteResult, voteToggle, rail, demon, me, rulebook, diary, loc, stage, focusPicker, demonRoll, stageBg: dLead ? '#4A1418' : '#EDE31B', rowScale, rowPull: Math.round(-519 * (1 - rowScale)) + 'px', debugVisible: this.state.debugVisible, gearToggle, watermarkShow: false}};
+    const firstVote = {
+      show: !this.state.firstSceneStarted && !voteBar.show && !voteResult.show,
+      start: () => this.startVote(null)
+    };
+    return {f: {anchors, gm, end, setup, newGame, cards: cardsActive, rollPicker, playerPicker, psiCostPicker, voteBar, voteHeadmaster, voteResult, voteToggle, rail, demon, me, rulebook, diary, loc, firstVote, stage, focusPicker, demonRoll, stageBg: dLead ? '#4A1418' : '#EDE31B', rowScale, rowPull: Math.round(-519 * (1 - rowScale)) + 'px', debugVisible: this.state.debugVisible, gearToggle, watermarkShow: false}};
   }
 }
 
@@ -6942,7 +7082,11 @@ var MP_LOCAL = {
 // state (detail, psiHover, psiExit, iconHover).
 var MP_CHAR = [
   'drama', 'psiCost', 'pop', 'broken', 'psychic', 'votedOnce', 'quirk',
-  'face', 'phase', 'psiUsed', 'breakResult', 'quirks'
+  'face', 'phase', 'psiUsed', 'breakResult', 'quirks',
+  // Best Friend / Rival targets — fixed for a 4-player game (copied off
+  // SEATS at init) but randomized per-game for 3 players (launchGame),
+  // so they have to travel like any other per-Student fact.
+  'friend', 'rival'
 ];
 
 // Character Select writes a Student's chosen Quirks and Goals onto the
@@ -7165,6 +7309,7 @@ class Component extends TBPBase {
     var css = '';
     if (role !== 'gm') {
       css += '[title^="Start a new game"],[title^="Scene Control"]{display:none !important}';
+      css += '[title^="Call the first Class Vote"]{pointer-events:none !important; opacity:.5 !important}';
       // Demon-roll controls stay visible to everyone (so the roll and the
       // Demon's name/goal are readable) but only the Headmaster can use them.
       css += '[data-mp="reroll-all"],[title="Reroll this whole line"],[title="Click to reroll just this one"],' +
@@ -7194,7 +7339,7 @@ class Component extends TBPBase {
     if (!el) {
       el = document.createElement('div');
       el.id = 'tbp-status';
-      el.style.cssText = 'position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:100000; ' +
+      el.style.cssText = 'position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:20; ' +
         "font-family:'Baloo 2',sans-serif; background:rgba(35,31,32,.92); border-radius:10px; padding:8px 12px; " +
         'max-width:min(90vw,260px)';
       document.body.appendChild(el);
@@ -7350,6 +7495,9 @@ class Component extends TBPBase {
         topOpen: ready && this.state.picking == null,
         demonOpen: ready && this.state.picking == null,
         rosterHint: '',
+        compact: ready,
+        rosterFlex: ready ? 'none' : '1',
+        rosterMaxHeight: ready ? '78px' : 'none',
         readyBtn: {
           show: isGm,
           label: ready ? 'STARTING…' : ('READY (' + lockCount + '/4)'),
@@ -7374,7 +7522,7 @@ class Component extends TBPBase {
             cardBg: ready ? '#231F20' : s.cardBg,
             compactTag: ready && locks[k] ? s.playerName : ''
           });
-        }),
+        }).filter(function (s, k) { return !ready || lockCount >= 4 || !!locks[k]; }),
         // The Demon-roll step: everyone sees the same name/goal fields and the
         // same rolling categories (both now sync — see MP_LOCAL above), but
         // only the Headmaster can type into them, reroll, or hit PLAY.

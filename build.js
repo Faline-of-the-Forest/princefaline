@@ -636,6 +636,25 @@ function renderGames() {
   write("games/index.html", layout({ title: "Games — Prince Faline's RPG Diaries", active: "Games", body }));
 }
 
+function renderAppStub(d) {
+  const slug = d.url.replace(/^\/games\//, "").replace(/\/$/, "");
+  const body = `
+    <div style="margin:34px 0 26px">
+      <a href="/games/" style="display:block;margin-bottom:14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F">◂ Games</a>
+      <div style="display:flex;align-items:center;gap:18px;margin-bottom:16px">
+        <img src="${d.icon}" alt="" style="width:72px;height:72px;object-fit:cover;border:2px solid #24211B;border-radius:16px;box-shadow:4px 4px 0 #24211B">
+        <div>
+          <h1 style="font:400 clamp(28px,4vw,40px)/1.05 'EB Garamond',serif;margin:0 0 4px">${esc(d.t)}</h1>
+          <div style="font:400 16px/1 'EB Garamond',serif;color:#8A836F">${esc(d.sys)}</div>
+        </div>
+      </div>
+      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0 0 18px">${esc(d.note)}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:26px">${(d.tags || []).map(t => `<span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">${esc(t)}</span>`).join("")}</div>
+      <div style="border:2px dashed #C8BFA6;background:#FBF8EF;padding:26px;font:400 17px/1.4 'EB Garamond',serif;color:#8A836F">This dashboard is in the works — check back soon.</div>
+    </div>`;
+  write(`games/${slug}/index.html`, layout({ title: d.t + " — Prince Faline's RPG Diaries", active: "Games", body, description: d.note }));
+}
+
 // ---------- ONE-SHOTS ----------
 function renderOneShotsIndex() {
   const cards = oneShots.slice().sort((a, b) => b.d.localeCompare(a.d)).map(s => {
@@ -728,6 +747,7 @@ reviews.forEach(renderReviewDetail);
 renderOneShotsIndex();
 oneShots.forEach(renderOneShotDetail);
 renderGames();
+dashboards.filter(d => d.t !== "Tokyo Brain Pop!?").forEach(renderAppStub);
 
 // copy static assets
 function copyDir(src, dest) {
@@ -741,6 +761,7 @@ function copyDir(src, dest) {
 }
 copyDir(path.join(ROOT, "uploads"), path.join(DIST, "uploads"));
 copyDir(path.join(ROOT, "assets"), path.join(DIST, "assets"));
+copyDirAll(path.join(ROOT, "app-icons"), path.join(DIST, "app-icons"));
 if (fs.existsSync(path.join(ROOT, "admin"))) copyDir(path.join(ROOT, "admin"), path.join(DIST, "admin"));
 
 // copyDirAll: unlike copyDir above, copies every file verbatim (including

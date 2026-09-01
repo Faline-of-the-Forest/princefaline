@@ -13,6 +13,76 @@
       "icon": "/games/tokyo-brain-pop/assets/icon_tbp.png",
       "url": "/games/tokyo-brain-pop/",
       "host": "princefaline.com/games/tokyo-brain-pop"
+    },
+    {
+      "t": "CBR+PNK",
+      "c": "CBR+PNK",
+      "sys": "CBR+PNK",
+      "tags": ["Scenario collection", "Mind the Gap", "PRDTR", "Basilisk"],
+      "note": "A scenario collection for CBR+PNK, gathering Mind the Gap, PRDTR and Basilisk in one dashboard.",
+      "icon": "/app-icons/icon_cbr-pnk.jpg",
+      "url": "/games/cbr-pnk/",
+      "host": "princefaline.com/games/cbr-pnk"
+    },
+    {
+      "t": "Bakto's Terifying Cuisine",
+      "c": "Bakto's Terifying Cuisine",
+      "sys": "Knave [2e]",
+      "tags": ["The Vanilla Game"],
+      "note": "A Knave one-shot dashboard for Bakto's Terifying Cuisine, including The Vanilla Game.",
+      "icon": "/app-icons/icon_bakto.jpg",
+      "url": "/games/baktos-terifying-cuisine/",
+      "host": "princefaline.com/games/baktos-terifying-cuisine"
+    },
+    {
+      "t": "Eat the Reich",
+      "c": "Eat the Reich",
+      "sys": "Eat the Reich",
+      "tags": ["Playset", "Abridged"],
+      "note": "An abridged playset dashboard for Eat the Reich.",
+      "icon": "/app-icons/icon_eatthereich.jpg",
+      "url": "/games/eat-the-reich/",
+      "host": "princefaline.com/games/eat-the-reich"
+    },
+    {
+      "t": "Jim Henson's Labyrinth",
+      "c": "Jim Henson's Labyrinth",
+      "sys": "Jim Henson's Labyrinth",
+      "tags": ["Playset", "Abridged"],
+      "note": "An abridged playset dashboard for Jim Henson's Labyrinth.",
+      "icon": "/app-icons/icon_jimhensonslabyrinth.jpg",
+      "url": "/games/jim-hensons-labyrinth/",
+      "host": "princefaline.com/games/jim-hensons-labyrinth"
+    },
+    {
+      "t": "Ghostbusters",
+      "c": "Ghostbusters",
+      "sys": "Ghostbusters",
+      "tags": ["Scenario collection", "Hot Rods of the Gods", "Scared Stiffs", "Ghost Toasties"],
+      "note": "A scenario collection for Ghostbusters, gathering Hot Rods of the Gods, Scared Stiffs and Ghost Toasties.",
+      "icon": "/app-icons/icon_ghostbusters.jpg",
+      "url": "/games/ghostbusters/",
+      "host": "princefaline.com/games/ghostbusters"
+    },
+    {
+      "t": "Something Is Wrong With This House",
+      "c": "Something Is Wrong With This House",
+      "sys": "Something Is Wrong With This House",
+      "tags": ["Playset"],
+      "note": "A playset dashboard for Something Is Wrong With This House.",
+      "icon": "/app-icons/icon_somethingiswrongwiththishouse.jpg",
+      "url": "/games/something-is-wrong-with-this-house/",
+      "host": "princefaline.com/games/something-is-wrong-with-this-house"
+    },
+    {
+      "t": "Everyone Is John",
+      "c": "Everyone Is John",
+      "sys": "Everyone is John",
+      "tags": ["Scenario collection", "Evil Dead", "Die Hard", "Alien Invasion"],
+      "note": "A scenario collection for Everyone Is John, gathering Evil Dead, Die Hard and Alien Invasion.",
+      "icon": "/app-icons/icon_everyoneisjohn.jpg",
+      "url": "/games/everyone-is-john/",
+      "host": "princefaline.com/games/everyone-is-john"
     }
   ]
 }
