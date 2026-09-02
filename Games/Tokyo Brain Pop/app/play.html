@@ -5107,12 +5107,15 @@
             <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; line-height:1; color:#231F20">Scene Control</div>
             <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.18em; line-height:1; color:#EDE31B; background:#231F20; border-radius:5px; padding:5px 9px">HEADMASTER ONLY</div>
           </div>
+          <div sc-camel-on-click="{{ f.gm.tabSceneClick }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; letter-spacing:.08em; color:{{ f.gm.tabSceneInk }}; background:{{ f.gm.tabSceneBg }}; border:3px solid #231F20; border-radius:8px; padding:7px 12px; line-height:1">SCENE</div>
+          <div sc-camel-on-click="{{ f.gm.tabAchClick }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; letter-spacing:.08em; color:{{ f.gm.tabAchInk }}; background:{{ f.gm.tabAchBg }}; border:3px solid #231F20; border-radius:8px; padding:7px 12px; line-height:1">ACHIEVEMENTS</div>
           <div sc-camel-on-click="{{ f.gm.fireGood }}" title="Show the table the Good End screen" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12.5px; letter-spacing:.08em; color:#231F20; background:#EDE31B; border:3px solid #231F20; border-radius:8px; padding:8px 13px; line-height:1">FIRE GOOD END</div>
           <div sc-camel-on-click="{{ f.gm.fireBad }}" title="Show the table the Bad End screen" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12.5px; letter-spacing:.08em; color:#EFE6C8; background:#E23A3A; border:3px solid #231F20; border-radius:8px; padding:8px 13px; line-height:1">FIRE BAD END</div>
           <div style="font-family:'Lora',serif; font-style:italic; font-size:15px; color:rgba(35,31,32,.65)">Nothing changes at the table until you Apply.</div>
           <div sc-camel-on-click="{{ f.gm.close }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:14px; letter-spacing:.08em; color:#EDE31B; background:#231F20; border-radius:8px; padding:9px 13px; line-height:1">CLOSE</div>
         </div>
 
+        <sc-if value="{{ f.gm.tabScene }}" hint-placeholder-val="{{ true }}">
         <div style="flex:1 1 auto; min-height:0; overflow-y:auto; padding:20px 22px; display:grid; grid-template-columns:1.02fr 1fr; gap:18px; align-items:start">
 
           <div style="box-sizing:border-box; background:rgba(239,230,200,.05); border:3px solid rgba(239,230,200,.14); border-radius:16px; padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px">
@@ -5239,6 +5242,34 @@
             <div style="font-family:'Lora',serif; font-style:italic; font-size:12.5px; line-height:1.3; color:rgba(239,230,200,.5); text-align:center">{{ f.gm.apply.note }}</div>
           </div>
         </div>
+        </sc-if>
+
+        <sc-if value="{{ f.gm.tabAch }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1 1 auto; min-height:0; overflow-y:auto; padding:20px 22px; display:flex; flex-direction:column; gap:12px">
+          <div style="font-family:'Lora',serif; font-style:italic; font-size:13px; color:rgba(239,230,200,.6)">Six slots, filled in priority order by whichever of these are eligible right now. Ties make an achievement ineligible. Click a value to edit it directly.</div>
+          <div style="display:flex; flex-direction:column; gap:2px">
+            <div style="display:grid; grid-template-columns:1.4fr 2fr repeat(4, 0.7fr); gap:8px; padding:0 10px 8px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.1em; color:rgba(239,230,200,.45)">
+              <div>ACHIEVEMENT</div><div>RULE</div>
+              <sc-for list="{{ f.gm.achSeats }}" as="hs" hint-placeholder-count="4"><div style="text-align:center; color:{{ hs.ink }}">{{ hs.label }}</div></sc-for>
+            </div>
+            <sc-for list="{{ f.gm.achRows }}" as="r" hint-placeholder-count="12">
+              <div style="display:grid; grid-template-columns:1.4fr 2fr repeat(4, 0.7fr); gap:8px; align-items:center; padding:9px 10px; border-radius:9px; background:{{ r.rowBg }}; border:2px solid {{ r.rowBorder }}">
+                <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; color:{{ r.nameInk }}">{{ r.name }}</div>
+                <div style="font-family:'Lora',serif; font-style:italic; font-size:11.5px; color:rgba(239,230,200,.55); text-wrap:pretty">{{ r.rule }}</div>
+                <sc-for list="{{ r.cells }}" as="cell" hint-placeholder-count="4">
+                  <sc-if value="{{ cell.show }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex; align-items:center; justify-content:center; gap:4px">
+                      <div sc-camel-on-click="{{ cell.dec }}" style="cursor:pointer; width:18px; height:18px; display:grid; place-items:center; border-radius:5px; background:rgba(239,230,200,.12); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; color:#EFE6C8">−</div>
+                      <div style="min-width:22px; text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:14px; color:{{ cell.ink }}">{{ cell.value }}</div>
+                      <div sc-camel-on-click="{{ cell.inc }}" style="cursor:pointer; width:18px; height:18px; display:grid; place-items:center; border-radius:5px; background:rgba(239,230,200,.12); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; color:#EFE6C8">+</div>
+                    </div>
+                  </sc-if>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
       </div>
     </div>
   </sc-if>
@@ -5246,7 +5277,12 @@
   <sc-if value="{{ f.end.shown }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed; inset:0; z-index:60; background:rgba(35,31,32,.82); display:flex; align-items:center; justify-content:center; padding:0; overflow:hidden">
       <div style="position:relative; width:1320px; height:900px; flex:none; transform:scale({{ f.end.scale }}); box-sizing:border-box; overflow:hidden; border:5px solid #231F20; border-radius:18px; background:{{ f.end.bg }}; box-shadow:0 14px 0 rgba(0,0,0,.5); display:flex; flex-direction:column">
-        <div sc-camel-on-click="{{ f.end.close }}" style="position:absolute; top:14px; right:14px; z-index:2; cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; color:#EFE6C8; background:#231F20; border-radius:8px; padding:9px 14px; line-height:1">CLOSE</div>
+        <div style="position:absolute; top:14px; right:14px; z-index:2; display:flex; gap:9px">
+          <sc-if value="{{ f.end.showEnd }}" hint-placeholder-val="{{ false }}">
+            <div sc-camel-on-click="{{ f.end.end }}" title="End the game for everyone and close this room" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; color:#EFE6C8; background:#B4322C; border-radius:8px; padding:9px 14px; line-height:1">END</div>
+          </sc-if>
+          <div sc-camel-on-click="{{ f.end.close }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; color:#EFE6C8; background:#231F20; border-radius:8px; padding:9px 14px; line-height:1">CLOSE</div>
+        </div>
         <div style="position:absolute; inset:0; background-image:radial-gradient(#231F20 1.7px, transparent 2.1px); background-size:11px 11px; opacity:{{ f.end.dots }}"></div>
         <div style="position:absolute; inset:0; background:{{ f.end.wash }}"></div>
         <div style="position:relative; flex:1; min-height:0; box-sizing:border-box; padding:30px 34px 34px; display:flex; flex-direction:column; gap:22px">
@@ -5615,6 +5651,59 @@ const LOCATIONS = [
 function faceOf(who) {
   return {oMomo: who === 'momo' ? 1 : 0, oMidori: who === 'midori' ? 1 : 0, oAo: who === 'ao' ? 1 : 0, oMurasaki: who === 'murasaki' ? 1 : 0};
 }
+
+// One entry per achievement, in the priority order the spreadsheet gives
+// them (ties for the 6 slots always go to the earlier priority). `field`
+// pulls a per-seat counter off `chars`; `table` ones read the whole game
+// instead of any one seat. `min`/`exact` encode each one's "Eligible" rule;
+// omitting both just means "highest value, no ties".
+const ACHIEVEMENT_SPEC = [
+  { key: 'perfect', table: true, value: (s) => s.badEnd, eligible: (s) => s.badEnd === 0 },
+  { key: 'honor', table: true,
+    value: (s) => s.scenesCompleted,
+    eligible: (s) => s.scenesCompleted <= (s.activeSeats.length === 3 ? 4 : 5) },
+  { key: 'prez', field: 'achMostPop', min: 3 },
+  { key: 'slayer', field: 'achDemon', min: 3 },
+  { key: 'meltdown', field: 'achBreaks', min: 2 },
+  { key: 'burnout', field: 'achPsi', min: 3 },
+  { key: 'over', field: 'goalsCleared', exact: 2 },
+  { key: 'mark', field: 'achChallenged', min: 3 },
+  { key: 'clumsy', field: 'achFails', min: 3 },
+  { key: 'influencer', field: 'achVotes' },
+  { key: 'gossip', field: 'achDrama' },
+  { key: 'explorer', table: true, value: (s) => s.visitedLocs.length, eligible: (s) => s.visitedLocs.length >= 4 }
+];
+
+// Runs the whole spec against the live game state. Returns every entry with
+// its current value/winner filled in (for the Scene Control tab that shows
+// everyone's standing), plus which ones are eligible right now, in priority
+// order, capped to the 6 slots that would actually show on the End screen.
+function computeAchievements(gameState) {
+  const activeSeats = gameState.activeSeats || [0, 1, 2, 3];
+  const chars = gameState.chars;
+  const goalsCleared = chars.map((c, k) => (gameState.goalsDone[k] || []).filter(Boolean).length);
+  const scenesCompleted = (gameState.led || [0, 0, 0, 0]).reduce((a, b) => a + b, 0);
+  const s = { badEnd: gameState.badEnd, scenesCompleted, visitedLocs: gameState.visitedLocs || [], activeSeats };
+  const rows = ACHIEVEMENT_SPEC.map((spec) => {
+    if (spec.table) {
+      const value = spec.value(s);
+      return { key: spec.key, table: true, value, winnerSeat: null, eligible: spec.eligible(s) };
+    }
+    const field = spec.field === 'goalsCleared' ? goalsCleared : chars.map((c) => Number(c[spec.field]) || 0);
+    const vals = activeSeats.map((k) => ({ k, v: field[k] }));
+    let winners;
+    if (spec.exact != null) winners = vals.filter((x) => x.v === spec.exact);
+    else {
+      const max = Math.max.apply(null, vals.map((x) => x.v));
+      if (spec.min != null && max < spec.min) winners = [];
+      else winners = vals.filter((x) => x.v === max && (spec.min != null || max > 0));
+    }
+    const eligible = winners.length === 1;
+    return { key: spec.key, table: false, value: vals, winnerSeat: eligible ? winners[0].k : null, eligible };
+  });
+  const topSix = rows.filter((r) => r.eligible).slice(0, 6).map((r) => r.key);
+  return { rows, topSix };
+}
 // Full 1st-4th turn order from a Class Vote's totals: highest spend first,
 // ties broken randomly within their tied group. Computed once, off the very
 // first vote, and kept for the rest of the game (see applyVote()).
@@ -5631,7 +5720,7 @@ function rankFromTotals(totals) {
 }
 
 class TBPBase extends DCLogic {
-  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, spinning: {type:false,power:false,complication:false,goal:false}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[false,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonLockLead: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, locChosen: false, turnOrder: null, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false}))};
+  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, spinning: {type:false,power:false,complication:false,goal:false}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[false,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonLockLead: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, locChosen: false, turnOrder: null, visitedLocs: [], achTab: false, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false, achMostPop:0, achDemon:0, achBreaks:0, achPsi:0, achChallenged:0, achFails:0, achVotes:0, achDrama:0}))};
 
   measureAnchors = () => {
     const g = this._goodEl, c = this._sceneEl;
@@ -5688,12 +5777,13 @@ class TBPBase extends DCLogic {
 
   componentWillUnmount() { window.removeEventListener('resize', this.fit); if (this.ro) this.ro.disconnect(); }
 
-  setEnd(side, k) {
+  setEnd(side, k, tierMax) {
+    const max = tierMax || 3;
     this.setState(s => {
       const cur = side === 'good' ? s.goodEnd : s.badEnd;
       const other = side === 'good' ? s.badEnd : s.goodEnd;
       let next = cur === k ? k - 1 : k;
-      if (next > 3 && other > 3) next = 3;
+      if (next > max && other > max) next = max;
       return side === 'good' ? {goodEnd: next} : {badEnd: next};
     });
   }
@@ -5858,6 +5948,41 @@ class TBPBase extends DCLogic {
     }));
     const dirty = pending.length > 0;
 
+    const gmTab = this.state.gmTab || 'scene';
+    const activeSeats = this.state.activeSeats || [0,1,2,3];
+    const achSeats = SEATS.map((s, k) => ({label: s.label, ink: activeSeats.indexOf(k) >= 0 ? '#EFE6C8' : 'rgba(239,230,200,.25)'}));
+    const ACH_RULE = {
+      perfect: 'Bad End is 0.', honor: 'Scenes completed ≤ 4 (3p) / 5 (4p).',
+      prez: 'Most Popular 3+ times, no tie.', slayer: 'Challenged the Demon 3+ times, no tie.',
+      meltdown: 'Broke! 2+ times, no tie.', burnout: 'Used PSI 3+ times, no tie.',
+      over: 'Cleared both Goals, no tie.', mark: 'Was Challenged 3+ times, no tie.',
+      clumsy: 'Failed 3+ Challenges, no tie.', influencer: 'Spent the most Drama voting, no tie.',
+      gossip: 'Gained the most Drama, no tie.', explorer: 'Had a Scene in all 4 locations.'
+    };
+    const achData = computeAchievements(this.state);
+    const achRows = ACHIEVEMENT_SPEC.map(spec => {
+      const row = achData.rows.find(r => r.key === spec.key);
+      const isWinning = achData.topSix.indexOf(spec.key) >= 0;
+      const cells = [0,1,2,3].map(k => {
+        if (row.table) return {show: k === 0, value: row.value, ink: '#EFE6C8', dec: () => {}, inc: () => {}};
+        if (activeSeats.indexOf(k) < 0) return {show: false, value: '', ink: '', dec: () => {}, inc: () => {}};
+        const field = spec.field === 'goalsCleared' ? null : spec.field;
+        const cur = field ? (Number(this.state.chars[k][field]) || 0) : (this.state.goalsDone[k] || []).filter(Boolean).length;
+        const winner = row.winnerSeat === k;
+        return {
+          show: true, value: cur, ink: winner && isWinning ? '#EDE31B' : '#EFE6C8',
+          dec: field ? (() => this.patch(k, {[field]: Math.max(0, cur - 1)})) : (() => {}),
+          inc: field ? (() => this.patch(k, {[field]: cur + 1})) : (() => {})
+        };
+      });
+      return {
+        name: EG_A[spec.key].name, rule: ACH_RULE[spec.key],
+        rowBg: isWinning ? 'rgba(237,227,27,.1)' : 'transparent',
+        rowBorder: isWinning ? '#EDE31B' : 'rgba(239,230,200,.14)',
+        nameInk: isWinning ? '#EDE31B' : '#EFE6C8',
+        cells
+      };
+    });
     return {
       show: this.state.gmOpen, stop,
       open: () => this.setState({gmOpen: true}),
@@ -5865,6 +5990,14 @@ class TBPBase extends DCLogic {
       fireGood: () => this.setState({endKind: 'good', gmOpen: false}),
       fireBad: () => this.setState({endKind: 'bad', gmOpen: false}),
       dotBg: dirty && this.state.gmOpen ? '#E23A3A' : '#9CB39A',
+      tabScene: gmTab === 'scene', tabAch: gmTab === 'achievements',
+      tabSceneClick: () => this.setState({gmTab: 'scene'}),
+      tabAchClick: () => this.setState({gmTab: 'achievements'}),
+      tabSceneBg: gmTab === 'scene' ? '#231F20' : 'transparent',
+      tabSceneInk: gmTab === 'scene' ? '#EDE31B' : '#231F20',
+      tabAchBg: gmTab === 'achievements' ? '#231F20' : 'transparent',
+      tabAchInk: gmTab === 'achievements' ? '#EDE31B' : '#231F20',
+      achSeats, achRows,
       places, subChips, leads, stepper, focusOptions, preview, cue, pending,
       sub: d.sub,
       setSub: (e) => this.gmSet({sub: e.target.value}),
@@ -5887,8 +6020,11 @@ class TBPBase extends DCLogic {
     d.done.forEach((gs, i) => gs.forEach((v, k) => { if (v && !live.done[i][k]) cleared = {seat:i, goal:k}; }));
     let shouted = null;
     d.done.forEach((gs, i) => gs.forEach((v, k) => { if (v && !live.done[i][k]) shouted = i; }));
+    const visitedLocs = (this.state.visitedLocs || []).indexOf(d.locIdx) >= 0
+      ? this.state.visitedLocs
+      : (this.state.visitedLocs || []).concat([d.locIdx]);
     this.setState({locIdx:d.locIdx, subText:d.sub, leadOverride:d.leadIdx, focusIdx:d.focusIdx,
-      goalIdx:d.goalIdx, led:d.led, goalsDone:d.done, justCleared:cleared, gmDraft:null, locChosen:true,
+      goalIdx:d.goalIdx, led:d.led, goalsDone:d.done, justCleared:cleared, gmDraft:null, locChosen:true, visitedLocs,
       gmOpen: shouted != null ? false : this.state.gmOpen, shoutSeat: shouted});
     if (shouted != null) {
       clearTimeout(this._shoutT);
@@ -5918,6 +6054,7 @@ class TBPBase extends DCLogic {
     const cur = Number(this.state.chars[i].drama) || 0;
     const willBreak = cur >= 5;
     this.patch(i, willBreak ? {drama: 0, broken: true, dramaPop: true} : {drama: Math.min(5, cur + n), dramaPop: true});
+    if (n > 0) this.patch(i, {achDrama: (Number(this.state.chars[i].achDrama) || 0) + n});
     clearTimeout(this.timers[i + 'd']);
     this.timers[i + 'd'] = setTimeout(() => this.patch(i, {dramaPop: false}), 800);
   }
@@ -5925,7 +6062,7 @@ class TBPBase extends DCLogic {
   breakOut(i) {
     if (this.state.rollMode !== i) return;
     clearInterval(this.timers[i + 'i']); clearTimeout(this.timers[i + 't']); clearTimeout(this.timers[i + 'l']);
-    this.patch(i, {phase: 'result', breakResult: true, broken: false, psychic: false});
+    this.patch(i, {phase: 'result', breakResult: true, broken: false, psychic: false, achBreaks: (Number(this.state.chars[i].achBreaks) || 0) + 1});
     const ch = this.state.challenge;
     if (ch) this.setState({challenge: Object.assign({}, ch, {resolved: true})});
   }
@@ -6024,6 +6161,10 @@ class TBPBase extends DCLogic {
     this.setState({vote: Object.assign({}, v, {alloc})});
   }
 
+  // A stable per-session id used to arbitrate who is allowed to drive the
+  // random tiebreak steps below — see the comment on startTieBreak().
+  mySessionId() { return (window.TBPNet && window.TBPNet.session) || 'local'; }
+
   finishVote() {
     const v = this.state.vote;
     if (!v || v.phase !== 'assign') return;
@@ -6035,7 +6176,16 @@ class TBPBase extends DCLogic {
     const minIdx = totals.map((n, k) => n === minV ? k : -1).filter(k => k >= 0);
     const tieMost = maxIdx.length > 1;
     const tieLeast = minIdx.filter(k => !(maxIdx.length === 1 && k === maxIdx[0])).length > 1;
-    this.setState({vote: Object.assign({}, v, {phase: 'count', totals, most: null, least: null, tieMost, tieLeast, rolls: {}, rollPool: [], tick: [0,0,0,0]})});
+    // In multiplayer, more than one screen can independently notice the vote
+    // is done (the countdown clock and "everyone's Ready" can each trigger
+    // this on whichever client saw it first) and race to resolve it. Totals
+    // are deterministic so that's harmless on its own, but the tiebreak dice
+    // are random — two clients rolling their own would each push a different
+    // winner and the result would flicker between them. Tag whoever gets
+    // here first as the resolver; by the time the 1s count-up animation
+    // below finishes, network sync has settled on a single tag, and
+    // startTieBreak() below only lets that one session's roll through.
+    this.setState({vote: Object.assign({}, v, {phase: 'count', totals, most: null, least: null, tieMost, tieLeast, rolls: {}, rollPool: [], tick: [0,0,0,0], resolvingBy: v.resolvingBy || this.mySessionId()})});
     const t0 = performance.now();
     const step = (now) => {
       const p = Math.min(1, (now - t0) / 1000);
@@ -6051,6 +6201,8 @@ class TBPBase extends DCLogic {
   }
 
   startTieBreak(maxIdx, minIdx) {
+    const v = this.state.vote;
+    if (!v || v.resolvingBy !== this.mySessionId()) return;
     const sameSet = maxIdx.length > 1 && maxIdx.length === minIdx.length && maxIdx.every(k => minIdx.indexOf(k) >= 0);
     if (sameSet) {
       const attempt = () => {
@@ -6121,7 +6273,11 @@ class TBPBase extends DCLogic {
       for (let k = 0; k < 4; k++) {
         const pop = k === most ? 'Most' : (k === least ? 'Least' : 'Average');
         const spent = Object.values(v.alloc[k]).reduce((a, b) => a + b, 0);
-        chars[k] = Object.assign({}, chars[k], {pop, drama: Math.max(0, (Number(chars[k].drama) || 0) - spent), landing: spent > 0});
+        chars[k] = Object.assign({}, chars[k], {
+          pop, drama: Math.max(0, (Number(chars[k].drama) || 0) - spent), landing: spent > 0,
+          achMostPop: (Number(chars[k].achMostPop) || 0) + (k === most ? 1 : 0),
+          achVotes: (Number(chars[k].achVotes) || 0) + spent
+        });
       }
       return {chars};
     });
@@ -6332,12 +6488,17 @@ class TBPBase extends DCLogic {
           challenge: st.challenge ? Object.assign({}, st.challenge, {resolved: true}) : null,
           rollMode: null
         };
-        if (success) out.badEnd = Math.min(4, st.badEnd + 1); else out.goodEnd = Math.min(4, st.goodEnd + 1);
-        if (out.badEnd > 3 && st.goodEnd > 3) out.goodEnd = 3;
-        if (out.goodEnd > 3 && st.badEnd > 3) out.badEnd = 3;
+        const tierMax = (st.activeSeats || [0,1,2,3]).length === 3 ? 2 : 3;
+        if (success) out.badEnd = Math.min(tierMax + 1, st.badEnd + 1); else out.goodEnd = Math.min(tierMax + 1, st.goodEnd + 1);
+        if (out.badEnd > tierMax && st.goodEnd > tierMax) out.goodEnd = tierMax;
+        if (out.goodEnd > tierMax && st.badEnd > tierMax) out.badEnd = tierMax;
         if (!lead) {
           out.demonIn = false;
           out.demonLockLead = st.leadOverride == null ? [0,1,2,3,0,1,2,3][st.scenePos] : st.leadOverride;
+        }
+        if (st.challenge && st.challenge.rel === 'demon' && !st.challenge.resolved) {
+          const by = st.challenge.by;
+          out.chars = st.chars.map((c, k) => k === by ? Object.assign({}, c, {achDemon: (Number(c.achDemon) || 0) + 1}) : c);
         }
         return out;
       });
@@ -6351,6 +6512,11 @@ class TBPBase extends DCLogic {
     const ch = this.state.challenge;
     if (!ch || ch.phase !== 'active' || ch.resolved) return;
     if ((ch.rel === 'friend' && success) || (ch.rel === 'rival' && !success)) this.addDrama(ch.by, 1);
+    const c = this.state.chars[target];
+    this.patch(target, {
+      achChallenged: (Number(c.achChallenged) || 0) + 1,
+      achFails: (Number(c.achFails) || 0) + (success ? 0 : 1)
+    });
     this.setState({challenge: Object.assign({}, ch, {resolved: true})});
   }
 
@@ -6372,7 +6538,7 @@ class TBPBase extends DCLogic {
     const name = k === 2 ? c.psi.name : PSI_SHARED[k].name;
     clearInterval(this.timers[i + 'i']); clearTimeout(this.timers[i + 't']); clearTimeout(this.timers[i + 'l']);
     cancelAnimationFrame(this.rafs[i]);
-    this.patch(i, {phase:'psychic', psiUsed:name, psychic:false, psiHover:null, face:'?', landing:true, drama:(Number(c.drama)||0) - cost, psiCost: Math.min(5, cost + 1)});
+    this.patch(i, {phase:'psychic', psiUsed:name, psychic:false, psiHover:null, face:'?', landing:true, drama:(Number(c.drama)||0) - cost, psiCost: Math.min(5, cost + 1), achPsi: (Number(c.achPsi) || 0) + 1});
     const ch = this.state.challenge;
     if (ch && ch.phase === 'active' && !ch.resolved) this.setState({challenge: Object.assign({}, ch, {resolved: true})});
     this.timers[i + 'l'] = setTimeout(() => this.patch(i, {landing:false}), 460);
@@ -6733,7 +6899,7 @@ class TBPBase extends DCLogic {
     // rows swap places mid count-up, which read as the results screen
     // "blinking".
     const rSort = voteActive && vote.totals ? vote.totals : rTick;
-    const voteRows = !voteActive ? [] : SEATS.map((s, k) => k).sort((a, b) => rSort[b] - rSort[a]).map(k => {
+    const voteRows = !voteActive ? [] : voteActiveSeats.slice().sort((a, b) => rSort[b] - rSort[a]).map(k => {
       const s = SEATS[k], n = rTick[k];
       const isMost = vote.most === k, isLeast = vote.least === k;
       const rollV = vote.rolls ? vote.rolls[k] : null;
@@ -6834,21 +7000,26 @@ class TBPBase extends DCLogic {
     const ledCounts = this.state.led ? this.state.led : SEATS.map(() => 0);
     const doneMap = this.state.goalsDone;
     const scenesLeft = Math.max(0, 8 - ledCounts.reduce((a, b) => a + b, 0));
-    const goodNeeded = Math.max(0, 4 - good);
+    // 3-player games run a shorter track — 2 small squares a side plus the
+    // shared center square, instead of 4's 3 a side.
+    const tierMax = (this.state.activeSeats || [0,1,2,3]).length === 3 ? 2 : 3;
+    const goodNeeded = Math.max(0, (tierMax + 1) - good);
     const demonWarn = scenesLeft < goodNeeded;
+    const goodTiers = Array.from({length: tierMax}, (_, i) => i + 1);
+    const badTiers = goodTiers.slice().reverse();
     const rail = {
       scenesLeft: scenesLeft,
       sceneInk: demonWarn ? '#E23A3A' : '#EFE6C8',
       demonWarn: demonWarn,
       demonName: this.state.demonName, demonGoal: this.state.demonGoal,
       goodCount: good, badCount: bad,
-      goodSquares: [1,2,3].map(k => ({bg: good >= k ? '#9CB39A' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setEnd('good', k)) : (() => {})})),
-      badSquares: [3,2,1].map(k => ({bg: bad >= k ? '#B4322C' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setEnd('bad', k)) : (() => {})})),
-      bigBg: good > 3 ? '#9CB39A' : (bad > 3 ? '#B4322C' : 'rgba(239,230,200,.14)'),
-      bigBorder: good > 3 ? '#9CB39A' : (bad > 3 ? '#E23A3A' : '#EFE6C8'),
-      bigGoodOpacity: good > 3 ? 1 : 0,
-      bigBadOpacity: bad > 3 ? 1 : 0,
-      bigClick: () => {},
+      goodSquares: goodTiers.map(k => ({bg: good >= k ? '#9CB39A' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setEnd('good', k, tierMax)) : (() => {})})),
+      badSquares: badTiers.map(k => ({bg: bad >= k ? '#B4322C' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setEnd('bad', k, tierMax)) : (() => {})})),
+      bigBg: good > tierMax ? '#9CB39A' : (bad > tierMax ? '#B4322C' : 'rgba(239,230,200,.14)'),
+      bigBorder: good > tierMax ? '#9CB39A' : (bad > tierMax ? '#E23A3A' : '#EFE6C8'),
+      bigGoodOpacity: good > tierMax ? 1 : 0,
+      bigBadOpacity: bad > tierMax ? 1 : 0,
+      bigClick: isHeadmaster ? (() => this.setEnd(bad > tierMax ? 'bad' : 'good', tierMax + 1, tierMax)) : (() => {}),
       // Displayed in turn order (Most Popular left, Least Popular right) once
       // the first Class Vote has settled it — falls back to seat order before
       // that.
@@ -6958,6 +7129,8 @@ class TBPBase extends DCLogic {
     const end = {
       shown: !!ek,
       close: () => this.setState({endKind: null}),
+      showEnd: !!(window.TBPNet && window.TBPNet.role === 'gm'),
+      end: () => this.endRoom(),
       scale: Math.min(1, (typeof window !== 'undefined' ? window.innerWidth : 1320) / 1360, (typeof window !== 'undefined' ? window.innerHeight : 900) / 940),
       kindLabel: e ? e.kindLabel : '', title: e ? e.title : '', accent: e ? e.accent : '', bg: e ? e.bg : '', icon: e ? e.icon : '',
       dots: e && e.dark ? 0.12 : 0.14,
@@ -6967,11 +7140,27 @@ class TBPBase extends DCLogic {
       portraitWash: e && e.dark
         ? 'linear-gradient(200deg, rgba(226,58,58,.24), rgba(35,31,32,.14) 70%)'
         : 'linear-gradient(200deg, rgba(237,227,27,.18), rgba(253,252,252,0) 65%)',
-      girls: e ? EG_GIRLS.map(g => ({ ...g, filter: e.dark ? 'grayscale(.35) brightness(.94)' : 'none' })) : [],
-      achievements: e ? e.achievements.map((a, n) => {
-        const idx = EG_HEAD[a.who.charAt(0) + a.who.slice(1).toLowerCase()];
-        return { ...a, delay: (0.4 + n * 0.12).toFixed(2) + 's', hasWinner: !a.table && idx !== undefined, isTable: !!a.table, head: idx !== undefined ? EG_GIRLS[idx].head : '' };
-      }) : []
+      // Only seats an actual Student claimed show up here — no placeholder
+      // "played by" names for girls nobody picked.
+      girls: e ? (this.state.activeSeats || [0,1,2,3]).map(k => {
+        const s = SEATS[k];
+        const name = (this.state.playerNames || {})[k];
+        return {
+          img: 'assets/portrait-' + s.who + '.png', head: 'assets/head-' + s.who + '.png', name: s.label,
+          player: name ? ('played by ' + name) : '',
+          filter: e.dark ? 'grayscale(.35) brightness(.94)' : 'none'
+        };
+      }) : [],
+      achievements: e ? (() => {
+        const ach = computeAchievements(this.state);
+        return ach.topSix.map((key, n) => {
+          const spec = EG_A[key];
+          const row = ach.rows.find(r => r.key === key);
+          const who = row.table ? 'THE TABLE' : SEATS[row.winnerSeat].label;
+          const head = row.table ? '' : 'assets/head-' + SEATS[row.winnerSeat].who + '.png';
+          return { ...spec, who, delay: (0.4 + n * 0.12).toFixed(2) + 's', hasWinner: !row.table, isTable: row.table, head };
+        });
+      })() : []
     };
     const catLabel = {type:'TYPE', power:'POWER', complication:'COMPLICATION', goal:'GOAL'};
     const locks = this.state.locks || [false,false,false,false];
@@ -7140,7 +7329,11 @@ var MP_CHAR = [
   // Best Friend / Rival targets — fixed for a 4-player game (copied off
   // SEATS at init) but randomized per-game for 3 players (launchGame),
   // so they have to travel like any other per-Student fact.
-  'friend', 'rival'
+  'friend', 'rival',
+  // Achievement counters — every seat needs to see everyone's tally, not
+  // just her own, so the Scene Control achievements tab reads the same
+  // standings on every screen.
+  'achMostPop', 'achDemon', 'achBreaks', 'achPsi', 'achChallenged', 'achFails', 'achVotes', 'achDrama'
 ];
 
 // Character Select writes a Student's chosen Quirks and Goals onto the
@@ -7240,6 +7433,20 @@ class Component extends TBPBase {
         var rc = shared.chars[i] || {}, merged = Object.assign({}, c);
         MP_CHAR.forEach(function (f) { if (f in rc) merged[f] = rc[f]; });
         return merged;
+      });
+    }
+    // Every seat's Drama allocation lives in the one shared `vote` blob, and
+    // each client pushes its whole local copy of it. Two Students spending
+    // Drama within the same debounce window otherwise race: whichever push
+    // lands second silently overwrites the other's not-yet-received seat.
+    // Merge per seat instead — trust my own seat's alloc from what I just
+    // set locally, and every other seat's from whatever the network says.
+    if (shared.vote && shared.vote.alloc && this.state.vote && this.state.vote.alloc) {
+      var Net = window.TBPNet;
+      var mySeat = (Net && Net.role === 'player') ? Net.seat : null;
+      var localAlloc = this.state.vote.alloc;
+      patch.vote = Object.assign({}, shared.vote, {
+        alloc: shared.vote.alloc.map(function (m, i) { return (mySeat === i && localAlloc[i]) ? localAlloc[i] : m; })
       });
     }
     mpReplayPicks(shared);
@@ -7413,7 +7620,18 @@ class Component extends TBPBase {
     el.style.border = '2px solid #EDE31B';
     el.style.pointerEvents = 'auto';
     var ps = this._mpPlayers || {};
-    var ids = Object.keys(ps);
+    // Firestore's map fields don't preserve a stable key order between
+    // snapshots — every push (including one per keystroke while typing the
+    // Demon's name/goal) can hand back `players` re-serialized in a
+    // different order, which made this list visibly reshuffle as you typed.
+    // Sort it ourselves so the order only depends on each player's own seat.
+    var ids = Object.keys(ps).sort(function (a, b) {
+      var pa = ps[a] || {}, pb = ps[b] || {};
+      var ra = pa.role === 'gm' ? -1 : (pa.seat != null ? pa.seat : 99);
+      var rb = pb.role === 'gm' ? -1 : (pb.seat != null ? pb.seat : 99);
+      if (ra !== rb) return ra - rb;
+      return a < b ? -1 : (a > b ? 1 : 0);
+    });
     var self = this;
     var collapsed = !!this._mpRosterCollapsed;
     var header = '<div data-toggle style="cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11px; letter-spacing:.12em; color:#EDE31B' + (collapsed ? '' : '; margin-bottom:6px') + '">' +
@@ -7483,6 +7701,34 @@ class Component extends TBPBase {
     document.body.appendChild(el);
   }
 
+  // The Headmaster ended the game from the Good/Bad End screen: the whole
+  // room got deleted out from under us. Same full-screen freeze as being
+  // kicked, different message.
+  mpShowRoomClosed() {
+    if (document.getElementById('tbp-kicked')) return;
+    var el = document.createElement('div');
+    el.id = 'tbp-kicked';
+    el.style.cssText = 'position:fixed; inset:0; z-index:200000; background:rgba(27,24,25,.94); ' +
+      'display:flex; align-items:center; justify-content:center; text-align:center; padding:24px';
+    el.innerHTML = '<div>' +
+      '<div style="display:inline-block; transform:skewX(-8deg); background:#EDE31B; padding:3px 15px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); margin-bottom:16px">' +
+        '<div style="transform:skewX(8deg); font-family:\'Baloo 2\',sans-serif; font-weight:800; font-size:24px; color:#231F20">THE END</div></div>' +
+      '<div style="font-family:\'Lora\',serif; font-style:italic; font-size:17px; color:rgba(239,230,200,.75); margin-bottom:20px">The Headmaster ended the game. This room is closed.</div>' +
+      '<a href="index.html" style="font-family:\'Baloo 2\',sans-serif; font-weight:800; font-size:15px; letter-spacing:.08em; color:#231F20; background:#EDE31B; border:4px solid #231F20; box-shadow:0 5px 0 rgba(0,0,0,.45); border-radius:11px; padding:12px 24px; text-decoration:none; display:inline-block">BACK TO TITLE</a>' +
+    '</div>';
+    document.body.appendChild(el);
+  }
+
+  // The Headmaster's own action: delete the room and send everyone (herself
+  // included) back to the title screen. deleteRoom() makes every other
+  // client's subscribe() fire with shared:null, caught below.
+  endRoom() {
+    var Net = window.TBPNet;
+    if (!Net || !Net.roomId) return;
+    Net.deleteRoom(Net.roomId).catch(function (e) { console.error('[tbp] end room failed', e); });
+    window.location.href = 'index.html';
+  }
+
   async mpStart() {
     var joined = await window.__TBPJoined;      // resolved by the room gate
     var Net = window.TBPNet;
@@ -7506,6 +7752,8 @@ class Component extends TBPBase {
         self.mpApplyRemote(shared);
       } else if (first && joined.role === 'gm') {
         self.mpPush();                           // seed a brand-new room
+      } else if (!first) {
+        self.mpShowRoomClosed();                 // room deleted mid-session
       }
       first = false;
     });
