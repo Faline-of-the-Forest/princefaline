@@ -628,11 +628,12 @@ function renderGames() {
       <div style="max-width:90%;font:400 15.5px/1.5 'EB Garamond',serif;color:#D9D1BE;text-wrap:pretty">${esc(d.shelfDesc || d.note)}</div>
       <div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:5px">
         ${d.players ? `<span style="font:500 10px 'EB Garamond',serif;letter-spacing:.16em;text-transform:uppercase;color:#A79E8B">${esc(d.players)} players</span>` : ""}
-        <span style="font:400 15px/1 'EB Garamond',serif;color:#E08A72">▸ Open</span>
+        <span style="font:400 15px/1 'EB Garamond',serif;color:#E08A72">▸ ${esc(d.kind || "Game")}</span>
       </div>
     </div>
   </a>`).join("");
 
+  const distinctKinds = new Set(dashboards.map(d => d.kind)).size;
   const filterBtns = GAME_FILTERS.map(label => {
     const n = label === "All" ? dashboards.length : dashboards.filter(d => d.kind === GAME_FILTER_KIND[label]).length;
     return `<button type="button" class="gm-filter" data-filter="${esc(GAME_FILTER_KIND[label] || "")}" data-active="${label === "All" ? "1" : "0"}" style="font:400 14px/1 'EB Garamond',serif;padding:5px 13px;cursor:pointer">${esc(label)} ${n}</button>`;
@@ -643,7 +644,7 @@ function renderGames() {
       <div id="gm-eyebrow" style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${dashboards.length} apps</div>
       <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">Games</h1>
       <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0 0 22px">The interactive character sheets, playsets and dashboards I build for the games I run.</p>
-      <div style="display:flex;flex-wrap:wrap;gap:7px">${filterBtns}</div>
+      ${distinctKinds > 1 ? `<div style="display:flex;flex-wrap:wrap;gap:7px">${filterBtns}</div>` : ""}
     </div>
     <div id="gm-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:26px 24px;padding-bottom:56px">${tiles}</div>
     <style>
@@ -807,6 +808,7 @@ function copyDir(src, dest) {
 copyDir(path.join(ROOT, "uploads"), path.join(DIST, "uploads"));
 copyDir(path.join(ROOT, "assets"), path.join(DIST, "assets"));
 copyDirAll(path.join(ROOT, "app-icons"), path.join(DIST, "app-icons"));
+copyDirAll(path.join(ROOT, "app-logo"), path.join(DIST, "app-logo"));
 if (fs.existsSync(path.join(ROOT, "admin"))) copyDir(path.join(ROOT, "admin"), path.join(DIST, "admin"));
 
 // copyDirAll: unlike copyDir above, copies every file verbatim (including
