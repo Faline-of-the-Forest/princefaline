@@ -29,6 +29,7 @@
       "shelfDesc": "Three cyberpunk jobs gathered into one dashboard: Mind the Gap, PRDTR and Basilisk.",
       "icon": "/app-icons/icon_cbr-pnk.jpg",
       "logo": "/app-logo/logo_cbr-pnk.png",
+      "logoStyle": "white",
       "url": "/games/cbr-pnk/",
       "host": "princefaline.com/games/cbr-pnk"
     },
@@ -57,6 +58,7 @@
       "shelfDesc": "Vampire commandos parachute into occupied Paris to drink Hitler. Sheets for all six.",
       "icon": "/app-icons/icon_eatthereich.jpg",
       "logo": "/app-logo/logo_eatthereich.png",
+      "logoStyle": "white",
       "url": "/games/eat-the-reich/",
       "host": "princefaline.com/games/eat-the-reich"
     },
@@ -71,6 +73,7 @@
       "shelfDesc": "Thirteen hours to reach the centre. A live clock tracks every trade and every trick.",
       "icon": "/app-icons/icon_jimhensonslabyrinth.jpg",
       "logo": "/app-logo/logo_labyrinth.png",
+      "logoStyle": "white",
       "url": "/games/jim-hensons-labyrinth/",
       "host": "princefaline.com/games/jim-hensons-labyrinth"
     },
@@ -99,6 +102,7 @@
       "shelfDesc": "A haunted house drawn room by room, filling in as the players make it worse.",
       "icon": "/app-icons/icon_somethingiswrongwiththishouse.jpg",
       "logo": "/app-logo/logo_somethingiswrongwiththishouse.png",
+      "logoStyle": "white",
       "url": "/games/something-is-wrong-with-this-house/",
       "host": "princefaline.com/games/something-is-wrong-with-this-house"
     },
