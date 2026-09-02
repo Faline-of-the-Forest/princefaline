@@ -622,13 +622,13 @@ function renderGames() {
   const sorted = dashboards.slice().sort((a, b) => a.t.localeCompare(b.t));
   const tiles = sorted.map(d => `<a href="${d.url}" target="_blank" rel="noopener" class="gm-tile" data-kind="${esc(d.kind || "")}" style="display:block;position:relative;aspect-ratio:1;border:2px solid #24211B;background:repeating-linear-gradient(45deg,#E4DCC6 0 6px,#F6F1E4 6px 12px);overflow:hidden;text-decoration:none;color:inherit;box-shadow:4px 4px 0 #24211B">
     <div class="gm-art" style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:url(${d.icon})"></div>
-    <div class="gm-panel" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:24px 22px;background:radial-gradient(120% 90% at 50% 50%,rgba(22,18,13,.58) 0%,rgba(22,18,13,.88) 100%)">
-      ${d.logo ? `<img src="${d.logo}" alt="${esc(d.t)}" style="display:block;max-width:88%;max-height:120px;width:auto;height:auto;object-fit:contain">` : `<div style="font:400 22px/1.2 'EB Garamond',serif;color:#F6F1E4">${esc(d.t)}</div>`}
-      <div class="gm-line" style="width:54px;height:1px;background:#C4553F"></div>
-      <div style="max-width:90%;font:400 15.5px/1.5 'EB Garamond',serif;color:#D9D1BE;text-wrap:pretty">${esc(d.shelfDesc || d.note)}</div>
-      <div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:5px">
-        ${d.players ? `<span style="font:500 10px 'EB Garamond',serif;letter-spacing:.16em;text-transform:uppercase;color:#A79E8B">${esc(d.players)} players</span>` : ""}
-        <span style="font:400 15px/1 'EB Garamond',serif;color:#E08A72">▸ ${esc(d.kind || "Game")}</span>
+    <div class="gm-panel" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2%;padding:8% 9%;background:radial-gradient(120% 90% at 50% 50%,rgba(22,18,13,.58) 0%,rgba(22,18,13,.9) 100%)">
+      ${d.logo ? `<img src="${d.logo}" alt="${esc(d.t)}" class="gm-logo" style="display:block;max-width:92%;max-height:38%;width:auto;height:auto;object-fit:contain;filter:brightness(0) invert(1);flex:0 1 auto">` : `<div style="font:400 22px/1.2 'EB Garamond',serif;color:#F6F1E4">${esc(d.t)}</div>`}
+      <div class="gm-line" style="width:15%;height:1px;background:#C4553F;flex:none"></div>
+      <div class="gm-desc" style="max-width:92%;font:400 13.5px/1.4 'EB Garamond',serif;color:#D9D1BE;text-wrap:pretty;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">${esc(d.shelfDesc || d.note)}</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:none">
+        ${d.players ? `<span style="font:500 9px 'EB Garamond',serif;letter-spacing:.14em;text-transform:uppercase;color:#A79E8B">${esc(d.players)} players</span>` : ""}
+        <span style="font:400 13.5px/1 'EB Garamond',serif;color:#E08A72;white-space:nowrap">▸ ${esc(d.kind || "Game")}</span>
       </div>
     </div>
   </a>`).join("");
