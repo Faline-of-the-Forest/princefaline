@@ -4325,15 +4325,15 @@
 
     <div style="flex:0 1 min(24vw,300px); min-width:min(15vw,178px); box-sizing:border-box; border-radius:14px; box-shadow:6px 6px 0 rgba(35,31,32,.28); border:4px solid #231F20; background:{{ f.me.tone }}; position:relative; overflow:hidden; display:flex; align-items:center; gap:min(1.1vw,13px); padding:11px min(1.1vw,13px)">
       <div style="position:absolute; inset:0; background-image:radial-gradient(#231F20 1.65px, transparent 2.1px); background-size:12px 12px; opacity:.16; pointer-events:none"></div>
-      <div style="position:relative; width:min(4.6vw,58px); height:min(4.6vw,58px); flex:none; opacity:{{ f.me.portraitOpacity }}">
+      <div style="position:relative; width:{{ f.me.portraitSize }}; height:{{ f.me.portraitSize }}; flex:none; opacity:{{ f.me.portraitOpacity }}">
         <img src="assets/head-momo-cut.png" alt="portrait, Hiromi" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 0 rgba(35,31,32,.3)); opacity:{{ f.me.oMomo }}">
         <img src="assets/head-midori-cut.png" alt="portrait, Kotori" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 0 rgba(35,31,32,.3)); opacity:{{ f.me.oMidori }}">
         <img src="assets/head-ao-cut.png" alt="portrait, Ume" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 0 rgba(35,31,32,.3)); opacity:{{ f.me.oAo }}">
         <img src="assets/head-murasaki-cut.png" alt="portrait, Yumi" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 0 rgba(35,31,32,.3)); opacity:{{ f.me.oMurasaki }}">
       </div>
-      <div style="position:relative; flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px">
+      <div style="position:relative; flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px; text-align:left">
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.16em; line-height:1; color:#231F20; opacity:.62">{{ f.me.playerLabel }}</div>
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(16px,1.75vw + 9px,25px); line-height:1; color:#231F20; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; -webkit-text-stroke:2px #FDFCFC; paint-order:stroke fill">{{ f.me.name }}</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(16px,1.75vw + 9px,25px); line-height:1; color:#231F20; white-space:nowrap; overflow:visible; -webkit-text-stroke:2px #FDFCFC; paint-order:stroke fill">{{ f.me.name }}</div>
       </div>
       <div style="position:relative; flex:none; display:flex; align-items:center; gap:8px">
         <div sc-camel-on-click="{{ f.me.openDiary }}" sc-camel-on-mouse-enter="{{ f.me.diaryEnter }}" sc-camel-on-mouse-leave="{{ f.me.diaryLeave }}" title="Character Diary" style="position:relative; cursor:pointer; width:min(3.64vw,42px); height:min(3.64vw,42px); display:{{ f.me.diaryDisplay }}; place-items:center; transform:{{ f.me.diaryPress }}; transition:transform .09s ease-out">
@@ -4421,7 +4421,7 @@
     <sc-if value="{{ f.firstVote.show }}" hint-placeholder-val="{{ false }}">
       <div sc-camel-on-click="{{ f.firstVote.start }}" title="Call the first Class Vote — Headmaster only" style="cursor:pointer; box-sizing:border-box; border:5px solid #231F20; border-radius:16px; box-shadow:10px 10px 0 rgba(35,31,32,.28); background:#EDE31B; padding:34px 46px; display:flex; flex-direction:column; align-items:center; gap:10px">
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.16em; color:rgba(35,31,32,.6)">BEFORE THE FIRST SCENE</div>
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:26px; letter-spacing:.04em; color:#231F20">CALL THE CLASS VOTE</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:26px; letter-spacing:.04em; color:#231F20">CLASS VOTE</div>
       </div>
     </sc-if>
 
@@ -4507,6 +4507,9 @@
           <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:44px; letter-spacing:.02em; line-height:1; color:#EDE31B">Class Vote!</div>
           <div style="font-family:'Lora',serif; font-style:italic; font-size:17px; color:rgba(239,230,200,.7)">Waiting on the Students to spend their Drama.</div>
           <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.1em; color:#EFE6C8">{{ f.voteHeadmaster.readyCount }} / {{ f.voteHeadmaster.readyTotal }} READY</div>
+          <div style="width:64px; height:64px; border-radius:50%; background:#231F20; border:3px solid rgba(239,230,200,.25); display:flex; align-items:center; justify-content:center; margin-top:4px; animation:{{ f.voteHeadmaster.clockAnim }}">
+            <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; line-height:1; color:{{ f.voteHeadmaster.clockInk }}">{{ f.voteHeadmaster.clock }}</div>
+          </div>
         </div>
         <div style="display:flex; flex-direction:column; gap:8px">
           <sc-for list="{{ f.voteHeadmaster.rows }}" as="r" hint-placeholder-count="4">
@@ -4942,23 +4945,25 @@
         <div style="position:absolute; inset:0; background-image:radial-gradient(rgba(239,230,200,.09) 1.6px, transparent 2.1px); background-size:14px 14px; pointer-events:none"></div>
         <div style="position:absolute; inset:0; background:radial-gradient(90% 70% at 50% 8%, rgba(226,58,58,.2), rgba(35,31,32,0) 62%); pointer-events:none"></div>
 
-        <div style="position:relative; flex:none; box-sizing:border-box; padding:22px 40px 0; display:flex; align-items:center; gap:18px">
-          <div style="transform:skewX(-8deg); background:#F6A7CA; padding:3px 18px 6px; box-shadow:5px 5px 0 rgba(0,0,0,.45)">
-            <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:40px; line-height:1; color:#231F20">CHARACTER SELECT</div>
+        <sc-if value="{{ f.setup.pickingStudents }}" hint-placeholder-val="{{ true }}">
+          <div style="position:relative; flex:none; box-sizing:border-box; padding:22px 40px 0; display:flex; align-items:center; gap:18px">
+            <div style="transform:skewX(-8deg); background:#F6A7CA; padding:3px 18px 6px; box-shadow:5px 5px 0 rgba(0,0,0,.45)">
+              <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(24px,2.2vw + 12px,40px); line-height:1; color:#231F20">CHARACTER SELECT</div>
+            </div>
+            <div style="flex:1; height:3px; background:linear-gradient(90deg, rgba(246,167,202,.6), rgba(239,230,200,0))"></div>
           </div>
-          <div style="flex:1; height:3px; background:linear-gradient(90deg, rgba(246,167,202,.6), rgba(239,230,200,0))"></div>
-        </div>
+        </sc-if>
 
         <sc-if value="{{ f.setup.topOpen }}" hint-placeholder-val="{{ false }}">
-          <div style="position:relative; flex:none; height:412px; box-sizing:border-box; padding:16px 40px 0; display:flex; flex-direction:column">
+          <div style="position:relative; flex:1; min-height:0; box-sizing:border-box; padding:16px 40px; display:flex; flex-direction:column; justify-content:center">
           <sc-if value="{{ f.setup.demonOpen }}" hint-placeholder-val="{{ false }}">
             <div style="flex:1; min-height:0; display:flex; flex-direction:column; gap:12px">
               <div style="flex:none; display:flex; align-items:center; gap:16px">
-                <img src="assets/icon-demon.png" alt="demon sigil" style="width:34px; height:34px; object-fit:contain">
-                <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:22px; letter-spacing:.24em; color:#E23A3A">TODAY'S DEMON</div>
+                <img src="assets/icon-demon.png" alt="demon sigil" style="width:min(3vw,34px); height:min(3vw,34px); object-fit:contain">
+                <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.8vw + 10px,28px); letter-spacing:.24em; color:#E23A3A">TODAY'S DEMON</div>
                 <div style="flex:1; height:3px; background:linear-gradient(90deg, rgba(226,58,58,.7), rgba(239,230,200,0))"></div>
                 <sc-if value="{{ f.setup.rolledAny }}" hint-placeholder-val="{{ false }}">
-                  <div data-mp="reroll-all" sc-camel-on-click="{{ f.setup.rerollAll }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.12em; color:rgba(239,230,200,.55); border:2px solid rgba(239,230,200,.22); border-radius:7px; padding:7px 11px">ROLL IT ALL AGAIN</div>
+                  <div data-mp="reroll-all" sc-camel-on-click="{{ f.setup.rerollAll }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.6vw + 6px,11px); letter-spacing:.12em; color:rgba(239,230,200,.55); border:2px solid rgba(239,230,200,.22); border-radius:7px; padding:7px 11px">ROLL IT ALL AGAIN</div>
                 </sc-if>
               </div>
 
@@ -4966,15 +4971,15 @@
                 <sc-for list="{{ f.setup.categories }}" as="cat" hint-placeholder-count="4">
                   <div style="box-sizing:border-box; min-height:0; background:#2b2527; border:4px solid {{ cat.border }}; border-radius:13px; overflow:hidden; display:flex; flex-direction:column">
                     <div style="flex:none; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:7px 11px; background:{{ cat.headBg }}">
-                      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.2em; color:{{ cat.headInk }}">{{ cat.label }}</div>
-                      <div sc-camel-on-click="{{ cat.reroll }}" title="Reroll this whole line" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9px; letter-spacing:.1em; color:{{ cat.headInk }}; opacity:.75; border:2px solid {{ cat.headInk }}; border-radius:5px; padding:2px 6px">RE-ROLL</div>
+                      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.6vw + 6px,11px); letter-spacing:.2em; color:{{ cat.headInk }}">{{ cat.label }}</div>
+                      <div sc-camel-on-click="{{ cat.reroll }}" title="Reroll this whole line" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(8px,.45vw + 5.5px,9.5px); letter-spacing:.1em; color:{{ cat.headInk }}; opacity:.75; border:2px solid {{ cat.headInk }}; border-radius:5px; padding:2px 6px">RE-ROLL</div>
                     </div>
                     <div style="flex:1; min-height:0; display:flex; flex-direction:column; gap:5px; padding:9px">
                       <sc-if value="{{ cat.spinning }}" hint-placeholder-val="{{ true }}">
                         <div style="flex:1; position:relative; overflow:hidden; border-radius:8px; background:#231F20; box-shadow:inset 0 14px 16px -10px rgba(0,0,0,.95), inset 0 -14px 16px -10px rgba(0,0,0,.95)">
                           <div style="position:absolute; left:0; right:0; top:0; display:flex; flex-direction:column; animation:tbp-reel {{ cat.reelSpeed }} linear infinite">
                             <sc-for list="{{ cat.reel }}" as="r" hint-placeholder-count="10">
-                              <div style="height:40px; flex:none; display:flex; align-items:center; padding:0 10px; font-family:'Lora',serif; font-size:14px; line-height:1.15; color:rgba(239,230,200,.85); white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ r.text }}</div>
+                              <div style="height:40px; flex:none; display:flex; align-items:center; padding:0 10px; font-family:'Lora',serif; font-size:clamp(12px,.85vw + 8px,15px); line-height:1.15; color:rgba(239,230,200,.85); white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ r.text }}</div>
                             </sc-for>
                           </div>
                           <div style="position:absolute; left:0; right:0; top:50%; height:3px; transform:translateY(-50%); background:rgba(226,58,58,.75)"></div>
@@ -4982,7 +4987,7 @@
                       </sc-if>
                       <sc-if value="{{ cat.notSpinning }}" hint-placeholder-val="{{ false }}">
                         <sc-for list="{{ cat.slots }}" as="sl" hint-placeholder-count="1">
-                          <div sc-camel-on-click="{{ sl.reroll }}" title="Click to reroll just this one" style="cursor:pointer; flex:1; min-height:0; display:flex; align-items:center; box-sizing:border-box; background:{{ sl.bg }}; border:2px solid {{ sl.border }}; border-radius:8px; padding:8px 10px; font-family:'Lora',serif; font-size:14.5px; line-height:1.25; color:#EFE6C8; text-wrap:pretty; animation:tbp-land .38s cubic-bezier(.2,1.5,.4,1) both">{{ sl.text }}</div>
+                          <div sc-camel-on-click="{{ sl.reroll }}" title="Click to reroll just this one" style="cursor:pointer; flex:1; min-height:0; display:flex; align-items:center; box-sizing:border-box; background:{{ sl.bg }}; border:2px solid {{ sl.border }}; border-radius:8px; padding:8px 10px; font-family:'Lora',serif; font-size:clamp(12px,.9vw + 8px,15.5px); line-height:1.25; color:#EFE6C8; text-wrap:pretty; animation:tbp-land .38s cubic-bezier(.2,1.5,.4,1) both">{{ sl.text }}</div>
                         </sc-for>
                       </sc-if>
                     </div>
@@ -4991,15 +4996,15 @@
               </div>
 
               <div style="flex:none; display:flex; align-items:flex-end; gap:12px">
-                <div style="flex:none; width:250px; display:flex; flex-direction:column; gap:6px">
-                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S NAME</div>
-                  <input data-mp="demon-name" value="{{ f.setup.name }}" sc-camel-on-change="{{ f.setup.setName }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:17px; letter-spacing:.04em; color:#EFE6C8; outline:none">
+                <div style="flex:none; width:min(20vw,250px); display:flex; flex-direction:column; gap:6px">
+                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(8px,.5vw + 6px,10px); letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S NAME</div>
+                  <input data-mp="demon-name" value="{{ f.setup.name }}" sc-camel-on-change="{{ f.setup.setName }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(13px,1vw + 8px,17px); letter-spacing:.04em; color:#EFE6C8; outline:none">
                 </div>
                 <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:6px">
-                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S GOAL</div>
-                  <input data-mp="demon-goal" value="{{ f.setup.goalText }}" sc-camel-on-change="{{ f.setup.setGoal }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:16px; color:#EFE6C8; outline:none">
+                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(8px,.5vw + 6px,10px); letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S GOAL</div>
+                  <input data-mp="demon-goal" value="{{ f.setup.goalText }}" sc-camel-on-change="{{ f.setup.setGoal }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:clamp(12px,.9vw + 8px,16px); color:#EFE6C8; outline:none">
                 </div>
-                <div data-mp="play-btn" sc-camel-on-click="{{ f.setup.start }}" style="flex:none; cursor:pointer; opacity:{{ f.setup.startOpacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:21px; letter-spacing:.09em; color:#EFE6C8; background:#B4322C; border:4px solid #E23A3A; border-radius:11px; padding:12px 40px; box-shadow:0 6px 0 rgba(0,0,0,.45)">PLAY</div>
+                <div data-mp="play-btn" sc-camel-on-click="{{ f.setup.start }}" style="flex:none; cursor:pointer; opacity:{{ f.setup.startOpacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(15px,1.3vw + 9px,21px); letter-spacing:.09em; color:#EFE6C8; background:#B4322C; border:4px solid #E23A3A; border-radius:11px; padding:12px 40px; box-shadow:0 6px 0 rgba(0,0,0,.45)">PLAY</div>
               </div>
             </div>
           </sc-if>
@@ -5032,15 +5037,16 @@
           </div>
         </sc-if>
 
+        <sc-if value="{{ f.setup.pickingStudents }}" hint-placeholder-val="{{ true }}">
         <div style="position:relative; flex:1; min-height:0; box-sizing:border-box; padding:16px 24px 24px; display:flex; flex-direction:column; gap:10px">
           <div style="flex:none; display:flex; align-items:center; gap:16px">
             <div style="transform:skewX(-8deg); background:#EDE31B; padding:2px 14px 4px; box-shadow:4px 4px 0 rgba(0,0,0,.45)">
-              <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:22px; line-height:1; color:#231F20">CHOOSE YOUR STUDENT</div>
+              <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(15px,1.1vw + 8px,22px); line-height:1; color:#231F20">CHOOSE YOUR STUDENT</div>
             </div>
             <div style="flex:1; height:3px; background:linear-gradient(90deg, rgba(237,227,27,.4), rgba(239,230,200,0))"></div>
-            <div style="flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12.5px; letter-spacing:.1em; color:rgba(239,230,200,.6)">{{ f.setup.rosterHint }}</div>
+            <div style="flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(10px,.6vw + 7px,12.5px); letter-spacing:.1em; color:rgba(239,230,200,.6)">{{ f.setup.rosterHint }}</div>
             <sc-if value="{{ f.setup.readyBtn.show }}" hint-placeholder-val="{{ false }}">
-              <div sc-camel-on-click="{{ f.setup.readyBtn.click }}" style="cursor:{{ f.setup.readyBtn.cursor }}; flex:none; opacity:{{ f.setup.readyBtn.opacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:16px; letter-spacing:.09em; color:#231F20; background:#EDE31B; border:4px solid #231F20; border-radius:10px; padding:9px 22px; box-shadow:0 5px 0 rgba(0,0,0,.45)">{{ f.setup.readyBtn.label }}</div>
+              <div sc-camel-on-click="{{ f.setup.readyBtn.click }}" style="cursor:{{ f.setup.readyBtn.cursor }}; flex:none; opacity:{{ f.setup.readyBtn.opacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(12px,.9vw + 7px,16px); letter-spacing:.09em; color:#231F20; background:#EDE31B; border:4px solid #231F20; border-radius:10px; padding:9px 22px; box-shadow:0 5px 0 rgba(0,0,0,.45)">{{ f.setup.readyBtn.label }}</div>
             </sc-if>
           </div>
 
@@ -5064,29 +5070,33 @@
                 <sc-if value="{{ s.showPortrait }}" hint-placeholder-val="{{ true }}">
                   <sc-if value="{{ s.locked }}" hint-placeholder-val="{{ false }}">
                     <div style="position:absolute; top:14px; right:-6px; transform:skewX(-8deg) rotate(3deg); background:#EDE31B; border:4px solid #231F20; padding:3px 13px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); animation:tbp-land .4s cubic-bezier(.2,1.5,.4,1) both">
-                      <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; color:#231F20">{{ s.playerName }}</div>
+                      <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(11px,.8vw + 6px,15px); letter-spacing:.06em; color:#231F20">{{ s.playerName }}</div>
                     </div>
                   </sc-if>
                   <sc-if value="{{ s.pickedByOther }}" hint-placeholder-val="{{ false }}">
                     <div style="position:absolute; top:14px; right:-6px; transform:skewX(-8deg) rotate(3deg); background:#E23A3A; border:4px solid #231F20; padding:3px 13px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); animation:tbp-land .4s cubic-bezier(.2,1.5,.4,1) both">
-                      <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; color:#EFE6C8">PICKING…</div>
+                      <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(11px,.8vw + 6px,15px); letter-spacing:.06em; color:#EFE6C8">PICKING…</div>
                     </div>
                   </sc-if>
                 </sc-if>
 
                 <div style="position:absolute; left:0; right:0; bottom:0; height:56px; background:#231F20; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 14px">
                   <div style="min-width:0; overflow:hidden">
-                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:30px; line-height:1; color:{{ s.nameInk }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ s.label }}</div>
+                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.8vw + 8px,30px); line-height:1; color:{{ s.nameInk }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ s.label }}</div>
                     <sc-if value="{{ s.compactTag }}" hint-placeholder-val="{{ false }}">
-                      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.06em; color:{{ s.compactTagInk }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ s.compactTag }}</div>
+                      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.5vw + 6px,11px); letter-spacing:.06em; color:{{ s.compactTagInk }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ s.compactTag }}</div>
                     </sc-if>
                   </div>
-                  <div style="flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; color:#EDE31B; border:2px solid #EDE31B; border-radius:7px; padding:4px 8px">{{ s.psiShort }}</div>
+                  <div style="flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(10px,.6vw + 7px,13px); letter-spacing:.08em; color:#EDE31B; border:2px solid #EDE31B; border-radius:7px; padding:4px 8px">{{ s.psiShort }}</div>
                 </div>
               </div>
             </sc-for>
           </div>
         </div>
+        </sc-if>
+      </div>
+      </div>
+    </sc-if>
 
   <sc-if value="{{ f.gm.show }}" hint-placeholder-val="{{ false }}">
     <div sc-camel-on-click="{{ f.gm.close }}" style="position:fixed; inset:0; z-index:45; background:rgba(35,31,32,.66); display:flex; align-items:center; justify-content:center; padding:26px">
@@ -5421,7 +5431,7 @@
       </div>
     </div>
   </sc-if>
-</div></div></sc-if></section>
+</section>
 
 </x-dc>
 <script type="text/x-dc" data-dc-script="">
@@ -5605,9 +5615,23 @@ const LOCATIONS = [
 function faceOf(who) {
   return {oMomo: who === 'momo' ? 1 : 0, oMidori: who === 'midori' ? 1 : 0, oAo: who === 'ao' ? 1 : 0, oMurasaki: who === 'murasaki' ? 1 : 0};
 }
+// Full 1st-4th turn order from a Class Vote's totals: highest spend first,
+// ties broken randomly within their tied group. Computed once, off the very
+// first vote, and kept for the rest of the game (see applyVote()).
+function rankFromTotals(totals) {
+  const groups = {};
+  totals.forEach((v, k) => { (groups[v] = groups[v] || []).push(k); });
+  const order = [];
+  Object.keys(groups).map(Number).sort((a, b) => b - a).forEach(v => {
+    const g = groups[v].slice();
+    for (let i = g.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = g[i]; g[i] = g[j]; g[j] = t; }
+    order.push(...g);
+  });
+  return order;
+}
 
 class TBPBase extends DCLogic {
-  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, spinning: {type:false,power:false,complication:false,goal:false}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[true,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonLockLead: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false}))};
+  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, spinning: {type:false,power:false,complication:false,goal:false}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[false,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonLockLead: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, locChosen: false, turnOrder: null, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false}))};
 
   measureAnchors = () => {
     const g = this._goodEl, c = this._sceneEl;
@@ -5630,7 +5654,9 @@ class TBPBase extends DCLogic {
       const dbgH = dbg ? dbg.getBoundingClientRect().height + 16 : 0;
       const availW = window.innerWidth - 56;
       const availH = Math.max(240, window.innerHeight - 16 - 28 - headerH - dbgH - 32);
-      const rowScale = Math.max(.34, Math.min(1, availW / 1676, (availH * .58) / 519));
+      // Let the Student cards grow much closer to the full height under the
+      // location card, rather than being capped at ~58% of it.
+      const rowScale = Math.max(.34, Math.min(1.8, availW / 1676, (availH * .96) / 519));
       const stageH = Math.max(110, availH - 519 * rowScale);
       const fitTo = (w, h) => Math.max(.3, Math.min(1, (stageH - 8) / h, (availW - 24) / w));
       const next = {rowScale, locScale: fitTo(760, 320), voteScale: fitTo(1300, 300), resScale: fitTo(1080, 470)};
@@ -5672,9 +5698,17 @@ class TBPBase extends DCLogic {
     });
   }
 
+  // The table's turn order: Most Popular first, Least Popular last, decided
+  // once by the first Class Vote's totals (ties broken randomly) and kept
+  // for the rest of the game — see rankFromTotals() / applyVote().
+  orderSeq() {
+    const base = this.state.turnOrder || [0,1,2,3];
+    return base.concat(base);
+  }
+
   jumpScene(i) {
     this.setState(s => {
-      const order = [0,1,2,3,0,1,2,3];
+      const order = this.orderSeq();
       if (order[s.scenePos] === i) return {scenePos: (s.scenePos + 1) % 8};
       for (let j = s.scenePos; j < 8; j++) if (order[j] === i) return {scenePos: j};
       return {scenePos: order.indexOf(i)};
@@ -5684,7 +5718,7 @@ class TBPBase extends DCLogic {
   toggleDebug() { this.setState(s => ({debugVisible: !s.debugVisible})); }
 
   liveScene() {
-    const order = [0,1,2,3,0,1,2,3], sp = this.state.scenePos;
+    const order = this.orderSeq(), sp = this.state.scenePos;
     const lc = LOCATIONS[this.state.locIdx % LOCATIONS.length];
     return {
       locIdx: this.state.locIdx % LOCATIONS.length,
@@ -5854,7 +5888,7 @@ class TBPBase extends DCLogic {
     let shouted = null;
     d.done.forEach((gs, i) => gs.forEach((v, k) => { if (v && !live.done[i][k]) shouted = i; }));
     this.setState({locIdx:d.locIdx, subText:d.sub, leadOverride:d.leadIdx, focusIdx:d.focusIdx,
-      goalIdx:d.goalIdx, led:d.led, goalsDone:d.done, justCleared:cleared, gmDraft:null,
+      goalIdx:d.goalIdx, led:d.led, goalsDone:d.done, justCleared:cleared, gmDraft:null, locChosen:true,
       gmOpen: shouted != null ? false : this.state.gmOpen, shoutSeat: shouted});
     if (shouted != null) {
       clearTimeout(this._shoutT);
@@ -5938,15 +5972,10 @@ class TBPBase extends DCLogic {
     const active = this.state.rollMode;
     if (active !== null) { const ap = this.state.chars[active].phase; if (ap !== 'result' && ap !== 'psychic') { return; } this.reset(active, {}); }
     if (typeof caller === 'number') this.patch(caller, {votedOnce: true});
-    const player = this.state.player;
-    const alloc = this.state.chars.map((c, vi) => {
-      const m = {};
-      if (vi !== player) {
-        let pts = Number(c.drama) || 0;
-        while (pts-- > 0) { const t = Math.floor(Math.random() * 4); m[t] = (m[t] || 0) + 1; }
-      }
-      return m;
-    });
+    // Every seat starts with nothing spent — each real Student assigns her
+    // own Drama (switching the Player picker to her seat in local/hotseat
+    // play); nobody's vote is randomly guessed for her.
+    const alloc = this.state.chars.map(() => ({}));
     this.setState({rollMode: null, challenge: null, firstSceneStarted: true, voteReady: {}, vote: {phase: 'assign', alloc, tick: [0,0,0,0], totals: null, most: null, least: null, tieMost: false, tieLeast: false, clock: 60}});
     this.startVoteClock();
   }
@@ -5979,6 +6008,7 @@ class TBPBase extends DCLogic {
   }
 
   voteAdjust(target, delta) {
+    if (window.TBPNet && window.TBPNet.role === 'gm') return;
     const v = this.state.vote;
     if (!v || v.phase !== 'assign') return;
     const player = this.state.player;
@@ -6082,6 +6112,9 @@ class TBPBase extends DCLogic {
     const v = this.state.vote;
     if (!v) return;
     this.setState({vote: Object.assign({}, v, {most, least})});
+    if (this.state.turnOrder == null && v.totals) {
+      this.setState({turnOrder: rankFromTotals(v.totals)});
+    }
     this.setState(s => {
       const chars = s.chars.slice();
       for (let k = 0; k < 4; k++) {
@@ -6198,12 +6231,14 @@ class TBPBase extends DCLogic {
     let chars = this.state.chars;
     // 3-player games get a randomized Best Friend / Rival assignment instead
     // of the fixed 4-cycle baked onto SEATS (which assumes all four seats are
-    // in play). Two independent derangements of the 3 active seats \u2014 every
-    // seat targets exactly one other seat and is targeted by exactly one
-    // other seat, nobody targets herself.
+    // in play). Two derangements of the 3 active seats, forced to opposite
+    // directions so nobody's Best Friend is also her Rival \u2014 every seat
+    // targets exactly one other seat for each relation, and is targeted by
+    // exactly one other seat, nobody targets herself.
     if (activeSeats.length === 3) {
-      const friendMap = this.randomDerangement3(activeSeats);
-      const rivalMap = this.randomDerangement3(activeSeats);
+      const friendDir = Math.random() < 0.5;
+      const friendMap = this.randomDerangement3(activeSeats, friendDir);
+      const rivalMap = this.randomDerangement3(activeSeats, !friendDir);
       chars = chars.map((c, k) => activeSeats.indexOf(k) < 0 ? c :
         Object.assign({}, c, {friend: friendMap[k], rival: rivalMap[k]}));
     }
@@ -6216,11 +6251,12 @@ class TBPBase extends DCLogic {
     });
   }
 
-  // A random derangement of a 3-element seat list: exactly one of the two
-  // possible 3-cycles (there is no other derangement of 3 items), so this is
-  // automatically fixed-point-free \u2014 nobody is assigned to herself.
-  randomDerangement3(seats) {
-    const dir = Math.random() < 0.5;
+  // A derangement of a 3-element seat list in the given direction: exactly
+  // one of the two possible 3-cycles (there is no other derangement of 3
+  // items), so this is automatically fixed-point-free \u2014 nobody is assigned
+  // to herself. Called once per direction from launchGame() so Best Friend
+  // and Rival always land on opposite cycles \u2014 never the same target.
+  randomDerangement3(seats, dir) {
     const map = {};
     seats.forEach((seat, i) => { map[seat] = dir ? seats[(i + 1) % 3] : seats[(i + 2) % 3]; });
     return map;
@@ -6253,7 +6289,7 @@ class TBPBase extends DCLogic {
   }
 
   curLead() {
-    const order = [0,1,2,3,0,1,2,3];
+    const order = this.orderSeq();
     return this.state.leadOverride == null ? order[this.state.scenePos] : this.state.leadOverride;
   }
 
@@ -6443,7 +6479,7 @@ class TBPBase extends DCLogic {
         boxCursor: isTarget ? 'pointer' : 'default',
         boxClick: () => { if (isTarget) this.selectTarget(i); },
         dramaPop: c.dramaPop,
-        voteAssign: voteActive && vote.phase === 'assign',
+        voteAssign: voteActive && vote.phase === 'assign' && !isHeadmaster,
         voteCount: counting,
         isPlayerCard: i === player,
         votePlayerAlloc: vote ? (vote.alloc[player][i] || 0) : 0,
@@ -6604,7 +6640,7 @@ class TBPBase extends DCLogic {
         gaugeAnim: c.broken ? 'tbp-brkshudder .28s ease-in-out infinite' : ((c.venting || c.landing) ? 'tbp-hit .34s ease-out' : 'none'),
         venting: c.venting,
         ventGlow: c.venting ? '0 0 12px rgba(226,58,58,.85)' : 'none',
-        bumpDrama: () => this.bumpDrama(i),
+        bumpDrama: (e) => { if (e && e.button === 2) return; this.bumpDrama(i); },
         dropDrama: (e) => { if (e && e.preventDefault) e.preventDefault(); this.dropDrama(i); },
         roll: needsBreak ? (() => this.breakOut(i)) : (() => this.roll(i)),
         cyclePop: () => this.reset(i, {pop: ORDER[(ORDER.indexOf(c.pop) + 1) % 3]}),
@@ -6672,6 +6708,9 @@ class TBPBase extends DCLogic {
     const voteActiveSeats = this.state.activeSeats || [0,1,2,3];
     const voteHeadmaster = {
       show: voteActive && vote.phase === 'assign' && isHeadmaster,
+      clock: secs < 10 ? '0' + secs : String(secs),
+      clockInk: secs <= 10 ? '#E23A3A' : '#EDE31B',
+      clockAnim: secs <= 10 ? 'tbp-pulse .9s ease-in-out infinite' : 'none',
       readyCount: voteActiveSeats.filter(k => this.state.voteReady[k]).length,
       readyTotal: voteActiveSeats.length,
       rows: voteActiveSeats.map(k => ({
@@ -6780,7 +6819,7 @@ class TBPBase extends DCLogic {
     const gearToggle = {click: () => this.toggleDebug(), ink: this.state.debugVisible ? '#EDE31B' : '#FDFCFC'};
 
     const good = this.state.goodEnd, bad = this.state.badEnd;
-    const order = [0,1,2,3,0,1,2,3];
+    const order = this.orderSeq();
     const scenePos = this.state.scenePos;
     const leadIdx = this.state.leadOverride == null ? order[scenePos] : this.state.leadOverride;
     const ledCounts = this.state.led ? this.state.led : SEATS.map((s, k) => order.slice(0, scenePos + 1).filter(x => x === k).length);
@@ -6822,10 +6861,11 @@ class TBPBase extends DCLogic {
     const stop = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
     const pc = this.state.chars[player];
     const me = Object.assign(faceOf(pc.who), {
-      tone: SEAT_TONE[pc.who],
+      tone: isHeadmaster ? '#3a3436' : SEAT_TONE[pc.who],
       name: isHeadmaster ? 'HEADMASTER' : pc.label,
       playerLabel: isHeadmaster ? '' : (this._mpName || ''),
       isHeadmaster,
+      portraitSize: isHeadmaster ? '0px' : 'min(4.6vw,58px)',
       portraitOpacity: isHeadmaster ? 0 : 1,
       diaryOpacity: isHeadmaster ? 0 : 1,
       diaryDisplay: isHeadmaster ? 'none' : 'grid',
@@ -6872,7 +6912,7 @@ class TBPBase extends DCLogic {
     const vsDemon = fi === 1, demonLead = fi === 2;
     const demonFocus = demonLead;
     const loc = Object.assign(faceOf(demonLead ? '' : leadSeat.who), {
-      show: !voteBar.show && !voteResult.show && this.state.firstSceneStarted,
+      show: !voteBar.show && !voteHeadmaster.show && !voteResult.show && this.state.firstSceneStarted && this.state.locChosen,
       img: lc.img, name: lc.name,
       sub: this.state.subText == null ? subs[this.state.subIdx % subs.length] : this.state.subText,
       cyclePlace: () => {},
@@ -6933,6 +6973,7 @@ class TBPBase extends DCLogic {
       demonOpen: allLocked && this.state.picking == null,
       showGoals: this.state.picking != null,
       topOpen: allLocked,
+      pickingStudents: !allLocked,
       goalPicker: (() => {
         const k = this.state.picking == null ? 0 : this.state.picking;
         const onQuirks = this.state.pickStep === 'quirks';
@@ -7494,6 +7535,7 @@ class Component extends TBPBase {
       f.setup = Object.assign({}, f.setup, {
         topOpen: ready && this.state.picking == null,
         demonOpen: ready && this.state.picking == null,
+        pickingStudents: !ready,
         rosterHint: '',
         compact: ready,
         rosterFlex: ready ? 'none' : '1',
