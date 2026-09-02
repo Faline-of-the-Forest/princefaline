@@ -5671,7 +5671,7 @@ const ACHIEVEMENT_SPEC = [
   { key: 'clumsy', field: 'achFails', min: 3 },
   { key: 'influencer', field: 'achVotes' },
   { key: 'gossip', field: 'achDrama' },
-  { key: 'explorer', table: true, value: (s) => s.visitedLocs.length, eligible: (s) => s.visitedLocs.length >= 4 }
+  { key: 'explorer', table: true, value: (s) => s.locsCount, eligible: (s) => s.locsCount >= 4 }
 ];
 
 // Runs the whole spec against the live game state. Returns every entry with
@@ -5682,8 +5682,14 @@ function computeAchievements(gameState) {
   const activeSeats = gameState.activeSeats || [0, 1, 2, 3];
   const chars = gameState.chars;
   const goalsCleared = chars.map((c, k) => (gameState.goalsDone[k] || []).filter(Boolean).length);
-  const scenesCompleted = (gameState.led || [0, 0, 0, 0]).reduce((a, b) => a + b, 0);
-  const s = { badEnd: gameState.badEnd, scenesCompleted, visitedLocs: gameState.visitedLocs || [], activeSeats };
+  // Table achievements are ordinarily derived from real gameplay state, but
+  // the Headmaster can override any of the three directly from the
+  // Achievements tab (see buildGm()'s achRows) — that takes precedence.
+  const derivedScenes = (gameState.led || [0, 0, 0, 0]).reduce((a, b) => a + b, 0);
+  const scenesCompleted = gameState.achScenesOverride != null ? gameState.achScenesOverride : derivedScenes;
+  const derivedLocs = (gameState.visitedLocs || []).length;
+  const locsCount = gameState.achLocsOverride != null ? gameState.achLocsOverride : derivedLocs;
+  const s = { badEnd: gameState.badEnd, scenesCompleted, locsCount, activeSeats };
   const rows = ACHIEVEMENT_SPEC.map((spec) => {
     if (spec.table) {
       const value = spec.value(s);
@@ -5720,7 +5726,7 @@ function rankFromTotals(totals) {
 }
 
 class TBPBase extends DCLogic {
-  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, spinning: {type:false,power:false,complication:false,goal:false}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[false,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonLockLead: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, locChosen: false, turnOrder: null, visitedLocs: [], achTab: false, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false, achMostPop:0, achDemon:0, achBreaks:0, achPsi:0, achChallenged:0, achFails:0, achVotes:0, achDrama:0}))};
+  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, spinning: {type:false,power:false,complication:false,goal:false}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[false,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonLockLead: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, locChosen: false, turnOrder: null, visitedLocs: [], achTab: false, achScenesOverride: null, achLocsOverride: null, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false, achMostPop:0, achDemon:0, achBreaks:0, achPsi:0, achChallenged:0, achFails:0, achVotes:0, achDrama:0}))};
 
   measureAnchors = () => {
     const g = this._goodEl, c = this._sceneEl;
@@ -5963,8 +5969,23 @@ class TBPBase extends DCLogic {
     const achRows = ACHIEVEMENT_SPEC.map(spec => {
       const row = achData.rows.find(r => r.key === spec.key);
       const isWinning = achData.topSix.indexOf(spec.key) >= 0;
+      const tierMax = activeSeats.length === 3 ? 2 : 3;
+      const tableEdit = {
+        perfect: {
+          dec: () => this.setState(s => ({badEnd: Math.max(0, s.badEnd - 1)})),
+          inc: () => this.setState(s => ({badEnd: Math.min(tierMax + 1, s.badEnd + 1)}))
+        },
+        honor: {
+          dec: () => this.setState({achScenesOverride: Math.max(0, row.value - 1)}),
+          inc: () => this.setState({achScenesOverride: row.value + 1})
+        },
+        explorer: {
+          dec: () => this.setState({achLocsOverride: Math.max(0, row.value - 1)}),
+          inc: () => this.setState({achLocsOverride: Math.min(4, row.value + 1)})
+        }
+      }[spec.key];
       const cells = [0,1,2,3].map(k => {
-        if (row.table) return {show: k === 0, value: row.value, ink: '#EFE6C8', dec: () => {}, inc: () => {}};
+        if (row.table) return {show: k === 0, value: row.value, ink: '#EFE6C8', dec: tableEdit.dec, inc: tableEdit.inc};
         if (activeSeats.indexOf(k) < 0) return {show: false, value: '', ink: '', dec: () => {}, inc: () => {}};
         const field = spec.field === 'goalsCleared' ? null : spec.field;
         const cur = field ? (Number(this.state.chars[k][field]) || 0) : (this.state.goalsDone[k] || []).filter(Boolean).length;
@@ -6942,7 +6963,10 @@ class TBPBase extends DCLogic {
       toggle: () => this.toggleVoteEnabled()
     };
     const dLead = this.state.focusIdx === 2;
-    const demonIn = this.state.demonIn || dLead;
+    // The Demon spawns in on her own the moment a Scene's Focus targets her —
+    // either as the Lead herself, or as a Student's "VS DEMON" goal — not
+    // just when someone manually summons her via a Challenge.
+    const demonIn = this.state.demonIn || dLead || this.state.focusIdx === 1;
     const demonPick = pickPhase && demonIn;
     const demonChallenged = !!ch && ch.rel === 'demon' && !ch.resolved;
     const demon = {
