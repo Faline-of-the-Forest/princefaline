@@ -622,8 +622,8 @@ function renderGames() {
   const sorted = dashboards.slice().sort((a, b) => a.t.localeCompare(b.t));
   const tiles = sorted.map(d => `<a href="${d.url}" target="_blank" rel="noopener" class="gm-tile" data-kind="${esc(d.kind || "")}" style="display:block;position:relative;aspect-ratio:1;border:2px solid #24211B;background:repeating-linear-gradient(45deg,#E4DCC6 0 6px,#F6F1E4 6px 12px);overflow:hidden;text-decoration:none;color:inherit;box-shadow:4px 4px 0 #24211B">
     <div class="gm-art" style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:url(${d.icon})"></div>
-    <div class="gm-panel" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2%;padding:8% 9%;background:radial-gradient(120% 90% at 50% 50%,rgba(22,18,13,.58) 0%,rgba(22,18,13,.9) 100%)">
-      ${d.logo ? `<img src="${d.logo}" alt="${esc(d.t)}" class="gm-logo" style="display:block;max-width:92%;max-height:38%;width:auto;height:auto;object-fit:contain;filter:brightness(0) invert(1);flex:0 1 auto">` : `<div style="font:400 22px/1.2 'EB Garamond',serif;color:#F6F1E4">${esc(d.t)}</div>`}
+    <div class="gm-panel" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2%;padding:6% 7%;background:radial-gradient(120% 90% at 50% 50%,rgba(22,18,13,.58) 0%,rgba(22,18,13,.9) 100%)">
+      ${d.logo ? `<img src="${d.logo}" alt="${esc(d.t)}" class="gm-logo" style="display:block;max-width:98%;max-height:52%;width:auto;height:auto;object-fit:contain;filter:brightness(0) invert(1);flex:0 1 auto">` : `<div style="font:400 22px/1.2 'EB Garamond',serif;color:#F6F1E4">${esc(d.t)}</div>`}
       <div class="gm-line" style="width:15%;height:1px;background:#C4553F;flex:none"></div>
       <div class="gm-desc" style="max-width:92%;font:400 13.5px/1.4 'EB Garamond',serif;color:#D9D1BE;text-wrap:pretty;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">${esc(d.shelfDesc || d.note)}</div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:none">
@@ -646,7 +646,7 @@ function renderGames() {
       <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0 0 22px">The interactive character sheets, playsets and dashboards I build for the games I run.</p>
       ${distinctKinds > 1 ? `<div style="display:flex;flex-wrap:wrap;gap:7px">${filterBtns}</div>` : ""}
     </div>
-    <div id="gm-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:26px 24px;padding-bottom:56px">${tiles}</div>
+    <div id="gm-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:26px 24px;padding-bottom:56px">${tiles}</div>
     <style>
       .gm-filter{border:1px solid rgba(36,33,27,.35);background:transparent;color:#3A362C;transition:background .15s,color .15s,border-color .15s}
       .gm-filter[data-active="1"]{background:#2F4633;border-color:#2F4633;color:#F6F1E4}
