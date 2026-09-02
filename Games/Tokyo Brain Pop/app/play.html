@@ -3,8 +3,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tokyo Brain Pop!?</title>
-<link rel="icon" type="image/png" href="assets/icon_tbp.png">
-<link rel="apple-touch-icon" href="assets/icon_tbp.png">
+<link rel="icon" type="image/png" href="assets/icon_tbp.png?v=2">
+<link rel="apple-touch-icon" href="assets/icon_tbp.png?v=2">
 <script>window.__TBPNetReady=new Promise(function(r){window.__TBPNetResolve=r;});window.__TBPJoined=new Promise(function(r){window.__TBPJoinedResolve=r;});</script>
 <script>window.__resources = {"https://unpkg.com/react@18.3.1/umd/react.production.min.js":"vendor/react.js","https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js":"vendor/react-dom.js"};</script>
 <script type="module" src="js/tbp-net.js"></script>
@@ -4939,7 +4939,7 @@
   </sc-if>
 
   <sc-if value="{{ f.setup.open }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed; inset:0; z-index:80; background:#1b1819; display:flex; align-items:center; justify-content:center; overflow:hidden; font-family:'Zen Kaku Gothic New',system-ui,sans-serif">
+    <div style="position:fixed; inset:0; z-index:80; background:#231F20; display:flex; align-items:center; justify-content:center; overflow:hidden; font-family:'Zen Kaku Gothic New',system-ui,sans-serif">
       <div style="position:relative; width:1600px; height:980px; flex:none; box-sizing:border-box; overflow:hidden; background:#231F20; display:flex; flex-direction:column; transform:scale({{ f.setup.scale }}); transform-origin:center center">
 
         <div style="position:absolute; inset:0; background-image:radial-gradient(rgba(239,230,200,.09) 1.6px, transparent 2.1px); background-size:14px 14px; pointer-events:none"></div>
@@ -5060,10 +5060,10 @@
                 </sc-if>
 
                 <div style="position:absolute; left:0; right:0; top:0; bottom:56px; box-sizing:border-box; background:rgba(27,24,25,.93); opacity:{{ s.infoOpacity }}; pointer-events:none; padding:14px 16px 12px; display:flex; flex-direction:column; gap:10px; overflow-y:auto">
-                  <div style="flex:none; font-family:'Lora',serif; font-size:clamp(12px,.55vw + 11.5px,13.5px); line-height:1.36; color:#EFE6C8; text-wrap:pretty">{{ s.bio }}</div>
+                  <div style="flex:none; font-family:'Lora',serif; font-size:13.5px; line-height:1.36; color:#EFE6C8; text-wrap:pretty">{{ s.bio }}</div>
                   <div style="flex:none; display:flex; flex-direction:column; gap:4px; background:rgba(237,227,27,.12); border-left:4px solid #EDE31B; padding:8px 10px">
-                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(11.5px,.45vw + 11.3px,13px); letter-spacing:.08em; color:#EDE31B">{{ s.psiName }}</div>
-                    <div style="font-family:'Lora',serif; font-size:clamp(11px,.4vw + 10.7px,12.5px); line-height:1.32; color:rgba(239,230,200,.82); text-wrap:pretty">{{ s.psiDesc }}</div>
+                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; color:#EDE31B">{{ s.psiName }}</div>
+                    <div style="font-family:'Lora',serif; font-size:12.5px; line-height:1.32; color:rgba(239,230,200,.82); text-wrap:pretty">{{ s.psiDesc }}</div>
                   </div>
                 </div>
 
@@ -5483,19 +5483,19 @@ function pipsFor(n, dot) {
 const SEATS = [
   {label:'HIROMI', who:'momo', pop:'Average', friend:1, rival:2,
    quirks:['“People often forget I’m there, but it’s fine... I don’t mind being ignored.”', '“I know good places to hide at school, and some places I don’t think anyone else knows about.”'],
-   goal:'“I want to start a demon hunting club before the term ends.”',
+   goal:'“I’m performing at the talent show today, and I need to finally make a lasting impression on the entire school.”',
    psi:{short:'GROW!', name:'PSI GROW!', desc:'Force your own flesh to grow. Muscle bulges out in tumorous ropes under your skin, doubling in thickness and giving you strength enough to tear a door off its frame. Once it starts, it’s hard to stop, and when pushed too far the skin splits along the strain lines. For you it is excruciating, but for everyone else, it’s the sight of it — enough to make one vomit.'}},
   {label:'KOTORI', who:'midori', pop:'Most', friend:2, rival:3,
    quirks:['“I’m Class President. If I tell you to do something, you’ll do it.”', '“Nobody on the track team can outrun me.”'],
-   goal:'“I want to be elected Class President, unanimously.”',
+   goal:'“As captain, I’m making sure we take first place at today’s sports tournament.”',
    psi:{short:'CRUSH!', name:'PSI CRUSH!', desc:'A burst of invisible force that pushes straight down or straight out. It is imprecise, but whatever stands in its path is crushed under unbearable weight. It turns a body to pulp and pounds bone into the wall behind it. It is also horribly prone to collateral damage.'}},
   {label:'UME', who:'ao', pop:'Least', friend:3, rival:0,
    quirks:['“Sometimes, spirits talk to me, and I always follow their guidance.”', '“I will never let any Demon best me in a duel.”'],
-   goal:'“I want one real friend who knows what I can do.”',
+   goal:'“Someone stole the old shrine bell. I have to find it before this evening, when it’s supposed to be rung.”',
    psi:{short:'BLEED!', name:'PSI BLEED!', desc:'Take hold of the blood inside a body, yours or someone else’s, and move it. Blood can be drawn out through pores in a fine red mist, or torn free and held in the air as a blade. It is also possible to take a person by the arteries and puppet them from the inside. Manipulating blood is always messy, and it is hard to use on someone else without killing them.'}},
   {label:'YUMI', who:'murasaki', pop:'Average', friend:0, rival:1,
    quirks:['“An eye for an eye... I always have my revenge.”', '“I would kill to protect my little sister.”'],
-   goal:'“I want to find out what happened to my sister at Atarashi High.”',
+   goal:'“Some dork I did a project with is telling everyone we’re dating. He won’t take a hint, so I have to shut it down somehow.”',
    psi:{short:'BURN!', name:'PSI BURN!', desc:'Create a pocket of burning heat in the open air, inside an object, or inside a person. You can spark a flame from nothing, boil water, warp steel, or cook the blood in someone’s veins until it steams out of them. However, the fire has a mind of its own, and it takes far more than it was meant to.'}}
 ];
 const PSI_SHARED = [
@@ -5583,10 +5583,10 @@ const QUIRK_POOL = {
   murasaki: ['“An eye for an eye... I always have my revenge.”','“I would kill to protect my little sister.”','“Demons don’t scare me. In fact, they should be scared of me.”','“I have my mother’s credit card if I ever need anything.”','“People know to stay out of my way.”','“I’m good at pushing someone until they break.”','“Blood and guts don’t bother me. If anything, I’m better when I’m covered in it.”','“I’m good at getting into places I’m not supposed to be.”','“A good threat goes a long way. And if not, torture never fails.”','“I can stalk someone for hours without being noticed.”']
 };
 const GOAL_POOL = {
-  momo: ['Start a demon-hunting club before the term ends.','Prove to Kotori that my boyfriend is real.','Get my name in the school paper — for something heroic.','Win a duel in front of a crowd.','Recruit one Student into my club, by any means.','Find proof that the old music room is haunted.','Beat the fastest time on the roof stair climb.','Get out of remedial class without studying.','Make a rival admit I was right about something.','Keep a promise I already regret making.'],
-  midori: ['Be elected Class President — unanimously.','Keep my diary of everyone\u2019s secrets out of the wrong hands.','Get a teacher to owe me a favour.','Have my ribbon copied by every girl in Class 2-A.','End a rumour about me before the bell.','Learn one secret about each Student.','Be photographed at the centre of the group.','Ruin someone\u2019s reputation without touching it.','Get an assembly cancelled entirely.','Be told, out loud, that I am the best.'],
-  ao: ['Find one real friend who knows what I can do.','Figure out what\u2019s really living in my locker.','Eat lunch with somebody, anybody, once.','Get through a whole day without using PSI.','Give something I made to a Student who\u2019ll keep it.','Learn who left the note in my desk.','Be seen doing something brave.','Return the thing I took from the nurse\u2019s office.','Get invited somewhere by name.','Say the thing I have never said out loud.'],
-  murasaki: ['Find out what happened to my sister at Atarashi High.','Win a twelfth fight — cleanly.','Keep my mother believing I\u2019m in the tea ceremony club.','Get into the records room after hours.','Protect a Student who can\u2019t protect herself.','Track down the person who lied to my family.','Break something that deserves it.','Teach somebody to throw one good punch.','Leave before anyone asks me a question.','Settle an old debt today.']
+  momo: ['I’m performing at the talent show today, and I need to finally make a lasting impression on the entire school.', 'Swim team tryouts are today. I’ve practiced all summer, and I have to make the team.', 'I lost my sketchbook somewhere at school and it’s full of very embarrassing drawings. I have to find it before someone else does.', 'Today’s the day they serve curry bread, and it’s always gone by the time I get down there. I have to find a way to get one before it sells out.', 'I forgot to shut the class rabbit’s cage and now it’s gone. I have to find it before anyone notices.', 'Some girls in my class invited me to karaoke and for some reason I said yes. Now I have to go and get through it without embarrassing myself.', 'I took a love letter addressed to Kotori from her shoe locker before she saw it. I have to find out who wrote it.', 'The popular girls have picked a girl in my year to torment, and it’s gone too far. I have to put a stop to it today.', 'My art project is due this afternoon and I dropped it on the way in. I have to make another one before class, or the teacher fails me.', 'Kotori picked up my diary by mistake and doesn’t know she has it. I have to get it back before she opens it.'],
+  midori: ['As captain, I’m making sure we take first place at today’s sports tournament.', 'As captain, I will make sure that we are taking first place at today’s sport tournament.', 'The person I like is dating someone else. I have to break them up.', 'The teacher gave me a B on an essay I know was perfect. I have to find a way to get that grade changed today.', 'Someone started a rumour that I cheated on the midterm. I have to find who started it and get them to confess that they lied.', 'My team’s best player is injured and the match is this afternoon. I need to find a worthy replacement before then.', 'One of my clubs gets shut down tomorrow unless we find a fifth member. It’s a weird, niche little club, so this won’t be easy. Today is my last day to find a fifth member.', 'I’m running an event this afternoon and barely anyone’s signed up. I need to make sure people show up and the event is a success.', 'The Headmaster asked me to tutor their kid, and the kid is hopeless. There’s a test this afternoon and I need them to pass it.', 'Someone’s been stealing clothes out of the girls’ locker room during practice. Half my team won’t come anymore, so I need to find the culprit and stop them.'],
+  ao: ['Someone stole the old shrine bell. I have to find it before this evening, when it’s supposed to be rung.', 'The shrine’s been vandalized twice this week. I need to find out who’s doing it.', 'I have to join a club before the end of the day. If I don’t, they’ll put me in the Drama Club, and I would rather not.', 'Something got into the shrine and made a mess of it. The clean up is going to take days, but I only have until tomorrow.', 'There’s a stray cat living in the school basement and someone’s reported it. I have to find it a new home before they call the ward office.', 'There’s a test tomorrow and if I fail another one I’ll be suspended. I have to find time to study today, no matter what.', 'There’s a book I need and someone borrowed it months ago without returning it. I have to track them down and get it back today.', 'After my last fight, my sword was confiscated and it’s in the Headmaster’s office now. I need it back.', 'Kids keep daring each other to break into the shrine at night. I’m going to scare them off for good.', 'There’s a school trip and the payment is due today. I’m short, and I have until the office closes to find the rest.'],
+  murasaki: ['Some dork I did a project with is telling everyone we’re dating. He won’t take a hint, so I have to shut it down somehow.', 'That teacher has it out for me and keeps failing me for no reason. Today I’m teaching her a lesson.', 'Somebody at my sister’s school made her cry yesterday. She won’t say who. I’m going to find out and make them pay.', 'There’s an assignment due today that I have no chance of passing on my own. I need to turn in something that gets top marks somehow.', 'I have detention this afternoon. I’m signing in and then breaking out, but the teacher who runs it is a tyrant and nobody’s ever made it out early.', 'My sister forgot her lunch at home. I’m going to have to sneak out of class so I can bring it to her.', 'My sister’s birthday is tomorrow and I can’t afford what she asked for. I need to find another way to get it.', 'I’ve got cleaning duty and it’s the whole classroom on my own. If I skip it again I get written up, so I need it done — preferably by somebody who isn’t me.', 'The school wants to meet my mother this afternoon or they’re calling her at work. She can’t find out about this, so I need to find someone who can pass for her.', 'My sister has a talent show today. She deserves first place, so I’m making sure the competition isn’t in any state to take it.']
 };
 const DEMON_TABLES = {
   type: ['A new student','A teacher','A family member','A government agent','A mysterious group','An animal or beast','A shapeshifter','A ghost or spirit','The undead','A cryptid or urban legend','An evil plant','An experiment or machine','A thing from outer space','A cursed or haunted place','A hideous monster','An actual demon','A natural disaster','A legendary villain','A god or demi-god','Roll twice and combine'],
