@@ -4582,7 +4582,7 @@
               <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:19.5px; line-height:1; color:#231F20">{{ c.label }}</div>
             </div>
             <div style="display:flex; align-items:center; gap:9px">
-              <div sc-camel-on-click="{{ c.voteDec }}" style="cursor:pointer; width:36px; height:36px; border-radius:9px; border:3px solid #231F20; background:#EFE6C8; display:flex; align-items:center; justify-content:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:24px; line-height:1; color:#231F20">–</div>
+              <div sc-camel-on-click="{{ c.voteDec }}" style="cursor:pointer; width:36px; height:36px; border-radius:9px; border:3px solid #231F20; background:#EFE6C8; opacity:{{ c.voteDecOpacity }}; display:flex; align-items:center; justify-content:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:24px; line-height:1; color:#231F20">–</div>
               <div style="min-width:33px; text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:27px; line-height:1; color:#231F20">{{ c.votePlayerAlloc }}</div>
               <div sc-camel-on-click="{{ c.voteInc }}" style="cursor:pointer; width:36px; height:36px; border-radius:9px; border:3px solid #231F20; background:#EDE31B; opacity:{{ c.voteIncOpacity }}; display:flex; align-items:center; justify-content:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:24px; line-height:1; color:#231F20">+</div>
             </div>
@@ -4763,7 +4763,7 @@
 
           <div sc-camel-on-click="{{ c.cyclePop }}" sc-camel-on-mouse-enter="{{ c.popEnter }}" sc-camel-on-mouse-leave="{{ c.popLeave }}" style="position:relative; cursor:help; border:4.5px solid #FDFCFC; background:#FDFCFC; box-sizing:border-box; height:60px; padding:6px 10.5px; display:flex; flex-direction:column; justify-content:center">
             <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:19.5px; line-height:1.3; color:#231F20; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ c.label }}</div>
-            <div style="font-family:'Baloo 2',sans-serif; font-weight:700; font-size:12.75px; letter-spacing:.09em; color:#E23A3A; height:16.5px">{{ c.popLabel }}</div>
+            <div style="font-family:'Baloo 2',sans-serif; font-weight:700; font-size:11.25px; letter-spacing:.06em; color:#E23A3A; height:16.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ c.popLabel }}</div>
             <sc-if value="{{ c.popHover }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute; left:50%; transform:translateX(-50%); bottom:calc(100% + 10.5px); z-index:12; background:#231F20; border-radius:9px; padding:7.5px 13.5px 9px; box-shadow:4.5px 4.5px 0 rgba(35,31,32,.3); pointer-events:none">
                 <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13.5px; letter-spacing:.11em; line-height:1; color:#EDE31B; white-space:nowrap">POPULARITY</div>
@@ -4955,9 +4955,9 @@
         </sc-if>
 
         <sc-if value="{{ f.setup.topOpen }}" hint-placeholder-val="{{ false }}">
-          <div style="position:relative; flex:1; min-height:0; box-sizing:border-box; padding:16px 40px; display:flex; flex-direction:column; justify-content:center">
+          <div style="position:relative; flex:1; min-height:0; box-sizing:border-box; padding:16px 40px; display:flex; flex-direction:column; align-items:center; justify-content:center">
           <sc-if value="{{ f.setup.demonOpen }}" hint-placeholder-val="{{ false }}">
-            <div style="flex:1; min-height:0; display:flex; flex-direction:column; gap:12px">
+            <div style="width:100%; max-width:1100px; height:min(100%,560px); min-height:0; display:flex; flex-direction:column; gap:12px">
               <div style="flex:none; display:flex; align-items:center; gap:16px">
                 <img src="assets/icon-demon.png" alt="demon sigil" style="width:min(3vw,34px); height:min(3vw,34px); object-fit:contain">
                 <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.8vw + 10px,28px); letter-spacing:.24em; color:#E23A3A">TODAY'S DEMON</div>
@@ -4987,7 +4987,7 @@
                       </sc-if>
                       <sc-if value="{{ cat.notSpinning }}" hint-placeholder-val="{{ false }}">
                         <sc-for list="{{ cat.slots }}" as="sl" hint-placeholder-count="1">
-                          <div sc-camel-on-click="{{ sl.reroll }}" title="Click to reroll just this one" style="cursor:pointer; flex:1; min-height:0; display:flex; align-items:center; box-sizing:border-box; background:{{ sl.bg }}; border:2px solid {{ sl.border }}; border-radius:8px; padding:8px 10px; font-family:'Lora',serif; font-size:clamp(12px,.9vw + 8px,15.5px); line-height:1.25; color:#EFE6C8; text-wrap:pretty; animation:tbp-land .38s cubic-bezier(.2,1.5,.4,1) both">{{ sl.text }}</div>
+                          <div sc-camel-on-click="{{ sl.reroll }}" title="Click to reroll just this one" style="cursor:pointer; flex:1; min-height:0; display:flex; align-items:center; justify-content:center; text-align:center; box-sizing:border-box; background:{{ sl.bg }}; border:2px solid {{ sl.border }}; border-radius:8px; padding:8px 10px; font-family:'Lora',serif; font-size:clamp(12px,.9vw + 8px,15.5px); line-height:1.25; color:#EFE6C8; text-wrap:pretty; animation:tbp-land .38s cubic-bezier(.2,1.5,.4,1) both">{{ sl.text }}</div>
                         </sc-for>
                       </sc-if>
                     </div>
@@ -5726,7 +5726,7 @@ class TBPBase extends DCLogic {
       leadIdx: this.state.leadOverride == null ? order[sp] : this.state.leadOverride,
       focusIdx: this.state.focusIdx,
       goalIdx: this.state.goalIdx,
-      led: this.state.led ? this.state.led.slice() : SEATS.map((s, k) => order.slice(0, sp + 1).filter(x => x === k).length),
+      led: this.state.led ? this.state.led.slice() : SEATS.map(() => 0),
       done: (this.state.goalsDone || [[false,false],[false,false],[false,false],[false,false]]).map(d => d.slice())
     };
   }
@@ -5909,6 +5909,7 @@ class TBPBase extends DCLogic {
   dropDrama(i) {
     if (window.TBPNet && window.TBPNet.role && window.TBPNet.role !== 'gm') return;
     const c = this.state.chars[i];
+    if (c.broken) { this.patch(i, {drama: 5, broken: false}); return; }
     const cur = Number(c.drama) || 0;
     this.patch(i, {drama: Math.max(0, cur - 1)});
   }
@@ -6427,6 +6428,7 @@ class TBPBase extends DCLogic {
     const busy = pickPhase || rollerBusy || voteActive;
     const playerSpent = vote ? Object.values(vote.alloc[player]).reduce((a, b) => a + b, 0) : 0;
     const playerCap = Number(this.state.chars[player].drama) || 0;
+    const playerReady = !!(voteActive && this.state.voteReady[player]);
     const cards = this.state.chars.map((c, i) => {
       const rollMode = active === i;
       const shout = this.state.shoutSeat === i;
@@ -6484,14 +6486,17 @@ class TBPBase extends DCLogic {
         isPlayerCard: i === player,
         votePlayerAlloc: vote ? (vote.alloc[player][i] || 0) : 0,
         voteCanInc: vote ? playerSpent < playerCap : false,
-        voteInc: () => this.voteAdjust(i, 1),
-        voteDec: () => this.voteAdjust(i, -1),
+        // Once you hit Ready, your own vote locks in — the +/- controls grey
+        // out on every card so it reads clearly as "locked", not just idle.
+        voteInc: playerReady ? (() => {}) : (() => this.voteAdjust(i, 1)),
+        voteDec: playerReady ? (() => {}) : (() => this.voteAdjust(i, -1)),
+        voteDecOpacity: playerReady ? 0.35 : 1,
         voteTick: vote ? vote.tick[i] : 0,
         voteMost: counting && vote.most === i,
         voteLeast: counting && vote.least === i,
         voteTie: voteActive && vote.phase === 'tiebreak' && vote.rollPool.indexOf(i) >= 0,
         voteGrey: (voteActive && vote.phase === 'assign' && i === player) ? playerSpent : 0,
-        voteIncOpacity: (vote && playerSpent >= playerCap) ? 0.35 : 1,
+        voteIncOpacity: playerReady ? 0.35 : ((vote && playerSpent >= playerCap) ? 0.35 : 1),
         voteBadgeBg: (counting && vote.most === i) ? '#EDE31B' : ((counting && vote.least === i) ? '#3E4C6B' : '#FDFCFC'),
         voteBadgeInk: (counting && vote.least === i) ? '#FDFCFC' : '#231F20',
         voteBadgeAnim: (counting && (vote.most === i || vote.least === i)) ? 'tbp-hit .5s ease-out' : 'none',
@@ -6576,9 +6581,9 @@ class TBPBase extends DCLogic {
         psiTipName: (c.psiHover === 0 || c.psiHover === 1 || c.psiHover === 2) ? (dv >= (Number(c.psiCost)||2) ? (c.psiHover === 2 ? c.psi.name : PSI_SHARED[c.psiHover].name) : 'Not enough Drama!') : '',
         psiTipDesc: (c.psiHover === 0 || c.psiHover === 1 || c.psiHover === 2) ? (dv >= (Number(c.psiCost)||2) ? (c.psiHover === 2 ? c.psi.desc : PSI_SHARED[c.psiHover].desc) : 'Costs ' + (Number(c.psiCost)||2) + ' Drama to use this power.') : '',
         psiTipInk: dv >= (Number(c.psiCost)||2) ? (c.psiHover === 2 ? '#E8A0A0' : (c.psiHover === 1 ? '#9CB39A' : '#A9BEDC')) : '#E23A3A',
-        resultWord: rolling ? 'ROLLING…' : (c.breakResult ? 'BREAK!' : (psi ? (c.psiUsed || 'PSI') : (success ? 'SUCCESS' : 'FAILURE'))),
+        resultWord: rolling ? 'ROLLING…' : (c.breakResult ? 'BREAK!' : (psi ? 'PSI!' : (success ? 'Success!' : 'Failure!'))),
         resultInk: rolling ? '#EDE31B' : (c.breakResult ? '#E23A3A' : (failure ? '#FDFCFC' : '#231F20')),
-        narratorLine: rolling ? 'Rolling the die…' : (c.breakResult ? 'Her PSI lashes out of control. The Headmaster narrates.' : (psi ? 'Spend Drama — no roll needed.' : (success ? 'Best Friend narrates the outcome.' : 'Rival narrates the outcome.'))),
+        narratorLine: rolling ? 'Rolling the die…' : (c.breakResult ? 'The Headmaster narrates how your PSI goes off on its own and does the worst thing it possibly could.' : (psi ? 'Your Rival narrates how you get what you wanted, and how your PSI makes everything worse in the process.' : (success ? 'Your Best Friend narrates how you pull off what you were trying to do.' : 'Your Rival narrates how what you were trying to do falls apart.'))),
         buttonLabel: needsBreak ? 'BREAK!' : 'Roll!',
         psiCostTop: 'COST',
         psiCostBig: (Number(c.psiCost) || 2) + '!?',
@@ -6724,7 +6729,11 @@ class TBPBase extends DCLogic {
     const TONE = {momo:'#F6A7CA', midori:'#9CB39A', ao:'#A9BEDC', murasaki:'#C8A8D8'};
     const rTick = voteActive && vote.tick ? vote.tick : [0,0,0,0];
     const rMax = Math.max(1, Math.max.apply(null, rTick));
-    const voteRows = !voteActive ? [] : SEATS.map((s, k) => k).sort((a, b) => rTick[b] - rTick[a]).map(k => {
+    // Sort by the final totals, not the animating tick — sorting by tick made
+    // rows swap places mid count-up, which read as the results screen
+    // "blinking".
+    const rSort = voteActive && vote.totals ? vote.totals : rTick;
+    const voteRows = !voteActive ? [] : SEATS.map((s, k) => k).sort((a, b) => rSort[b] - rSort[a]).map(k => {
       const s = SEATS[k], n = rTick[k];
       const isMost = vote.most === k, isLeast = vote.least === k;
       const rollV = vote.rolls ? vote.rolls[k] : null;
@@ -6822,7 +6831,7 @@ class TBPBase extends DCLogic {
     const order = this.orderSeq();
     const scenePos = this.state.scenePos;
     const leadIdx = this.state.leadOverride == null ? order[scenePos] : this.state.leadOverride;
-    const ledCounts = this.state.led ? this.state.led : SEATS.map((s, k) => order.slice(0, scenePos + 1).filter(x => x === k).length);
+    const ledCounts = this.state.led ? this.state.led : SEATS.map(() => 0);
     const doneMap = this.state.goalsDone;
     const scenesLeft = Math.max(0, 8 - ledCounts.reduce((a, b) => a + b, 0));
     const goodNeeded = Math.max(0, 4 - good);
@@ -6833,14 +6842,18 @@ class TBPBase extends DCLogic {
       demonWarn: demonWarn,
       demonName: this.state.demonName, demonGoal: this.state.demonGoal,
       goodCount: good, badCount: bad,
-      goodSquares: [1,2,3].map(k => ({bg: good >= k ? '#9CB39A' : 'rgba(239,230,200,.14)', click: () => {}})),
-      badSquares: [3,2,1].map(k => ({bg: bad >= k ? '#B4322C' : 'rgba(239,230,200,.14)', click: () => {}})),
+      goodSquares: [1,2,3].map(k => ({bg: good >= k ? '#9CB39A' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setEnd('good', k)) : (() => {})})),
+      badSquares: [3,2,1].map(k => ({bg: bad >= k ? '#B4322C' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setEnd('bad', k)) : (() => {})})),
       bigBg: good > 3 ? '#9CB39A' : (bad > 3 ? '#B4322C' : 'rgba(239,230,200,.14)'),
       bigBorder: good > 3 ? '#9CB39A' : (bad > 3 ? '#E23A3A' : '#EFE6C8'),
       bigGoodOpacity: good > 3 ? 1 : 0,
       bigBadOpacity: bad > 3 ? 1 : 0,
       bigClick: () => {},
-      seats: SEATS.map((s, k) => {
+      // Displayed in turn order (Most Popular left, Least Popular right) once
+      // the first Class Vote has settled it — falls back to seat order before
+      // that.
+      seats: order.slice(0, 4).filter(k => (this.state.activeSeats || [0,1,2,3]).indexOf(k) >= 0).map(k => {
+        const s = SEATS[k];
         const scenesDone = ledCounts[k];
         const cleared = doneMap[k].filter(Boolean).length;
         return Object.assign({
@@ -6855,7 +6868,7 @@ class TBPBase extends DCLogic {
           })),
           click: () => {}
         }, faceOf(s.who));
-      }).filter((s, k) => (this.state.activeSeats || [0,1,2,3]).indexOf(k) >= 0)
+      })
     };
     const ui = this.state.ui;
     const stop = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
@@ -7380,7 +7393,7 @@ class Component extends TBPBase {
     if (!el) {
       el = document.createElement('div');
       el.id = 'tbp-status';
-      el.style.cssText = 'position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:20; ' +
+      el.style.cssText = 'position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:90; ' +
         "font-family:'Baloo 2',sans-serif; background:rgba(35,31,32,.92); border-radius:10px; padding:8px 12px; " +
         'max-width:min(90vw,260px)';
       document.body.appendChild(el);
@@ -7588,7 +7601,15 @@ class Component extends TBPBase {
         f.cards = f.cards.map(function (c) { return mpNeuter(c); });
       } else if (Net.role === 'player' && Net.seat != null) {
         var mine = Net.seat;
-        f.cards = f.cards.map(function (c, i) { return i === mine ? c : mpNeuter(c); });
+        // Another Student's die/quirk/challenge controls stay off-limits, but
+        // during a Class Vote everyone can still spend Drama on any card —
+        // keep just the vote +/- (and its readout) live on those.
+        f.cards = f.cards.map(function (c, i) {
+          if (i === mine) return c;
+          var n = mpNeuter(c);
+          if (c.voteAssign) { n.voteInc = c.voteInc; n.voteDec = c.voteDec; }
+          return n;
+        });
       }
     }
     if (Net.role === 'spectator') {
