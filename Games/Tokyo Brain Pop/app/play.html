@@ -4940,7 +4940,7 @@
 
   <sc-if value="{{ f.setup.open }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed; inset:0; z-index:80; background:#1b1819; display:flex; align-items:center; justify-content:center; overflow:hidden; font-family:'Zen Kaku Gothic New',system-ui,sans-serif">
-      <div style="position:relative; width:100vw; height:100vh; flex:none; box-sizing:border-box; overflow:hidden; background:#231F20; display:flex; flex-direction:column">
+      <div style="position:relative; width:1600px; height:980px; flex:none; box-sizing:border-box; overflow:hidden; background:#231F20; display:flex; flex-direction:column; transform:scale({{ f.setup.scale }}); transform-origin:center center">
 
         <div style="position:absolute; inset:0; background-image:radial-gradient(rgba(239,230,200,.09) 1.6px, transparent 2.1px); background-size:14px 14px; pointer-events:none"></div>
         <div style="position:absolute; inset:0; background:radial-gradient(90% 70% at 50% 8%, rgba(226,58,58,.2), rgba(35,31,32,0) 62%); pointer-events:none"></div>
@@ -4948,7 +4948,7 @@
         <sc-if value="{{ f.setup.pickingStudents }}" hint-placeholder-val="{{ true }}">
           <div style="position:relative; flex:none; box-sizing:border-box; padding:22px 40px 0; display:flex; align-items:center; gap:18px">
             <div style="transform:skewX(-8deg); background:#F6A7CA; padding:3px 18px 6px; box-shadow:5px 5px 0 rgba(0,0,0,.45)">
-              <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(24px,2.2vw + 12px,40px); line-height:1; color:#231F20">CHARACTER SELECT</div>
+              <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:40px; line-height:1; color:#231F20">CHARACTER SELECT</div>
             </div>
             <div style="flex:1; height:3px; background:linear-gradient(90deg, rgba(246,167,202,.6), rgba(239,230,200,0))"></div>
           </div>
@@ -4959,11 +4959,11 @@
           <sc-if value="{{ f.setup.demonOpen }}" hint-placeholder-val="{{ false }}">
             <div style="width:100%; max-width:1100px; height:min(100%,560px); min-height:0; display:flex; flex-direction:column; gap:12px">
               <div style="flex:none; display:flex; align-items:center; gap:16px">
-                <img src="assets/icon-demon.png" alt="demon sigil" style="width:min(3vw,34px); height:min(3vw,34px); object-fit:contain">
-                <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.8vw + 10px,28px); letter-spacing:.24em; color:#E23A3A">TODAY'S DEMON</div>
+                <img src="assets/icon-demon.png" alt="demon sigil" style="width:34px; height:34px; object-fit:contain">
+                <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:22px; letter-spacing:.24em; color:#E23A3A">TODAY'S DEMON</div>
                 <div style="flex:1; height:3px; background:linear-gradient(90deg, rgba(226,58,58,.7), rgba(239,230,200,0))"></div>
                 <sc-if value="{{ f.setup.rolledAny }}" hint-placeholder-val="{{ false }}">
-                  <div data-mp="reroll-all" sc-camel-on-click="{{ f.setup.rerollAll }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.6vw + 6px,11px); letter-spacing:.12em; color:rgba(239,230,200,.55); border:2px solid rgba(239,230,200,.22); border-radius:7px; padding:7px 11px">ROLL IT ALL AGAIN</div>
+                  <div data-mp="reroll-all" sc-camel-on-click="{{ f.setup.rerollAll }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.12em; color:rgba(239,230,200,.55); border:2px solid rgba(239,230,200,.22); border-radius:7px; padding:7px 11px">ROLL IT ALL AGAIN</div>
                 </sc-if>
               </div>
 
@@ -4971,15 +4971,15 @@
                 <sc-for list="{{ f.setup.categories }}" as="cat" hint-placeholder-count="4">
                   <div style="box-sizing:border-box; min-height:0; background:#2b2527; border:4px solid {{ cat.border }}; border-radius:13px; overflow:hidden; display:flex; flex-direction:column">
                     <div style="flex:none; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:7px 11px; background:{{ cat.headBg }}">
-                      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.6vw + 6px,11px); letter-spacing:.2em; color:{{ cat.headInk }}">{{ cat.label }}</div>
-                      <div sc-camel-on-click="{{ cat.reroll }}" title="Reroll this whole line" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(8px,.45vw + 5.5px,9.5px); letter-spacing:.1em; color:{{ cat.headInk }}; opacity:.75; border:2px solid {{ cat.headInk }}; border-radius:5px; padding:2px 6px">RE-ROLL</div>
+                      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.2em; color:{{ cat.headInk }}">{{ cat.label }}</div>
+                      <div sc-camel-on-click="{{ cat.reroll }}" title="Reroll this whole line" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9px; letter-spacing:.1em; color:{{ cat.headInk }}; opacity:.75; border:2px solid {{ cat.headInk }}; border-radius:5px; padding:2px 6px">RE-ROLL</div>
                     </div>
                     <div style="flex:1; min-height:0; display:flex; flex-direction:column; gap:5px; padding:9px">
                       <sc-if value="{{ cat.spinning }}" hint-placeholder-val="{{ true }}">
                         <div style="flex:1; position:relative; overflow:hidden; border-radius:8px; background:#231F20; box-shadow:inset 0 14px 16px -10px rgba(0,0,0,.95), inset 0 -14px 16px -10px rgba(0,0,0,.95)">
                           <div style="position:absolute; left:0; right:0; top:0; display:flex; flex-direction:column; animation:tbp-reel {{ cat.reelSpeed }} linear infinite">
                             <sc-for list="{{ cat.reel }}" as="r" hint-placeholder-count="10">
-                              <div style="height:40px; flex:none; display:flex; align-items:center; padding:0 10px; font-family:'Lora',serif; font-size:clamp(12px,.85vw + 8px,15px); line-height:1.15; color:rgba(239,230,200,.85); white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ r.text }}</div>
+                              <div style="height:40px; flex:none; display:flex; align-items:center; padding:0 10px; font-family:'Lora',serif; font-size:14px; line-height:1.15; color:rgba(239,230,200,.85); white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ r.text }}</div>
                             </sc-for>
                           </div>
                           <div style="position:absolute; left:0; right:0; top:50%; height:3px; transform:translateY(-50%); background:rgba(226,58,58,.75)"></div>
@@ -4987,7 +4987,7 @@
                       </sc-if>
                       <sc-if value="{{ cat.notSpinning }}" hint-placeholder-val="{{ false }}">
                         <sc-for list="{{ cat.slots }}" as="sl" hint-placeholder-count="1">
-                          <div sc-camel-on-click="{{ sl.reroll }}" title="Click to reroll just this one" style="cursor:pointer; flex:1; min-height:0; display:flex; align-items:center; justify-content:center; text-align:center; box-sizing:border-box; background:{{ sl.bg }}; border:2px solid {{ sl.border }}; border-radius:8px; padding:8px 10px; font-family:'Lora',serif; font-size:clamp(12px,.9vw + 8px,15.5px); line-height:1.25; color:#EFE6C8; text-wrap:pretty; animation:tbp-land .38s cubic-bezier(.2,1.5,.4,1) both">{{ sl.text }}</div>
+                          <div sc-camel-on-click="{{ sl.reroll }}" title="Click to reroll just this one" style="cursor:pointer; flex:1; min-height:0; display:flex; align-items:center; justify-content:center; text-align:center; box-sizing:border-box; background:{{ sl.bg }}; border:2px solid {{ sl.border }}; border-radius:8px; padding:8px 10px; font-family:'Lora',serif; font-size:14.5px; line-height:1.25; color:#EFE6C8; text-wrap:pretty; animation:tbp-land .38s cubic-bezier(.2,1.5,.4,1) both">{{ sl.text }}</div>
                         </sc-for>
                       </sc-if>
                     </div>
@@ -4996,15 +4996,15 @@
               </div>
 
               <div style="flex:none; display:flex; align-items:flex-end; gap:12px">
-                <div style="flex:none; width:min(20vw,250px); display:flex; flex-direction:column; gap:6px">
-                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(8px,.5vw + 6px,10px); letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S NAME</div>
-                  <input data-mp="demon-name" value="{{ f.setup.name }}" sc-camel-on-change="{{ f.setup.setName }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(13px,1vw + 8px,17px); letter-spacing:.04em; color:#EFE6C8; outline:none">
+                <div style="flex:none; width:250px; display:flex; flex-direction:column; gap:6px">
+                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S NAME</div>
+                  <input data-mp="demon-name" value="{{ f.setup.name }}" sc-camel-on-change="{{ f.setup.setName }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:17px; letter-spacing:.04em; color:#EFE6C8; outline:none">
                 </div>
                 <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:6px">
-                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(8px,.5vw + 6px,10px); letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S GOAL</div>
-                  <input data-mp="demon-goal" value="{{ f.setup.goalText }}" sc-camel-on-change="{{ f.setup.setGoal }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:clamp(12px,.9vw + 8px,16px); color:#EFE6C8; outline:none">
+                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S GOAL</div>
+                  <input data-mp="demon-goal" value="{{ f.setup.goalText }}" sc-camel-on-change="{{ f.setup.setGoal }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:16px; color:#EFE6C8; outline:none">
                 </div>
-                <div data-mp="play-btn" sc-camel-on-click="{{ f.setup.start }}" style="flex:none; cursor:pointer; opacity:{{ f.setup.startOpacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(15px,1.3vw + 9px,21px); letter-spacing:.09em; color:#EFE6C8; background:#B4322C; border:4px solid #E23A3A; border-radius:11px; padding:12px 40px; box-shadow:0 6px 0 rgba(0,0,0,.45)">PLAY</div>
+                <div data-mp="play-btn" sc-camel-on-click="{{ f.setup.start }}" style="flex:none; cursor:pointer; opacity:{{ f.setup.startOpacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:21px; letter-spacing:.09em; color:#EFE6C8; background:#B4322C; border:4px solid #E23A3A; border-radius:11px; padding:12px 40px; box-shadow:0 6px 0 rgba(0,0,0,.45)">PLAY</div>
               </div>
             </div>
           </sc-if>
@@ -5041,12 +5041,12 @@
         <div style="position:relative; flex:1; min-height:0; box-sizing:border-box; padding:16px 24px 24px; display:flex; flex-direction:column; gap:10px">
           <div style="flex:none; display:flex; align-items:center; gap:16px">
             <div style="transform:skewX(-8deg); background:#EDE31B; padding:2px 14px 4px; box-shadow:4px 4px 0 rgba(0,0,0,.45)">
-              <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(15px,1.1vw + 8px,22px); line-height:1; color:#231F20">CHOOSE YOUR STUDENT</div>
+              <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:22px; line-height:1; color:#231F20">CHOOSE YOUR STUDENT</div>
             </div>
             <div style="flex:1; height:3px; background:linear-gradient(90deg, rgba(237,227,27,.4), rgba(239,230,200,0))"></div>
-            <div style="flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(10px,.6vw + 7px,12.5px); letter-spacing:.1em; color:rgba(239,230,200,.6)">{{ f.setup.rosterHint }}</div>
+            <div style="flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12.5px; letter-spacing:.1em; color:rgba(239,230,200,.6)">{{ f.setup.rosterHint }}</div>
             <sc-if value="{{ f.setup.readyBtn.show }}" hint-placeholder-val="{{ false }}">
-              <div sc-camel-on-click="{{ f.setup.readyBtn.click }}" style="cursor:{{ f.setup.readyBtn.cursor }}; flex:none; opacity:{{ f.setup.readyBtn.opacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(12px,.9vw + 7px,16px); letter-spacing:.09em; color:#231F20; background:#EDE31B; border:4px solid #231F20; border-radius:10px; padding:9px 22px; box-shadow:0 5px 0 rgba(0,0,0,.45)">{{ f.setup.readyBtn.label }}</div>
+              <div sc-camel-on-click="{{ f.setup.readyBtn.click }}" style="cursor:{{ f.setup.readyBtn.cursor }}; flex:none; opacity:{{ f.setup.readyBtn.opacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:16px; letter-spacing:.09em; color:#231F20; background:#EDE31B; border:4px solid #231F20; border-radius:10px; padding:9px 22px; box-shadow:0 5px 0 rgba(0,0,0,.45)">{{ f.setup.readyBtn.label }}</div>
             </sc-if>
           </div>
 
@@ -5070,24 +5070,24 @@
                 <sc-if value="{{ s.showPortrait }}" hint-placeholder-val="{{ true }}">
                   <sc-if value="{{ s.locked }}" hint-placeholder-val="{{ false }}">
                     <div style="position:absolute; top:14px; right:-6px; transform:skewX(-8deg) rotate(3deg); background:#EDE31B; border:4px solid #231F20; padding:3px 13px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); animation:tbp-land .4s cubic-bezier(.2,1.5,.4,1) both">
-                      <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(11px,.8vw + 6px,15px); letter-spacing:.06em; color:#231F20">{{ s.playerName }}</div>
+                      <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; color:#231F20">{{ s.playerName }}</div>
                     </div>
                   </sc-if>
                   <sc-if value="{{ s.pickedByOther }}" hint-placeholder-val="{{ false }}">
                     <div style="position:absolute; top:14px; right:-6px; transform:skewX(-8deg) rotate(3deg); background:#E23A3A; border:4px solid #231F20; padding:3px 13px 5px; box-shadow:4px 4px 0 rgba(0,0,0,.45); animation:tbp-land .4s cubic-bezier(.2,1.5,.4,1) both">
-                      <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(11px,.8vw + 6px,15px); letter-spacing:.06em; color:#EFE6C8">PICKING…</div>
+                      <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; color:#EFE6C8">PICKING…</div>
                     </div>
                   </sc-if>
                 </sc-if>
 
                 <div style="position:absolute; left:0; right:0; bottom:0; height:56px; background:#231F20; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 14px">
                   <div style="min-width:0; overflow:hidden">
-                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.8vw + 8px,30px); line-height:1; color:{{ s.nameInk }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ s.label }}</div>
+                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:30px; line-height:1; color:{{ s.nameInk }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ s.label }}</div>
                     <sc-if value="{{ s.compactTag }}" hint-placeholder-val="{{ false }}">
-                      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.5vw + 6px,11px); letter-spacing:.06em; color:{{ s.compactTagInk }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ s.compactTag }}</div>
+                      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.06em; color:{{ s.compactTagInk }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ s.compactTag }}</div>
                     </sc-if>
                   </div>
-                  <div style="flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(10px,.6vw + 7px,13px); letter-spacing:.08em; color:#EDE31B; border:2px solid #EDE31B; border-radius:7px; padding:4px 8px">{{ s.psiShort }}</div>
+                  <div style="flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em; color:#EDE31B; border:2px solid #EDE31B; border-radius:7px; padding:4px 8px">{{ s.psiShort }}</div>
                 </div>
               </div>
             </sc-for>
