@@ -614,25 +614,70 @@ function renderReviewDetail(r) {
 }
 
 // ---------- GAMES ----------
+const GAME_KINDS = ["Dashboard", "Playset", "Character sheets"];
+const GAME_FILTERS = ["All", "Dashboards", "Playsets", "Character Sheets"];
+const GAME_FILTER_KIND = { Dashboards: "Dashboard", Playsets: "Playset", "Character Sheets": "Character sheets" };
+
 function renderGames() {
-  const tiles = dashboards.map(d => `<a href="${d.url}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;align-items:center;gap:10px;color:inherit">
-    <div style="position:relative;width:112px;height:112px">
-      <div style="position:absolute;inset:0;border:2px solid #24211B;border-radius:24px;background:#FBF8EF;box-shadow:4px 4px 0 #24211B;display:grid;place-items:center;overflow:hidden">${d.icon ? `<img src="${d.icon}" alt="" style="width:100%;height:100%;object-fit:cover">` : `<span style="font:400 44px/1 'EB Garamond',serif;color:#A5231F">${esc(d.t.charAt(0))}</span>`}</div>
-      <div class="hover-overlay" style="position:absolute;inset:0;border-radius:24px;background:rgba(36,33,27,.94);color:#F6F1E4;padding:12px;display:flex;flex-direction:column;justify-content:center;gap:5px;text-align:center;opacity:0;transition:opacity .15s">
-        <div style="font:400 15.5px/1.25 'EB Garamond',serif;color:#E8C87A">${esc(d.c)}</div>
-        <div style="font:400 14.5px/1.3 'EB Garamond',serif;color:#C3BCA6">${esc(d.sys)}</div>
+  const sorted = dashboards.slice().sort((a, b) => a.t.localeCompare(b.t));
+  const tiles = sorted.map(d => `<a href="${d.url}" target="_blank" rel="noopener" class="gm-tile" data-kind="${esc(d.kind || "")}" style="display:block;position:relative;aspect-ratio:1;border:2px solid #24211B;background:repeating-linear-gradient(45deg,#E4DCC6 0 6px,#F6F1E4 6px 12px);overflow:hidden;text-decoration:none;color:inherit;box-shadow:4px 4px 0 #24211B">
+    <div class="gm-art" style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:url(${d.icon})"></div>
+    <div class="gm-panel" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:24px 22px;background:radial-gradient(120% 90% at 50% 50%,rgba(22,18,13,.58) 0%,rgba(22,18,13,.88) 100%)">
+      ${d.logo ? `<img src="${d.logo}" alt="${esc(d.t)}" style="display:block;max-width:88%;max-height:120px;width:auto;height:auto;object-fit:contain">` : `<div style="font:400 22px/1.2 'EB Garamond',serif;color:#F6F1E4">${esc(d.t)}</div>`}
+      <div class="gm-line" style="width:54px;height:1px;background:#C4553F"></div>
+      <div style="max-width:90%;font:400 15.5px/1.5 'EB Garamond',serif;color:#D9D1BE;text-wrap:pretty">${esc(d.shelfDesc || d.note)}</div>
+      <div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:5px">
+        ${d.players ? `<span style="font:500 10px 'EB Garamond',serif;letter-spacing:.16em;text-transform:uppercase;color:#A79E8B">${esc(d.players)} players</span>` : ""}
+        <span style="font:400 15px/1 'EB Garamond',serif;color:#E08A72">▸ Open</span>
       </div>
     </div>
-    <div style="font:400 17px/1.25 'EB Garamond',serif;text-align:center;max-width:140px">${esc(d.t)}</div>
   </a>`).join("");
+
+  const filterBtns = GAME_FILTERS.map(label => {
+    const n = label === "All" ? dashboards.length : dashboards.filter(d => d.kind === GAME_FILTER_KIND[label]).length;
+    return `<button type="button" class="gm-filter" data-filter="${esc(GAME_FILTER_KIND[label] || "")}" data-active="${label === "All" ? "1" : "0"}" style="font:400 14px/1 'EB Garamond',serif;padding:5px 13px;cursor:pointer">${esc(label)} ${n}</button>`;
+  }).join("");
+
   const body = `
     <div style="margin:34px 0 26px">
-      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${dashboards.length} apps</div>
+      <div id="gm-eyebrow" style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${dashboards.length} apps</div>
       <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">Games</h1>
-      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">The interactive character sheets, playsets and dashboards I build for the games I run.</p>
+      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0 0 22px">The interactive character sheets, playsets and dashboards I build for the games I run.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:7px">${filterBtns}</div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:30px 18px;padding-bottom:56px">${tiles}</div>
-    <style>a:hover .hover-overlay{opacity:1}</style>`;
+    <div id="gm-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:26px 24px;padding-bottom:56px">${tiles}</div>
+    <style>
+      .gm-filter{border:1px solid rgba(36,33,27,.35);background:transparent;color:#3A362C;transition:background .15s,color .15s,border-color .15s}
+      .gm-filter[data-active="1"]{background:#2F4633;border-color:#2F4633;color:#F6F1E4}
+      .gm-panel{opacity:0;pointer-events:none;backdrop-filter:blur(0);transition:opacity .4s ease,backdrop-filter .4s ease}
+      .gm-tile:hover .gm-panel,.gm-tile:focus .gm-panel{opacity:1;pointer-events:auto;backdrop-filter:blur(3px)}
+      .gm-art{transition:transform .7s cubic-bezier(.22,1,.36,1),filter .5s ease}
+      .gm-tile:hover .gm-art,.gm-tile:focus .gm-art{transform:scale(1.08);filter:blur(4px) brightness(.42) saturate(.85)}
+      .gm-line{transform:scaleX(.12);transform-origin:center;transition:transform .55s cubic-bezier(.22,1,.36,1)}
+      .gm-tile:hover .gm-line,.gm-tile:focus .gm-line{transform:scaleX(1)}
+      .gm-tile[data-hidden="1"]{display:none!important}
+    </style>
+    <script>
+      (function(){
+        var filters = document.querySelectorAll('.gm-filter');
+        var tiles = document.querySelectorAll('.gm-tile');
+        var eyebrow = document.getElementById('gm-eyebrow');
+        var total = ${dashboards.length};
+        filters.forEach(function(btn){
+          btn.addEventListener('click', function(){
+            filters.forEach(function(b){ b.dataset.active = '0'; });
+            btn.dataset.active = '1';
+            var kind = btn.dataset.filter, shown = 0;
+            tiles.forEach(function(t){
+              var ok = !kind || t.dataset.kind === kind;
+              t.dataset.hidden = ok ? '0' : '1';
+              if (ok) shown++;
+            });
+            eyebrow.textContent = kind ? ('◆ ' + shown + ' of ' + total + ' apps · ' + btn.textContent.replace(/\\s\\d+$/, '')) : ('◆ ' + total + ' apps');
+          });
+        });
+      })();
+    </script>`;
   write("games/index.html", layout({ title: "Games — Prince Faline's RPG Diaries", active: "Games", body }));
 }
 
