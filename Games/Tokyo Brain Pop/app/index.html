@@ -93,8 +93,8 @@
           <div style="display: flex; align-items: center; gap: 22px; padding: 16px 32px 18px 24px; transform: skewX(9deg);">
             <span style="font-family: 'Anton', sans-serif; font-size: 28px; opacity: .5; min-width: 44px;">04</span>
             <span style="flex: 1;">
-              <span style="display: block; font-family: 'Anton', sans-serif; font-size: 46px; line-height: 1; letter-spacing: .025em; text-transform: uppercase;">Tutorial</span>
-              <span style="display: block; font-family: 'DotGothic16', monospace; font-size: 16px; letter-spacing: .22em; opacity: .7; margin-top: 6px;">チュートリアル</span>
+              <span style="display: block; font-family: 'Anton', sans-serif; font-size: 46px; line-height: 1; letter-spacing: .025em; text-transform: uppercase;">Rulebook</span>
+              <span style="display: block; font-family: 'DotGothic16', monospace; font-size: 16px; letter-spacing: .22em; opacity: .7; margin-top: 6px;">ルールブック</span>
             </span>
             <span style="font-family: 'Anton', sans-serif; font-size: 32px; opacity: {{ ar3 }};">▶</span>
           </div>
@@ -114,13 +114,13 @@ const ITEMS = [
   { tag: "ROOM 作成 / HOST A SORTIE", body: "Open a new containment cell. Set the ward, pick a demon tier, and call in up to three espers." },
   { tag: "参加 / 6-DIGIT PSI CODE", body: "Drop into a sortie already in progress. Bring a clean uniform — the last one didn't come back." },
   { tag: "校長室 / PROGRESS & SECRETS", body: "Report to the Headmaster. Ranks, brain-pop upgrades, and the files she keeps in the locked drawer." },
-  { tag: "チュートリアル / ORIENTATION", body: "Learn the ropes before your first sortie." }
+  { tag: "ルールブック / ORIENTATION", body: "Learn the ropes before your first sortie." }
 ];
 const ACTIONS = [
   "CELL OPEN — ROOM CODE PSI-4417 — WAITING FOR ALLIES…",
   "AWAITING PSI CODE INPUT…",
   "SUMMONED. THE HEADMASTER IS LISTENING.",
-  "ORIENTATION COMING SOON."
+  "OPENING THE RULEBOOK…"
 ];
 
 class TBPHomeBase extends DCLogic {
@@ -223,7 +223,7 @@ class Component extends TBPHomeBase {
       if (i === 0) H.createRoom();
       else if (i === 1) H.joinRoom();
       else if (i === 2) H.headmaster();
-      // i === 3: Tutorial — coming soon, no destination yet.
+      else if (i === 3) H.rulebook();
     }, 90);
   }
 }

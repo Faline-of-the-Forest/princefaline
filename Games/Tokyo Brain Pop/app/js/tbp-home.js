@@ -6,6 +6,8 @@
 // drawn in the title screen's own language — Anton / DotGothic16, #EEE41B on
 // #100D0B with the red accent and hard offset shadows.
 
+import { RULES } from './tbp-rules.js';
+
 const Net = await window.__TBPNetReady;
 
 const YEL = '#EEE41B', INK = '#100D0B', RED = '#D2232A', PAPER = '#FFFDF0';
@@ -119,6 +121,69 @@ export const TBPHome = {
         location.href = 'rooms.html';
       }
     });
+  },
+
+  // Standalone Rulebook — no room/session needed, so it opens right on the
+  // title screen instead of routing through play.html's join gate.
+  rulebook() {
+    close();
+    const ACC = '#EDE31B', BG = '#231F20', CREAM = '#EFE6C8', PINK = '#F6A7CA';
+    const BALOO = "font-family:'Baloo 2',sans-serif;font-weight:800;";
+    const LORA = "font-family:'Lora',serif;";
+    let tab = 0;
+
+    host = document.createElement('div');
+    host.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(16,13,11,.82);' +
+      'display:flex;align-items:center;justify-content:center;padding:24px';
+    host.onclick = close;
+
+    const renderBlock = (b) => {
+      if (b.t === 'h') return '<div style="' + BALOO + 'font-size:20px;letter-spacing:.04em;line-height:1.2;color:' + PINK + ';margin:22px 0 8px">' + b.text + '</div>';
+      if (b.t === 'p') return '<div style="' + LORA + 'font-size:17px;line-height:1.55;color:' + CREAM + ';margin-bottom:12px">' + b.text + '</div>';
+      if (b.t === 'li') return '<div style="display:flex;gap:11px;margin-bottom:8px;padding-left:4px">' +
+        '<div style="flex:none;width:8px;height:8px;margin-top:8px;border-radius:2px;background:' + ACC + ';transform:rotate(45deg)"></div>' +
+        '<div style="' + LORA + 'font-size:16.5px;line-height:1.5;color:' + CREAM + '">' + b.text + '</div></div>';
+      if (b.t === 'table') {
+        const head = b.headers.map(h => '<div style="' + BALOO + 'font-size:13px;letter-spacing:.04em;color:' + ACC + ';padding:8px 10px">' + h + '</div>').join('');
+        const rows = b.rows.map(r => '<div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(239,230,200,.12)">' +
+          r.map(c => '<div style="' + LORA + 'font-size:14px;color:' + CREAM + ';padding:6px 10px">' + c + '</div>').join('') + '</div>').join('');
+        return '<div style="margin-bottom:16px;border:1px solid rgba(239,230,200,.25);border-radius:8px;overflow:hidden">' +
+          '<div style="display:grid;grid-template-columns:repeat(4,1fr);background:rgba(239,230,200,.12)">' + head + '</div>' + rows + '</div>';
+      }
+      return '';
+    };
+
+    const paint = () => {
+      const tabsHtml = RULES.map((r, i) =>
+        '<div class="tbp-rb-tab" data-i="' + i + '" style="cursor:pointer;' + BALOO + 'font-size:16px;letter-spacing:.02em;line-height:1.1;' +
+        'color:' + (i === tab ? BG : CREAM) + ';background:' + (i === tab ? ACC : 'transparent') +
+        ';border-radius:10px;padding:12px 15px">' + r.label + '</div>'
+      ).join('');
+      const blocksHtml = RULES[tab].blocks.map(renderBlock).join('');
+      host.innerHTML =
+        '<div style="width:min(1000px,92vw);height:min(760px,88vh);box-sizing:border-box;background:' + BG +
+          ';border:5px solid ' + BG + ';border-radius:20px;box-shadow:12px 12px 0 rgba(35,31,32,.4);display:flex;flex-direction:column;overflow:hidden" id="tbp-rb-box">' +
+          '<div style="flex:none;display:flex;align-items:center;gap:14px;padding:16px 22px;background:' + ACC + ';border-bottom:5px solid ' + BG + '">' +
+            '<div style="flex:1;' + BALOO + 'font-size:30px;line-height:1;letter-spacing:.01em;color:' + BG + '">Rulebook</div>' +
+            '<div id="tbp-rb-close" style="cursor:pointer;' + BALOO + 'font-size:15px;letter-spacing:.08em;color:' + ACC +
+              ';background:' + BG + ';border-radius:10px;padding:10px 22px;line-height:1;box-shadow:4px 4px 0 rgba(35,31,32,.3)">CLOSE</div>' +
+          '</div>' +
+          '<div style="flex:1;min-height:0;display:flex">' +
+            '<div style="flex:none;width:224px;box-sizing:border-box;background:#2f2a2b;border-right:5px solid ' + BG + ';padding:14px 12px;display:flex;flex-direction:column;gap:6px;overflow-y:auto">' + tabsHtml + '</div>' +
+            '<div style="flex:1;min-width:0;overflow-y:auto;padding:26px 34px 40px">' +
+              '<div style="' + BALOO + 'font-size:34px;line-height:1.05;color:' + ACC + ';margin-bottom:16px">' + RULES[tab].title + '</div>' +
+              blocksHtml +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      host.querySelector('#tbp-rb-box').onclick = (e) => e.stopPropagation();
+      host.querySelector('#tbp-rb-close').onclick = close;
+      Array.prototype.forEach.call(host.querySelectorAll('.tbp-rb-tab'), (el) => {
+        el.onclick = () => { tab = +el.dataset.i; paint(); };
+      });
+    };
+    paint();
+    document.body.appendChild(host);
   }
 };
 

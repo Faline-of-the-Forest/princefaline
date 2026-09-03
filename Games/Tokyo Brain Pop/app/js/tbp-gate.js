@@ -56,7 +56,7 @@ async function enter(role, seat) {
   window.__TBPJoinedResolve({ role, seat, room: Net.roomId });
 }
 
-function pickStudent(taken) {
+function pickStudent(taken, locks) {
   const root = document.createElement('div');
   root.id = 'tbp-gate';
   root.style.cssText = [
@@ -66,16 +66,22 @@ function pickStudent(taken) {
     'justify-content:center', 'padding:24px', 'overflow:auto'
   ].join(';');
 
+  // A seat that was never locked in during Character Select isn't part of
+  // this game at all (e.g. Yumi absent in a 3-player game) — she has no
+  // Student to run, so she's shown greyed-out and can't be picked.
   const cards = SEATS.map(function (s, i) {
     const n = taken[i] || 0;
-    return '<div class="tbp-seat-pick" data-seat="' + i + '" style="cursor:pointer;background:' + INK +
-      ';border:4px solid ' + s.tone + ';border-radius:13px;overflow:hidden;box-shadow:0 6px 0 rgba(0,0,0,.45)">' +
+    const inGame = !locks || locks[i];
+    const cardStyle = inGame
+      ? 'cursor:pointer;background:' + INK + ';border:4px solid ' + s.tone + ';border-radius:13px;overflow:hidden;box-shadow:0 6px 0 rgba(0,0,0,.45)'
+      : 'cursor:default;background:' + INK + ';border:4px solid rgba(239,230,200,.2);border-radius:13px;overflow:hidden;box-shadow:0 6px 0 rgba(0,0,0,.45);opacity:.4;filter:grayscale(.9)';
+    return '<div class="tbp-seat-pick" data-seat="' + i + '" data-ingame="' + (inGame ? '1' : '0') + '" style="' + cardStyle + '">' +
       '<img src="assets/head-' + s.who + '.png" alt="" style="width:100%;height:104px;object-fit:cover;' +
         'object-position:50% 12%;background:' + s.tone + '">' +
       '<div style="padding:9px 10px 11px">' +
         '<div style="' + BALOO + 'font-size:17px;color:' + s.tone + '">' + s.label + '</div>' +
         '<div style="' + LORA + 'font-size:12.5px;color:rgba(239,230,200,.55)">' +
-          (n ? n + ' already playing her' : 'free') + '</div>' +
+          (!inGame ? 'not in this game' : (n ? n + ' already playing her' : 'free')) + '</div>' +
       '</div></div>';
   }).join('');
 
@@ -102,6 +108,7 @@ function pickStudent(taken) {
     try { await enter(role, seat); } catch (e) { fail(String((e && e.message) || e)); }
   };
   Array.prototype.forEach.call(root.querySelectorAll('.tbp-seat-pick'), function (el) {
+    if (el.dataset.ingame !== '1') return;
     el.onclick = function () { go('player', +el.dataset.seat); };
   });
   document.getElementById('tbp-spectate').onclick = function () { go('spectator', null); };
@@ -121,7 +128,7 @@ function pickStudent(taken) {
     Object.values((data && data.players) || {}).forEach(function (p) {
       if (p && p.role === 'player' && p.seat != null) taken[p.seat] = (taken[p.seat] || 0) + 1;
     });
-    pickStudent(taken);
+    pickStudent(taken, data && data.locks);
     return;
   }
   // Not started: drop straight into the game's own Character Select and claim
