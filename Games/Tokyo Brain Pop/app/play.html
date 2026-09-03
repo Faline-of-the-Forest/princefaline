@@ -4506,7 +4506,7 @@
     </sc-if>
 
     <sc-if value="{{ f.voteHeadmaster.show }}" hint-placeholder-val="{{ false }}">
-      <div style="width:640px; flex:none; box-sizing:border-box; background:#231F20; border-radius:18px; padding:26px 30px; box-shadow:10px 10px 0 rgba(35,31,32,.35); display:flex; flex-direction:column; gap:14px">
+      <div style="width:640px; flex:none; transform:scale({{ f.stage.hmVoteScale }}); box-sizing:border-box; background:#231F20; border-radius:18px; padding:26px 30px; box-shadow:10px 10px 0 rgba(35,31,32,.35); display:flex; flex-direction:column; gap:14px">
         <div style="display:flex; flex-direction:column; align-items:center; gap:6px">
           <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:44px; letter-spacing:.02em; line-height:1; color:#EDE31B">Class Vote!</div>
           <div style="font-family:'Lora',serif; font-style:italic; font-size:17px; color:rgba(239,230,200,.7)">Waiting on the Students to spend their Drama.</div>
@@ -4879,7 +4879,10 @@
               <div style="flex:1 1 0; border:4.5px solid #EFE6C8; background:#231F20; box-sizing:border-box; padding:10.5px 12px; display:flex; align-items:center">
                 <div style="font-family:'Lora',serif; font-style:italic; font-size:15.75px; line-height:1.35; color:#EFE6C8; text-wrap:pretty">{{ f.demon.goal }}</div>
               </div>
-              <div style="flex:none; border:4.5px solid #EFE6C8; background:{{ f.demon.costBg }}; box-sizing:border-box; min-height:36px; padding:5px 8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px">
+              <!-- Fixed height on purpose: the NOT ENOUGH line has to sit
+                   inside the same box rather than growing it, or it shoves
+                   the Demon's goal panel upward whenever it appears. -->
+              <div style="flex:none; border:4.5px solid #EFE6C8; background:{{ f.demon.costBg }}; box-sizing:border-box; height:44px; padding:0 8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px">
                 <sc-if value="{{ f.demon.costNoteShow }}" hint-placeholder-val="{{ false }}">
                   <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.12em; line-height:1; color:{{ f.demon.costInk }}; white-space:nowrap">{{ f.demon.costNote }}</div>
                 </sc-if>
@@ -5684,7 +5687,7 @@ const DEMON_TABLES = {
   type: ['A new student','A teacher','A family member','A government agent','A mysterious group','An animal or beast','A shapeshifter','A ghost or spirit','The undead','A cryptid or urban legend','An evil plant','An experiment or machine','A thing from outer space','A cursed or haunted place','A hideous monster','An actual demon','A natural disaster','A legendary villain','A god or demi-god','Roll twice and combine'],
   power: ['Weapons (guns / swords)','Animal features (teeth / claws / tentacles)','A swarm / a mob','Poison / disease','Stalking / going unseen','Unnatural beauty / charm / influence','Draining blood / draining energy','Fire','A mutation / extra limbs','Multiplying / spreading','Enormous size','Weird science','Dark magic (spells / potions)','Possession','Telepathy / mind control','Memories / dreams','Immortality / invulnerability','Time loop / time travel','PSI','Roll twice and combine'],
   complication: ['It only appears at a certain time','It can only be defeated by one specific weakness','Its lair must be found to defeat it','It looks normal, except for one tell-tale feature','It has a secret ally / minion','It has a hostage','It is being used / controlled by someone else','It has already infiltrated the school under a false identity','It already has a group of followers','It answers to a powerful master / patron','A ritual or invention is needed to defeat it','A curse must be broken before it can be defeated','It is being hunted by something worse','A deal / promise must be made to defeat it','Hurting it hurts someone else','Defeating it will cause a disaster','It is found at the end of a long journey','It has been defeated in the past, but it\u2019s back in a new form.','It shares a history with one of the Students','Roll twice and combine'],
-  goal: ['To eat someone, or something','To find something it lost','To take revenge on someone','To steal something','To take a mate','To kill a specific person','To move in','To feed on fear','To summon something worse','To rise to power / take over','To spread misery and chaos','To protect someone / something','To repay a debt / keep a promise','To gather enough followers','To become immortal / young again','To play a game / to win a contest','To capture a Student','To kill every psychic girl','To turn a Student to evil','Roll twice and combine']
+  goal: ['To eat someone, or something','To find something it lost','To take revenge on someone','To steal something','To take a mate','To kill a specific person','To move in','To feed on fear','To summon something worse','To rise to power / take over','To spread misery and chaos','To protect someone / something','To repay a debt / keep a promise','To gather enough followers','To become immortal / young again','To play a game / to win a contest','To capture a Student','To kill every psionic girl','To turn a Student to evil','Roll twice and combine']
 };
 
 const EG_GIRLS = [
@@ -5846,7 +5849,8 @@ class TBPBase extends DCLogic {
       const rowScale = Math.max(.34, Math.min(1.8, availW / 1676, (availH * .96) / 519));
       const stageH = Math.max(110, availH - 519 * rowScale);
       const fitTo = (w, h) => Math.max(.3, Math.min(1, (stageH - 8) / h, (availW - 24) / w));
-      const next = {rowScale, locScale: fitTo(760, 320), voteScale: fitTo(1300, 300), resScale: fitTo(1080, 470)};
+      const next = {rowScale, locScale: fitTo(760, 320), voteScale: fitTo(1300, 300), resScale: fitTo(1080, 470),
+        hmVoteScale: fitTo(640, 500)};
       const cur = this.state;
       const same = Object.keys(next).every(k => Math.abs((cur[k] == null ? -1 : cur[k]) - next[k]) < .003);
       if (!same) this.setState(next);
@@ -7255,7 +7259,7 @@ class TBPBase extends DCLogic {
       present: demonIn, absent: !demonIn,
       name: this.state.demonName, goal: this.state.demonGoal,
       status: demonChallenged ? 'CHALLENGED' : 'DEMON',
-      costLabel: demonBroke ? 'NEEDS ' + demonCost + ' DRAMA' : 'CALL: ' + demonCost + ' DRAMA',
+      costLabel: 'CHALLENGE: ' + demonCost + ' !?',
       costNote: demonBroke ? 'NOT ENOUGH' : '',
       costNoteShow: demonBroke,
       costBg: demonBroke ? '#231F20' : '#EFE6C8',
@@ -7431,7 +7435,11 @@ class TBPBase extends DCLogic {
       const locScale = this.state.locScale == null ? 1 : this.state.locScale;
       const voteScale = this.state.voteScale == null ? 1 : this.state.voteScale;
       const resScale = this.state.resScale == null ? 1 : this.state.resScale;
-      return {locScale, voteScale, resScale};
+      // The Headmaster's vote panel is the tallest thing the stage ever
+      // holds; without its own fit it overflowed the stage and clipped off
+      // the top of the screen.
+      const hmVoteScale = this.state.hmVoteScale == null ? 1 : this.state.hmVoteScale;
+      return {locScale, voteScale, resScale, hmVoteScale};
     })();
     const focusPicker = ['GOAL', 'VS DEMON', 'DEMON LEAD'].map((label, k) => ({
       label, pick: () => this.setState({focusIdx: k}),
