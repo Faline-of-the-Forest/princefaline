@@ -4420,7 +4420,7 @@
     </div>
   </div>
 
-  <div data-tbp="stage" style="flex:1 1 auto; min-height:0; width:100%; position:relative; z-index:6; display:flex; align-items:center; justify-content:center; overflow:visible">
+  <div data-tbp="stage" style="flex:0 0 auto; min-height:0; width:100%; position:relative; z-index:6; display:flex; align-items:center; justify-content:center; overflow:visible">
 
     <sc-if value="{{ f.firstVote.show }}" hint-placeholder-val="{{ false }}">
       <div sc-camel-on-click="{{ f.firstVote.start }}" title="Call the first Class Vote — Headmaster only" style="cursor:pointer; box-sizing:border-box; border:5px solid #231F20; border-radius:16px; box-shadow:10px 10px 0 rgba(35,31,32,.28); background:#EDE31B; padding:34px 46px; display:flex; flex-direction:column; align-items:center; gap:10px">
@@ -4430,7 +4430,8 @@
     </sc-if>
 
     <sc-if value="{{ f.loc.show }}" hint-placeholder-val="{{ true }}">
-      <div style="width:760px; height:320px; flex:none; transform:scale({{ f.stage.locScale }}); pointer-events:auto; box-sizing:border-box; border:5px solid #231F20; border-radius:16px; box-shadow:10px 10px 0 rgba(35,31,32,.28); background:#231F20; overflow:hidden; display:flex; align-items:stretch">
+      <div style="width:{{ f.stage.locW }}px; height:{{ f.stage.locH }}px; flex:none; overflow:hidden">
+      <div style="width:760px; height:320px; flex:none; transform:scale({{ f.stage.locScale }}); transform-origin:top left; pointer-events:auto; box-sizing:border-box; border:5px solid #231F20; border-radius:16px; box-shadow:10px 10px 0 rgba(35,31,32,.28); background:#231F20; overflow:hidden; display:flex; align-items:stretch">
         <div style="position:relative; height:100%; aspect-ratio:1/1; flex:none; overflow:hidden; background:#EFE6C8">
           <img src="{{ f.loc.img }}" alt="scene location" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 45%">
           <div style="position:absolute; inset:0; box-shadow:inset 0 0 0 4px rgba(35,31,32,.18)"></div>
@@ -4470,10 +4471,12 @@
           </div>
         </div>
       </div>
+      </div>
     </sc-if>
 
     <sc-if value="{{ f.voteBar.show }}" hint-placeholder-val="{{ false }}">
-      <div style="width:1300px; height:300px; flex:none; transform:scale({{ f.stage.voteScale }}); pointer-events:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px">
+      <div style="width:{{ f.stage.voteW }}px; height:{{ f.stage.voteH }}px; flex:none; overflow:hidden">
+      <div style="width:1300px; height:300px; flex:none; transform:scale({{ f.stage.voteScale }}); transform-origin:top left; pointer-events:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px">
         <div style="width:100%; display:flex; align-items:center; justify-content:space-between; gap:32px">
           <div style="display:flex; flex-direction:column; gap:8px; flex:1 1 0; min-width:0">
             <div style="display:flex; align-items:center; gap:11px">
@@ -4502,6 +4505,7 @@
           </div>
           <div style="font-family:'Lora',serif; font-style:italic; font-size:28px; line-height:1; color:#231F20">Spend your Drama!</div>
         </div>
+      </div>
       </div>
     </sc-if>
 
@@ -5615,7 +5619,7 @@ const RULES = [
     {t:'p', text:'The Demon is the main event — the big, nasty threat the Students face before the session ends. It can be an actual demon, a monster, or a mundane threat: a disaster, a secret organization, an evil teacher, ninjas, even alien invaders. The group creates it together at the start.'},
     {t:'p', text:'The Demon enters when a Student’s Best Friend Calls a Challenge on her and narrates how the Demon complicates the action. From then on the Headmaster narrates what the Demon does.'},
     {t:'h', text:'Challenging the Demon'},
-    {t:'p', text:'A Student may Call a Challenge on the Demon (unless she holds 5 Drama), narrating how the situation works against it. She gains 1 Drama for Calling but never gains more from the result. The Demon rolls and succeeds on 4–6.'},
+    {t:'p', text:'A Student may Call a Challenge on the Demon (unless she holds 5 Drama), narrating how the situation works against it. She gains 1 Drama for Calling, plus 1 more for every Bad End step currently marked, capped at the Drama max of 5 — but never gains more from the result. The Demon rolls and succeeds on 4–6.'},
     {t:'li', text:'Its target lowers by 1 for every unresolved Student Goal, and raises by 1 for every Strike taken. It can never go below 2 or above 6 — the Demon always fails on a 1.'},
     {t:'li', text:'Every success marks the Bad End track; every failure marks the Good End track. Marks needed equals the number of Students playing.'},
     {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one. If success becomes mathematically impossible, the Demon becomes the next Lead and does not retreat.'}
@@ -6277,7 +6281,7 @@ class TBPBase extends DCLogic {
     // own Drama (switching the Player picker to her seat in local/hotseat
     // play); nobody's vote is randomly guessed for her.
     const alloc = this.state.chars.map(() => ({}));
-    this.setState({rollMode: null, challenge: null, firstSceneStarted: true, voteReady: {}, vote: {phase: 'assign', alloc, tick: [0,0,0,0], totals: null, most: null, least: null, tieMost: false, tieLeast: false, clock: 60}});
+    this.setState({rollMode: null, challenge: null, firstSceneStarted: true, voteReady: {}, vote: {phase: 'assign', caller, alloc, tick: [0,0,0,0], totals: null, most: null, least: null, tieMost: false, tieLeast: false, clock: 60}});
     this.startVoteClock();
   }
 
@@ -6472,7 +6476,12 @@ class TBPBase extends DCLogic {
     if (!this.state.vote || this.state.vote.phase === 'done') return;
     clearTimeout(this.timers.voteend); clearTimeout(this.timers.tieEnd); clearTimeout(this.timers.tieNext);
     clearInterval(this.timers.tieSpin); clearInterval(this.timers.voteClock); cancelAnimationFrame(this.rafs.vote);
+    const caller = this.state.vote.caller;
     this.setState({vote: null, voteReady: {}});
+    // The caller's one-Vote-per-session allowance is only actually spent
+    // once a Vote resolves — a canceled Vote never happened, so give it
+    // back to whoever called it.
+    if (typeof caller === 'number') this.patch(caller, {votedOnce: false});
   }
   toggleVoteEnabled() {
     const on = !this.state.voteEnabled;
@@ -6602,15 +6611,35 @@ class TBPBase extends DCLogic {
   cancelChallenge() {
     const ch = this.state.challenge;
     if (ch && ch.phase === 'pick') { this.setState({challenge: null}); return; }
+    if (!ch || ch.resolved) return;
     // A Challenge called on the Demon skips the normal 'pick' phase (see
-    // selectTarget) and goes straight to 'active' with the 1 Drama already
-    // spent — so unlike the student-vs-student cancel above, canceling here
-    // has to refund it to match "cancel costs nothing" for both paths.
-    if (ch && ch.rel === 'demon' && !ch.resolved &&
-        this.state.demonRoll && this.state.demonRoll.phase === 'ready') {
+    // selectTarget) and goes straight to 'active' with Drama already
+    // gained — so unlike the student-vs-student cancel above, canceling here
+    // has to refund it to match "cancel costs nothing" for both paths. The
+    // refund matches whatever was actually granted at call time (stored on
+    // demonRoll.cost), since the Bad End track — and so the cost formula —
+    // may have moved since the Call.
+    if (ch.rel === 'demon') {
+      if (this.state.demonRoll && this.state.demonRoll.phase === 'ready') {
+        const c = this.state.chars[ch.by];
+        const refund = Number(this.state.demonRoll.cost) || 1;
+        this.patch(ch.by, {drama: Math.max(0, (Number(c.drama) || 0) - refund)});
+        this.setState({challenge: null, demonRoll: null});
+      }
+      return;
+    }
+    // Student-vs-student Challenge: cancelable any time before the target
+    // has actually rolled (or gone Psychic) — i.e. through Quirk selection,
+    // not just the instant the target is chosen. Refunds the 1 Drama the
+    // caller gained for Calling, same as the Demon path above.
+    if ((ch.rel === 'friend' || ch.rel === 'rival') && this.state.rollMode !== null) {
+      const active = this.state.rollMode;
+      const ap = this.state.chars[active].phase;
+      if (ap === 'rolling' || ap === 'result' || ap === 'psychic') return;
       const c = this.state.chars[ch.by];
       this.patch(ch.by, {drama: Math.max(0, (Number(c.drama) || 0) - 1)});
-      this.setState({challenge: null, demonRoll: null});
+      this.reset(active, {});
+      this.setState({challenge: null, rollMode: null});
     }
   }
 
@@ -6621,11 +6650,13 @@ class TBPBase extends DCLogic {
     if (target === 'demon') {
       if (!this.demonPresent()) return;
       this.reset(by, {quirk: null, psychic: false});
-      this.addDrama(by, 1);
+      // Calling on the Demon costs more Drama the deeper the Bad End track
+      // is marked: 1 + current Bad End steps, capped at the game's normal
+      // Drama max (5) so a single Call can never grant more than that.
+      const demonCost = Math.min(5, 1 + (Number(this.state.badEnd) || 0));
+      this.addDrama(by, demonCost);
       this.setState({rollMode: null, challenge: {by, rel: 'demon', phase: 'active', resolved: false},
-        demonRoll: {by, phase: 'ready', face: null, success: null}});
-      return;
-      this.addDrama(by, 1);
+        demonRoll: {by, phase: 'ready', face: null, success: null, cost: demonCost}});
       return;
     }
     const rel = target === SEATS[by].friend ? 'friend' : (target === SEATS[by].rival ? 'rival' : null);
@@ -6828,6 +6859,12 @@ class TBPBase extends DCLogic {
       const psi = c.phase === 'psychic';
       const rolled = c.phase === 'result';
       const needsBreak = !!c.broken && rollMode && !rolled;
+      // Softlock escape hatch (see forceBreak()): when every playing Student
+      // is maxed/broken, nobody can be Called to a Challenge, so this flashes
+      // right on the seat's own die-roll control instead — the same slot a
+      // normal Challenge roll/resolve would use — rather than on her Drama
+      // gauge, which isn't where any other roll/resolve action ever lives.
+      const forceBreakReady = allMaxed && ((Number(c.drama) || 0) >= 5 || c.broken) && !rollMode;
       const success = rolled && c.face >= t;
       const failure = rolled && !success;
       const showResult = rolled || psi;
@@ -6861,7 +6898,10 @@ class TBPBase extends DCLogic {
         showExclaim: !!ch && !ch.resolved && i === ch.by,
         showCancel: (pickPhase && i === ch.by) ||
           (!!ch && ch.rel === 'demon' && !ch.resolved && i === ch.by &&
-           !!this.state.demonRoll && this.state.demonRoll.phase === 'ready'),
+           !!this.state.demonRoll && this.state.demonRoll.phase === 'ready') ||
+          (!!ch && (ch.rel === 'friend' || ch.rel === 'rival') && !ch.resolved && i === ch.by &&
+           active !== null && this.state.chars[active].phase !== 'rolling' &&
+           this.state.chars[active].phase !== 'result' && this.state.chars[active].phase !== 'psychic'),
         showArrow: isTarget,
         arrowRel: pickPhase && isTarget ? (i === this.state.chars[ch.by].friend ? 'BEST FRIEND' : 'RIVAL') : '',
         pickGlow: isTarget ? 'tbp-pickglow 1s ease-in-out infinite' : 'none',
@@ -6901,10 +6941,10 @@ class TBPBase extends DCLogic {
         faceText: psi ? '脳' : c.face,
         showDie: rolled || psi,
         rollMode,
-        rollLocked: !rollMode && !(rolling || rolled || psi),
-        showRollLabel: rollMode && !(rolling || rolled || psi) && !c.psychic,
+        rollLocked: !rollMode && !(rolling || rolled || psi) && !forceBreakReady,
+        showRollLabel: (rollMode && !(rolling || rolled || psi) && !c.psychic) || forceBreakReady,
         showPsiCost: rollMode && !(rolling || rolled || psi) && c.psychic,
-        rollReadyAnim: needsBreak ? 'tbp-breakblink .6s steps(1) infinite' : 'none',
+        rollReadyAnim: (needsBreak || forceBreakReady) ? 'tbp-breakblink .6s steps(1) infinite' : 'none',
         rollBorder: '#FDFCFC',
         quirkPicker: [
           {label: '✕', key: null, title: 'No Quirk applies'},
@@ -6928,9 +6968,9 @@ class TBPBase extends DCLogic {
         bubbleBorderStyle: (!(rolling || rolled || psi) && quirkSel === null) ? 'dashed' : 'solid',
         bubbleTail: (rolling || rolled || psi) || quirkSel === 0 || quirkSel === 1,
         showClose: rolled || psi,
-        rollPanelBg: needsBreak ? '#E23A3A' : ((rolling || rolled || psi) ? '#FDFCFC' : (c.psychic ? '#EDE31B' : (rollMode ? '#EDE31B' : '#F3EFE4'))),
-        rollLabelInk: needsBreak ? '#FDFCFC' : '#231F20',
-        rollCursor: (rollMode && !c.psychic) ? 'pointer' : 'default',
+        rollPanelBg: (needsBreak || forceBreakReady) ? '#E23A3A' : ((rolling || rolled || psi) ? '#FDFCFC' : (c.psychic ? '#EDE31B' : (rollMode ? '#EDE31B' : '#F3EFE4'))),
+        rollLabelInk: (needsBreak || forceBreakReady) ? '#FDFCFC' : '#231F20',
+        rollCursor: (rollMode && !c.psychic) ? 'pointer' : (forceBreakReady ? 'pointer' : 'default'),
         rollHoverInk: '#231F20',
         targetDice: [1,2,3,4,5,6].filter(n => n >= t).map(n => ({n, pips: pipsFor(n, '#231F20')})),
         bonds: [
@@ -6971,7 +7011,7 @@ class TBPBase extends DCLogic {
         resultWord: rolling ? 'ROLLING…' : (c.breakResult ? 'BREAK!' : (psi ? 'PSI!' : (success ? 'Success!' : 'Failure!'))),
         resultInk: rolling ? '#EDE31B' : (c.breakResult ? '#E23A3A' : (failure ? '#FDFCFC' : '#231F20')),
         narratorLine: rolling ? 'Rolling the die…' : (c.breakResult ? 'The Headmaster narrates how your PSI goes off on its own and does the worst thing it possibly could.' : (psi ? 'Your Rival narrates your success, but also how your PSI gets out of control and makes things worse.' :(success ? 'Your Best Friend narrates how you pull off what you were trying to do.' : 'Your Rival narrates how what you were trying to do falls apart.'))),
-        buttonLabel: needsBreak ? 'BREAK!' : 'Roll!',
+        buttonLabel: (needsBreak || forceBreakReady) ? 'BREAK!' : 'Roll!',
         psiCostTop: 'COST',
         psiCostBig: (Number(c.psiCost) || 2) + '!?',
         narratorPsi: c.psiUsed,
@@ -7018,15 +7058,15 @@ class TBPBase extends DCLogic {
         cardBorder: c.broken ? '#E23A3A' : '#231F20',
         fillPct: (dv * 20) + '%',
         badgeA: max ? 'MAX' : '!?',
-        badgeC: (allMaxed && (max || c.broken)) ? 'BREAK!' : (c.broken ? 'BRK' : (max ? 'MAX' : '!?')),
+        badgeC: c.broken ? 'BRK' : (max ? 'MAX' : '!?'),
         badgeBg: c.broken ? '#E23A3A' : '#EDE31B',
         badgeInk: c.broken ? '#FDFCFC' : '#231F20',
-        badgeCursor: (allMaxed && (max || c.broken)) ? 'pointer' : 'help',
-        badgeClick: (allMaxed && (max || c.broken)) ? (() => this.forceBreak(i)) : (() => {}),
+        badgeCursor: 'help',
+        badgeClick: () => {},
         gaugeBorder: c.broken ? '#E23A3A' : '#231F20',
         badgeSize: c.broken ? '9px' : (max ? '8px' : '10px'),
         badgeD: max ? '喝' : '電',
-        maxAnim: (allMaxed && (max || c.broken)) ? 'tbp-breakblink .5s steps(1) infinite' : (max ? 'tbp-maxflash .55s steps(1,end) infinite' : 'none'),
+        maxAnim: max ? 'tbp-maxflash .55s steps(1,end) infinite' : 'none',
         tubeAnim: max ? 'tbp-tubeglow .8s ease-in-out infinite' : 'none',
         iconBg: !dv ? '#EFE6C8' : (max ? '#B4322C' : '#EDE31B'),
         iconInk: max ? '#FDFCFC' : '#231F20',
@@ -7036,7 +7076,7 @@ class TBPBase extends DCLogic {
         ventGlow: c.venting ? '0 0 12px rgba(226,58,58,.85)' : 'none',
         bumpDrama: (e) => { if (e && e.button === 2) return; this.bumpDrama(i); },
         dropDrama: (e) => { if (e && e.preventDefault) e.preventDefault(); this.dropDrama(i); },
-        roll: needsBreak ? (() => this.breakOut(i)) : (() => this.roll(i)),
+        roll: needsBreak ? (() => this.breakOut(i)) : (forceBreakReady ? (() => this.forceBreak(i)) : (() => this.roll(i))),
         cyclePop: () => this.reset(i, {pop: ORDER[(ORDER.indexOf(c.pop) + 1) % 3]}),
         toggleDetail: () => this.reset(i, {detail: !c.detail}),
         togglePsychic: () => { if (this.state.rollMode === i) this.reset(i, {psychic: !c.psychic}); },
@@ -7341,11 +7381,22 @@ class TBPBase extends DCLogic {
       goalText: demonLead ? this.state.demonGoal : (vsDemon ? '“Defeat the ' + this.state.demonName + '.”' : '“' + BIOS[leadSeat.who].goals[this.state.goalIdx % 2] + '”'),
       cycleGoal: () => this.setState(s => ({goalIdx: (s.goalIdx + 1) % 2})),
     });
-    const stage = {
-      locScale: this.state.locScale == null ? 1 : this.state.locScale,
-      voteScale: this.state.voteScale == null ? 1 : this.state.voteScale,
-      resScale: this.state.resScale == null ? 1 : this.state.resScale
-    };
+    const stage = (() => {
+      const locScale = this.state.locScale == null ? 1 : this.state.locScale;
+      const voteScale = this.state.voteScale == null ? 1 : this.state.voteScale;
+      const resScale = this.state.resScale == null ? 1 : this.state.resScale;
+      // transform:scale() shrinks how a card *renders* but not the layout
+      // box it reserves — at low scales (narrow windows) that left a huge
+      // dead gap between the card and whatever sits below it. Giving each
+      // card's wrapper the already-scaled pixel size (instead of its full
+      // unscaled size) lets the stage collapse down to the card's real
+      // on-screen footprint.
+      return {
+        locScale, voteScale, resScale,
+        locW: Math.round(760 * locScale), locH: Math.round(320 * locScale),
+        voteW: Math.round(1300 * voteScale), voteH: Math.round(300 * voteScale)
+      };
+    })();
     const focusPicker = ['GOAL', 'VS DEMON', 'DEMON LEAD'].map((label, k) => ({
       label, pick: () => this.setState({focusIdx: k}),
       bg: fi === k ? '#F6A7CA' : 'transparent', ink: fi === k ? '#231F20' : '#FDFCFC', border: fi === k ? '#F6A7CA' : 'rgba(253,252,252,.3)'
@@ -7668,13 +7719,31 @@ class Component extends TBPBase {
         return merged;
       });
     }
-    // Every seat's Drama allocation lives in the one shared `vote` blob, and
-    // each client pushes its whole local copy of it. Two Students spending
-    // Drama within the same debounce window otherwise race: whichever push
-    // lands second silently overwrites the other's not-yet-received seat.
-    // Merge per seat instead — trust my own seat's alloc from what I just
-    // set locally, and every other seat's from whatever the network says.
-    if (shared.vote && shared.vote.alloc && this.state.vote && this.state.vote.alloc) {
+    // The vote's phase only ever advances forward locally (assign -> count ->
+    // tiebreak -> done). A remote push can be STALE: its sender's local copy
+    // hadn't yet received a later phase change (network lag) before some
+    // unrelated local setState of theirs (spending Drama, a hover, anything)
+    // fired a push of their whole snapshot — including their old 'assign'
+    // vote. Applying that here would yank an already-resolved vote back to
+    // 'assign': the ready flags are already all true and the resolver's own
+    // countdown timer was cleared the moment it finished, so nothing would
+    // ever re-trigger finishVote() again — the table freezes for good with
+    // the poll screen flickering back to "Ready" and never recovering. Never
+    // regress our own local phase; if the incoming push is behind us, keep
+    // what we already have and re-push it once so the stale write gets
+    // corrected in the room doc too, not just healed on this one screen.
+    var VOTE_PHASE_ORDER = {assign: 0, count: 1, tiebreak: 2, done: 3};
+    var voteIsStale = !!(shared.vote && this.state.vote &&
+      (VOTE_PHASE_ORDER[shared.vote.phase] || 0) < (VOTE_PHASE_ORDER[this.state.vote.phase] || 0));
+    if (voteIsStale) {
+      patch.vote = this.state.vote;
+    } else if (shared.vote && shared.vote.alloc && this.state.vote && this.state.vote.alloc) {
+      // Every seat's Drama allocation lives in the one shared `vote` blob, and
+      // each client pushes its whole local copy of it. Two Students spending
+      // Drama within the same debounce window otherwise race: whichever push
+      // lands second silently overwrites the other's not-yet-received seat.
+      // Merge per seat instead — trust my own seat's alloc from what I just
+      // set locally, and every other seat's from whatever the network says.
       var Net = window.TBPNet;
       var mySeat = (Net && Net.role === 'player') ? Net.seat : null;
       var localAlloc = this.state.vote.alloc;
@@ -7698,6 +7767,11 @@ class Component extends TBPBase {
     mpReplayPicks(shared);
     // super.setState so our own push hook doesn't echo this straight back out.
     super.setState(patch);
+    // We're ahead of what the room doc just showed us (see voteIsStale above)
+    // — re-assert our own state so that stale write gets corrected for every
+    // other screen too, not just this one. mpPush (not setState) so it isn't
+    // gated behind another 120ms debounce on top of the one that already ran.
+    if (voteIsStale) this.mpPush();
   }
 
   // Claiming a Student: clicking a girl on the original Character Select is
@@ -7846,7 +7920,7 @@ class Component extends TBPBase {
     if (!el) {
       el = document.createElement('div');
       el.id = 'tbp-status';
-      el.style.cssText = 'position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:90; ' +
+      el.style.cssText = 'position:fixed; top:4px; right:8px; z-index:90; ' +
         "font-family:'Baloo 2',sans-serif; background:rgba(35,31,32,.92); border-radius:10px; padding:8px 12px; " +
         'max-width:min(90vw,260px)';
       document.body.appendChild(el);
@@ -8095,11 +8169,19 @@ class Component extends TBPBase {
         f.cards = f.cards.map(function (c) { return mpNeuter(c); });
       } else if (Net.role === 'player' && Net.seat != null) {
         var mine = Net.seat;
+        // In a 3-player game f.cards is re-indexed by position (0..2, joined
+        // seats only — see cardsActive above), not by seat index, so array
+        // index i no longer equals the seat number. Map position back to the
+        // real seat it holds before comparing to mine, or every seat's
+        // controls after the first empty one shift down by one and the wrong
+        // card ends up "live".
+        var activeSeatsForCards = this.state.activeSeats || [0, 1, 2, 3];
         // Another Student's die/quirk/challenge controls stay off-limits, but
         // during a Class Vote everyone can still spend Drama on any card —
         // keep just the vote +/- (and its readout) live on those.
         f.cards = f.cards.map(function (c, i) {
-          if (i === mine) return c;
+          var seatAtPos = activeSeatsForCards[i] != null ? activeSeatsForCards[i] : i;
+          if (seatAtPos === mine) return c;
           var n = mpNeuter(c);
           if (c.voteAssign) { n.voteInc = c.voteInc; n.voteDec = c.voteDec; }
           // A Challenge target lives on someone else's card by definition —
