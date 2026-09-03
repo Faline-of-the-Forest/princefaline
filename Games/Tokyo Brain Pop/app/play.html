@@ -4420,7 +4420,7 @@
     </div>
   </div>
 
-  <div data-tbp="stage" style="flex:0 0 auto; min-height:0; width:100%; position:relative; z-index:6; display:flex; align-items:center; justify-content:center; overflow:visible">
+  <div data-tbp="stage" style="flex:1 1 auto; min-height:0; width:100%; position:relative; z-index:6; display:flex; align-items:center; justify-content:center; overflow:visible">
 
     <sc-if value="{{ f.firstVote.show }}" hint-placeholder-val="{{ false }}">
       <div sc-camel-on-click="{{ f.firstVote.start }}" title="Call the first Class Vote — Headmaster only" style="cursor:pointer; box-sizing:border-box; border:5px solid #231F20; border-radius:16px; box-shadow:10px 10px 0 rgba(35,31,32,.28); background:#EDE31B; padding:34px 46px; display:flex; flex-direction:column; align-items:center; gap:10px">
@@ -4430,8 +4430,7 @@
     </sc-if>
 
     <sc-if value="{{ f.loc.show }}" hint-placeholder-val="{{ true }}">
-      <div style="width:{{ f.stage.locW }}px; height:{{ f.stage.locH }}px; flex:none; overflow:hidden">
-      <div style="width:760px; height:320px; flex:none; transform:scale({{ f.stage.locScale }}); transform-origin:top left; pointer-events:auto; box-sizing:border-box; border:5px solid #231F20; border-radius:16px; box-shadow:10px 10px 0 rgba(35,31,32,.28); background:#231F20; overflow:hidden; display:flex; align-items:stretch">
+      <div style="width:760px; height:320px; flex:none; transform:scale({{ f.stage.locScale }}); pointer-events:auto; box-sizing:border-box; border:5px solid #231F20; border-radius:16px; box-shadow:10px 10px 0 rgba(35,31,32,.28); background:#231F20; overflow:hidden; display:flex; align-items:stretch">
         <div style="position:relative; height:100%; aspect-ratio:1/1; flex:none; overflow:hidden; background:#EFE6C8">
           <img src="{{ f.loc.img }}" alt="scene location" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 45%">
           <div style="position:absolute; inset:0; box-shadow:inset 0 0 0 4px rgba(35,31,32,.18)"></div>
@@ -4471,12 +4470,10 @@
           </div>
         </div>
       </div>
-      </div>
     </sc-if>
 
     <sc-if value="{{ f.voteBar.show }}" hint-placeholder-val="{{ false }}">
-      <div style="width:{{ f.stage.voteW }}px; height:{{ f.stage.voteH }}px; flex:none; overflow:hidden">
-      <div style="width:1300px; height:300px; flex:none; transform:scale({{ f.stage.voteScale }}); transform-origin:top left; pointer-events:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px">
+      <div style="width:1300px; height:300px; flex:none; transform:scale({{ f.stage.voteScale }}); pointer-events:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px">
         <div style="width:100%; display:flex; align-items:center; justify-content:space-between; gap:32px">
           <div style="display:flex; flex-direction:column; gap:8px; flex:1 1 0; min-width:0">
             <div style="display:flex; align-items:center; gap:11px">
@@ -4505,7 +4502,6 @@
           </div>
           <div style="font-family:'Lora',serif; font-style:italic; font-size:28px; line-height:1; color:#231F20">Spend your Drama!</div>
         </div>
-      </div>
       </div>
     </sc-if>
 
@@ -4883,6 +4879,12 @@
               <div style="flex:1 1 0; border:4.5px solid #EFE6C8; background:#231F20; box-sizing:border-box; padding:10.5px 12px; display:flex; align-items:center">
                 <div style="font-family:'Lora',serif; font-style:italic; font-size:15.75px; line-height:1.35; color:#EFE6C8; text-wrap:pretty">{{ f.demon.goal }}</div>
               </div>
+              <div style="flex:none; border:4.5px solid #EFE6C8; background:{{ f.demon.costBg }}; box-sizing:border-box; min-height:36px; padding:5px 8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px">
+                <sc-if value="{{ f.demon.costNoteShow }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.12em; line-height:1; color:{{ f.demon.costInk }}; white-space:nowrap">{{ f.demon.costNote }}</div>
+                </sc-if>
+                <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12.5px; letter-spacing:.06em; line-height:1; color:{{ f.demon.costInk }}; white-space:nowrap">{{ f.demon.costLabel }}</div>
+              </div>
             </div>
           </div>
         </sc-if>
@@ -4937,6 +4939,7 @@
         <div style="position:relative; flex:1 1 auto; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px">
           <sc-if value="{{ f.demonRoll.ready }}" hint-placeholder-val="{{ true }}">
             <div sc-camel-on-click="{{ f.demonRoll.roll }}" style="cursor:pointer; padding:15px 46px; border-radius:13px; background:#EDE31B; border:5px solid #231F20; box-sizing:border-box; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; letter-spacing:.09em; line-height:1; color:#231F20; box-shadow:6px 6px 0 rgba(35,31,32,.45)">ROLL</div>
+            <div sc-camel-on-click="{{ f.demonRoll.cancel }}" style="cursor:pointer; padding:9px 22px; border-radius:10px; background:transparent; border:3px solid rgba(239,230,200,.45); box-sizing:border-box; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.09em; line-height:1; color:rgba(239,230,200,.8)">{{ f.demonRoll.cancelLabel }}</div>
           </sc-if>
           <sc-if value="{{ f.demonRoll.settled }}" hint-placeholder-val="{{ false }}">
             <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:20px; letter-spacing:.1em; color:#231F20; background:{{ f.demonRoll.verdictInk }}; padding:7px 18px; border-radius:9px; border:4px solid #231F20">{{ f.demonRoll.mark }}</div>
@@ -5292,6 +5295,13 @@
                     <div sc-camel-on-click="{{ r.tableInc }}" style="cursor:pointer; width:18px; height:18px; display:grid; place-items:center; border-radius:5px; background:rgba(239,230,200,.12); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; color:#EFE6C8">+</div>
                   </div>
                 </sc-if>
+                <!-- Every column must emit exactly one grid child, shown or
+                     not: an omitted cell doesn't leave a gap, it slides every
+                     later column one slot to the left (which is how seat
+                     values ended up under the TABLE heading). -->
+                <sc-if value="{{ r.tableHide }}" hint-placeholder-val="{{ true }}">
+                  <div></div>
+                </sc-if>
                 <sc-for list="{{ r.cells }}" as="cell" hint-placeholder-count="4">
                   <sc-if value="{{ cell.show }}" hint-placeholder-val="{{ true }}">
                     <div style="display:flex; align-items:center; justify-content:center; gap:4px">
@@ -5299,6 +5309,9 @@
                       <div style="min-width:22px; text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:14px; color:{{ cell.ink }}">{{ cell.value }}</div>
                       <div sc-camel-on-click="{{ cell.inc }}" style="cursor:pointer; width:18px; height:18px; display:grid; place-items:center; border-radius:5px; background:rgba(239,230,200,.12); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; color:#EFE6C8">+</div>
                     </div>
+                  </sc-if>
+                  <sc-if value="{{ cell.hide }}" hint-placeholder-val="{{ false }}">
+                    <div></div>
                   </sc-if>
                 </sc-for>
               </div>
@@ -5619,7 +5632,7 @@ const RULES = [
     {t:'p', text:'The Demon is the main event — the big, nasty threat the Students face before the session ends. It can be an actual demon, a monster, or a mundane threat: a disaster, a secret organization, an evil teacher, ninjas, even alien invaders. The group creates it together at the start.'},
     {t:'p', text:'The Demon enters when a Student’s Best Friend Calls a Challenge on her and narrates how the Demon complicates the action. From then on the Headmaster narrates what the Demon does.'},
     {t:'h', text:'Challenging the Demon'},
-    {t:'p', text:'A Student may Call a Challenge on the Demon (unless she holds 5 Drama), narrating how the situation works against it. She gains 1 Drama for Calling, plus 1 more for every Bad End step currently marked, capped at the Drama max of 5 — but never gains more from the result. The Demon rolls and succeeds on 4–6.'},
+    {t:'p', text:'Calling a Challenge on the Demon costs Drama rather than granting it: 1 Drama, plus 1 more for every Bad End step already marked, capped at 5. With two Bad End steps marked it costs 3 Drama. A Student who cannot pay the price cannot Call the Demon at all. She narrates how the situation works against it, and gains nothing from the result. The Demon rolls and succeeds on 4–6.'},
     {t:'li', text:'Its target lowers by 1 for every unresolved Student Goal, and raises by 1 for every Strike taken. It can never go below 2 or above 6 — the Demon always fails on a 1.'},
     {t:'li', text:'Every success marks the Bad End track; every failure marks the Good End track. Marks needed equals the number of Students playing.'},
     {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one. If success becomes mathematically impossible, the Demon becomes the next Lead and does not retreat.'}
@@ -6098,13 +6111,13 @@ class TBPBase extends DCLogic {
       // which visually credited her with something the whole table earned.
       // They get their own TABLE column instead; no seat column shows them.
       const cells = [0,1,2,3].map(k => {
-        if (row.table) return {show: false, value: '', ink: '', dec: () => {}, inc: () => {}};
-        if (activeSeats.indexOf(k) < 0) return {show: false, value: '', ink: '', dec: () => {}, inc: () => {}};
+        if (row.table) return {show: false, hide: true, value: '', ink: '', dec: () => {}, inc: () => {}};
+        if (activeSeats.indexOf(k) < 0) return {show: false, hide: true, value: '', ink: '', dec: () => {}, inc: () => {}};
         const field = spec.field === 'goalsCleared' ? null : spec.field;
         const cur = field ? (Number(this.state.chars[k][field]) || 0) : (this.state.goalsDone[k] || []).filter(Boolean).length;
         const winner = row.winnerSeat === k;
         return {
-          show: true, value: cur, ink: winner && isWinning ? '#EDE31B' : '#EFE6C8',
+          show: true, hide: false, value: cur, ink: winner && isWinning ? '#EDE31B' : '#EFE6C8',
           dec: field ? (() => this.patch(k, {[field]: Math.max(0, cur - 1)})) : (() => {}),
           inc: field ? (() => this.patch(k, {[field]: cur + 1})) : (() => {})
         };
@@ -6116,6 +6129,7 @@ class TBPBase extends DCLogic {
         nameInk: isWinning ? '#EDE31B' : '#EFE6C8',
         cells,
         tableShow: row.table,
+        tableHide: !row.table,
         tableValue: row.table ? row.value : '',
         tableInk: isWinning ? '#EDE31B' : '#EFE6C8',
         tableDec: row.table ? tableEdit.dec : () => {},
@@ -6214,14 +6228,31 @@ class TBPBase extends DCLogic {
     this.timers[i + 'd'] = setTimeout(() => this.patch(i, {dramaPop: false}), 800);
   }
 
-  // Softlock escape hatch: when every playing Student is simultaneously
-  // maxed/broken (see the allMaxed guard in renderVals), nobody can call a
+  // Calling a Challenge on the Demon costs Drama rather than granting it,
+  // and gets steeper the deeper the Bad End track is marked: 1 + current Bad
+  // End steps, capped at the Drama max so it can never exceed a full purse.
+  demonCost() { return Math.min(5, 1 + (Number(this.state.badEnd) || 0)); }
+
+  canAffordDemon(i) { return (Number(this.state.chars[i].drama) || 0) >= this.demonCost(); }
+
+  spendDrama(i, n) {
+    const cur = Number(this.state.chars[i].drama) || 0;
+    this.patch(i, {drama: Math.max(0, cur - n), dramaPop: true});
+    clearTimeout(this.timers[i + 'd']);
+    this.timers[i + 'd'] = setTimeout(() => this.patch(i, {dramaPop: false}), 800);
+  }
+
+  // Softlock escape hatch: when every playing Student is Breaking at once
+  // (see the allBreaking guard in renderVals), nobody can be Called to a
   // Challenge to formally resolve anyone's Break. Any one of them can press
-  // her own flashing badge to Break directly — no Challenge/roll needed.
+  // her own flashing BREAK! control to Break directly — no Challenge needed.
+  // It lands exactly like a Called Break does, narration bubble and all.
   forceBreak(i) {
     const c = this.state.chars[i];
-    if (!c.broken && (Number(c.drama) || 0) < 5) return;
-    this.patch(i, {drama: 0, broken: false, breakResult: false, achBreaks: (Number(c.achBreaks) || 0) + 1, dramaPop: true});
+    if (!c.broken) return;
+    clearInterval(this.timers[i + 'i']); clearTimeout(this.timers[i + 't']); clearTimeout(this.timers[i + 'l']);
+    this.patch(i, {phase: 'result', breakResult: true, broken: false, psychic: false, drama: 0,
+      achBreaks: (Number(c.achBreaks) || 0) + 1, dramaPop: true});
     clearTimeout(this.timers[i + 'd']);
     this.timers[i + 'd'] = setTimeout(() => this.patch(i, {dramaPop: false}), 800);
   }
@@ -6613,17 +6644,16 @@ class TBPBase extends DCLogic {
     if (ch && ch.phase === 'pick') { this.setState({challenge: null}); return; }
     if (!ch || ch.resolved) return;
     // A Challenge called on the Demon skips the normal 'pick' phase (see
-    // selectTarget) and goes straight to 'active' with Drama already
-    // gained — so unlike the student-vs-student cancel above, canceling here
-    // has to refund it to match "cancel costs nothing" for both paths. The
-    // refund matches whatever was actually granted at call time (stored on
-    // demonRoll.cost), since the Bad End track — and so the cost formula —
+    // selectTarget) and goes straight to 'active' with its price already
+    // paid — so canceling before the roll hands that Drama straight back.
+    // The refund matches whatever was actually charged at call time (stored
+    // on demonRoll.cost), since the Bad End track — and so the cost formula —
     // may have moved since the Call.
     if (ch.rel === 'demon') {
       if (this.state.demonRoll && this.state.demonRoll.phase === 'ready') {
         const c = this.state.chars[ch.by];
         const refund = Number(this.state.demonRoll.cost) || 1;
-        this.patch(ch.by, {drama: Math.max(0, (Number(c.drama) || 0) - refund)});
+        this.patch(ch.by, {drama: Math.min(5, (Number(c.drama) || 0) + refund)});
         this.setState({challenge: null, demonRoll: null});
       }
       return;
@@ -6649,12 +6679,12 @@ class TBPBase extends DCLogic {
     const by = ch.by;
     if (target === 'demon') {
       if (!this.demonPresent()) return;
+      // She pays the Demon's price up front — and can't Call it at all if her
+      // purse is short (the Demon box says so rather than silently ignoring).
+      const demonCost = this.demonCost();
+      if (!this.canAffordDemon(by)) return;
       this.reset(by, {quirk: null, psychic: false});
-      // Calling on the Demon costs more Drama the deeper the Bad End track
-      // is marked: 1 + current Bad End steps, capped at the game's normal
-      // Drama max (5) so a single Call can never grant more than that.
-      const demonCost = Math.min(5, 1 + (Number(this.state.badEnd) || 0));
-      this.addDrama(by, demonCost);
+      this.spendDrama(by, demonCost);
       this.setState({rollMode: null, challenge: {by, rel: 'demon', phase: 'active', resolved: false},
         demonRoll: {by, phase: 'ready', face: null, success: null, cost: demonCost}});
       return;
@@ -6835,16 +6865,14 @@ class TBPBase extends DCLogic {
     const playerSpent = vote ? Object.values(vote.alloc[player]).reduce((a, b) => a + b, 0) : 0;
     const playerCap = Number(this.state.chars[player].drama) || 0;
     const playerReady = !!(voteActive && this.state.voteReady[player]);
-    // Softlock guard: if every playing Student is simultaneously stuck at
-    // max Drama (or already auto-broken but not yet formally resolved),
-    // nobody's "Call a Challenge" tool works — broken Students have every
-    // tool disabled, and a maxed-but-unbroken Student can't call either
-    // (canCall requires her own Drama under 5). Nothing can ever move the
-    // game forward again unless someone can Break without being Called
-    // first, so flash a direct BREAK! control on every one of them.
+    // Softlock guard: this is about every playing Student *Breaking* at once,
+    // which is not the same thing as everyone sitting at max Drama. A girl at
+    // 5 Drama is merely full; she only starts Breaking once she'd gain another
+    // on top of that. When all of them are Breaking, none can be Called to a
+    // Challenge to resolve it, so the table stops — one of them has to Break
+    // without a Challenge, so flash a direct BREAK! control on every one.
     const amActiveSeats = this.state.activeSeats || [0,1,2,3];
-    const cannotCall = k => { const cc = this.state.chars[k]; return !!cc.broken || (Number(cc.drama) || 0) >= 5; };
-    const allMaxed = amActiveSeats.length > 0 && amActiveSeats.every(cannotCall);
+    const allBreaking = amActiveSeats.length > 0 && amActiveSeats.every(k => !!this.state.chars[k].broken);
     const cards = this.state.chars.map((c, i) => {
       const rollMode = active === i;
       const shout = this.state.shoutSeat === i;
@@ -6860,11 +6888,11 @@ class TBPBase extends DCLogic {
       const rolled = c.phase === 'result';
       const needsBreak = !!c.broken && rollMode && !rolled;
       // Softlock escape hatch (see forceBreak()): when every playing Student
-      // is maxed/broken, nobody can be Called to a Challenge, so this flashes
+      // is Breaking, nobody can be Called to a Challenge, so this flashes
       // right on the seat's own die-roll control instead — the same slot a
       // normal Challenge roll/resolve would use — rather than on her Drama
       // gauge, which isn't where any other roll/resolve action ever lives.
-      const forceBreakReady = allMaxed && ((Number(c.drama) || 0) >= 5 || c.broken) && !rollMode;
+      const forceBreakReady = allBreaking && !!c.broken && !rollMode && !rolled;
       const success = rolled && c.face >= t;
       const failure = rolled && !success;
       const showResult = rolled || psi;
@@ -6958,7 +6986,10 @@ class TBPBase extends DCLogic {
         })),
         quirkText: quirkSel === 0 || quirkSel === 1 ? c.quirks[quirkSel] : '',
         showOptions: rollMode && !(rolling || rolled || psi) && !c.psychic && !c.psiExit && !needsBreak,
-        bubbleShow: rollMode && !needsBreak && !((c.psychic || c.psiExit) && !(rolling || rolled || psi)),
+        // A Break taken without being Called (the all-Breaking softlock) has
+        // no rollMode behind it, but it still deserves the same narration
+        // bubble a Called Break gets.
+        bubbleShow: (rollMode || (rolled && c.breakResult)) && !needsBreak && !((c.psychic || c.psiExit) && !(rolling || rolled || psi)),
         bubbleResult: rolled || psi,
         bubbleRolling: rolling,
         bubbleQuirk: !(rolling || rolled || psi) && (quirkSel === 0 || quirkSel === 1),
@@ -7212,15 +7243,27 @@ class TBPBase extends DCLogic {
     const demonIn = !this.state.demonForcedOut && (this.state.demonIn || dLead || this.state.focusIdx === 1);
     const demonPick = pickPhase && demonIn;
     const demonChallenged = !!ch && ch.rel === 'demon' && !ch.resolved;
+    // The Demon's price is 1 + the Bad End steps already marked, so it climbs
+    // as the session sours. While someone is choosing a target, the box shows
+    // whether she can actually afford it rather than just refusing the click.
+    const demonCost = this.demonCost();
+    const demonCaller = pickPhase ? ch.by : null;
+    const demonBroke = demonCaller != null && !this.canAffordDemon(demonCaller);
+    const demonCallable = demonPick && !demonBroke;
     const demon = {
       order: demonOrder,
       present: demonIn, absent: !demonIn,
       name: this.state.demonName, goal: this.state.demonGoal,
       status: demonChallenged ? 'CHALLENGED' : 'DEMON',
-      cursor: demonPick ? 'pointer' : 'pointer',
-      glow: demonPick ? 'tbp-pickglowred 1s ease-in-out infinite' : (demonChallenged ? 'tbp-active 1.1s ease-in-out infinite' : 'none'),
-      showArrow: demonPick,
-      click: () => { if (demonPick) this.selectTarget('demon'); else if (!dLead && (!window.TBPNet || !window.TBPNet.role || window.TBPNet.role === 'gm')) this.toggleDemon(); }
+      costLabel: demonBroke ? 'NEEDS ' + demonCost + ' DRAMA' : 'CALL: ' + demonCost + ' DRAMA',
+      costNote: demonBroke ? 'NOT ENOUGH' : '',
+      costNoteShow: demonBroke,
+      costBg: demonBroke ? '#231F20' : '#EFE6C8',
+      costInk: demonBroke ? '#E23A3A' : '#B4322C',
+      cursor: demonPick && demonBroke ? 'not-allowed' : 'pointer',
+      glow: demonCallable ? 'tbp-pickglowred 1s ease-in-out infinite' : (demonChallenged ? 'tbp-active 1.1s ease-in-out infinite' : 'none'),
+      showArrow: demonCallable,
+      click: () => { if (demonPick) { if (demonCallable) this.selectTarget('demon'); } else if (!dLead && (!window.TBPNet || !window.TBPNet.role || window.TBPNet.role === 'gm')) this.toggleDemon(); }
     };
 
     const dr = this.state.demonRoll;
@@ -7254,6 +7297,9 @@ class TBPBase extends DCLogic {
       mark: dr && dr.success != null ? (dr.success ? '+1 BAD END' : '+1 GOOD END') : '',
       vanish: dr && dr.success != null && !dLead ? 'The Demon vanishes. It will not return until the Lead changes.' : 'Demon-led Scene — the Demon does not retreat.',
       roll: () => this.rollDemon(),
+      // Backing out before the die is thrown hands the Call's Drama back.
+      cancelLabel: dr && dr.cost ? 'CANCEL — REFUNDS ' + dr.cost + ' DRAMA' : 'CANCEL',
+      cancel: () => this.cancelChallenge(),
       close: () => this.setState({demonRoll: null}),
       stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); }
     };
@@ -7385,17 +7431,7 @@ class TBPBase extends DCLogic {
       const locScale = this.state.locScale == null ? 1 : this.state.locScale;
       const voteScale = this.state.voteScale == null ? 1 : this.state.voteScale;
       const resScale = this.state.resScale == null ? 1 : this.state.resScale;
-      // transform:scale() shrinks how a card *renders* but not the layout
-      // box it reserves — at low scales (narrow windows) that left a huge
-      // dead gap between the card and whatever sits below it. Giving each
-      // card's wrapper the already-scaled pixel size (instead of its full
-      // unscaled size) lets the stage collapse down to the card's real
-      // on-screen footprint.
-      return {
-        locScale, voteScale, resScale,
-        locW: Math.round(760 * locScale), locH: Math.round(320 * locScale),
-        voteW: Math.round(1300 * voteScale), voteH: Math.round(300 * voteScale)
-      };
+      return {locScale, voteScale, resScale};
     })();
     const focusPicker = ['GOAL', 'VS DEMON', 'DEMON LEAD'].map((label, k) => ({
       label, pick: () => this.setState({focusIdx: k}),

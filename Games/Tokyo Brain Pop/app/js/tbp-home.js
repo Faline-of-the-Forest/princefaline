@@ -36,7 +36,10 @@ function panel(opts) {
       (i > 0 ? 'margin-top:12px;' : '') + '">'
   ).join('');
   host.innerHTML =
-    '<div style="width:min(620px,94vw);background:' + YEL + ';border:6px solid ' + INK +
+    // The wide letter-spacing suits typed-in digits but stretches the
+    // placeholder into unreadable mush, so the hint text keeps normal spacing.
+    '<style>#tbp-gate-panel input::placeholder{letter-spacing:.02em;font-size:22px;opacity:.55}</style>' +
+    '<div id="tbp-gate-panel" style="width:min(620px,94vw);background:' + YEL + ';border:6px solid ' + INK +
       ';box-shadow:18px 18px 0 ' + RED + ';padding:30px 32px 32px;transform:rotate(-.6deg)">' +
       '<div style="' + DOT + 'font-size:15px;letter-spacing:.2em;color:' + RED + '">' + opts.tag + '</div>' +
       '<div style="' + ANTON + 'font-size:52px;line-height:1;letter-spacing:.02em;text-transform:uppercase;' +
