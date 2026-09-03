@@ -54,6 +54,32 @@ const Net = {
 
   normalize,
 
+  // Creates a room under a fresh, unique 4-digit code instead of a
+  // player-chosen name, and joins it as the Headmaster. The transaction
+  // retries against a fresh random code whenever one's already taken, so two
+  // people opening a room at the same instant can never collide.
+  async createRoom(displayName) {
+    await authReady;
+    for (let attempt = 0; attempt < 25; attempt++) {
+      const code = String(Math.floor(1000 + Math.random() * 9000));
+      const ref = doc(db, "rooms", code);
+      const created = await runTransaction(db, async (tx) => {
+        const snap = await tx.get(ref);
+        if (snap.exists()) return false;
+        tx.set(ref, { name: code, createdAt: serverTimestamp(), sharedJson: null, players: {} });
+        return true;
+      });
+      if (created) {
+        this.roomId = code; this.role = "gm"; this.seat = null;
+        await updateDoc(ref, {
+          ["players." + this.session]: { role: "gm", seat: null, name: displayName || null, at: Date.now() }
+        });
+        return code;
+      }
+    }
+    throw new Error("Couldn't generate a free room code — try again.");
+  },
+
   async join(roomName, role, seat, displayName) {
     await authReady;
     const id = normalize(roomName);

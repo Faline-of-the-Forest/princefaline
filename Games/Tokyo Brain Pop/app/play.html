@@ -4346,6 +4346,10 @@
     </div>
 
     <div style="flex:1 1 auto; min-width:0; box-sizing:border-box; background:#231F20; border-radius:14px; padding:12px min(1vw,18px); box-shadow:6px 6px 0 rgba(35,31,32,.28); display:flex; align-items:center; justify-content:center; gap:min(.5vw,11px); overflow:hidden">
+      <div title="Room code — share this with anyone joining" style="flex:none; display:flex; flex-direction:column; align-items:center; gap:1px; margin-right:min(.9vw,14px); padding-right:min(.9vw,16px); border-right:3px solid rgba(239,230,200,.18)">
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.82vw + 5px,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:rgba(239,230,200,.55)">ROOM CODE</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.85vw + 11px,26px); line-height:1; color:#EDE31B; letter-spacing:.08em; text-align:center">{{ f.rail.roomCode }}</div>
+      </div>
       <div ref="{{ f.anchors.good }}" style="display:flex; flex-direction:column; align-items:center; gap:1px; flex:none">
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.82vw + 5px,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:#9CB39A">GOOD END</div>
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.85vw + 11px,26px); line-height:1; color:#9CB39A; text-align:center">{{ f.rail.goodCount }}</div>
@@ -4951,6 +4955,10 @@
               <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:40px; line-height:1; color:#231F20">CHARACTER SELECT</div>
             </div>
             <div style="flex:1; height:3px; background:linear-gradient(90deg, rgba(246,167,202,.6), rgba(239,230,200,0))"></div>
+            <div title="Share this code so others can join" style="flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:1px">
+              <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.16em; line-height:1; color:rgba(239,230,200,.55)">ROOM CODE</div>
+              <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; letter-spacing:.1em; line-height:1; color:#EDE31B">{{ f.setup.roomCode }}</div>
+            </div>
           </div>
         </sc-if>
 
@@ -7231,6 +7239,7 @@ class TBPBase extends DCLogic {
       sceneInk: demonWarn ? '#E23A3A' : '#EFE6C8',
       demonWarn: demonWarn,
       demonName: this.state.demonName, demonGoal: this.state.demonGoal,
+      roomCode: (window.TBPNet && window.TBPNet.roomId) || '',
       goodCount: good, badCount: bad,
       goodSquares: goodTiers.map(k => ({bg: good >= k ? '#9CB39A' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setEnd('good', k, tierMax)) : (() => {})})),
       badSquares: badTiers.map(k => ({bg: bad >= k ? '#B4322C' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setEnd('bad', k, tierMax)) : (() => {})})),
@@ -7389,6 +7398,7 @@ class TBPBase extends DCLogic {
     const fs = SEATS[fSeat] || SEATS[0];
     const setup = {
       open: this.state.setupOpen,
+      roomCode: (window.TBPNet && window.TBPNet.roomId) || '',
       // Reference size tuned to what a normal browser window actually gives
       // us (not a fullscreen monitor) — the original 980px height reference
       // over-shrank this whole screen on completely ordinary ~700-800px

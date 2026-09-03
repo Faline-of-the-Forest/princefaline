@@ -107,7 +107,7 @@ function pickStudent(taken, locks) {
 }
 
 (async function () {
-  if (!roomName) { fail('No room was given. Head back and pick one from the title screen.'); return; }
+  if (!roomName) { fail('No room code was given. Head back and create or join one from the title screen.'); return; }
   let data = null;
   try { data = await Net.peek(roomName); } catch (e) { /* treat as new */ }
 

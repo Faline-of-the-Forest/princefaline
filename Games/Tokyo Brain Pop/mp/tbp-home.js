@@ -65,29 +65,48 @@ function panel(opts) {
 function busy(msg, text) { msg.style.color = INK; msg.textContent = text; }
 
 export const TBPHome = {
+  // No more naming a room — she's handed a fresh 4-digit code instead.
   createRoom() {
-    panel({
-      tag: 'ルーム作成 / NEW CELL', title: 'Create Room', placeholder: 'room name',
-      confirm: 'Open', onConfirm: async (raw, msg) => {
-        const id = Net.normalize(raw);
-        if (!id) { msg.textContent = 'TYPE A ROOM NAME.'; return; }
-        busy(msg, 'OPENING…');
-        const existing = await Net.peek(id);
-        if (existing) { msg.style.color = RED; msg.textContent = 'THAT ROOM EXISTS — USE JOIN.'; return; }
-        location.href = 'play.html?room=' + encodeURIComponent(id);
+    close();
+    host = document.createElement('div');
+    host.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(16,13,11,.82);' +
+      'display:flex;align-items:center;justify-content:center;padding:24px;' + "font-family:'Zen Kaku Gothic New',system-ui,sans-serif";
+    host.innerHTML =
+      '<div style="width:min(460px,94vw);background:' + YEL + ';border:6px solid ' + INK +
+        ';box-shadow:18px 18px 0 ' + RED + ';padding:30px 32px 32px;transform:rotate(-.6deg)">' +
+        '<div style="' + DOT + 'font-size:15px;letter-spacing:.2em;color:' + RED + '">ルーム作成 / NEW CELL</div>' +
+        '<div style="' + ANTON + 'font-size:44px;line-height:1;letter-spacing:.02em;text-transform:uppercase;' +
+          'color:' + INK + ';margin:6px 0 18px">Opening Room…</div>' +
+        '<div id="tbp-msg" style="' + DOT + 'font-size:15px;letter-spacing:.12em;color:' + RED + ';min-height:20px"></div>' +
+        '<div id="tbp-cancel" style="display:none;cursor:pointer;margin-top:14px;' + ANTON + 'font-size:26px;letter-spacing:.06em;' +
+          'text-transform:uppercase;background:transparent;color:' + INK + ';padding:12px 24px;' +
+          'border:4px solid ' + INK + ';display:inline-block">Back</div>' +
+      '</div>';
+    document.body.appendChild(host);
+    const msg = host.querySelector('#tbp-msg');
+    const cancel = host.querySelector('#tbp-cancel');
+    cancel.onclick = close;
+    (async () => {
+      try {
+        const code = await Net.createRoom();
+        location.href = 'play.html?room=' + encodeURIComponent(code) + '&gm=1';
+      } catch (e) {
+        msg.style.color = RED;
+        msg.textContent = String((e && e.message) || e).toUpperCase();
+        cancel.style.display = 'inline-block';
       }
-    });
+    })();
   },
 
   joinRoom() {
     panel({
-      tag: '参加 / EXISTING CELL', title: 'Join Room', placeholder: 'room name',
+      tag: '参加 / EXISTING CELL', title: 'Join Room', placeholder: 'room code', numeric: true,
       confirm: 'Join', onConfirm: async (raw, msg) => {
         const id = Net.normalize(raw);
-        if (!id) { msg.textContent = 'TYPE A ROOM NAME.'; return; }
+        if (!id) { msg.textContent = 'ENTER THE ROOM CODE.'; return; }
         busy(msg, 'LOOKING…');
         const existing = await Net.peek(id);
-        if (!existing) { msg.style.color = RED; msg.textContent = 'NO ROOM BY THAT NAME.'; return; }
+        if (!existing) { msg.style.color = RED; msg.textContent = 'NO ROOM WITH THAT CODE.'; return; }
         location.href = 'play.html?room=' + encodeURIComponent(id);
       }
     });
