@@ -80,6 +80,14 @@ async function listDir(path, env) {
   return res.json(); // array of { name, path, sha, ... }
 }
 
+// The ledger keeps decimal hours for the running totals, but runtime "HH:MM" is
+// what actually gets typed, so hours are always derived from it.
+function hoursFromRuntime(rt, fallback) {
+  const m = /^s*(d+)s*:s*([0-5]?d)s*$/.exec(String(rt || ""));
+  if (!m) return Number(fallback) || 0;
+  return Math.round((Number(m[1]) + Number(m[2]) / 60) * 100) / 100;
+}
+
 function slugify(s) {
   return s.toLowerCase().trim().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
@@ -107,7 +115,7 @@ async function loadCampaignsIndex(env) {
   const entries = await listDir("content/campaigns", env);
   return Promise.all(entries.filter(e => e.name.endsWith(".json")).map(async e => {
     const f = await getFile(`content/campaigns/${e.name}`, env);
-    return { slug: f.content.slug, name: f.content.name, status: f.content.status, sys: f.content.sys };
+    return { slug: f.content.slug, name: f.content.name, status: f.content.status, sys: f.content.sys, ed: f.content.ed || "" };
   }));
 }
 
@@ -197,8 +205,16 @@ async function handleApi(request, env, url) {
       const body = await request.json();
       const file = await getFile("content/sessions.json", env);
       const sessions = file.content.sessions;
-      const rec = { d: body.d, t: body.t, campaignSlug: body.campaignSlug || "", s: body.s, h: Number(body.h), rt: body.rt };
-      if (body.ed) rec.ed = body.ed;
+      const campaignSlug = body.campaignSlug || "";
+      // A campaign never changes system, so its sessions inherit sys/ed from it and
+      // whatever the form sent is ignored. Only one-shots pick a system of their own.
+      let sys = body.s || "", ed = body.ed || "";
+      if (campaignSlug) {
+        const cf = await getFile("content/campaigns/" + campaignSlug + ".json", env);
+        if (cf) { sys = cf.content.sys || ""; ed = cf.content.ed || ""; }
+      }
+      const rec = { d: body.d, t: body.t, campaignSlug, s: sys, h: hoursFromRuntime(body.rt, body.h), rt: body.rt };
+      if (ed) rec.ed = ed;
       if (!rec.campaignSlug) {
         // Every one-shot automatically gets its own page.
         const existingSlugs = sessions.filter(s => !s.campaignSlug && String(s.n) !== String(body.n)).map(s => s.slug).filter(Boolean);
@@ -380,6 +396,10 @@ function adminPage() {
   .modal-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
   .modal-close{background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0;line-height:1}
   .hidden{display:none !important}
+  .withbtn{display:flex;gap:6px;align-items:stretch}
+  .withbtn input{flex:1;margin-bottom:0}
+  .withbtn button{margin-top:0;white-space:nowrap}
+  .inherited{font-size:13px;color:var(--faint);margin-top:10px}
 </style>
 </head>
 <body>
@@ -428,30 +448,33 @@ function adminPage() {
 
     <form id="form-sessions" class="editform hidden">
       <div class="row">
-        <div><label>Date</label><input name="d" type="date" required></div>
+        <div><label>Date</label>
+          <div class="withbtn"><input name="d" type="date" required><button type="button" class="secondary" data-today>Today</button></div>
+        </div>
         <div><label>Runtime (HH:MM)</label><input name="rt" placeholder="04:00" required></div>
       </div>
       <label>Title</label><input name="t" required>
       <label>Campaign</label>
       <select name="campaignSlug" id="campaignSelect"><option value="">— One-Shot —</option></select>
-      <div class="row">
-        <div><label>System</label><input name="s" required></div>
-        <div><label>Edition/Version (optional)</label><input name="ed" placeholder="e.g. 2e, VTR"></div>
+      <div id="sessionSysPick" class="hidden">
+        <label>System (from Reviews marked as "System")</label>
+        <select id="sessionSysSelect"><option value="">— choose a system —</option></select>
       </div>
-      <label>Hours (decimal, e.g. 4.0)</label><input name="h" type="number" step="0.01" required>
+      <div id="sessionSysInherited" class="inherited hidden"></div>
+      <input type="hidden" name="s"><input type="hidden" name="ed"><input type="hidden" name="h">
     </form>
 
     <form id="form-oneshots" class="editform hidden">
       <div class="row">
-        <div><label>Date</label><input name="d" type="date" required></div>
+        <div><label>Date</label>
+          <div class="withbtn"><input name="d" type="date" required><button type="button" class="secondary" data-today>Today</button></div>
+        </div>
         <div><label>Runtime (HH:MM)</label><input name="rt" placeholder="04:00" required></div>
       </div>
       <label>Title</label><input name="t" required>
-      <div class="row">
-        <div><label>System</label><input name="s" required></div>
-        <div><label>Edition/Version (optional)</label><input name="ed" placeholder="e.g. 2e, VTR"></div>
-      </div>
-      <label>Hours (decimal, e.g. 4.0)</label><input name="h" type="number" step="0.01" required>
+      <label>System (from Reviews marked as "System")</label>
+      <select id="oneshotSysSelect"><option value="">— choose a system —</option></select>
+      <input type="hidden" name="s"><input type="hidden" name="ed"><input type="hidden" name="h">
       <label>Slug (leave blank to auto-generate; don't change when editing)</label><input name="slug">
       <label>Write-up (separate paragraphs with a blank line)</label><textarea name="writeup"></textarea>
       <label>Cover image (square works best)</label>
@@ -612,20 +635,92 @@ async function ensureReviewsAndPeople() {
   if (!state.people) { try { state.people = (await api("GET", "/api/list?type=people")).items; } catch (e) { state.people = []; } }
 }
 
+// Every system dropdown is filled from Reviews of type "System", which is where
+// editions live. A value with no review yet is kept as a "~keep" option so that
+// editing an old entry never silently rewrites its system.
+function fillSystemOptions(sel, currentSys, currentEd) {
+  const systems = (state.reviews || []).filter(r => r.type === "System");
+  const match = systems.find(r => r.t === currentSys && (r.ed || "") === (currentEd || ""));
+  let html = '<option value="">— choose a system —</option>' +
+    systems.map(r => '<option value="' + r.slug + '">' + escapeHtml(r.t) + (r.ed ? ' (' + escapeHtml(r.ed) + ')' : '') + '</option>').join("");
+  if (currentSys && !match) {
+    html += '<option value="~keep">' + escapeHtml(currentSys) + (currentEd ? ' (' + escapeHtml(currentEd) + ')' : '') + ' — not in Reviews</option>';
+  }
+  sel.innerHTML = html;
+  sel.value = match ? match.slug : (currentSys ? "~keep" : "");
+}
+
+function bindSysSelect(selId, formId) {
+  const sel = el(selId);
+  sel.addEventListener("change", () => {
+    if (sel.value === "~keep") return;
+    const form = el(formId);
+    const r = (state.reviews || []).find(x => x.slug === sel.value);
+    el('[name="s"]', form).value = r ? r.t : "";
+    el('[name="ed"]', form).value = r ? (r.ed || "") : "";
+  });
+}
+bindSysSelect("#sessionSysSelect", "#form-sessions");
+bindSysSelect("#oneshotSysSelect", "#form-oneshots");
+
 async function populateSysSelect(currentSys, currentEd) {
   await ensureReviewsAndPeople();
-  const sel = el("#sysReviewSelect");
-  const systems = state.reviews.filter(r => r.type === "System");
-  sel.innerHTML = '<option value="">— choose a system —</option>' +
-    systems.map(r => '<option value="' + r.slug + '">' + escapeHtml(r.t) + (r.ed ? ' (' + escapeHtml(r.ed) + ')' : '') + '</option>').join("");
-  const match = systems.find(r => r.t === currentSys && (r.ed || "") === (currentEd || ""));
-  sel.value = match ? match.slug : "";
+  fillSystemOptions(el("#sysReviewSelect"), currentSys, currentEd);
 }
 el("#sysReviewSelect").addEventListener("change", () => {
+  if (el("#sysReviewSelect").value === "~keep") return;
   const r = (state.reviews || []).find(x => x.slug === el("#sysReviewSelect").value);
   el('#form-campaigns [name="sys"]').value = r ? r.t : "";
   el('#form-campaigns [name="ed"]').value = r ? (r.ed || "") : "";
 });
+
+// A campaign owns its system, so a session logged against one only shows what it
+// inherits; a one-shot is the one case that still gets to choose.
+function applySessionSystem() {
+  const form = el("#form-sessions");
+  const slug = el("#campaignSelect").value;
+  const note = el("#sessionSysInherited");
+  el("#sessionSysPick").classList.toggle("hidden", !!slug);
+  note.classList.toggle("hidden", !slug);
+  if (slug) {
+    const camp = state.campaigns.find(c => c.slug === slug);
+    el('[name="s"]', form).value = camp ? (camp.sys || "") : "";
+    el('[name="ed"]', form).value = camp ? (camp.ed || "") : "";
+    note.textContent = camp
+      ? "System: " + camp.sys + (camp.ed ? " · " + camp.ed : "") + " — from the campaign."
+      : "This campaign has no system set; add one on the Campaigns tab.";
+  } else {
+    const sel = el("#sessionSysSelect");
+    if (sel.value === "~keep") return;
+    const r = (state.reviews || []).find(x => x.slug === sel.value);
+    el('[name="s"]', form).value = r ? r.t : "";
+    el('[name="ed"]', form).value = r ? (r.ed || "") : "";
+  }
+}
+el("#campaignSelect").addEventListener("change", applySessionSystem);
+
+// Decimal hours only exist for the running totals; runtime is the field typed.
+function hoursFromRuntime(rt) {
+  const parts = String(rt || "").split(":");
+  if (parts.length !== 2) return "";
+  const hh = parts[0].trim(), mm = parts[1].trim();
+  if (!hh || !mm || isNaN(Number(hh)) || isNaN(Number(mm))) return "";
+  return String(Math.round((Number(hh) + Number(mm) / 60) * 100) / 100);
+}
+els('.editform [name="rt"]').forEach(input => {
+  const sync = () => {
+    const h = el('[name="h"]', input.form);
+    if (h) h.value = hoursFromRuntime(input.value);
+  };
+  input.addEventListener("input", sync);
+  input.addEventListener("change", sync);
+});
+
+els("[data-today]").forEach(btn => btn.addEventListener("click", () => {
+  const input = el('input[type="date"]', btn.parentElement);
+  const now = new Date();
+  input.value = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+}));
 
 function renderMaterialsChips() {
   const box = el("#materialsChips");
@@ -772,7 +867,16 @@ async function openModal(type, id) {
   modalTitle.textContent = (id === null || id === undefined) ? "Add" : "Edit";
   backdrop.classList.add("active");
 
-  if (type === "sessions") await populateCampaignSelect();
+  if (type === "sessions") {
+    await populateCampaignSelect();
+    await ensureReviewsAndPeople();
+    fillSystemOptions(el("#sessionSysSelect"), "", "");
+    applySessionSystem();
+  }
+  if (type === "oneshots") {
+    await ensureReviewsAndPeople();
+    fillSystemOptions(el("#oneshotSysSelect"), "", "");
+  }
 
   if (type === "campaigns") {
     state.materials = []; state.cast = []; state.episodes = [];
@@ -797,7 +901,12 @@ async function openModal(type, id) {
       if (Array.isArray(item[k])) field.value = item[k].join(k === "summary" || k === "premise" || k === "writeup" ? "\\n\\n" : ", ");
       else field.value = item[k] == null ? "" : item[k];
     });
-    if (type === "sessions") el("#campaignSelect").value = item.campaignSlug || "";
+    if (type === "sessions") {
+      el("#campaignSelect").value = item.campaignSlug || "";
+      fillSystemOptions(el("#sessionSysSelect"), item.s, item.ed);
+      applySessionSystem();
+    }
+    if (type === "oneshots") fillSystemOptions(el("#oneshotSysSelect"), item.s, item.ed);
     if (type === "campaigns") {
       if (!item.summary && item.premise) el('#form-campaigns [name="summary"]').value = item.premise.join("\\n\\n");
       state.materials = (item.materials || []).slice();
@@ -855,7 +964,7 @@ el("#modal-save").addEventListener("click", async () => {
     }
     const data = {};
     els("input,select,textarea", form).forEach(f => {
-      if (f.type === "file") return;
+      if (!f.name || f.type === "file") return;
       if (f.type === "checkbox") { data[f.name] = f.checked; return; }
       data[f.name] = f.value;
     });
