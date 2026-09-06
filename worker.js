@@ -456,7 +456,11 @@ function adminPage() {
       <label>Title</label><input name="t" required>
       <label>Campaign</label>
       <select name="campaignSlug" id="campaignSelect"><option value="">— One-Shot —</option></select>
-      <div id="sessionSysInherited" class="inherited"></div>
+      <div id="sessionSysPick" class="hidden">
+        <label>System (from Reviews marked as "System")</label>
+        <select id="sessionSysSelect"><option value="">— choose a system —</option></select>
+      </div>
+      <div id="sessionSysInherited" class="inherited hidden"></div>
       <input type="hidden" name="s"><input type="hidden" name="ed"><input type="hidden" name="h">
     </form>
 
@@ -656,6 +660,7 @@ function bindSysSelect(selId, formId) {
     el('[name="ed"]', form).value = r ? (r.ed || "") : "";
   });
 }
+bindSysSelect("#sessionSysSelect", "#form-sessions");
 bindSysSelect("#oneshotSysSelect", "#form-oneshots");
 
 async function populateSysSelect(currentSys, currentEd) {
@@ -669,33 +674,28 @@ el("#sysReviewSelect").addEventListener("change", () => {
   el('#form-campaigns [name="ed"]').value = r ? (r.ed || "") : "";
 });
 
-// The system is never typed here: a campaign session takes it from the campaign,
-// a one-shot takes it from the one-shot's own entry on the One-Shots tab. The
-// session form only reports which one it is using. state.sessionSys holds the
-// one-shot's own system so switching campaign and back does not lose it.
-state.sessionSys = { s: "", ed: "" };
+// A campaign owns its system, so a session logged against one only shows what it
+// inherits; a one-shot is the one case that still gets to choose.
 function applySessionSystem() {
   const form = el("#form-sessions");
   const slug = el("#campaignSelect").value;
   const note = el("#sessionSysInherited");
-  let sys, ed, text;
+  el("#sessionSysPick").classList.toggle("hidden", !!slug);
+  note.classList.toggle("hidden", !slug);
   if (slug) {
     const camp = state.campaigns.find(c => c.slug === slug);
-    sys = camp ? (camp.sys || "") : "";
-    ed = camp ? (camp.ed || "") : "";
-    text = sys
-      ? "System: " + sys + (ed ? " · " + ed : "") + " — from the campaign."
+    el('[name="s"]', form).value = camp ? (camp.sys || "") : "";
+    el('[name="ed"]', form).value = camp ? (camp.ed || "") : "";
+    note.textContent = camp
+      ? "System: " + camp.sys + (camp.ed ? " · " + camp.ed : "") + " — from the campaign."
       : "This campaign has no system set; add one on the Campaigns tab.";
   } else {
-    sys = state.sessionSys.s;
-    ed = state.sessionSys.ed;
-    text = sys
-      ? "System: " + sys + (ed ? " · " + ed : "") + " — from the one-shot."
-      : "System: set on the One-Shots tab, with this one-shot's write-up and cover.";
+    const sel = el("#sessionSysSelect");
+    if (sel.value === "~keep") return;
+    const r = (state.reviews || []).find(x => x.slug === sel.value);
+    el('[name="s"]', form).value = r ? r.t : "";
+    el('[name="ed"]', form).value = r ? (r.ed || "") : "";
   }
-  el('[name="s"]', form).value = sys;
-  el('[name="ed"]', form).value = ed;
-  note.textContent = text;
 }
 el("#campaignSelect").addEventListener("change", applySessionSystem);
 
@@ -869,7 +869,8 @@ async function openModal(type, id) {
 
   if (type === "sessions") {
     await populateCampaignSelect();
-    state.sessionSys = { s: "", ed: "" };
+    await ensureReviewsAndPeople();
+    fillSystemOptions(el("#sessionSysSelect"), "", "");
     applySessionSystem();
   }
   if (type === "oneshots") {
@@ -902,7 +903,7 @@ async function openModal(type, id) {
     });
     if (type === "sessions") {
       el("#campaignSelect").value = item.campaignSlug || "";
-      state.sessionSys = item.campaignSlug ? { s: "", ed: "" } : { s: item.s || "", ed: item.ed || "" };
+      fillSystemOptions(el("#sessionSysSelect"), item.s, item.ed);
       applySessionSystem();
     }
     if (type === "oneshots") fillSystemOptions(el("#oneshotSysSelect"), item.s, item.ed);
