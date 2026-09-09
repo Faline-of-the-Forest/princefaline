@@ -4666,7 +4666,7 @@
 
       <div style="position:absolute; left:-39px; top:186px; width:39px; z-index:6; display:flex; flex-direction:column; gap:6px; animation:{{ c.panelAnim }}">
         <sc-for list="{{ c.bonds }}" as="b" hint-placeholder-count="2">
-          <div sc-camel-on-click="{{ b.click }}" sc-camel-on-mouse-enter="{{ b.enter }}" sc-camel-on-mouse-leave="{{ b.leave }}" style="position:relative; width:45px; height:45px; cursor:{{ b.cursor }}">
+          <div sc-camel-on-click="{{ b.click }}" sc-camel-on-mouse-enter="{{ b.enter }}" sc-camel-on-mouse-leave="{{ b.leave }}" style="position:relative; width:45px; height:45px; cursor:{{ b.cursor }}; opacity:{{ b.opacity }}; transition:opacity .14s ease-out">
             <div style="position:absolute; inset:0; overflow:hidden">
               <img src="assets/head-momo.png" alt="portrait, Hiromi" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; opacity:{{ b.oMomo }}">
               <img src="assets/head-midori.png" alt="portrait, Kotori" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; opacity:{{ b.oMidori }}">
@@ -4941,7 +4941,13 @@
 
         <div style="position:relative; flex:1 1 auto; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px">
           <sc-if value="{{ f.demonRoll.ready }}" hint-placeholder-val="{{ true }}">
-            <div sc-camel-on-click="{{ f.demonRoll.roll }}" style="cursor:pointer; padding:15px 46px; border-radius:13px; background:#EDE31B; border:5px solid #231F20; box-sizing:border-box; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; letter-spacing:.09em; line-height:1; color:#231F20; box-shadow:6px 6px 0 rgba(35,31,32,.45)">ROLL</div>
+            <div style="display:flex; align-items:center; justify-content:center; gap:14px">
+              <div sc-camel-on-click="{{ f.demonRoll.roll }}" style="cursor:pointer; padding:15px 40px; border-radius:13px; background:#EDE31B; border:5px solid #231F20; box-sizing:border-box; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; letter-spacing:.09em; line-height:1; color:#231F20; box-shadow:6px 6px 0 rgba(35,31,32,.45)">ROLL</div>
+              <div sc-camel-on-click="{{ f.demonRoll.psiUse }}" style="cursor:{{ f.demonRoll.psiCursor }}; opacity:{{ f.demonRoll.psiOpacity }}; filter:{{ f.demonRoll.psiFilter }}; padding:11px 22px; border-radius:13px; background:#F6A7CA; border:5px solid #231F20; box-sizing:border-box; text-align:center; box-shadow:6px 6px 0 rgba(35,31,32,.45)">
+                <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:19px; letter-spacing:.07em; line-height:1; color:#231F20">{{ f.demonRoll.psiLabel }}</div>
+                <div style="margin-top:5px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.08em; line-height:1; color:rgba(35,31,32,.65)">{{ f.demonRoll.psiNote }}</div>
+              </div>
+            </div>
             <div sc-camel-on-click="{{ f.demonRoll.cancel }}" style="cursor:pointer; padding:9px 22px; border-radius:10px; background:transparent; border:3px solid rgba(239,230,200,.45); box-sizing:border-box; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.09em; line-height:1; color:rgba(239,230,200,.8)">{{ f.demonRoll.cancelLabel }}</div>
           </sc-if>
           <sc-if value="{{ f.demonRoll.settled }}" hint-placeholder-val="{{ false }}">
@@ -5601,10 +5607,10 @@ const RULES = [
     {t:'p', text:'At the start of each episode, choose two Goals your Student wants to accomplish. The Demon is strengthened by every unresolved Goal, so choose ones you can actually finish.'},
     {t:'h', text:'Best Friend & Rival'},
     {t:'p', text:'At the start of the game, each Student is assigned one other Student as her Best Friend and a different one as her Rival. These bonds are not mutual — the girl assigned as your Best Friend may have you assigned as her Rival.'},
-    {t:'p', text:'Your Best Friend and Rival are the only Students you can Call a Challenge on.'}
+    {t:'p', text:'Your Best Friend and Rival are the only Students you can Call a Challenge on — and only while one of them is the Scene’s Lead. The Lead is the only Student who can be Challenged.'}
   ]},
   {label:'Challenges', title:'Challenges', blocks:[
-    {t:'p', text:'At any point in a Scene, a Student may Call a Challenge on her Rival or Best Friend, explaining how it complicates that Student’s attempt at the Scene’s focus. The Headmaster may veto an unjustified Challenge; if allowed, the caller immediately gains 1 Drama. A Student at 5 Drama (the max) cannot Call.'},
+    {t:'p', text:'At any point in a Scene, a Student may Call a Challenge on her Rival or Best Friend — but only on the Scene’s Lead, who is the only Student in the spotlight — explaining how it complicates that Student’s attempt at the Scene’s focus. The Headmaster may veto an unjustified Challenge; if allowed, the caller immediately gains 1 Drama. A Student at 5 Drama (the max) cannot Call.'},
     {t:'p', text:'Rival: explains how the situation complicates the action — never involving the Demon. Best Friend: explains how today’s Demon works against the action.'},
     {t:'h', text:'Resolving a Challenge'},
     {t:'p', text:'The Challenged Student rolls a die. The number she needs depends on Popularity: Most Popular 3–6, Average 4–6, Least Popular 5–6. If a Quirk applies, lower the target by 1.'},
@@ -5635,10 +5641,12 @@ const RULES = [
     {t:'p', text:'The Demon is the main event — the big, nasty threat the Students face before the session ends. It can be an actual demon, a monster, or a mundane threat: a disaster, a secret organization, an evil teacher, ninjas, even alien invaders. The group creates it together at the start.'},
     {t:'p', text:'The Demon enters when a Student’s Best Friend Calls a Challenge on her and narrates how the Demon complicates the action. From then on the Headmaster narrates what the Demon does.'},
     {t:'h', text:'Challenging the Demon'},
+    {t:'p', text:'Only the Scene’s Lead may Call the Demon. When the Demon is itself the Lead, any Student may Call it.'},
     {t:'p', text:'Calling a Challenge on the Demon costs Drama rather than granting it: 1 Drama, plus 1 more for every Bad End step already marked, capped at 5. With two Bad End steps marked it costs 3 Drama. A Student who cannot pay the price cannot Call the Demon at all. She narrates how the situation works against it, and gains nothing from the result. The Demon rolls and succeeds on 4–6.'},
     {t:'li', text:'Its target lowers by 1 for every unresolved Student Goal, and raises by 1 for every Strike taken. It can never go below 2 or above 6 — the Demon always fails on a 1.'},
     {t:'li', text:'Every success marks the Bad End track; every failure marks the Good End track. Marks needed equals the number of Students playing.'},
-    {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one. If success becomes mathematically impossible, the Demon becomes the next Lead and does not retreat.'}
+    {t:'li', text:'Use PSI: instead of letting the Demon roll, the Student who Called it may burn PSI at her usual escalating price. The Demon fails outright — Good End marked, Demon gone.'},
+    {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one, and once it has left it cannot be summoned back that Scene, not even by a Best Friend’s Challenge. It can return once the Scene changes. If success becomes mathematically impossible, the Demon becomes the next Lead and does not retreat.'}
   ]},
   {label:'Japanese Names', title:'Common Japanese Names', blocks:[
     {t:'p', text:'A quick reference if you need a name for a new Student, Demon, or NPC during play.'},
@@ -5821,7 +5829,7 @@ function rankFromTotals(totals) {
 }
 
 class TBPBase extends DCLogic {
-  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, spinning: {type:false,power:false,complication:false,goal:false}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[false,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonLockLead: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, locChosen: false, turnOrder: null, visitedLocs: [], achTab: false, achScenesOverride: null, achLocsOverride: null, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false, achMostPop:0, achDemon:0, achBreaks:0, achPsi:0, achChallenged:0, achFails:0, achVotes:0, achDrama:0}))};
+  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, spinning: {type:false,power:false,complication:false,goal:false}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[false,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonOut: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, locChosen: false, turnOrder: null, visitedLocs: [], achTab: false, achScenesOverride: null, achLocsOverride: null, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false, achMostPop:0, achDemon:0, achBreaks:0, achPsi:0, achChallenged:0, achFails:0, achVotes:0, achDrama:0}))};
 
   measureAnchors = () => {
     const g = this._goodEl, c = this._sceneEl;
@@ -6194,11 +6202,11 @@ class TBPBase extends DCLogic {
       : (this.state.visitedLocs || []).concat([d.locIdx]);
     this.setState({locIdx:d.locIdx, subText:d.sub, leadOverride:d.leadIdx, focusIdx:d.focusIdx,
       goalIdx:d.goalIdx, led:d.led, goalsDone:d.done, justCleared:cleared, gmDraft:null, locChosen:true, visitedLocs,
-      gmOpen: shouted != null ? false : this.state.gmOpen, shoutSeat: shouted,
-      // A new Scene starts the Demon's presence fresh — let the auto-presence
-      // rules (Demon-led / VS DEMON focus) decide again instead of carrying
-      // over last Scene's manual/auto retreat.
-      demonForcedOut: false});
+      // The Demon's "already been here" mark is keyed to the Scene itself
+      // (see sceneSig() / demonOutThisScene()), so it expires on its own the
+      // moment this Apply moves the Lead, the place or the Scene slot —
+      // there is nothing to reset by hand.
+      gmOpen: shouted != null ? false : this.state.gmOpen, shoutSeat: shouted});
     if (shouted != null) {
       clearTimeout(this._shoutT);
       this._shoutT = setTimeout(() => this.setState({shoutSeat: null}), 2700);
@@ -6273,6 +6281,9 @@ class TBPBase extends DCLogic {
     if (this.state.vote) return;
     const ch = this.state.challenge;
     if (ch && !ch.resolved) return;
+    // Nothing she is allowed to Call this Scene — the Lead is not one of her
+    // bonds and the Demon is either absent or not hers to Call.
+    if (!this.challengeableBy(i) && !(this.canCallDemon(i) && this.demonPresent())) return;
     const active = this.state.rollMode;
     if (active !== null) {
       const ap = this.state.chars[active].phase;
@@ -6296,11 +6307,17 @@ class TBPBase extends DCLogic {
       if (ap !== 'result' && ap !== 'psychic') return;
       this.reset(active, {});
     }
-    const rel = target === SEATS[i].friend ? 'friend' : (target === SEATS[i].rival ? 'rival' : null);
-    if (!rel) return;
+    // Bonds live on per-Student state, not on SEATS — a 3-player game
+    // randomizes them at launch and never writes them back to the constant.
+    const c = this.state.chars[i];
+    const rel = target === c.friend ? 'friend' : (target === c.rival ? 'rival' : null);
+    if (!rel || this.challengeableBy(i) !== rel) return;
     this.reset(target, {quirk: null, psychic: false});
     this.setState({rollMode: target, challenge: {by: i, rel, phase: 'active', resolved: false}});
-    if (rel === 'friend' && this.state.demonLockLead !== this.curLead()) this.setState({demonIn: true});
+    // A Best Friend's Challenge is what walks the Demon into the Scene — but
+    // only the first time. Once it has come and gone it stays gone until the
+    // Scene changes (or the Headmaster puts it back by hand).
+    if (rel === 'friend' && !this.demonOutThisScene()) this.setState({demonIn: true, demonOut: null});
     this.addDrama(i, 1);
   }
 
@@ -6682,7 +6699,9 @@ class TBPBase extends DCLogic {
     if (!ch || ch.phase !== 'pick') return;
     const by = ch.by;
     if (target === 'demon') {
-      if (!this.demonPresent()) return;
+      // Only the Scene's Lead may Call the Demon — unless the Demon leads the
+      // Scene, when the whole table may.
+      if (!this.demonPresent() || !this.canCallDemon(by)) return;
       // She pays the Demon's price up front — and can't Call it at all if her
       // purse is short (the Demon box says so rather than silently ignoring).
       const demonCost = this.demonCost();
@@ -6693,22 +6712,78 @@ class TBPBase extends DCLogic {
         demonRoll: {by, phase: 'ready', face: null, success: null, cost: demonCost}});
       return;
     }
-    const rel = target === SEATS[by].friend ? 'friend' : (target === SEATS[by].rival ? 'rival' : null);
-    if (!rel) return;
+    const bc = this.state.chars[by];
+    const rel = target === bc.friend ? 'friend' : (target === bc.rival ? 'rival' : null);
+    if (!rel || this.challengeableBy(by) !== rel) return;
     this.reset(target, {quirk: null, psychic: false});
     this.setState({rollMode: target, challenge: {by, rel, phase: 'active', resolved: false}});
-    if (rel === 'friend' && this.state.demonLockLead !== this.curLead()) this.setState({demonIn: true});
+    if (rel === 'friend' && !this.demonOutThisScene()) this.setState({demonIn: true, demonOut: null});
     this.addDrama(by, 1);
   }
 
-  curLead() {
+  curLead(s) {
+    const st = s || this.state;
     const order = this.orderSeq();
-    return this.state.leadOverride == null ? order[this.state.scenePos] : this.state.leadOverride;
+    return st.leadOverride == null ? order[st.scenePos] : st.leadOverride;
   }
 
-  demonLead() { return this.state.focusIdx === 2; }
+  demonLead(s) { return (s || this.state).focusIdx === 2; }
 
-  demonPresent() { return this.state.demonIn || this.demonLead(); }
+  // A Scene's identity, for the Demon-presence rules below: which slot on the
+  // Scene track we are on, who leads it, and where it is set. Any of those
+  // moving means a new Scene — which is exactly when the Demon's mark below
+  // stops applying, with no explicit reset anywhere.
+  sceneSig(s) {
+    const st = s || this.state;
+    return [st.scenePos, this.curLead(st), st.locIdx].join('|');
+  }
+
+  // True once the Demon has come and gone in THIS Scene — whether it retreated
+  // after its Challenge or the Headmaster popped it out by hand. While it
+  // holds, a Best Friend Calling a Challenge no longer summons the Demon back;
+  // only the Headmaster's manual toggle can. It is never set during a
+  // Demon-led Scene, where the Demon does not retreat at all.
+  demonOutThisScene(s) {
+    const st = s || this.state;
+    return st.demonOut != null && st.demonOut === this.sceneSig(st);
+  }
+
+  demonPresent() {
+    return !this.demonOutThisScene() && (this.state.demonIn || this.demonLead() || this.state.focusIdx === 1);
+  }
+
+  // Which bond seat i may Call a Challenge along this Scene, or null. Only the
+  // Scene's Lead is in the spotlight, so she is the only Student who can be
+  // Challenged — and only by whoever holds her as a Best Friend or Rival. A
+  // Demon-led Scene has no Student Lead in the spotlight at all: there the
+  // Demon is the only thing anyone can Call.
+  challengeableBy(i) {
+    if (this.demonLead()) return null;
+    const lead = this.curLead();
+    if (lead === i) return null;
+    const c = this.state.chars[i];
+    if (!c) return null;
+    if (c.friend === lead) return 'friend';
+    if (c.rival === lead) return 'rival';
+    return null;
+  }
+
+  // Calling the Demon is the Lead's move — the Scene is hers. When the Demon
+  // leads the Scene it is the spotlight, so the whole table may Call it.
+  canCallDemon(i) { return this.demonLead() || i === this.curLead(); }
+
+  // Could anyone at the table Call a Challenge on seat i right now? Under the
+  // Lead-only rule the answer is no for most seats on most Scenes — which
+  // matters for Breaking, whose only normal exit is being Called (see the
+  // forceBreakReady hatch in renderVals).
+  canBeChallenged(i) {
+    if (this.demonLead() || i !== this.curLead()) return false;
+    const seats = this.state.activeSeats || [0,1,2,3];
+    // A caller who is Breaking has no working tools, and one at Max Drama
+    // isn't allowed to Call — neither of them can get her out of it.
+    return seats.some(k => k !== i && this.challengeableBy(k) != null
+      && !this.state.chars[k].broken && (Number(this.state.chars[k].drama) || 0) < 5);
+  }
 
   demonTarget() {
     const dr = this.state.demonRoll;
@@ -6737,45 +6812,80 @@ class TBPBase extends DCLogic {
         return;
       }
       const success = landed === 6 ? true : (landed === 1 ? false : landed >= target);
-      this.setState(st => {
-        const lead = st.focusIdx === 2;
-        const out = {
-          demonRoll: Object.assign({}, st.demonRoll, {phase: 'done', face: landed, success, reelY: dist, reelSpeed: 0}),
-          challenge: st.challenge ? Object.assign({}, st.challenge, {resolved: true}) : null,
-          rollMode: null
-        };
-        const tierMax = (st.activeSeats || [0,1,2,3]).length === 3 ? 2 : 3;
-        if (success) out.badEnd = Math.min(tierMax + 1, st.badEnd + 1); else out.goodEnd = Math.min(tierMax + 1, st.goodEnd + 1);
-        if (out.badEnd > tierMax && st.goodEnd > tierMax) out.goodEnd = tierMax;
-        if (out.goodEnd > tierMax && st.badEnd > tierMax) out.badEnd = tierMax;
-        if (!lead) {
-          out.demonIn = false;
-          out.demonLockLead = st.leadOverride == null ? [0,1,2,3,0,1,2,3][st.scenePos] : st.leadOverride;
-          // Retreat for real: a Scene focused "VS DEMON" (focusIdx===1) would
-          // otherwise keep forcing her presence back on below (see demonIn's
-          // render formula) even though she just resolved her roll and left.
-          out.demonForcedOut = true;
-        }
-        if (st.challenge && st.challenge.rel === 'demon' && !st.challenge.resolved) {
-          const by = st.challenge.by;
-          out.chars = st.chars.map((c, k) => k === by ? Object.assign({}, c, {achDemon: (Number(c.achDemon) || 0) + 1}) : c);
-        }
-        return out;
-      });
+      this.settleDemon({phase: 'done', face: landed, success, reelY: dist, reelSpeed: 0}, success);
     };
     this.rafs.dr = requestAnimationFrame(step);
   }
 
+  // The shared tail of a Demon Challenge: mark the Good/Bad End track, retreat
+  // the Demon unless it leads the Scene, credit the caller's DEMON SLAYER
+  // tally and close out the Challenge. Reached either by the die landing
+  // (rollDemon) or by the caller burning PSI to make it fail flat (psiDemon).
+  settleDemon(patch, success) {
+    this.setState(st => {
+      const lead = st.focusIdx === 2;
+      const out = {
+        demonRoll: Object.assign({}, st.demonRoll, patch),
+        challenge: st.challenge ? Object.assign({}, st.challenge, {resolved: true}) : null,
+        rollMode: null
+      };
+      const tierMax = (st.activeSeats || [0,1,2,3]).length === 3 ? 2 : 3;
+      if (success) out.badEnd = Math.min(tierMax + 1, st.badEnd + 1); else out.goodEnd = Math.min(tierMax + 1, st.goodEnd + 1);
+      if (out.badEnd > tierMax && st.goodEnd > tierMax) out.goodEnd = tierMax;
+      if (out.goodEnd > tierMax && st.badEnd > tierMax) out.badEnd = tierMax;
+      if (!lead) {
+        out.demonIn = false;
+        // Retreat for real, and remember it did: the mark both overrides a
+        // Scene focused "VS DEMON" (focusIdx===1), which would otherwise keep
+        // forcing the Demon's presence back on in the render formula, and
+        // stops a Best Friend Calling it straight back in. It expires by
+        // itself when the Scene changes — see sceneSig().
+        out.demonOut = this.sceneSig(st);
+      }
+      if (st.challenge && st.challenge.rel === 'demon' && !st.challenge.resolved) {
+        const by = st.challenge.by;
+        out.chars = st.chars.map((c, k) => k === by ? Object.assign({}, c, {achDemon: (Number(c.achDemon) || 0) + 1}) : c);
+      }
+      return out;
+    });
+  }
+
+  // The Student who Called the Demon can burn PSI instead of letting it roll.
+  // She pays her usual escalating PSI price — the same purse, the same +1 per
+  // use, the same BURNOUT tally — and the Demon simply fails. Everything past
+  // that runs exactly as if the die had come up short: Good End marked, the
+  // Demon retreats, the Challenge closes.
+  psiDemon() {
+    const dr = this.state.demonRoll;
+    if (!dr || dr.phase !== 'ready') return;
+    const i = dr.by;
+    const c = this.state.chars[i];
+    const cost = Number(c.psiCost) || 2;
+    if ((Number(c.drama) || 0) < cost) return;
+    clearInterval(this.timers[i + 'i']); clearTimeout(this.timers[i + 't']); clearTimeout(this.timers[i + 'l']);
+    cancelAnimationFrame(this.rafs[i]);
+    this.patch(i, {phase: 'psychic', psiUsed: null, psychic: false, psiHover: null, face: '?', landing: true,
+      drama: Math.max(0, (Number(c.drama) || 0) - cost), psiCost: Math.min(5, cost + 1),
+      achPsi: (Number(c.achPsi) || 0) + 1, dramaPop: true});
+    this.timers[i + 'l'] = setTimeout(() => this.patch(i, {landing: false}), 460);
+    clearTimeout(this.timers[i + 'd']);
+    this.timers[i + 'd'] = setTimeout(() => this.patch(i, {dramaPop: false}), 800);
+    this.settleDemon({phase: 'done', face: null, psi: true, success: false, reelY: 0, reelSpeed: 0}, false);
+  }
+
   // Headmaster fallback: always able to force the Demon in or out, even when
   // the auto-presence rules (Demon-led Scene, or a Student's VS DEMON goal)
-  // would otherwise keep re-asserting her — demonForcedOut wins over those.
+  // would otherwise keep re-asserting her — the mark below wins over those.
   toggleDemon() {
     this.setState(s => {
-      const lead = s.focusIdx === 2;
-      const autoIn = s.demonIn || lead || s.focusIdx === 1;
-      const currentlyIn = autoIn && !s.demonForcedOut;
-      if (currentlyIn) return {demonIn: false, demonForcedOut: true};
-      return {demonIn: true, demonForcedOut: false, demonLockLead: s.demonIn ? s.demonLockLead : null};
+      const autoIn = s.demonIn || s.focusIdx === 2 || s.focusIdx === 1;
+      const currentlyIn = autoIn && !this.demonOutThisScene(s);
+      // Popping it out by hand counts the same as retreating after a Challenge:
+      // the Demon has been in this Scene and left, so a Best Friend can't
+      // quietly summon it back. Popping it back in clears that mark — the
+      // Headmaster's override always wins.
+      if (currentlyIn) return {demonIn: false, demonOut: this.sceneSig(s)};
+      return {demonIn: true, demonOut: null};
     });
   }
 
@@ -6880,9 +6990,17 @@ class TBPBase extends DCLogic {
     const cards = this.state.chars.map((c, i) => {
       const rollMode = active === i;
       const shout = this.state.shoutSeat === i;
-      const isTarget = pickPhase && (i === this.state.chars[ch.by].friend || i === this.state.chars[ch.by].rival);
+      // Only the Scene's Lead lights up as a target, and only when the caller
+      // actually holds her as a Best Friend or Rival.
+      const pickRel = pickPhase ? this.challengeableBy(ch.by) : null;
+      const isTarget = pickPhase && pickRel != null && i === this.state.chars[ch.by][pickRel];
       const dvNow = Number(c.drama) || 0;
-      const canCall = (!ch || ch.resolved) && !voteActive && !rollerBusy && dvNow < 5;
+      // A seat with no legal target this Scene can't Call at all: the Lead is
+      // neither her Best Friend nor her Rival, and the Demon is either absent
+      // or not hers to Call.
+      const bondRel = this.challengeableBy(i);
+      const hasTarget = bondRel != null || (this.canCallDemon(i) && this.demonPresent());
+      const canCall = (!ch || ch.resolved) && !voteActive && !rollerBusy && dvNow < 5 && hasTarget;
       const canVote = (!ch || ch.resolved) && !voteActive && !rollerBusy && this.state.voteEnabled && !c.votedOnce;
       const counting = voteActive && (vote.phase === 'count' || vote.phase === 'tiebreak' || vote.phase === 'done');
       const quirkSel = rollMode ? (c.quirk === 0 || c.quirk === 1 ? c.quirk : null) : null;
@@ -6896,7 +7014,12 @@ class TBPBase extends DCLogic {
       // right on the seat's own die-roll control instead — the same slot a
       // normal Challenge roll/resolve would use — rather than on her Drama
       // gauge, which isn't where any other roll/resolve action ever lives.
-      const forceBreakReady = allBreaking && !!c.broken && !rollMode && !rolled;
+      // Widened for the Lead-only Challenge rule: whole Scenes now go by where
+      // nobody at the table is allowed to Call a given seat (she isn't the
+      // Lead, or the Demon leads the Scene), and Breaking's only normal exit
+      // is being Called. Rather than leave her frozen with every tool disabled
+      // until her own Scene comes round, she can Break directly here too.
+      const forceBreakReady = !!c.broken && !rollMode && !rolled && (allBreaking || !this.canBeChallenged(i));
       const success = rolled && c.face >= t;
       const failure = rolled && !success;
       const showResult = rolled || psi;
@@ -6935,7 +7058,7 @@ class TBPBase extends DCLogic {
            active !== null && this.state.chars[active].phase !== 'rolling' &&
            this.state.chars[active].phase !== 'result' && this.state.chars[active].phase !== 'psychic'),
         showArrow: isTarget,
-        arrowRel: pickPhase && isTarget ? (i === this.state.chars[ch.by].friend ? 'BEST FRIEND' : 'RIVAL') : '',
+        arrowRel: isTarget ? (pickRel === 'friend' ? 'BEST FRIEND' : 'RIVAL') : '',
         pickGlow: isTarget ? 'tbp-pickglow 1s ease-in-out infinite' : 'none',
         boxCursor: isTarget ? 'pointer' : 'default',
         boxClick: () => { if (isTarget) this.selectTarget(i); },
@@ -7009,8 +7132,8 @@ class TBPBase extends DCLogic {
         rollHoverInk: '#231F20',
         targetDice: [1,2,3,4,5,6].filter(n => n >= t).map(n => ({n, pips: pipsFor(n, '#231F20')})),
         bonds: [
-          Object.assign(faceOf(SEATS[c.friend].who), {name: SEATS[c.friend].label, tag: 'BEST FRIEND', tagInk: '#F0A8B8', icon: '💗', open: c.bondHover === 0, cursor: canCall ? 'pointer' : 'help', click: () => { if (canCall) this.callChallengeOn(i, c.friend); }, enter: () => this.patch(i, {bondHover: 0}), leave: () => this.patch(i, {bondHover: null})}),
-          Object.assign(faceOf(SEATS[c.rival].who), {name: SEATS[c.rival].label, tag: 'RIVAL', tagInk: '#A9BEDC', icon: '💔', open: c.bondHover === 1, cursor: canCall ? 'pointer' : 'help', click: () => { if (canCall) this.callChallengeOn(i, c.rival); }, enter: () => this.patch(i, {bondHover: 1}), leave: () => this.patch(i, {bondHover: null})})
+          Object.assign(faceOf(SEATS[c.friend].who), {name: SEATS[c.friend].label, tag: bondRel === 'friend' ? 'BEST FRIEND · LEAD' : 'BEST FRIEND', tagInk: '#F0A8B8', icon: '💗', open: c.bondHover === 0, opacity: bondRel === 'friend' ? 1 : .38, cursor: canCall && bondRel === 'friend' ? 'pointer' : 'help', click: () => { if (canCall && bondRel === 'friend') this.callChallengeOn(i, c.friend); }, enter: () => this.patch(i, {bondHover: 0}), leave: () => this.patch(i, {bondHover: null})}),
+          Object.assign(faceOf(SEATS[c.rival].who), {name: SEATS[c.rival].label, tag: bondRel === 'rival' ? 'RIVAL · LEAD' : 'RIVAL', tagInk: '#A9BEDC', icon: '💔', open: c.bondHover === 1, opacity: bondRel === 'rival' ? 1 : .38, cursor: canCall && bondRel === 'rival' ? 'pointer' : 'help', click: () => { if (canCall && bondRel === 'rival') this.callChallengeOn(i, c.rival); }, enter: () => this.patch(i, {bondHover: 1}), leave: () => this.patch(i, {bondHover: null})})
         ],
         psiAfford: dv >= (Number(c.psiCost) || 2),
         psiSlots: [
@@ -7244,8 +7367,10 @@ class TBPBase extends DCLogic {
     // The Demon spawns in on her own the moment a Scene's Focus targets her —
     // either as the Lead herself, or as a Student's "VS DEMON" goal — not
     // just when someone manually summons her via a Challenge.
-    const demonIn = !this.state.demonForcedOut && (this.state.demonIn || dLead || this.state.focusIdx === 1);
-    const demonPick = pickPhase && demonIn;
+    const demonIn = this.demonPresent();
+    // Calling the Demon belongs to the Scene's Lead — unless the Demon is the
+    // one leading, when the whole table can Call it.
+    const demonPick = pickPhase && demonIn && this.canCallDemon(ch.by);
     const demonChallenged = !!ch && ch.rel === 'demon' && !ch.resolved;
     // The Demon's price is 1 + the Bad End steps already marked, so it climbs
     // as the session sours. While someone is choosing a target, the box shows
@@ -7272,13 +7397,24 @@ class TBPBase extends DCLogic {
 
     const dr = this.state.demonRoll;
     const dt = this.demonTarget();
+    // The caller can burn PSI instead of letting the Demon roll — her ordinary
+    // escalating price, out of her ordinary purse.
+    const drCaller = dr ? this.state.chars[dr.by] : null;
+    const drPsiCost = drCaller ? (Number(drCaller.psiCost) || 2) : 2;
+    const drPsiAfford = !!drCaller && (Number(drCaller.drama) || 0) >= drPsiCost;
     const demonRoll = {
       open: !!dr,
       ready: !!dr && dr.phase === 'ready',
       rolling: !!dr && dr.phase === 'rolling',
       settled: !!dr && dr.phase === 'done',
-      face: dr && dr.face ? String(dr.face) : '?',
-      faceInk: dr && dr.phase === 'done' ? (dr.success ? '#E23A3A' : '#9CB39A') : '#EFE6C8',
+      face: dr && dr.psi ? '脳' : (dr && dr.face ? String(dr.face) : '?'),
+      faceInk: dr && dr.psi ? '#F6A7CA' : (dr && dr.phase === 'done' ? (dr.success ? '#E23A3A' : '#9CB39A') : '#EFE6C8'),
+      psiLabel: 'USE PSI · ' + drPsiCost + ' !?',
+      psiCursor: drPsiAfford ? 'pointer' : 'not-allowed',
+      psiOpacity: drPsiAfford ? 1 : .45,
+      psiFilter: drPsiAfford ? 'none' : 'grayscale(1)',
+      psiNote: drPsiAfford ? 'The Demon fails outright.' : 'Not enough Drama.',
+      psiUse: () => { if (drPsiAfford) this.psiDemon(); },
       sigilOpacity: dr && dr.phase === 'ready' ? .55 : .1,
       faceOpacity: dr && dr.phase === 'done' ? 1 : 0,
       reelShift: 'translateY(-' + Math.round((dr && dr.reelY) || 0) + 'px)',
@@ -7297,9 +7433,9 @@ class TBPBase extends DCLogic {
           border: landed ? '#EDE31B' : '#231F20',
           ink: landed ? '#231F20' : (hit ? '#EFE6C8' : 'rgba(35,31,32,.45)')};
       }),
-      verdictInk: dr && dr.success ? '#E23A3A' : '#9CB39A',
-      mark: dr && dr.success != null ? (dr.success ? '+1 BAD END' : '+1 GOOD END') : '',
-      vanish: dr && dr.success != null && !dLead ? 'The Demon vanishes. It will not return until the Lead changes.' : 'Demon-led Scene — the Demon does not retreat.',
+      verdictInk: dr && dr.psi ? '#F6A7CA' : (dr && dr.success ? '#E23A3A' : '#9CB39A'),
+      mark: dr && dr.success != null ? (dr.success ? '+1 BAD END' : (dr.psi ? 'PSI! +1 GOOD END' : '+1 GOOD END')) : '',
+      vanish: dr && dr.success != null && !dLead ? 'The Demon vanishes. It will not return this Scene — not even if a Best Friend Calls it back.' : 'Demon-led Scene — the Demon does not retreat.',
       roll: () => this.rollDemon(),
       // Backing out before the die is thrown hands the Call's Drama back.
       cancelLabel: dr && dr.cost ? 'CANCEL — REFUNDS ' + dr.cost + ' DRAMA' : 'CANCEL',
