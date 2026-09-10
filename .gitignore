@@ -20,3 +20,6 @@ uploads/RPG Mockups.png
 uploads/RPG Mockups.webp
 uploads/RPG Mockups (1).png
 uploads/RPG Mockups (1).webp
+
+# Claude Code agent worktrees (local scratch, not project content)
+.claude/worktrees/

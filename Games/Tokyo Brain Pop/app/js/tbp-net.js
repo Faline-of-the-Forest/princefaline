@@ -51,6 +51,7 @@ const Net = {
   seat: null,   // 0..3 for players
   _unsub: null,
   _lastSent: null,
+  _pushed: false,   // have WE written to this room during this page load?
 
   normalize,
 
@@ -58,7 +59,10 @@ const Net = {
   // player-chosen name, and joins it as the Headmaster. The transaction
   // retries against a fresh random code whenever one's already taken, so two
   // people opening a room at the same instant can never collide.
-  async createRoom(displayName) {
+  // `meta` is merged into the room document at creation — the Headmaster's
+  // Demo Room uses it to stamp {demo:true, demoSeats:[...]} so the room list can
+  // label it and so re-entering it later still knows it is a demo.
+  async createRoom(displayName, meta) {
     await authReady;
     for (let attempt = 0; attempt < 25; attempt++) {
       const code = String(Math.floor(1000 + Math.random() * 9000));
@@ -66,7 +70,7 @@ const Net = {
       const created = await runTransaction(db, async (tx) => {
         const snap = await tx.get(ref);
         if (snap.exists()) return false;
-        tx.set(ref, { name: code, createdAt: serverTimestamp(), sharedJson: null, players: {} });
+        tx.set(ref, Object.assign({ name: code, createdAt: serverTimestamp(), sharedJson: null, players: {} }, meta || {}));
         return true;
       });
       if (created) {
@@ -102,16 +106,29 @@ const Net = {
   subscribe(cb) {
     if (!this.roomId) throw new Error("join() first");
     if (this._unsub) this._unsub();
-    this._unsub = onSnapshot(doc(db, "rooms", this.roomId), (snap) => {
-      if (!snap.exists()) { cb(null, {}); return; }
+    // includeMetadataChanges matters: without it Firestore delivers the cached
+    // snapshot and then STAYS SILENT when the identical server value confirms
+    // it. Since an empty cached read is not trusted below, that silence could
+    // swallow the only callback a fresh room ever got.
+    this._unsub = onSnapshot(doc(db, "rooms", this.roomId), { includeMetadataChanges: true }, (snap) => {
+      // Firestore serves a cached snapshot first and the server's a moment
+      // later. An empty CACHED read proves nothing about the room, so the
+      // caller is told which kind this is — seeding a "new" room on the
+      // strength of one would wipe a game that is really still there.
+      const meta = { fromCache: !!(snap.metadata && snap.metadata.fromCache) };
+      if (!snap.exists()) { cb(null, {}, meta); return; }
       const d = snap.data();
       // Ignore the echo of our own write — it would stomp newer local edits.
-      if (d.updatedBy === this.session) { cb(undefined, d.players || {}); return; }
+      // Keyed on having actually pushed during THIS page load: the session id
+      // lives in sessionStorage and survives a reload, so a room this very tab
+      // last wrote would otherwise look like our own echo forever, never load,
+      // and get a blank game pushed over it by the first local edit.
+      if (this._pushed && d.updatedBy === this.session) { cb(undefined, d.players || {}, meta); return; }
       let shared = null;
       if (typeof d.sharedJson === "string") {
         try { shared = JSON.parse(d.sharedJson); } catch (e) { console.error("[tbp] bad state blob", e); }
       }
-      cb(shared, d.players || {});
+      cb(shared, d.players || {}, meta);
     }, (e) => console.error("[tbp] snapshot error", e));
     return this._unsub;
   },
@@ -125,6 +142,7 @@ const Net = {
     const json = JSON.stringify(shared);
     if (json === this._lastSent) return;   // nothing actually changed
     this._lastSent = json;
+    this._pushed = true;
     await updateDoc(doc(db, "rooms", this.roomId), {
       sharedJson: json, updatedBy: this.session, updatedAt: Date.now()
     });
@@ -153,7 +171,7 @@ const Net = {
       const rows = [];
       qs.forEach((d) => {
         const v = d.data() || {};
-        rows.push({ id: d.id, name: v.name || d.id, players: Object.keys(v.players || {}).length, started: !!v.sharedJson });
+        rows.push({ id: d.id, name: v.name || d.id, players: Object.keys(v.players || {}).length, started: !!v.sharedJson, demo: !!v.demo, demoSeats: v.demoSeats || null });
       });
       rows.sort((a, b) => a.id.localeCompare(b.id));
       cb(rows);
