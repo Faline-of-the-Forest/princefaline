@@ -2,8 +2,44 @@
   "slug": "predator-savage-planet",
   "name": "Predator: Savage Planet",
   "sys": "Savage Worlds",
-  "status": "running",
+  "status": "concluded",
   "banner": "",
   "covers": [],
-  "ed": "Deluxe"
+  "ed": "Deluxe",
+  "materials": [],
+  "cast": [],
+  "episodes": [
+    {
+      "n": "01",
+      "date": "2026-08-17",
+      "rt": "03:40",
+      "title": "Act 1",
+      "hook": "",
+      "img": ""
+    },
+    {
+      "n": "02",
+      "date": "2026-08-31",
+      "rt": "04:37",
+      "title": "Act 2",
+      "hook": "",
+      "img": ""
+    },
+    {
+      "n": "03",
+      "date": "2026-09-07",
+      "rt": "3:15",
+      "title": "Act 3",
+      "hook": "",
+      "img": ""
+    },
+    {
+      "n": "04",
+      "date": "2026-09-14",
+      "rt": "4:10",
+      "title": "Act 4",
+      "hook": "",
+      "img": ""
+    }
+  ]
 }
