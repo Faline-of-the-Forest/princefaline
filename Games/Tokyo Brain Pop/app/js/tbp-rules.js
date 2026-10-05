@@ -22,6 +22,7 @@ export const RULES = [
     {t:'p', text:'A Quirk can be a trait, a special interest, a strange power, a relationship, a possession, or an embarrassing secret. Choose two at the start — never more. In a Challenge, if a Quirk is relevant, lower the number you need to roll by 1.'},
     {t:'h', text:'Goals'},
     {t:'p', text:'At the start of each episode, choose two Goals your Student wants to accomplish. The Demon is strengthened by every unresolved Goal, so choose ones you can actually finish.'},
+    {t:'p', text:'A Goal should always be possible. If the story turns so that a Goal can no longer be completed as written, the Headmaster reinterprets it in a way that still can be — the Goal changes shape, it never becomes a dead end.'},
     {t:'h', text:'Friend & Rival'},
     {t:'p', text:'Every pair of Students either shares a bond or does not. A bond is always MUTUAL: if she is your Friend, you are her Friend. Some pairs are both Friend and Rival at once.'},
     {t:'p', text:'The bonds are fixed for each line-up rather than rolled — who is Friends with whom depends only on which girls are playing. Every Student always has at least one Friend and at least one Rival, though not always exactly one of each.'},
@@ -35,7 +36,7 @@ export const RULES = [
     {t:'p', text:'The Challenged Student rolls a die. The number she needs depends on Popularity: Most Popular 3–6, Average 4–6, Least Popular 5–6. If a Quirk applies, lower the target by 1.'},
     {t:'li', text:'Success: her Friend narrates how she accomplishes it. If her Friend Called it, she gains 1 Drama.'},
     {t:'li', text:'Failure: her Rival narrates what goes wrong. If her Rival Called it, she gains 1 Drama. The Student always gains 1 Drama on a failure.'},
-    {t:'li', text:'Use PSI: the Challenge succeeds automatically, no one gains Drama. Her Rival narrates — working in as much awfulness as possible.'},
+    {t:'li', text:'Use PSI: the Challenge succeeds automatically, no one gains Drama. Her Rival narrates the success — she does get what she wanted — AND a serious consequence caused by the PSI itself. Both, every time: the win is real, and so is the damage.'},
     {t:'p', text:'Who narrates: if she has only one Friend (or Rival), it is that Student. If she has two, the narrator is the one who is not also her Rival (or Friend) — a Frenemy is never picked over a plain Friend or Rival. The screen names her.'},
     {t:'h', text:'Death'},
     {t:'p', text:'Fighting monsters is dangerous, but your Students can’t die while the Demon is undefeated. If a Student must die, she will return as a Ghost or Ghoul to keep playing.'}
@@ -54,7 +55,7 @@ export const RULES = [
   ]},
   {label:'PSI', title:'PSI', blocks:[
     {t:'p', text:'Nothing good ever came of psionic powers. They will destroy your Student’s life.'},
-    {t:'p', text:'Facing a Challenge, a Student may Use PSI: her action succeeds automatically but always leads to awful consequences. PSI may be used any time, including after a Challenge is Called on her.'},
+    {t:'p', text:'Facing a Challenge, a Student may Use PSI: her action succeeds automatically, but the PSI always causes a serious consequence on top of the success. PSI may be used any time, including after a Challenge is Called on her.'},
     {t:'p', text:'Using PSI costs 2 Drama. Each further use that episode costs 1 more, up to 5. The cost resets at the end of the episode. Every Student has one unique PSI ability of her own.'},
     {t:'p', text:'PSI can only be turned on the Demon by a Student who has completed all of her own Goals. Until then her own business is still in the way, and the Demon must be faced with the die.'}
   ]},
@@ -65,16 +66,16 @@ export const RULES = [
     {t:'p', text:'Only the Scene’s Lead may Call the Demon. When the Demon is itself the Lead, any Student may Call it.'},
     {t:'p', text:'Calling a Challenge on the Demon is free — it costs no Drama, and grants none either. She narrates how the situation works against it, and gains nothing from the result. The Demon rolls and succeeds on 4–6, before modifiers.'},
     {t:'h', text:'The Demon’s Die'},
-    {t:'p', text:'The Demon needs 4 or better. Four things move that number, and the two End tracks pull against each other:'},
+    {t:'p', text:'The Demon needs 4 or better. Two things move that number — the Good End and Bad End tracks do not:'},
     {t:'li', text:'−1 for each of the Challenger’s unresolved Goals — a distracted Student is easier prey.'},
-    {t:'li', text:'+1 for each Good End marked — the girls are winning, and it feels it.'},
-    {t:'li', text:'−1 for each Bad End marked — it is winning, and it presses the advantage.'},
     {t:'li', text:'+1 if the Demon is the Scene’s Focus — squaring up to it deliberately puts it on the back foot.'},
     {t:'p', text:'The Challenger may Use PSI instead of letting it roll, and the Demon simply fails — but only if she has completed all of her own Goals first.'},
     {t:'li', text:'Its target lowers by 1 for every unresolved Student Goal, and raises by 1 for every Strike taken. It can never go below 2 or above 6 — the Demon always fails on a 1.'},
     {t:'li', text:'Every success marks the Bad End track; every failure marks the Good End track. Marks needed equals the number of Students playing.'},
-    {t:'li', text:'Use PSI: instead of letting the Demon roll, the Student who Called it may burn PSI at her usual escalating price. The Demon fails outright — Good End marked, Demon gone.'},
-    {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one, and once it has left it cannot be summoned back that Scene, not even by a Challenge from her Friend. It returns once the Scene changes. If success becomes mathematically impossible, the Demon becomes the next Lead and does not retreat.'}
+    {t:'li', text:'Use PSI: instead of letting the Demon roll, the Student who Called it may burn PSI at her usual escalating price. The Demon fails outright — Good End marked, Demon gone. The Headmaster narrates the Demon’s defeat AND a serious consequence the PSI causes along the way.'},
+    {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one, and once it has left it cannot be summoned back that Scene, not even by a Challenge from her Friend. It returns once the Scene changes. If success becomes mathematically impossible, the Demon becomes the next Lead and does not retreat.'},
+    {t:'h', text:'Hail Mary'},
+    {t:'p', text:'When the Demon leads a Scene, the Students stop Challenging each other. No Friend or Rival Challenges at all — the only Challenge anyone may Call is on the Demon, and every Student may Call it.'}
   ]},
   {label:'Japanese Names', title:'Common Japanese Names', blocks:[
     {t:'p', text:'A quick reference if you need a name for a new Student, Demon, or NPC during play.'},

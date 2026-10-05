@@ -4687,7 +4687,7 @@
       </div>
 
       <sc-if value="{{ c.psychicArmed }}" hint-placeholder-val="{{ false }}">
-        <div style="position:absolute; left:0; right:0; bottom:calc(100% + 18px); z-index:9; display:flex; gap:9px; animation:{{ c.psiAnim }}">
+        <div style="position:absolute; left:0; right:0; bottom:calc(100% + 18px); z-index:{{ c.psiZ }}; display:flex; gap:9px; animation:{{ c.psiAnim }}">
           <sc-for list="{{ c.psiSlots }}" as="p" hint-placeholder-count="3">
             <div sc-camel-on-click="{{ p.use }}" sc-camel-on-mouse-enter="{{ p.enter }}" sc-camel-on-mouse-leave="{{ p.leave }}" style="cursor:{{ p.cursor }}; flex:1 1 0; height:78px; box-sizing:border-box; border:4.5px solid {{ p.slabBorder }}; border-radius:7px; background:{{ p.slabBg }}; filter:{{ p.filter }}; box-shadow:{{ p.slabShadow }}; position:relative; overflow:hidden; animation:{{ p.bob }}; transition:background .14s ease-out, border-color .14s ease-out">
               <div style="position:absolute; inset:0; background-image:radial-gradient(#231F20 1.6px, transparent 2px); background-size:9px 9px; opacity:{{ p.dotOpacity }}"></div>
@@ -5711,6 +5711,7 @@ const RULES = [
     {t:'p', text:'A Quirk can be a trait, a special interest, a strange power, a relationship, a possession, or an embarrassing secret. Choose two at the start — never more. In a Challenge, if a Quirk is relevant, lower the number you need to roll by 1.'},
     {t:'h', text:'Goals'},
     {t:'p', text:'At the start of each episode, choose two Goals your Student wants to accomplish. The Demon is strengthened by every unresolved Goal, so choose ones you can actually finish.'},
+    {t:'p', text:'A Goal should always be possible. If the story turns so that a Goal can no longer be completed as written, the Headmaster reinterprets it in a way that still can be — the Goal changes shape, it never becomes a dead end.'},
     {t:'h', text:'Friend & Rival'},
     {t:'p', text:'Every pair of Students either shares a bond or does not. A bond is always MUTUAL: if she is your Friend, you are her Friend. Some pairs are both Friend and Rival at once.'},
     {t:'p', text:'The bonds are fixed for each line-up rather than rolled — who is Friends with whom depends only on which girls are playing. Every Student always has at least one Friend and at least one Rival, though not always exactly one of each.'},
@@ -5724,7 +5725,7 @@ const RULES = [
     {t:'p', text:'The Challenged Student rolls a die. The number she needs depends on Popularity: Most Popular 3–6, Average 4–6, Least Popular 5–6. If a Quirk applies, lower the target by 1.'},
     {t:'li', text:'Success: her Friend narrates how she accomplishes it. If her Friend Called it, she gains 1 Drama.'},
     {t:'li', text:'Failure: her Rival narrates what goes wrong. If her Rival Called it, she gains 1 Drama. The Student always gains 1 Drama on a failure.'},
-    {t:'li', text:'Use PSI: the Challenge succeeds automatically, no one gains Drama. Her Rival narrates — working in as much awfulness as possible.'},
+    {t:'li', text:'Use PSI: the Challenge succeeds automatically, no one gains Drama. Her Rival narrates the success — she does get what she wanted — AND a serious consequence caused by the PSI itself. Both, every time: the win is real, and so is the damage.'},
     {t:'p', text:'Who narrates: if she has only one Friend (or Rival), it is that Student. If she has two, the narrator is the one who is not also her Rival (or Friend) — a Frenemy is never picked over a plain Friend or Rival. The screen names her.'},
     {t:'h', text:'Death'},
     {t:'p', text:'Fighting monsters is dangerous, but your Students can’t die while the Demon is undefeated. If a Student must die, she will return as a Ghost or Ghoul to keep playing.'}
@@ -5743,7 +5744,7 @@ const RULES = [
   ]},
   {label:'PSI', title:'PSI', blocks:[
     {t:'p', text:'Nothing good ever came of psionic powers. They will destroy your Student’s life.'},
-    {t:'p', text:'Facing a Challenge, a Student may Use PSI: her action succeeds automatically but always leads to awful consequences. PSI may be used any time, including after a Challenge is Called on her.'},
+    {t:'p', text:'Facing a Challenge, a Student may Use PSI: her action succeeds automatically, but the PSI always causes a serious consequence on top of the success. PSI may be used any time, including after a Challenge is Called on her.'},
     {t:'p', text:'Using PSI costs 2 Drama. Each further use that episode costs 1 more, up to 5. The cost resets at the end of the episode. Every Student has one unique PSI ability of her own.'},
     {t:'p', text:'PSI can only be turned on the Demon by a Student who has completed all of her own Goals. Until then her own business is still in the way, and the Demon must be faced with the die.'}
   ]},
@@ -5754,16 +5755,16 @@ const RULES = [
     {t:'p', text:'Only the Scene’s Lead may Call the Demon. When the Demon is itself the Lead, any Student may Call it.'},
     {t:'p', text:'Calling a Challenge on the Demon is free — it costs no Drama, and grants none either. She narrates how the situation works against it, and gains nothing from the result. The Demon rolls and succeeds on 4–6, before modifiers.'},
     {t:'h', text:'The Demon’s Die'},
-    {t:'p', text:'The Demon needs 4 or better. Four things move that number, and the two End tracks pull against each other:'},
+    {t:'p', text:'The Demon needs 4 or better. Two things move that number — the Good End and Bad End tracks do not:'},
     {t:'li', text:'−1 for each of the Challenger’s unresolved Goals — a distracted Student is easier prey.'},
-    {t:'li', text:'+1 for each Good End marked — the girls are winning, and it feels it.'},
-    {t:'li', text:'−1 for each Bad End marked — it is winning, and it presses the advantage.'},
     {t:'li', text:'+1 if the Demon is the Scene’s Focus — squaring up to it deliberately puts it on the back foot.'},
     {t:'p', text:'The Challenger may Use PSI instead of letting it roll, and the Demon simply fails — but only if she has completed all of her own Goals first.'},
     {t:'li', text:'Its target lowers by 1 for every unresolved Student Goal, and raises by 1 for every Strike taken. It can never go below 2 or above 6 — the Demon always fails on a 1.'},
     {t:'li', text:'Every success marks the Bad End track; every failure marks the Good End track. Marks needed equals the number of Students playing.'},
-    {t:'li', text:'Use PSI: instead of letting the Demon roll, the Student who Called it may burn PSI at her usual escalating price. The Demon fails outright — Good End marked, Demon gone.'},
-    {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one, and once it has left it cannot be summoned back that Scene, not even by a Challenge from her Friend. It returns once the Scene changes. If success becomes mathematically impossible, the Demon becomes the next Lead and does not retreat.'}
+    {t:'li', text:'Use PSI: instead of letting the Demon roll, the Student who Called it may burn PSI at her usual escalating price. The Demon fails outright — Good End marked, Demon gone. The Headmaster narrates the Demon’s defeat AND a serious consequence the PSI causes along the way.'},
+    {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one, and once it has left it cannot be summoned back that Scene, not even by a Challenge from her Friend. It returns once the Scene changes. If success becomes mathematically impossible, the Demon becomes the next Lead and does not retreat.'},
+    {t:'h', text:'Hail Mary'},
+    {t:'p', text:'When the Demon leads a Scene, the Students stop Challenging each other. No Friend or Rival Challenges at all — the only Challenge anyone may Call is on the Demon, and every Student may Call it.'}
   ]},
   {label:'Japanese Names', title:'Common Japanese Names', blocks:[
     {t:'p', text:'A quick reference if you need a name for a new Student, Demon, or NPC during play.'},
@@ -6494,7 +6495,8 @@ class TBPBase extends DCLogic {
     }
     // A new Call clears the last Demon result off its card: the verdict
     // bubble is not allowed to sit under a fresh Challenge.
-    this.setState({rollMode: null, demonRoll: null, challenge: {by: i, phase: 'pick', resolved: false}});
+    this.clearDemonResult();
+    this.setState({rollMode: null, challenge: {by: i, phase: 'pick', resolved: false}});
   }
 
   // Calling a Challenge directly against a known target — clicking the
@@ -6988,7 +6990,8 @@ class TBPBase extends DCLogic {
   commitChallenge(by, target, rel) {
     if (this.challengeableBy(by).indexOf(rel) < 0) return;
     this.reset(target, {quirk: null, psychic: false});
-    this.setState({rollMode: target, demonRoll: null,
+    this.clearDemonResult();
+    this.setState({rollMode: target,
       challenge: {by, rel, phase: 'active', resolved: false}});
     // A Friend's Challenge is what walks the Demon into the Scene — but only
     // the first time. Once it has come and gone it stays gone until the Scene
@@ -7127,11 +7130,10 @@ class TBPBase extends DCLogic {
     const unresolved = this.demonLead()
       ? done.reduce((a, g) => a + g.filter(v => !v).length, 0)
       : (done[who] ? done[who].filter(v => !v).length : 0);
-    // Good End and Bad End pull in opposite directions on the same die: every
-    // Good End the girls bank makes the Demon harder to land, every Bad End it
-    // has already scored makes the next one easier.
+    // The Good End and Bad End tracks no longer touch this die — the Demon was
+    // hard enough to beat without the tracks snowballing it.
     const focus = this.demonIsFocus() ? 1 : 0;
-    const raw = 4 - unresolved + this.state.goodEnd - this.state.badEnd + focus;
+    const raw = 4 - unresolved + focus;
     return {unresolved, focus, target: Math.max(2, Math.min(6, raw))};
   }
 
@@ -7187,10 +7189,24 @@ class TBPBase extends DCLogic {
       }
       if (st.challenge && st.challenge.rel === 'demon' && !st.challenge.resolved) {
         const by = st.challenge.by;
-        out.chars = st.chars.map((c, k) => k === by ? Object.assign({}, c, {achDemon: (Number(c.achDemon) || 0) + 1}) : c);
+        // psychic:false — she may have armed PSI and then let the Demon roll.
+        out.chars = st.chars.map((c, k) => k === by ? Object.assign({}, c, {achDemon: (Number(c.achDemon) || 0) + 1, psychic: false}) : c);
       }
       return out;
     });
+  }
+
+  // Take a finished Demon result off the table — and off its Challenger's card.
+  // A PSI spent on the Demon leaves her card in its 'psychic' state, and with
+  // no roll of her own to close, nothing else ever put it back: the PSI effect
+  // on her portrait kept blinking for the rest of the Scene.
+  clearDemonResult() {
+    const dr = this.state.demonRoll;
+    if (dr && dr.by != null && this.state.chars[dr.by] && this.state.rollMode !== dr.by) {
+      const c = this.state.chars[dr.by];
+      if (c.phase === 'psychic' || c.psychic) this.reset(dr.by, {psychic: false, psiUsed: null});
+    }
+    this.setState({demonRoll: null});
   }
 
   // The Student who Called the Demon can burn PSI instead of letting it roll.
@@ -7418,7 +7434,11 @@ class TBPBase extends DCLogic {
         burstOpacity: rolling ? 0.18 : 0,
         psychicArmed: (rollMode || demonPsiOpen) && !psi && !rolling && (c.psychic || c.psiExit),
         psiAnim: c.psiExit ? 'tbp-popout .2s ease-in forwards' : 'tbp-pop .22s ease-out',
-        showExclaim: !!ch && !ch.resolved && i === ch.by,
+        // Calling the Demon puts her own PSI slabs where the "!" stands, so the
+        // "!" stands down while they are offered, and the slabs sit above the
+        // CANCEL button rather than under it.
+        showExclaim: !!ch && !ch.resolved && i === ch.by && !demonPsiOpen,
+        psiZ: demonPsiOpen ? 17 : 9,
         challengerTag: isChallenger,
         showCancel: ((pickPhase || rolePhase) && i === ch.by) ||
           (!!ch && ch.rel === 'demon' && !ch.resolved && i === ch.by &&
@@ -7569,7 +7589,7 @@ class TBPBase extends DCLogic {
         psiTipInk: dv >= (Number(c.psiCost)||2) ? (c.psiHover === 2 ? '#E8A0A0' : (c.psiHover === 1 ? '#9CB39A' : '#A9BEDC')) : '#E23A3A',
         resultWord: rolling ? 'ROLLING…' : (c.breakResult ? 'BREAK!' : (psi ? 'PSI!' : (success ? 'Success!' : 'Failure!'))),
         resultInk: rolling ? '#EDE31B' : (c.breakResult ? '#E23A3A' : (failure ? '#FDFCFC' : '#231F20')),
-        narratorLine: rolling ? 'Rolling the die…' : (c.breakResult ? 'The Headmaster narrates how your PSI goes off on its own and does the worst thing it possibly could.' : (psi ? this.narratorFor(i, 'rival') + ' narrates your success, but also how your PSI gets out of control and makes things worse.' :(success ? this.narratorFor(i, 'friend') + ' narrates how you pull off what you were trying to do.' : this.narratorFor(i, 'rival') + ' narrates how what you were trying to do falls apart.'))),
+        narratorLine: rolling ? 'Rolling the die…' : (c.breakResult ? 'The Headmaster narrates how your PSI goes off on its own and does the worst thing it possibly could.' : (psi ? this.narratorFor(i, 'rival') + ' narrates your success — you get what you wanted — AND a serious consequence your PSI causes.' :(success ? this.narratorFor(i, 'friend') + ' narrates how you pull off what you were trying to do.' : this.narratorFor(i, 'rival') + ' narrates how what you were trying to do falls apart.'))),
         buttonLabel: (needsBreak || forceBreakReady) ? 'BREAK!' : 'Roll!',
         psiCostTop: 'COST',
         psiCostBig: (Number(c.psiCost) || 2) + '!?',
@@ -7859,11 +7879,9 @@ class TBPBase extends DCLogic {
       bubbleResult: drDone,
       modTarget: [
         {text: '4 BASE', bg: '#EFE6C8', ink: '#231F20', opacity: 1},
-        {text: '−' + dt.unresolved + ' GOALS', bg: '#9CB39A', ink: '#231F20', opacity: dt.unresolved ? 1 : 0.32},
-        {text: '+' + this.state.goodEnd + ' GOOD END', bg: '#EDE31B', ink: '#231F20', opacity: this.state.goodEnd ? 1 : 0.32}
+        {text: '−' + dt.unresolved + ' GOALS', bg: '#9CB39A', ink: '#231F20', opacity: dt.unresolved ? 1 : 0.32}
       ],
       modCost: [
-        {text: '−' + this.state.badEnd + ' BAD END', bg: '#E23A3A', ink: '#FDFCFC', opacity: this.state.badEnd ? 1 : 0.32},
         {text: '+' + dt.focus + ' FOCUS', bg: '#A9BEDC', ink: '#231F20', opacity: dt.focus ? 1 : 0.32}
       ],
       modSummary: 'It marks a Bad End on ' + dt.target + '+ · Calling it is free.',
@@ -7872,11 +7890,13 @@ class TBPBase extends DCLogic {
       // Finally rendered somewhere: the line that explains the retreat rule the
       // table keeps forgetting.
       resultLine: !drDone ? '' : (
-        (dr.success
-          ? 'The Headmaster narrates how it succeeds. +1 Bad End. '
-          : 'The Headmaster narrates how it fails. +1 Good End. ') +
+        (dr.psi
+          ? 'The Headmaster narrates how the PSI beats it — and the serious consequence the PSI causes doing it. +1 Good End. '
+          : (dr.success
+            ? 'The Headmaster narrates how it succeeds. +1 Bad End. '
+            : 'The Headmaster narrates how it fails. +1 Good End. ')) +
         (dLead ? 'It leads this Scene, so it does not retreat.' : 'The Demon retreats.')),
-      closeResult: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({demonRoll: null}); }
+      closeResult: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.clearDemonResult(); }
     };
 
     const gearToggle = {click: () => this.toggleDebug(), ink: this.state.debugVisible ? '#EDE31B' : '#FDFCFC'};
@@ -7915,7 +7935,9 @@ class TBPBase extends DCLogic {
       // Displayed in turn order (Most Popular left, Least Popular right) once
       // the first Class Vote has settled it — falls back to seat order before
       // that.
-      seats: order.slice(0, 4).filter(k => (this.state.activeSeats || [0,1,2,3]).indexOf(k) >= 0).map(k => {
+      // One lap of the order, not a fixed four: with three girls the fourth
+      // entry wraps round to the first and she showed up twice.
+      seats: order.slice(0, (this.state.activeSeats || [0,1,2,3]).length).map(k => {
         const s = SEATS[k];
         const scenesDone = ledCounts[k];
         const cleared = doneMap[k].filter(Boolean).length;
@@ -8478,6 +8500,7 @@ class Component extends TBPBase {
     // super.setState so our own push hook doesn't echo this straight back out.
     super.setState(patch);
     this.mpSynced = true;
+    this.mpBackupSoon();
     // We're ahead of what the room doc just showed us (see voteIsStale above)
     // — re-assert our own state so that stale write gets corrected for every
     // other screen too, not just this one. mpPush (not setState) so it isn't
@@ -8569,6 +8592,7 @@ class Component extends TBPBase {
     if (!this.mpSynced) return;
     var Net = window.TBPNet;
     var shared = this.mpShared();
+    this.mpBackupSoon();
     var run = function () { return Net.push(shared).catch(function (e) { console.error('[tbp] push failed', e); }); };
     this.mpPushChain = (this.mpPushChain || Promise.resolve()).then(run, run);
   }
@@ -8701,8 +8725,10 @@ class Component extends TBPBase {
         '<span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' + (isSelf ? '★ ' : '') + mpEsc(p.name || 'Unnamed') + (isSelf ? ' (you)' : '') +
         '<br><span style="opacity:.55; font-size:10.5px">' + seatLabel(p) + '</span></span>' + kick + '</div>';
     }).join('');
-    el.innerHTML = header + (rows || '<div style="font-size:11.5px; color:rgba(239,230,200,.5)">Nobody yet.</div>');
+    var backupsBtn = '<div data-backups style="cursor:pointer; margin-top:8px; text-align:center; font-size:10.5px; letter-spacing:.12em; color:#EFE6C8; border:1px solid rgba(239,230,200,.35); border-radius:6px; padding:4px 6px">BACKUPS ⟲</div>';
+    el.innerHTML = header + (rows || '<div style="font-size:11.5px; color:rgba(239,230,200,.5)">Nobody yet.</div>') + backupsBtn;
     el.querySelector('[data-toggle]').onclick = function () { self._mpRosterCollapsed = true; self.mpUpdateStatus(); };
+    el.querySelector('[data-backups]').onclick = function () { self.mpShowBackups(); };
     // Two-tap kick (tap once to arm, tap again within 3s to confirm) rather
     // than a native confirm() — it matches the game's own custom dialogs, and
     // never gets silently blocked by a browser's popup/dialog settings.
@@ -8721,6 +8747,152 @@ class Component extends TBPBase {
         }
       };
     });
+  }
+
+  // ---- backups ---------------------------------------------------------------
+  //
+  // The room lives in one Firestore document, and any browser that pushes a
+  // bad state (a blank table from a reload, a stale snapshot) overwrites it
+  // for everyone. So every browser also keeps its own trail of the room's
+  // state in localStorage: a snapshot whenever something that matters moves
+  // (the setup step, the Demon's rolls, the Scene, the End tracks, a vote) and
+  // at least every 45 seconds while play goes on. Nothing ever overwrites an
+  // older snapshot, so the state from just BEFORE a wipe is always still there.
+  //
+  // The Headmaster restores from the BACKUPS button on her roster — into this
+  // room or, if the room had to be remade, into the new one. A snapshot can
+  // also be saved as a file and loaded back from it, in case the browser
+  // itself is lost.
+  mpBackupSoon() {
+    clearTimeout(this._mpBackupT);
+    this._mpBackupT = setTimeout(this.mpBackupNow.bind(this), 1500);
+  }
+
+  mpBackupSig(sh) {
+    var r = sh.rolled || {};
+    return [sh.setupOpen, !!sh.mpReady, (sh.locks || []).join(''),
+      ['type', 'power', 'complication', 'goal'].map(function (c) { return (r[c] || []).join('/'); }).join('|'),
+      sh.demonName, sh.demonGoal, sh.firstSceneStarted, sh.scenePos, sh.locIdx, sh.goodEnd, sh.badEnd,
+      JSON.stringify(sh.goalsDone || []), sh.vote ? sh.vote.phase : '-', sh.endKind].join('#');
+  }
+
+  mpBackupRead() {
+    try { return JSON.parse(localStorage.getItem('tbp-backups') || '[]') || []; } catch (e) { return []; }
+  }
+
+  mpBackupNow() {
+    var Net = window.TBPNet;
+    if (!Net || !Net.roomId || !this.mpSynced) return;
+    var shared = this.mpShared();
+    // A table nobody has set up yet is not worth keeping — and is exactly
+    // what a wipe looks like, so it must never crowd out a real one.
+    var hasLocks = (shared.locks || []).some(Boolean);
+    if (!hasLocks && shared.setupOpen !== false) return;
+    var list = this.mpBackupRead();
+    var last = null;
+    for (var i = list.length - 1; i >= 0; i--) if (list[i].room === Net.roomId) { last = list[i]; break; }
+    var sig = this.mpBackupSig(shared);
+    var now = Date.now();
+    var json = JSON.stringify(shared);
+    if (last && last.json === json) return;
+    if (last && last.sig === sig && now - last.at < 45000) return;
+    list.push({ room: Net.roomId, at: now, sig: sig, label: this.mpBackupLabel(shared), json: json });
+    // Newest 40 overall; drop the oldest first if the browser runs out of room.
+    while (list.length > 40) list.shift();
+    for (;;) {
+      try { localStorage.setItem('tbp-backups', JSON.stringify(list)); break; }
+      catch (e) { if (list.length <= 1) break; list.shift(); }
+    }
+  }
+
+  mpBackupLabel(sh) {
+    var seats = (sh.locks || []).map(function (l, k) { return l && SEATS[k] ? SEATS[k].label : null; }).filter(Boolean).join(', ');
+    var where;
+    if (sh.endKind) where = (sh.endKind === 'good' ? 'Good' : 'Bad') + ' End reached';
+    else if (sh.setupOpen !== false) where = sh.mpReady ? 'Today\u2019s Demon' + (sh.demonNameDraft ? ' \u00b7 ' + sh.demonNameDraft : '') : 'Character Select';
+    else where = (sh.firstSceneStarted ? 'Scene ' + ((Number(sh.scenePos) || 0) + 1) : 'Before the first Scene') +
+      ' \u00b7 ' + (sh.demonName || '') + ' \u00b7 Good ' + (sh.goodEnd || 0) + ' / Bad ' + (sh.badEnd || 0);
+    return where + (seats ? ' \u2014 ' + seats : '');
+  }
+
+  mpRestore(json) {
+    var shared;
+    try { shared = typeof json === 'string' ? JSON.parse(json) : json; } catch (e) { shared = null; }
+    if (!shared || typeof shared !== 'object' || !Array.isArray(shared.chars)) { window.alert('That backup could not be read.'); return; }
+    this._mpMine = {};
+    this.mpPending = shared;
+    this.mpSynced = true;
+    this.mpFlush();
+    // Make it the room's state for everyone, not just this screen.
+    var self = this;
+    setTimeout(function () { self.mpPush(); }, 60);
+  }
+
+  mpShowBackups() {
+    var Net = window.TBPNet;
+    var self = this;
+    var old = document.getElementById('tbp-backups');
+    if (old) old.remove();
+    var list = this.mpBackupRead().slice().reverse();
+    var el = document.createElement('div');
+    el.id = 'tbp-backups';
+    el.style.cssText = 'position:fixed; inset:0; z-index:200001; background:rgba(27,24,25,.9); display:flex; align-items:center; justify-content:center; padding:20px; ' +
+      "font-family:'Baloo 2',sans-serif";
+    var fmt = function (t) { var d = new Date(t); return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'}); };
+    var rows = list.map(function (b, i) {
+      var here = Net && b.room === Net.roomId;
+      return '<div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(239,230,200,.12)">' +
+        '<div style="flex:1; min-width:0">' +
+          '<div style="font-size:12.5px; font-weight:800; color:#EFE6C8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' + mpEsc(b.label || '') + '</div>' +
+          '<div style="font-size:11px; color:rgba(239,230,200,.55)">' + fmt(b.at) + ' \u00b7 room ' + mpEsc(b.room) + (here ? ' (this room)' : '') + '</div>' +
+        '</div>' +
+        '<span data-dl="' + i + '" title="Save this backup as a file" style="cursor:pointer; flex:none; font-size:11px; font-weight:800; letter-spacing:.08em; color:#EFE6C8; border:1px solid rgba(239,230,200,.35); border-radius:6px; padding:3px 8px">FILE</span>' +
+        '<span data-restore="' + i + '" style="cursor:pointer; flex:none; font-size:11px; font-weight:800; letter-spacing:.08em; color:#231F20; background:#EDE31B; border-radius:6px; padding:4px 9px">RESTORE</span>' +
+      '</div>';
+    }).join('');
+    el.innerHTML = '<div style="width:min(640px,96vw); max-height:86vh; display:flex; flex-direction:column; background:#231F20; border:3px solid #EDE31B; border-radius:14px; padding:18px 20px">' +
+      '<div style="display:flex; align-items:center; gap:10px; margin-bottom:6px">' +
+        '<div style="flex:1; font-size:20px; font-weight:800; letter-spacing:.08em; color:#EDE31B">BACKUPS</div>' +
+        '<span data-load style="cursor:pointer; font-size:11px; font-weight:800; letter-spacing:.08em; color:#EFE6C8; border:1px solid rgba(239,230,200,.35); border-radius:6px; padding:3px 8px">LOAD FILE\u2026</span>' +
+        '<span data-close style="cursor:pointer; font-size:18px; color:#EFE6C8; padding:0 4px">\u2715</span>' +
+      '</div>' +
+      '<div style="font-family:Lora,serif; font-style:italic; font-size:13px; color:rgba(239,230,200,.65); margin-bottom:8px">Snapshots this browser has kept of your games, newest first. RESTORE puts one back into this room for everyone. FILE saves one to your computer.</div>' +
+      '<div style="overflow:auto; min-height:0">' + (rows || '<div style="font-size:12px; color:rgba(239,230,200,.5); padding:10px 0">No backups yet. They start once a table is set up.</div>') + '</div>' +
+      '<input data-file type="file" accept=".json,application/json" style="display:none">' +
+    '</div>';
+    document.body.appendChild(el);
+    el.querySelector('[data-close]').onclick = function () { el.remove(); };
+    el.onclick = function (e) { if (e.target === el) el.remove(); };
+    Array.prototype.forEach.call(el.querySelectorAll('[data-restore]'), function (btn) {
+      btn.onclick = function () {
+        var b = list[+btn.getAttribute('data-restore')];
+        if (!window.confirm('Restore "' + b.label + '" from ' + fmt(b.at) + ' into this room? Everyone\u2019s table will jump to it.')) return;
+        el.remove();
+        self.mpRestore(b.json);
+      };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-dl]'), function (btn) {
+      btn.onclick = function () {
+        var b = list[+btn.getAttribute('data-dl')];
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([b.json], {type: 'application/json'}));
+        a.download = 'tokyo-brain-pop-' + b.room + '-' + new Date(b.at).toISOString().replace(/[:.]/g, '-') + '.json';
+        document.body.appendChild(a); a.click(); a.remove();
+      };
+    });
+    var file = el.querySelector('[data-file]');
+    el.querySelector('[data-load]').onclick = function () { file.click(); };
+    file.onchange = function () {
+      var f = file.files && file.files[0];
+      if (!f) return;
+      var rd = new FileReader();
+      rd.onload = function () {
+        if (!window.confirm('Restore the game in "' + f.name + '" into this room? Everyone\u2019s table will jump to it.')) return;
+        el.remove();
+        self.mpRestore(String(rd.result));
+      };
+      rd.readAsText(f);
+    };
   }
 
   // Your own session vanished from the players map: the Headmaster kicked you.
@@ -9086,6 +9258,11 @@ class Component extends TBPBase {
           // this, whoever called the Challenge could never actually pick a
           // target on any device but her own seat's own card.
           if (c.showArrow) { n.boxClick = c.boxClick; }
+          // Same again for "Calling as FRIEND / RIVAL": that choice pops up on
+          // the challenged girl's card, but it is the CALLER's to make. Neutered
+          // here, the buttons showed and did nothing, so she was stuck.
+          var chNow = self.state.challenge;
+          if (c.roleChoice && chNow && chNow.by === mine) { n.roleOptions = c.roleOptions; }
           return n;
         });
       }
