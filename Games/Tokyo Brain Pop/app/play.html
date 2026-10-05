@@ -6926,6 +6926,32 @@ class TBPBase extends DCLogic {
     if (Object.keys(patch).length) this.setState(patch);
   }
 
+  // Clean refresh — the way out of any soft-lock. Puts every in-flight process
+  // back to rest for the whole table: rolls, Challenges, the Demon's roll, a
+  // Class Vote in progress (cancelled, nothing spent), the End screen, stuck
+  // pop-ups and animations, half-made Character Select picks. Everything
+  // durable is kept: Drama, Breaking, Popularity, Goals, Scenes, the End
+  // tracks, achievements, the Demon, the running order.
+  unstickTable() {
+    Object.values(this.rafs).forEach(r => cancelAnimationFrame(r));
+    Object.values(this.timers).forEach(t => { clearInterval(t); clearTimeout(t); });
+    const v = this.state.vote;
+    const caller = v && v.phase !== 'done' && typeof v.caller === 'number' ? v.caller : null;
+    const rest = {phase: 'idle', face: '?', landing: false, reelY: 0, reelSpeed: 0, psychic: false, psiExit: false,
+      psiHover: null, psiUsed: null, breakResult: false, dramaPop: false, quirk: null};
+    const chars = this.state.chars.map((c, k) => Object.assign({}, c, rest, k === caller ? {votedOnce: false} : {}));
+    if (this.mpTouch) this.mpTouch([].concat.apply([], chars.map((c, k) => Object.keys(rest).concat(['votedOnce']).map(f => 'chars.' + k + '.' + f))));
+    // Remembered so this screen does not run its local half twice when the
+    // stamp comes back round in another client's push.
+    const stamp = Date.now();
+    this._mpLastUnstick = stamp;
+    this.setState({
+      rollMode: null, challenge: null, demonRoll: null, vote: null, voteReady: {}, endKind: null, shoutSeat: null,
+      rollEnds: {}, picking: null, pickingBy: {}, gmDraft: null, justCleared: null,
+      unstickAt: stamp, chars
+    });
+  }
+
   cancelChallenge() {
     const ch = this.state.challenge;
     if (ch && (ch.phase === 'pick' || ch.phase === 'role')) { this.setState({challenge: null}); return; }
@@ -8379,9 +8405,16 @@ class Component extends TBPBase {
   // update would be deferred forever waiting for a spin that isn't ours.
   mpBusy() {
     var cs = this.state.chars || [];
-    for (var i = 0; i < cs.length; i++) if (cs[i].reelSpeed > 0) return true;
+    var busy = false;
+    for (var i = 0; i < cs.length; i++) if (cs[i].reelSpeed > 0) busy = true;
     var dr = this.state.demonRoll;
-    return !!(dr && dr.reelSpeed > 0);
+    if (dr && dr.reelSpeed > 0) busy = true;
+    if (!busy) { this._mpBusySince = null; return false; }
+    // A die spins for about a second. One still "spinning" after 5s is a
+    // frozen animation, not a roll — stop holding the room's updates for it,
+    // or this screen never hears from the table again.
+    if (!this._mpBusySince) this._mpBusySince = Date.now();
+    return Date.now() - this._mpBusySince < 5000;
   }
 
   // Note that this client just changed these state keys, so mpFlush knows to
@@ -8499,6 +8532,14 @@ class Component extends TBPBase {
     mpReplayPicks(shared);
     // super.setState so our own push hook doesn't echo this straight back out.
     super.setState(patch);
+    if (shared.unstickAt && shared.unstickAt !== this._mpLastUnstick) {
+      // The Headmaster unstuck the table. The shared part arrived above; the
+      // purely local part (animation loops, timers, reel positions) is ours.
+      if (this._mpLastUnstick !== undefined) this.mpUnstickLocal();
+      this._mpLastUnstick = shared.unstickAt;
+    } else if (this._mpLastUnstick === undefined) {
+      this._mpLastUnstick = shared.unstickAt || null;
+    }
     this.mpSynced = true;
     this.mpBackupSoon();
     // We're ahead of what the room doc just showed us (see voteIsStale above)
@@ -8725,10 +8766,27 @@ class Component extends TBPBase {
         '<span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' + (isSelf ? '★ ' : '') + mpEsc(p.name || 'Unnamed') + (isSelf ? ' (you)' : '') +
         '<br><span style="opacity:.55; font-size:10.5px">' + seatLabel(p) + '</span></span>' + kick + '</div>';
     }).join('');
-    var backupsBtn = '<div data-backups style="cursor:pointer; margin-top:8px; text-align:center; font-size:10.5px; letter-spacing:.12em; color:#EFE6C8; border:1px solid rgba(239,230,200,.35); border-radius:6px; padding:4px 6px">BACKUPS ⟲</div>';
+    var unsticking = this._mpUnstickArmed;
+    var backupsBtn = '<div style="display:flex; gap:6px; margin-top:8px">' +
+      '<div data-backups title="Restore the game from a saved snapshot" style="cursor:pointer; flex:1; text-align:center; font-size:10.5px; letter-spacing:.12em; color:#EFE6C8; border:1px solid rgba(239,230,200,.35); border-radius:6px; padding:4px 6px">BACKUPS ⟲</div>' +
+      '<div data-unstick title="Clear stuck rolls, Challenges, votes and pop-ups for everyone. Scores are kept." style="cursor:pointer; flex:1; text-align:center; font-size:10.5px; letter-spacing:.12em; color:' + (unsticking ? '#231F20' : '#EDE31B') + '; background:' + (unsticking ? '#EDE31B' : 'transparent') + '; border:1px solid #EDE31B; border-radius:6px; padding:4px 6px">' + (unsticking ? 'SURE?' : 'UNSTICK') + '</div>' +
+    '</div>';
     el.innerHTML = header + (rows || '<div style="font-size:11.5px; color:rgba(239,230,200,.5)">Nobody yet.</div>') + backupsBtn;
     el.querySelector('[data-toggle]').onclick = function () { self._mpRosterCollapsed = true; self.mpUpdateStatus(); };
     el.querySelector('[data-backups]').onclick = function () { self.mpShowBackups(); };
+    // Two taps, like KICK: a native confirm() can be silently blocked.
+    el.querySelector('[data-unstick]').onclick = function () {
+      clearTimeout(self._mpUnstickT);
+      if (self._mpUnstickArmed) {
+        self._mpUnstickArmed = false;
+        self.unstickTable();
+        self.mpUnstickLocal();
+      } else {
+        self._mpUnstickArmed = true;
+        self._mpUnstickT = setTimeout(function () { self._mpUnstickArmed = false; self.mpUpdateStatus(); }, 3000);
+      }
+      self.mpUpdateStatus();
+    };
     // Two-tap kick (tap once to arm, tap again within 3s to confirm) rather
     // than a native confirm() — it matches the game's own custom dialogs, and
     // never gets silently blocked by a browser's popup/dialog settings.
@@ -8780,7 +8838,7 @@ class Component extends TBPBase {
     try { return JSON.parse(localStorage.getItem('tbp-backups') || '[]') || []; } catch (e) { return []; }
   }
 
-  mpBackupNow() {
+  mpBackupNow(force) {
     var Net = window.TBPNet;
     if (!Net || !Net.roomId || !this.mpSynced) return;
     var shared = this.mpShared();
@@ -8794,8 +8852,9 @@ class Component extends TBPBase {
     var sig = this.mpBackupSig(shared);
     var now = Date.now();
     var json = JSON.stringify(shared);
+    this.mpCloudBackup(false, shared, sig, json);
     if (last && last.json === json) return;
-    if (last && last.sig === sig && now - last.at < 45000) return;
+    if (!force && last && last.sig === sig && now - last.at < 45000) return;
     list.push({ room: Net.roomId, at: now, sig: sig, label: this.mpBackupLabel(shared), json: json });
     // Newest 40 overall; drop the oldest first if the browser runs out of room.
     while (list.length > 40) list.shift();
@@ -8803,6 +8862,49 @@ class Component extends TBPBase {
       try { localStorage.setItem('tbp-backups', JSON.stringify(list)); break; }
       catch (e) { if (list.length <= 1) break; list.shift(); }
     }
+  }
+
+  // The second layer: the Headmaster's browser also copies snapshots to the
+  // cloud (Firestore `tbpBackups`), so a wiped browser — or a lost computer —
+  // still leaves the game recoverable from any other one. On a milestone, or
+  // every 2 minutes while play changes anything; never on a blank table.
+  mpCloudBackup(force, shared, sig, json) {
+    var Net = window.TBPNet;
+    if (!Net || !Net.roomId || Net.role !== 'gm' || !Net.saveBackup || !this.mpSynced) return Promise.resolve();
+    if (!shared) { shared = this.mpShared(); sig = this.mpBackupSig(shared); json = JSON.stringify(shared); }
+    if (!(shared.locks || []).some(Boolean) && shared.setupOpen !== false) return Promise.resolve();
+    var c = this._mpCloud || (this._mpCloud = {});
+    var now = Date.now();
+    if (!force) {
+      if (c.busy || c.json === json) return Promise.resolve();
+      if (c.failedAt && now - c.failedAt < 60000) return Promise.resolve();
+      if (c.sig === sig && now - (c.at || 0) < 120000) return Promise.resolve();
+    }
+    if (json.length > 900000) { c.status = 'Too large for a cloud backup.'; return Promise.resolve(); }
+    c.busy = true;
+    var entry = { room: Net.roomId, at: now, sig: sig, label: this.mpBackupLabel(shared), json: json };
+    return Net.saveBackup(entry).then(function () {
+      c.busy = false; c.at = now; c.sig = sig; c.json = json; c.failedAt = null;
+      c.status = 'Last cloud backup ' + new Date(now).toLocaleTimeString();
+    }, function (e) {
+      c.busy = false; c.failedAt = now;
+      c.status = 'Cloud backup FAILED: ' + ((e && (e.code || e.message)) || e);
+      console.error('[tbp] cloud backup failed', e);
+    });
+  }
+
+  // This screen's half of an Unstick: the animation loops, timers and reel
+  // positions that never travel between browsers.
+  mpUnstickLocal() {
+    Object.values(this.rafs).forEach(function (r) { cancelAnimationFrame(r); });
+    Object.values(this.timers).forEach(function (t) { clearInterval(t); clearTimeout(t); });
+    this._mpBusySince = null;
+    var chars = (this.state.chars || []).map(function (c) {
+      return Object.assign({}, c, { reelY: 0, reelSpeed: 0, landing: false, psiExit: false, psiHover: null, dramaPop: false });
+    });
+    var dr = this.state.demonRoll;
+    var ui = Object.assign({}, this.state.ui, { diaryPress: false, helpPress: false });
+    super.setState({ chars: chars, ui: ui, demonRoll: dr ? Object.assign({}, dr, { reelSpeed: 0 }) : dr });
   }
 
   mpBackupLabel(sh) {
@@ -8833,66 +8935,86 @@ class Component extends TBPBase {
     var self = this;
     var old = document.getElementById('tbp-backups');
     if (old) old.remove();
-    var list = this.mpBackupRead().slice().reverse();
+    var local = this.mpBackupRead().slice().reverse().map(function (b) { return Object.assign({ src: 'browser' }, b); });
+    var cloud = null, cloudErr = null;
     var el = document.createElement('div');
     el.id = 'tbp-backups';
     el.style.cssText = 'position:fixed; inset:0; z-index:200001; background:rgba(27,24,25,.9); display:flex; align-items:center; justify-content:center; padding:20px; ' +
       "font-family:'Baloo 2',sans-serif";
-    var fmt = function (t) { var d = new Date(t); return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'}); };
-    var rows = list.map(function (b, i) {
-      var here = Net && b.room === Net.roomId;
-      return '<div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(239,230,200,.12)">' +
-        '<div style="flex:1; min-width:0">' +
-          '<div style="font-size:12.5px; font-weight:800; color:#EFE6C8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' + mpEsc(b.label || '') + '</div>' +
-          '<div style="font-size:11px; color:rgba(239,230,200,.55)">' + fmt(b.at) + ' \u00b7 room ' + mpEsc(b.room) + (here ? ' (this room)' : '') + '</div>' +
-        '</div>' +
-        '<span data-dl="' + i + '" title="Save this backup as a file" style="cursor:pointer; flex:none; font-size:11px; font-weight:800; letter-spacing:.08em; color:#EFE6C8; border:1px solid rgba(239,230,200,.35); border-radius:6px; padding:3px 8px">FILE</span>' +
-        '<span data-restore="' + i + '" style="cursor:pointer; flex:none; font-size:11px; font-weight:800; letter-spacing:.08em; color:#231F20; background:#EDE31B; border-radius:6px; padding:4px 9px">RESTORE</span>' +
-      '</div>';
-    }).join('');
-    el.innerHTML = '<div style="width:min(640px,96vw); max-height:86vh; display:flex; flex-direction:column; background:#231F20; border:3px solid #EDE31B; border-radius:14px; padding:18px 20px">' +
-      '<div style="display:flex; align-items:center; gap:10px; margin-bottom:6px">' +
-        '<div style="flex:1; font-size:20px; font-weight:800; letter-spacing:.08em; color:#EDE31B">BACKUPS</div>' +
-        '<span data-load style="cursor:pointer; font-size:11px; font-weight:800; letter-spacing:.08em; color:#EFE6C8; border:1px solid rgba(239,230,200,.35); border-radius:6px; padding:3px 8px">LOAD FILE\u2026</span>' +
-        '<span data-close style="cursor:pointer; font-size:18px; color:#EFE6C8; padding:0 4px">\u2715</span>' +
-      '</div>' +
-      '<div style="font-family:Lora,serif; font-style:italic; font-size:13px; color:rgba(239,230,200,.65); margin-bottom:8px">Snapshots this browser has kept of your games, newest first. RESTORE puts one back into this room for everyone. FILE saves one to your computer.</div>' +
-      '<div style="overflow:auto; min-height:0">' + (rows || '<div style="font-size:12px; color:rgba(239,230,200,.5); padding:10px 0">No backups yet. They start once a table is set up.</div>') + '</div>' +
-      '<input data-file type="file" accept=".json,application/json" style="display:none">' +
-    '</div>';
     document.body.appendChild(el);
-    el.querySelector('[data-close]').onclick = function () { el.remove(); };
     el.onclick = function (e) { if (e.target === el) el.remove(); };
-    Array.prototype.forEach.call(el.querySelectorAll('[data-restore]'), function (btn) {
-      btn.onclick = function () {
-        var b = list[+btn.getAttribute('data-restore')];
-        if (!window.confirm('Restore "' + b.label + '" from ' + fmt(b.at) + ' into this room? Everyone\u2019s table will jump to it.')) return;
-        el.remove();
-        self.mpRestore(b.json);
+    var fmt = function (t) { var d = new Date(t); return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'}); };
+    var armed = null, armedT = null;
+    var rows = [];
+    var render = function () {
+      rows = local.concat(cloud || []).sort(function (a, b) { return b.at - a.at; });
+      var c = self._mpCloud || {};
+      var cloudLine = cloudErr ? 'Cloud backups could not be loaded: ' + cloudErr :
+        (cloud === null ? 'Loading cloud backups\u2026' : (c.status || 'Cloud backups are made from the Headmaster\u2019s browser.'));
+      var html = rows.map(function (b, i) {
+        var here = Net && b.room === Net.roomId;
+        var isArmed = armed === i;
+        return '<div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(239,230,200,.12)">' +
+          '<span style="flex:none; font-size:9.5px; font-weight:800; letter-spacing:.1em; color:' + (b.src === 'cloud' ? '#A9BEDC' : '#9CB39A') + '; border:1px solid currentColor; border-radius:5px; padding:1px 5px">' + (b.src === 'cloud' ? 'CLOUD' : 'BROWSER') + '</span>' +
+          '<div style="flex:1; min-width:0">' +
+            '<div style="font-size:12.5px; font-weight:800; color:#EFE6C8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' + mpEsc(b.label || '') + '</div>' +
+            '<div style="font-size:11px; color:rgba(239,230,200,.55)">' + fmt(b.at) + ' \u00b7 room ' + mpEsc(b.room) + (here ? ' (this room)' : '') + '</div>' +
+          '</div>' +
+          '<span data-dl="' + i + '" title="Save this backup as a file" style="cursor:pointer; flex:none; font-size:11px; font-weight:800; letter-spacing:.08em; color:#EFE6C8; border:1px solid rgba(239,230,200,.35); border-radius:6px; padding:3px 8px">FILE</span>' +
+          '<span data-restore="' + i + '" style="cursor:pointer; flex:none; font-size:11px; font-weight:800; letter-spacing:.08em; color:#231F20; background:' + (isArmed ? '#E23A3A' : '#EDE31B') + '; border-radius:6px; padding:4px 9px">' + (isArmed ? 'SURE?' : 'RESTORE') + '</span>' +
+        '</div>';
+      }).join('');
+      el.innerHTML = '<div style="width:min(680px,96vw); max-height:86vh; display:flex; flex-direction:column; background:#231F20; border:3px solid #EDE31B; border-radius:14px; padding:18px 20px">' +
+        '<div style="display:flex; align-items:center; gap:10px; margin-bottom:6px">' +
+          '<div style="flex:1; font-size:20px; font-weight:800; letter-spacing:.08em; color:#EDE31B">BACKUPS</div>' +
+          '<span data-load style="cursor:pointer; font-size:11px; font-weight:800; letter-spacing:.08em; color:#EFE6C8; border:1px solid rgba(239,230,200,.35); border-radius:6px; padding:3px 8px">LOAD FILE\u2026</span>' +
+          '<span data-close style="cursor:pointer; font-size:18px; color:#EFE6C8; padding:0 4px">\u2715</span>' +
+        '</div>' +
+        '<div style="font-family:Lora,serif; font-style:italic; font-size:13px; color:rgba(239,230,200,.65); margin-bottom:4px">Snapshots of your games, newest first. BROWSER ones live on this computer; CLOUD ones survive a wiped browser or a new computer. RESTORE puts one back into this room for everyone (tap twice). FILE saves one to your computer.</div>' +
+        '<div style="font-size:11px; letter-spacing:.04em; color:' + (/FAILED|could not/.test(cloudLine) ? '#E23A3A' : 'rgba(239,230,200,.55)') + '; margin-bottom:8px">' + mpEsc(cloudLine) + '</div>' +
+        '<div style="overflow:auto; min-height:0">' + (html || '<div style="font-size:12px; color:rgba(239,230,200,.5); padding:10px 0">No backups yet. They start once a table is set up.</div>') + '</div>' +
+        '<input data-file type="file" accept=".json,application/json" style="display:none">' +
+      '</div>';
+      el.querySelector('[data-close]').onclick = function () { el.remove(); };
+      Array.prototype.forEach.call(el.querySelectorAll('[data-restore]'), function (btn) {
+        btn.onclick = function () {
+          var i = +btn.getAttribute('data-restore');
+          clearTimeout(armedT);
+          if (armed !== i) { armed = i; armedT = setTimeout(function () { armed = null; render(); }, 3000); render(); return; }
+          el.remove();
+          self.mpRestore(rows[i].json);
+        };
+      });
+      Array.prototype.forEach.call(el.querySelectorAll('[data-dl]'), function (btn) {
+        btn.onclick = function () {
+          var b = rows[+btn.getAttribute('data-dl')];
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(new Blob([b.json], {type: 'application/json'}));
+          a.download = 'tokyo-brain-pop-' + b.room + '-' + new Date(b.at).toISOString().replace(/[:.]/g, '-') + '.json';
+          document.body.appendChild(a); a.click(); a.remove();
+        };
+      });
+      var file = el.querySelector('[data-file]');
+      el.querySelector('[data-load]').onclick = function () { file.click(); };
+      file.onchange = function () {
+        var f = file.files && file.files[0];
+        if (!f) return;
+        var rd = new FileReader();
+        rd.onload = function () { el.remove(); self.mpRestore(String(rd.result)); };
+        rd.readAsText(f);
       };
-    });
-    Array.prototype.forEach.call(el.querySelectorAll('[data-dl]'), function (btn) {
-      btn.onclick = function () {
-        var b = list[+btn.getAttribute('data-dl')];
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob([b.json], {type: 'application/json'}));
-        a.download = 'tokyo-brain-pop-' + b.room + '-' + new Date(b.at).toISOString().replace(/[:.]/g, '-') + '.json';
-        document.body.appendChild(a); a.click(); a.remove();
-      };
-    });
-    var file = el.querySelector('[data-file]');
-    el.querySelector('[data-load]').onclick = function () { file.click(); };
-    file.onchange = function () {
-      var f = file.files && file.files[0];
-      if (!f) return;
-      var rd = new FileReader();
-      rd.onload = function () {
-        if (!window.confirm('Restore the game in "' + f.name + '" into this room? Everyone\u2019s table will jump to it.')) return;
-        el.remove();
-        self.mpRestore(String(rd.result));
-      };
-      rd.readAsText(f);
     };
+    render();
+    if (Net && Net.listBackups) {
+      Net.listBackups(60).then(function (r) {
+        cloud = (r || []).map(function (b) { return Object.assign({}, b, { src: 'cloud' }); });
+        if (document.body.contains(el)) render();
+      }, function (e) {
+        cloudErr = (e && (e.code || e.message)) || String(e);
+        cloud = [];
+        if (document.body.contains(el)) render();
+      });
+    } else { cloud = []; render(); }
   }
 
   // Your own session vanished from the players map: the Headmaster kicked you.
@@ -8934,9 +9056,12 @@ class Component extends TBPBase {
   // The Headmaster's own action: delete the room and send everyone (herself
   // included) back to the title screen. deleteRoom() makes every other
   // client's subscribe() fire with shared:null, caught below.
-  endRoom() {
+  async endRoom() {
     var Net = window.TBPNet;
     if (!Net || !Net.roomId) return;
+    // Keep a final copy of the finished game first: the room doc is about to go.
+    this.mpBackupNow(true);
+    try { await Promise.race([this.mpCloudBackup(true), new Promise(function (r) { setTimeout(r, 4000); })]); } catch (e) {}
     Net.deleteRoom(Net.roomId).catch(function (e) { console.error('[tbp] end room failed', e); });
     window.location.href = 'index.html';
   }

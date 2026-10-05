@@ -11,7 +11,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/fireba
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField, onSnapshot,
-  collection, runTransaction, serverTimestamp
+  collection, runTransaction, serverTimestamp, getDocs, query, orderBy, limit
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -188,6 +188,21 @@ const Net = {
       ["players." + sessionId]: deleteField()
     });
   },
+  // Cloud backups live in their own collection, apart from the rooms, so
+  // neither ending a room (which deletes its doc) nor a browser wiping its
+  // storage can take them with it. One doc per snapshot, never overwritten.
+  async saveBackup(entry) {
+    await authReady;
+    await setDoc(doc(db, "tbpBackups", entry.room + "-" + entry.at), entry);
+  },
+  async listBackups(max) {
+    await authReady;
+    const qs = await getDocs(query(collection(db, "tbpBackups"), orderBy("at", "desc"), limit(max || 60)));
+    const rows = [];
+    qs.forEach((d) => rows.push(d.data()));
+    return rows;
+  },
+
   async peek(id) { await authReady; const s = await getDoc(doc(db, "rooms", normalize(id))); return s.exists() ? s.data() : null; }
 };
 
