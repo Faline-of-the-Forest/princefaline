@@ -8747,6 +8747,14 @@ class Component extends TBPBase {
       } else if (!first) {
         self.mpShowRoomClosed();                 // room deleted mid-session
       }
+      if (first && joined.role === 'player' && joined.seat != null && self._mpName) {
+        // Joining a seat the Headmaster already set up: put her name on it,
+        // once the room's own state has landed.
+        setTimeout(function () {
+          var names = self.state.playerNames || {};
+          if (!names[joined.seat]) self.setState({ playerNames: Object.assign({}, names, { [joined.seat]: self._mpName }) });
+        }, 1500);
+      }
       first = false;
       self.mpRenderDemoBar();
     });
@@ -8955,11 +8963,17 @@ class Component extends TBPBase {
           var pickedByOther = !locks[k] && pickingBy[k] && pickingBy[k] !== Net.session;
           var canChoose = Net.role === 'player' && !ready && !pickedByOther &&
             (locks[k] ? mySeat : (Net.seat == null || Net.seat === k));
+          // The Headmaster can set the table herself: pick any free girl's
+          // Quirks and Goals, or tap a girl she set up to free her again.
+          // Players who join once the game is underway then take over a
+          // ready-made seat (see the room gate).
+          var gmChoose = isGm && !ready && !pickedByOther;
           var canFocus = isGm || canChoose;
           return Object.assign({}, s, {
-            choose: canChoose ? function () { self.mpChoose(k); } : function () {},
+            choose: canChoose ? function () { self.mpChoose(k); } :
+              (gmChoose ? function () { if (locks[k]) self.mpUnchoose(k); else self.openGoalPicker(k); } : function () {}),
             focus: canFocus ? s.focus : function () {},
-            btnLabel: (locks[k] && mySeat) ? 'UNSELECT' : s.btnLabel,
+            btnLabel: ((locks[k] && mySeat) || (locks[k] && gmChoose)) ? 'UNSELECT' : s.btnLabel,
             pickedByOther: pickedByOther,
             artFilter: pickedByOther ? 'grayscale(.9) brightness(.55)' : s.artFilter,
             border: pickedByOther ? 'rgba(226,58,58,.5)' : s.border,
