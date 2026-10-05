@@ -4323,7 +4323,7 @@
   <div style="position:absolute; inset:0; z-index:0; pointer-events:none; background-image:radial-gradient(#231F20 3.4px, transparent 3.9px); background-size:15px 15px; -webkit-mask-image:radial-gradient(115% 105% at 50% 42%, transparent 42%, #000 100%); mask-image:radial-gradient(115% 105% at 50% 42%, transparent 42%, #000 100%)"></div>
   <div style="position:absolute; inset:0; z-index:0; pointer-events:none; background-image:radial-gradient(#231F20 1.8px, transparent 2.3px); background-size:15px 15px; -webkit-mask-image:radial-gradient(115% 105% at 50% 42%, transparent 26%, #000 62%, transparent 78%); mask-image:radial-gradient(115% 105% at 50% 42%, transparent 26%, #000 62%, transparent 78%)"></div>
 
-  <div data-tbp="hdr" style="width:100%; flex:none; display:flex; align-items:stretch; gap:16px; position:relative; z-index:9">
+  <div data-tbp="hdr" style="visibility:{{ f.chromeVis }}; width:100%; flex:none; display:flex; align-items:stretch; gap:16px; position:relative; z-index:9">
 
     <div style="flex:0 1 min(24vw,300px); min-width:min(15vw,178px); box-sizing:border-box; border-radius:14px; box-shadow:6px 6px 0 rgba(35,31,32,.28); border:4px solid #231F20; background:{{ f.me.tone }}; position:relative; overflow:hidden; display:flex; align-items:center; gap:min(1.1vw,13px); padding:11px min(1.1vw,13px)">
       <div style="position:absolute; inset:0; background-image:radial-gradient(#231F20 1.65px, transparent 2.1px); background-size:12px 12px; opacity:.16; pointer-events:none"></div>
@@ -4409,13 +4409,13 @@
     </div>
   </div>
 
-  <div style="position:fixed; top:4px; left:{{ f.anchors.goodX }}; transform:translateX(-50%); z-index:30">
+  <div style="visibility:{{ f.chromeVis }}; position:fixed; top:4px; left:{{ f.anchors.goodX }}; transform:translateX(-50%); z-index:30">
     <div sc-camel-on-click="{{ f.newGame.open }}" title="Start a new game — pick students and roll the Demon" style="cursor:pointer; height:28px; box-sizing:border-box; padding:0 10px; border-radius:8px; background:#313739; border:2.5px solid rgba(253,252,252,.3); display:flex; align-items:center; justify-content:center; box-shadow:2px 2px 0 rgba(35,31,32,.3)">
       <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.13em; line-height:1; white-space:nowrap; color:#F6A7CA">NEW GAME</div>
     </div>
   </div>
 
-  <div style="position:fixed; top:4px; left:{{ f.anchors.sceneX }}; transform:translateX(-50%); z-index:30">
+  <div style="visibility:{{ f.chromeVis }}; position:fixed; top:4px; left:{{ f.anchors.sceneX }}; transform:translateX(-50%); z-index:30">
     <div sc-camel-on-click="{{ f.gm.open }}" title="Scene Control — GM only" style="cursor:pointer; height:28px; box-sizing:border-box; padding:0 10px; border-radius:8px; background:#313739; border:2.5px solid rgba(253,252,252,.3); display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:2px 2px 0 rgba(35,31,32,.3)">
       <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.13em; line-height:1; white-space:nowrap; color:#EDE31B">SCENE</div>
       <div style="width:8px; height:8px; border-radius:50%; background:{{ f.gm.dotBg }}"></div>
@@ -5094,6 +5094,7 @@
                   <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S GOAL</div>
                   <input data-mp="demon-goal" value="{{ f.setup.goalText }}" sc-camel-on-change="{{ f.setup.setGoal }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:16px; color:#EFE6C8; outline:none">
                 </div>
+                <div data-mp="skip-btn" sc-camel-on-click="{{ f.setup.skip }}" title="Go straight to the table — the Demon can be renamed later from Scene Control" style="flex:none; cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.09em; color:#EFE6C8; background:transparent; border:3px solid rgba(239,230,200,.35); border-radius:11px; padding:12px 18px; white-space:nowrap">SKIP TO ROOM</div>
                 <div data-mp="play-btn" sc-camel-on-click="{{ f.setup.start }}" style="flex:none; cursor:pointer; opacity:{{ f.setup.startOpacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:21px; letter-spacing:.09em; color:#EFE6C8; background:#B4322C; border:4px solid #E23A3A; border-radius:11px; padding:12px 40px; box-shadow:0 6px 0 rgba(0,0,0,.45)">PLAY</div>
               </div>
             </div>
@@ -5286,7 +5287,10 @@
                 </sc-for>
               </div>
 
-              <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.16em; color:rgba(239,230,200,.6); padding-top:4px">DEMON</div>
+              <div style="display:flex; align-items:center; gap:8px; padding-top:4px">
+                <div style="flex:1; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.16em; color:rgba(239,230,200,.6)">DEMON · {{ f.gm.demonName }}</div>
+                <div sc-camel-on-click="{{ f.gm.renameDemon }}" title="Change the Demon's name and goal" style="cursor:pointer; flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9.5px; letter-spacing:.1em; color:#EFE6C8; border:2px solid rgba(239,230,200,.3); border-radius:7px; padding:3px 8px">RENAME</div>
+              </div>
               <div style="display:flex; gap:8px">
                 <sc-for list="{{ f.gm.demonAvail }}" as="da" hint-placeholder-count="2">
                   <div sc-camel-on-click="{{ da.click }}" style="cursor:pointer; flex:1 1 0; text-align:center; background:{{ da.bg }}; border:2px solid {{ da.border }}; border-radius:9px; padding:7px 8px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9.5px; letter-spacing:.1em; color:{{ da.ink }}; white-space:nowrap">{{ da.label }}</div>
@@ -6354,6 +6358,8 @@ class TBPBase extends DCLogic {
     return {
       show: this.state.gmOpen, stop,
       demonAvail, voteSpent, orderEdit,
+      demonName: this.state.demonName,
+      renameDemon: () => this.renameDemon(),
       open: () => this.setState({gmOpen: true}),
       close: () => this.setState({gmOpen: false, gmDraft: null}),
       fireGood: () => this.setState({endKind: 'good', gmOpen: false}),
@@ -6878,6 +6884,44 @@ class TBPBase extends DCLogic {
       chars,
       setupOpen: false
     });
+  }
+
+  // Straight from Today's Demon to the table, without waiting on the reels or
+  // the name and goal. Whatever is filled in is kept; anything blank keeps the
+  // Demon's current name/goal, which the Headmaster can rename later from
+  // Scene Control. An empty reel gets one roll so the dossier is not blank.
+  skipToRoom() {
+    const locks = this.state.locks || [true,true,true,true];
+    const activeSeats = locks.map((l, k) => l ? k : -1).filter(k => k >= 0);
+    if (activeSeats.length < 3) return;
+    const rolled = Object.assign({}, this.state.rolled);
+    ['type','power','complication','goal'].forEach(cat => {
+      if (!(rolled[cat] || []).length) {
+        const list = DEMON_TABLES[cat];
+        rolled[cat] = [list[Math.floor(Math.random() * (list.length - 1))]];
+      }
+    });
+    const name = (this.state.demonNameDraft || '').trim();
+    const goal = (this.state.demonGoalDraft || '').trim();
+    this.setState({
+      demonName: name ? name.toUpperCase() : this.state.demonName,
+      demonGoal: goal ? '“' + goal + '”' : this.state.demonGoal,
+      activeSeats: activeSeats.length === 3 ? activeSeats : [0,1,2,3],
+      rolled, rollEnds: {},
+      setupOpen: false
+    });
+  }
+
+  // The Headmaster renaming the Demon mid-game, from Scene Control.
+  renameDemon() {
+    const name = window.prompt('Demon’s name', this.state.demonName);
+    if (name == null) return;
+    const goal = window.prompt('Demon’s goal', String(this.state.demonGoal).replace(/^“|”$/g, ''));
+    if (goal == null) return;
+    const patch = {};
+    if (name.trim()) patch.demonName = name.trim().toUpperCase();
+    if (goal.trim()) patch.demonGoal = '“' + goal.trim() + '”';
+    if (Object.keys(patch).length) this.setState(patch);
   }
 
   cancelChallenge() {
@@ -8152,6 +8196,7 @@ class TBPBase extends DCLogic {
       name: this.state.demonNameDraft,
       goalText: this.state.demonGoalDraft,
       setName: e => this.setState({demonNameDraft: e.target.value}),
+      skip: () => this.skipToRoom(),
       setGoal: e => this.setState({demonGoalDraft: e.target.value}),
       startOpacity: (this.state.demonNameDraft.trim() && this.state.demonGoalDraft.trim() && !this.anySpinning()) ? 1 : 0.4,
       roster: (this.state.locks || []).map((locked, k) => Object.assign(faceOf(SEATS[k].who), {
@@ -8174,7 +8219,10 @@ class TBPBase extends DCLogic {
       show: !this.state.firstSceneStarted && !voteBar.show && !voteResult.show,
       start: () => this.startVote(null)
     };
-    return {f: {anchors, gm, end, setup, newGame, cards: cardsActive, rollPicker, playerPicker, psiCostPicker, voteBar, voteHeadmaster, voteResult, voteToggle, rail, demon, me, rulebook, diary, loc, firstVote, stage, focusPicker, stageBg: dLead ? '#4A1418' : '#EDE31B', rowScale, rowPull: Math.round(-519 * (1 - rowScale)) + 'px', debugVisible: this.state.debugVisible, gearToggle, watermarkShow: false}};
+    return {f: {anchors, gm, end, setup, newGame, cards: cardsActive, rollPicker, playerPicker, psiCostPicker, voteBar, voteHeadmaster, voteResult, voteToggle, rail, demon, me, rulebook, diary, loc, firstVote, stage, focusPicker, stageBg: dLead ? '#4A1418' : '#EDE31B', rowScale, rowPull: Math.round(-519 * (1 - rowScale)) + 'px', debugVisible: this.state.debugVisible, gearToggle, watermarkShow: false,
+      // The setup screen sits inside a layer that ranks below the header, so
+      // the header (and the NEW GAME / SCENE tabs) would show over it.
+      chromeVis: this.state.setupOpen ? 'hidden' : 'visible'}};
   }
 }
 
@@ -8345,6 +8393,9 @@ class Component extends TBPBase {
     var shared = this.mpPending; this.mpPending = null;
     var self = this;
     var patch = {};
+    // The first snapshot is the room's truth, whole: nothing this client did
+    // before it arrived (layout, a default seat) outranks it.
+    if (!this.mpSynced) this._mpMine = {};
     for (var k in shared) {
       if (!Object.prototype.hasOwnProperty.call(shared, k)) continue;
       if (k === 'chars') continue;
@@ -8426,6 +8477,7 @@ class Component extends TBPBase {
     mpReplayPicks(shared);
     // super.setState so our own push hook doesn't echo this straight back out.
     super.setState(patch);
+    this.mpSynced = true;
     // We're ahead of what the room doc just showed us (see voteIsStale above)
     // — re-assert our own state so that stale write gets corrected for every
     // other screen too, not just this one. mpPush (not setState) so it isn't
@@ -8510,6 +8562,11 @@ class Component extends TBPBase {
   mpPush() {
     if (!window.TBPNet || !window.TBPNet.roomId) return;
     if (window.TBPNet.role === 'spectator') return;
+    // Every push carries this client's WHOLE state. Until the room's own state
+    // has landed here, that is the blank starting table — and a joiner's first
+    // layout pass (fit() on mount) used to push it straight over a live game,
+    // throwing everyone back to Today's Demon with empty reels.
+    if (!this.mpSynced) return;
     var Net = window.TBPNet;
     var shared = this.mpShared();
     var run = function () { return Net.push(shared).catch(function (e) { console.error('[tbp] push failed', e); }); };
@@ -8557,6 +8614,7 @@ class Component extends TBPBase {
       // Demon's name/goal are readable) but only the Headmaster can use them.
       css += '[data-mp="reroll-all"],[title="Reroll this whole line"],[title="Click to reroll just this one"],' +
         '[data-mp="play-btn"]{pointer-events:none !important; opacity:.35 !important}';
+      css += '[data-mp="skip-btn"]{display:none !important}';
       css += '[data-mp="demon-name"],[data-mp="demon-goal"]{pointer-events:none !important}';
     }
     if (role === 'spectator') {
@@ -8743,6 +8801,7 @@ class Component extends TBPBase {
         // where it was left rather than wiping it.
         var demo = self.mpDemoOpts();
         if (demo) self.demoSeed(demo.seats);
+        self.mpSynced = true;                    // a new room: our state IS the room
         self.mpPush();                           // seed a brand-new room
       } else if (!first) {
         self.mpShowRoomClosed();                 // room deleted mid-session
@@ -8988,6 +9047,7 @@ class Component extends TBPBase {
         setName: isGm ? f.setup.setName : function () {},
         setGoal: isGm ? f.setup.setGoal : function () {},
         start: isGm ? f.setup.start : function () {},
+        skip: isGm ? f.setup.skip : function () {},
         rerollAll: isGm ? f.setup.rerollAll : function () {},
         categories: (f.setup.categories || []).map(function (cat) {
           return Object.assign({}, cat, {
