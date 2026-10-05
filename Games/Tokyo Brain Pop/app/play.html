@@ -6888,7 +6888,11 @@ class TBPBase extends DCLogic {
     // selectTarget) and goes straight to 'active'. Calling it is free, so
     // backing out just clears it — there is nothing to hand back.
     if (ch.rel === 'demon') {
-      if (this.state.demonRoll && this.state.demonRoll.phase === 'ready') {
+      // A Demon Challenge with no roll behind it (the roll was cleared out from
+      // under it) is orphaned: nothing will ever resolve it, so cancelling
+      // must clear it rather than leave her stuck as CHALLENGER.
+      const dr = this.state.demonRoll;
+      if (!dr || dr.phase === 'ready') {
         this.setState({challenge: null, demonRoll: null});
       }
       return;
@@ -7299,6 +7303,7 @@ class TBPBase extends DCLogic {
       // rolling, so she has no rollMode of her own — but PSI is still hers to
       // spend, and her card has to say so loudly enough that nobody has to
       // remember the option exists.
+      const orphanDemonCall = !!ch && ch.rel === 'demon' && !ch.resolved && !this.state.demonRoll;
       const isChallenger = !!ch && ch.rel === 'demon' && !ch.resolved && i === ch.by;
       const demonWaiting = isChallenger && !!this.state.demonRoll && this.state.demonRoll.phase === 'ready';
       // She may only burn PSI on the Demon once every one of her Goals is
@@ -7373,7 +7378,7 @@ class TBPBase extends DCLogic {
         challengerTag: isChallenger,
         showCancel: ((pickPhase || rolePhase) && i === ch.by) ||
           (!!ch && ch.rel === 'demon' && !ch.resolved && i === ch.by &&
-           !!this.state.demonRoll && this.state.demonRoll.phase === 'ready') ||
+           (orphanDemonCall || (!!this.state.demonRoll && this.state.demonRoll.phase === 'ready'))) ||
           (!!ch && (ch.rel === 'friend' || ch.rel === 'rival') && !ch.resolved && i === ch.by &&
            active !== null && this.state.chars[active].phase !== 'rolling' &&
            this.state.chars[active].phase !== 'result' && this.state.chars[active].phase !== 'psychic'),
