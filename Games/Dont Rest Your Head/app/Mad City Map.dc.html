@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Barlow:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body{margin:0;background:#050506;}
+    *{box-sizing:border-box;}
+    a{color:oklch(0.55 0.21 27);}
+    a:hover{color:oklch(0.68 0.19 30);}
+    button{font-family:'Barlow',sans-serif; font-weight:600;}
+    input,textarea{outline:none;}
+    textarea::placeholder,input::placeholder{color:oklch(0.5 0.01 70);}
+    ::-webkit-scrollbar{width:6px;height:6px;}
+    ::-webkit-scrollbar-thumb{background:oklch(0.4 0.01 60);}
+    @keyframes mc-in{0%{opacity:0;transform:translateY(4px)}100%{opacity:1;transform:none}}
+  </style>
+</helmet>
+<div style="{{ rootStyle }}">
+  <div style="position:relative; z-index:20; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:12px 26px; background:rgba(4,4,5,0.92); border-bottom:1px solid oklch(0.93 0.012 85 / 0.5);">
+    <div style="display:flex; align-items:baseline; gap:16px;">
+      <span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:30px; line-height:1; letter-spacing:0.02em; text-transform:uppercase; color:oklch(0.96 0.012 85);">Mad City</span>
+      
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button onClick="{{ onAddNode }}" style="height:32px; padding:0 14px; background:transparent; border:1px solid oklch(0.55 0.21 27); color:oklch(0.68 0.19 30); font-size:12.5px; font-weight:600; letter-spacing:0.18em; cursor:pointer;" style-hover="background:oklch(0.55 0.21 27); color:oklch(0.97 0.01 85);">+ LOCATION</button>
+      <span style="width:1px; height:20px; background:oklch(0.93 0.012 85 / 0.25); margin:0 4px;"></span>
+      <button onClick="{{ onZoomOut }}" title="Zoom out" style="width:32px; height:32px; padding:0; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.9 0.01 80); font-size:16px; cursor:pointer;" style-hover="border-color:oklch(0.95 0.012 85);">−</button>
+      <span style="min-width:44px; text-align:center; font-family:'Barlow',sans-serif; font-weight:600; font-size:13px; color:oklch(0.85 0.01 80);">{{ zoomText }}</span>
+      <button onClick="{{ onZoomIn }}" title="Zoom in" style="width:32px; height:32px; padding:0; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.9 0.01 80); font-size:16px; cursor:pointer;" style-hover="border-color:oklch(0.95 0.012 85);">+</button>
+      <button onClick="{{ onFit }}" title="Fit all locations" style="height:32px; padding:0 12px; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.9 0.01 80); font-size:12px; letter-spacing:0.18em; cursor:pointer;" style-hover="border-color:oklch(0.95 0.012 85);">FIT</button>
+    </div>
+  </div>
+
+  <div ref="{{ canvasRef }}" onMouseDown="{{ onCanvasDown }}" onDoubleClick="{{ onCanvasDbl }}" style="{{ canvasStyle }}">
+    <div style="{{ worldStyle }}">
+      <svg width="1" height="1" style="position:absolute; left:0; top:0; overflow:visible; pointer-events:none; z-index:0;">
+        <defs>
+          <marker id="mc-arrow" viewBox="0 0 12 12" refX="10.5" refY="6" markerWidth="13" markerHeight="13" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M1 1.5 L11 6 L1 10.5 z" fill="oklch(0.88 0.012 85)"></path></marker>
+          <marker id="mc-arrow-lock" viewBox="0 0 12 12" refX="10.5" refY="6" markerWidth="13" markerHeight="13" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M1 1.5 L11 6 L1 10.5 z" fill="oklch(0.62 0.21 27)"></path></marker>
+          <marker id="mc-arrow-sel" viewBox="0 0 12 12" refX="10.5" refY="6" markerWidth="13" markerHeight="13" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M1 1.5 L11 6 L1 10.5 z" fill="oklch(0.62 0.21 27)"></path></marker>
+        </defs>
+        <sc-for list="{{ edgeViews }}" as="e" hint-placeholder-count="0">
+          <g>
+            <path d="{{ e.d }}" fill="none" stroke="{{ e.stroke }}" stroke-width="{{ e.width }}" stroke-dasharray="{{ e.dash }}" marker-end="{{ e.markerEnd }}" marker-start="{{ e.markerStart }}"></path>
+            <path d="{{ e.d }}" fill="none" stroke="transparent" stroke-width="18" style="pointer-events:stroke; cursor:pointer;" onMouseDown="{{ e.onSelect }}" onDoubleClick="{{ e.onSelect }}"></path>
+          </g>
+        </sc-for>
+        <sc-if value="{{ linkOn }}" hint-placeholder-val="{{ false }}">
+          <path d="{{ linkD }}" fill="none" stroke="oklch(0.62 0.21 27)" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#mc-arrow-sel)"></path>
+        </sc-if>
+      </svg>
+
+      <sc-for list="{{ nodeViews }}" as="n" hint-placeholder-count="0">
+        <div data-node="{{ n.id }}" style="{{ n.style }}" onMouseDown="{{ n.onDown }}" onDoubleClick="{{ n.onDbl }}">
+          <div style="display:flex; align-items:center; gap:8px; padding:10px 10px 8px 14px; cursor:grab;">
+            <input data-name-input="{{ n.id }}" value="{{ n.name }}" onChange="{{ n.onName }}" placeholder="Location name" style="flex:1; min-width:0; background:transparent; border:none; border-bottom:1px solid transparent; padding:1px 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:23px; line-height:1.1; text-transform:uppercase; color:oklch(0.96 0.012 85); user-select:text;" style-hover="border-bottom-color:oklch(0.93 0.012 85 / 0.3);" style-focus="border-bottom-color:oklch(0.62 0.21 27);" />
+            <button onClick="{{ n.onNotes }}" title="Open this location's notes in the GM panel" style="flex-shrink:0; height:24px; padding:0 8px; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.3); color:oklch(0.85 0.01 80); font-family:'Barlow',sans-serif; font-weight:700; font-size:13px; letter-spacing:0.1em; cursor:pointer;" style-hover="border-color:oklch(0.62 0.21 27); color:oklch(0.97 0.01 85);">NOTES</button>
+            <button onClick="{{ n.onDelete }}" title="Delete location" style="{{ n.delStyle }}">{{ n.delLabel }}</button>
+          </div>
+          <sc-if value="{{ n.hasHere }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; flex-wrap:wrap; gap:6px; padding:8px 14px; background:oklch(0.93 0.012 85 / 0.07); border-bottom:1px solid oklch(0.93 0.012 85 / 0.18);">
+              <sc-for list="{{ n.here }}" as="h" hint-placeholder-count="0">
+                <div onMouseDown="{{ h.onDown }}" title="Drag to move" style="display:flex; align-items:center; gap:7px; padding:2px 10px 2px 2px; background:oklch(0.07 0.008 50); border:1px solid oklch(0.93 0.012 85 / 0.4); border-radius:20px; cursor:grab;">
+                  <div style="{{ h.avatarStyle }}"></div>
+                  <span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:15px; letter-spacing:0.05em; text-transform:uppercase; line-height:1; color:oklch(0.96 0.012 85);">{{ h.name }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <button onMouseDown="{{ n.onLinkStart }}" title="Drag onto another location to draw an arrow" style="position:absolute; right:-11px; top:calc(50% - 11px); width:22px; height:22px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#050506; border:1.5px solid oklch(0.55 0.21 27); color:oklch(0.68 0.19 30); font-size:12px; line-height:1; cursor:crosshair;" style-hover="background:oklch(0.55 0.21 27); color:oklch(0.97 0.01 85);">→</button>
+        </div>
+      </sc-for>
+
+      <sc-for list="{{ labelViews }}" as="l" hint-placeholder-count="0">
+        <div style="{{ l.style }}" onMouseDown="{{ l.onDown }}" onDoubleClick="{{ l.onDown }}">
+          <sc-if value="{{ l.selected }}" hint-placeholder-val="{{ false }}">
+            <div style="width:236px; background:oklch(0.1 0.008 50); border:1px solid oklch(0.55 0.21 27); border-top:3px solid oklch(0.55 0.21 27); box-shadow:0 14px 34px rgba(0,0,0,0.85); padding:10px 12px 12px; display:flex; flex-direction:column; gap:8px; cursor:default; animation:mc-in 120ms ease-out both;">
+              <div style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.14em; color:oklch(0.68 0.19 30); text-transform:uppercase; line-height:1.4;">{{ l.title }}</div>
+              <textarea data-edge-input="1" rows="3" value="{{ l.label }}" onChange="{{ l.onLabel }}" placeholder="How do you get from here to there?" style="width:100%; resize:vertical; background:oklch(0.07 0.008 50); border:1px solid oklch(0.93 0.012 85 / 0.25); padding:7px 8px; font-family:'Crimson Text',serif; font-size:16px; line-height:1.3; color:oklch(0.93 0.008 80); user-select:text;" style-focus="border-color:oklch(0.62 0.21 27);"></textarea>
+              <button onClick="{{ l.onLock }}" style="{{ l.lockPanelStyle }}">{{ l.lockPanelLabel }}</button>
+              <div style="display:flex; gap:6px;">
+                <button onClick="{{ l.onReverse }}" style="flex:1; padding:6px 0; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.88 0.01 80); font-size:11px; letter-spacing:0.12em; cursor:pointer;" style-hover="border-color:oklch(0.95 0.012 85);">REVERSE</button>
+                <button onClick="{{ l.onBoth }}" style="{{ l.bothStyle }}">TWO-WAY</button>
+                <button onClick="{{ l.onDelete }}" style="flex:1; padding:6px 0; background:transparent; border:1px solid oklch(0.55 0.21 27); color:oklch(0.68 0.19 30); font-size:11px; letter-spacing:0.12em; cursor:pointer;" style-hover="background:oklch(0.55 0.21 27); color:oklch(0.97 0.01 85);">DELETE</button>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ l.pillOn }}" hint-placeholder-val="{{ false }}">
+            <div style="max-width:210px; padding:5px 10px 6px; background:oklch(0.1 0.008 50); border:1px solid oklch(0.93 0.012 85 / 0.4); font-family:'Crimson Text',serif; font-style:italic; font-size:15px; line-height:1.28; color:oklch(0.92 0.008 80); text-align:center; text-wrap:pretty; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.7);" style-hover="border-color:oklch(0.62 0.21 27);">{{ l.label }}</div>
+          </sc-if>
+          <sc-if value="{{ l.badgeOn }}" hint-placeholder-val="{{ true }}">
+            <button onMouseDown="{{ l.stop }}" onDoubleClick="{{ l.stop }}" onClick="{{ l.onLock }}" title="{{ l.lockTitle }}" style="{{ l.lockStyle }}"><svg width="12" height="12" viewBox="0 0 12 12" style="display:block;"><rect x="2" y="5.5" width="8" height="5.5" fill="currentColor"></rect><path d="{{ l.shackle }}" fill="none" stroke="currentColor" stroke-width="1.5"></path></svg></button>
+          </sc-if>
+          <sc-if value="{{ l.dotOn }}" hint-placeholder-val="{{ false }}">
+            <div title="{{ l.dotTitle }}" style="{{ l.dotStyle }}" style-hover="border-color:oklch(0.62 0.21 27); background:oklch(0.55 0.21 27);"></div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="position:absolute; inset:0; pointer-events:none; z-index:4; box-shadow:inset 0 0 160px 30px rgba(0,0,0,0.85);"></div>
+    <sc-if value="{{ ghostOn }}" hint-placeholder-val="{{ false }}"><div style="{{ ghostStyle }}"></div></sc-if>
+    <div onMouseDown="{{ stop }}" onDoubleClick="{{ stop }}" style="position:absolute; left:20px; top:14px; z-index:6; display:flex; flex-direction:column; align-items:flex-start; gap:6px; cursor:default;">
+      <div style="display:flex; align-items:center; gap:12px; padding:8px 12px; background:rgba(4,4,5,0.9); border:1px solid oklch(0.93 0.012 85 / 0.35); min-height:62px;">
+        <span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.68 0.19 30);">PARTY</span>
+        <sc-for list="{{ trayTokens }}" as="t" hint-placeholder-count="0">
+          <div onMouseDown="{{ t.onDown }}" title="Drag onto a location" style="display:flex; flex-direction:column; align-items:center; gap:3px; cursor:grab;">
+            <div style="{{ t.avatarStyle }}"></div>
+            <span style="font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; line-height:1; color:oklch(0.9 0.01 80);">{{ t.name }}</span>
+          </div>
+        </sc-for>
+        <sc-if value="{{ trayMsgOn }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.14em; color:oklch(0.6 0.01 70);">{{ trayMsg }}</span></sc-if>
+        <span style="width:1px; align-self:stretch; background:oklch(0.93 0.012 85 / 0.25);"></span>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <button onClick="{{ onStarts }}" title="Send the party to their starting points" style="padding:4px 8px; background:transparent; border:1px solid oklch(0.84 0.16 88 / 0.7); color:oklch(0.84 0.16 88); font-size:11px; letter-spacing:0.14em; cursor:pointer;" style-hover="background:oklch(0.84 0.16 88); color:oklch(0.16 0.02 70);">↺ STARTS</button>
+          <button onClick="{{ onRoster }}" style="{{ rosterBtnStyle }}">ROSTER</button>
+        </div>
+      </div>
+      <sc-if value="{{ rosterOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 12px 12px; background:rgba(4,4,5,0.95); border:1px solid oklch(0.93 0.012 85 / 0.35); animation:mc-in 120ms ease-out both;">
+          <div style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.16em; color:oklch(0.6 0.01 70); margin-bottom:9px;">WHO'S PLAYING</div>
+          <div style="display:grid; grid-template-columns:repeat(4,56px); gap:10px 8px;">
+            <sc-for list="{{ rosterChars }}" as="r" hint-placeholder-count="0">
+              <button onClick="{{ r.onToggle }}" style="display:flex; flex-direction:column; align-items:center; gap:4px; padding:0; background:transparent; border:none; cursor:pointer;">
+                <div style="{{ r.avatarStyle }}"></div>
+                <span style="{{ r.labelStyle }}">{{ r.name }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+    
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;onOpenNotes&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(id:string)=>void&quot;},&quot;embedded&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;characters&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{id:string,name:string,avatarUrl:string,avatarPos?:string}[]&quot;}}">
+class Component extends DCLogic {
+  KEY = 'dryh_madcity_map_v1';
+  W = 290;
+  chars(){
+    const p = this.props.characters;
+    const pos = { c6: 'center 45%', c8: 'center 35%' };
+    const fb = this.CHARS.map(c => ({ id: c[0], name: c[1], url: encodeURI('uploads/' + c[1] + '-darkroom-1333x2000.png'), pos: pos[c[0]] || 'center 15%' }));
+    return Array.isArray(p) && p.length ? p.map(c => ({ id: c.id, name: c.name, url: c.avatarUrl, pos: c.avatarPos || 'center 15%' })) : fb;
+  }
+  startToken(id, e){
+    if (e.button !== 0) return;
+    e.stopPropagation(); e.preventDefault();
+    const r = this.canvasRef.current.getBoundingClientRect();
+    this.drag = { type: 'token', id };
+    this.setState({ tokenDrag: { id, x: e.clientX - r.left, y: e.clientY - r.top, over: null }, roster: false });
+  }
+  setPlace(id, at){ this.setState(s => ({ party: { ...s.party, [id]: { ...(s.party || {})[id], on: true, at } } })); }
+  canvasRef = React.createRef();
+  sizes = {};
+  drag = null;
+  focusReq = null;
+  state = this.init();
+
+  uid(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+  init(){
+    const mk = (id, name, x, y, subs) => ({ id, name, x, y, subs: subs.map((s, i) => ({ id: id + '-s' + i, name: s })) });
+    const seed = {
+      nodes: [
+        mk('district13', 'District 13', 40, 140, ['The Precinct Steps', 'The Warrant Office', 'The Holding Cells']),
+        mk('bazaar', 'The Bizarre Bazaar', 440, 40, ['The Stalls', 'The Auction Block', 'The Back Alley']),
+        mk('rooftop', 'The Rooftop Jungle', 840, 140, ['The Ledges', 'The Vent Maze', 'The Garden Roof']),
+        mk('warrens', 'The Warrens', 240, 430, ['The Drainpipes', 'The Wax Line', 'The Underlanding']),
+        mk('highschool', 'The High School', 680, 450, ['The Gymnasium', 'The Lockers', "The Principal's Office"]),
+      ],
+      edges: [], view: { x: 40, y: 20, k: 1 },
+    };
+    let d = seed;
+    try { const raw = localStorage.getItem(this.KEY); if (raw) { const p = JSON.parse(raw); if (p && p.nodes) d = { ...seed, ...p }; } } catch (e) {}
+    return { nodes: d.nodes, edges: d.edges, view: d.view, selNode: null, selEdge: null, arm: null, linking: null, pick: null, nm: null, nmPick: null, party: d.party || {}, tokenDrag: null, roster: false };
+  }
+  CHARS = [['c1','Toad'],['c2','Phee'],['c3','Fat Jack'],['c4','Peter'],['c5','Henry'],['c6','Alice'],['c7','Jane'],['c8','Ben']];
+  toggleStart(nodeId, cid){
+    this.setState(s => ({ nodes: s.nodes.map(n => {
+      const has = (n.starts || []).includes(cid);
+      if (n.id === nodeId) return { ...n, starts: has ? n.starts.filter(x => x !== cid) : [...(n.starts || []), cid] };
+      return has ? { ...n, starts: n.starts.filter(x => x !== cid) } : n;
+    }) }));
+  }
+
+  componentDidMount(){
+    window.addEventListener('mousemove', this.onMove);
+    window.addEventListener('mouseup', this.onUp);
+    window.addEventListener('keydown', this.onKey);
+    window.addEventListener('dryh-city-edit', this.onExtEdit);
+    this.attachWheel();
+    this.measure();
+  }
+  componentWillUnmount(){
+    window.removeEventListener('mousemove', this.onMove);
+    window.removeEventListener('mouseup', this.onUp);
+    window.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('dryh-city-edit', this.onExtEdit);
+    clearTimeout(this._saveT); this.save();
+    if (this._wheelEl) this._wheelEl.removeEventListener('wheel', this.onWheel);
+  }
+  componentDidUpdate(){
+    this.attachWheel();
+    this.measure();
+    const f = this.focusReq;
+    if (f && this.canvasRef.current) {
+      const sel = f.type === 'boon' ? `[data-boon-input="${f.id}"]` : f.type === 'nm' ? `[data-nm-input="${f.id}"]` : f.type === 'node' ? `[data-name-input="${f.id}"]` : f.type === 'sub' ? `[data-sub-input="${f.id}"]` : '[data-edge-input]';
+      const el = this.canvasRef.current.querySelector(sel);
+      if (el) { this.focusReq = null; el.focus(); if (f.type !== 'sub') el.select && el.select(); }
+    }
+    clearTimeout(this._saveT);
+    if (this._ext) { this._ext = false; return; }
+    this._saveT = setTimeout(() => {
+      this.save();
+    }, 250);
+  }
+
+  save(){ const { nodes, edges, view, party } = this.state; try { localStorage.setItem(this.KEY, JSON.stringify({ nodes, edges, view, party })); } catch (e) {} window.dispatchEvent(new Event('dryh-map-saved')); }
+  onExtEdit = () => { try { const p = JSON.parse(localStorage.getItem(this.KEY) || 'null'); if (p && p.nodes) { this._ext = true; this.setState({ nodes: p.nodes, edges: p.edges || [] }); } } catch (e) {} };
+  attachWheel(){
+    const el = this.canvasRef.current;
+    if (el && this._wheelEl !== el) {
+      if (this._wheelEl) this._wheelEl.removeEventListener('wheel', this.onWheel);
+      el.addEventListener('wheel', this.onWheel, { passive: false });
+      this._wheelEl = el;
+    }
+  }
+  measure(){
+    const el = this.canvasRef.current; if (!el) return;
+    let changed = false;
+    el.querySelectorAll('[data-node]').forEach(n => {
+      const id = n.getAttribute('data-node'), h = n.offsetHeight, w = n.offsetWidth;
+      const o = this.sizes[id];
+      if (!o || o.h !== h || o.w !== w) { this.sizes[id] = { w, h }; changed = true; }
+    });
+    if (changed) this.forceUpdate();
+  }
+
+  toWorld(e){
+    const r = this.canvasRef.current.getBoundingClientRect(), v = this.state.view;
+    return { x: (e.clientX - r.left - v.x) / v.k, y: (e.clientY - r.top - v.y) / v.k };
+  }
+
+  onWheel = (e) => {
+    if (e.target.closest && e.target.closest('textarea') && !e.ctrlKey) return;
+    e.preventDefault();
+    const v = this.state.view;
+    if (e.ctrlKey || e.metaKey) {
+      const r = this.canvasRef.current.getBoundingClientRect();
+      this.zoomAt(v, e.clientX - r.left, e.clientY - r.top, v.k * Math.exp(-e.deltaY * 0.01));
+    } else {
+      this.setState({ view: { ...v, x: v.x - e.deltaX, y: v.y - e.deltaY } });
+    }
+  };
+  zoomAt(v, cx, cy, nk){
+    nk = Math.max(0.25, Math.min(2, nk));
+    const wx = (cx - v.x) / v.k, wy = (cy - v.y) / v.k;
+    this.setState({ view: { x: cx - wx * nk, y: cy - wy * nk, k: nk } });
+  }
+  zoomBy(f){
+    const r = this.canvasRef.current.getBoundingClientRect(), v = this.state.view;
+    this.zoomAt(v, r.width / 2, r.height / 2, v.k * f);
+  }
+  fit(){
+    const { nodes } = this.state; if (!nodes.length) return;
+    const r = this.canvasRef.current.getBoundingClientRect();
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    nodes.forEach(n => { const z = this.sizes[n.id] || { w: this.W, h: 180 }; x0 = Math.min(x0, n.x); y0 = Math.min(y0, n.y); x1 = Math.max(x1, n.x + z.w); y1 = Math.max(y1, n.y + z.h); });
+    const pad = 80, k = Math.max(0.25, Math.min(1, (r.width - pad * 2) / (x1 - x0), (r.height - pad * 2) / (y1 - y0)));
+    this.setState({ view: { k, x: (r.width - (x1 - x0) * k) / 2 - x0 * k, y: (r.height - (y1 - y0) * k) / 2 - y0 * k } });
+  }
+
+  onMove = (e) => {
+    const d = this.drag; if (!d) return;
+    const dx = e.clientX - d.sx, dy = e.clientY - d.sy;
+    if (d.type === 'pan') this.setState({ view: { ...d.v0, x: d.v0.x + dx, y: d.v0.y + dy } });
+    else if (d.type === 'node') { const k = this.state.view.k; this.setState(s => ({ nodes: s.nodes.map(n => n.id === d.id ? { ...n, x: d.ox + dx / k, y: d.oy + dy / k } : n) })); }
+    else if (d.type === 'link') this.setState({ linking: { from: d.from, ...this.toWorld(e) } });
+    else if (d.type === 'token') {
+      const r = this.canvasRef.current.getBoundingClientRect(), el = document.elementFromPoint(e.clientX, e.clientY), nd = el && el.closest ? el.closest('[data-node]') : null;
+      this.setState({ tokenDrag: { id: d.id, x: e.clientX - r.left, y: e.clientY - r.top, over: nd ? nd.getAttribute('data-node') : null } });
+    }
+  };
+  onUp = (e) => {
+    const d = this.drag; this.drag = null;
+    if (d && d.type === 'token') {
+      const el = document.elementFromPoint(e.clientX, e.clientY), nd = el && el.closest ? el.closest('[data-node]') : null;
+      this.setPlace(d.id, nd ? nd.getAttribute('data-node') : null); this.setState({ tokenDrag: null }); return;
+    }
+    if (d && d.type === 'link') {
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const nodeEl = el && el.closest ? el.closest('[data-node]') : null;
+      const inCanvas = el && this.canvasRef.current && this.canvasRef.current.contains(el);
+      let to = nodeEl ? nodeEl.getAttribute('data-node') : null;
+      if (!to && inCanvas) {
+        const w = this.toWorld(e); to = this.uid();
+        this.setState(s => ({ nodes: [...s.nodes, { id: to, name: 'New Location', x: w.x - this.W / 2, y: w.y - 24, subs: [] }] }));
+        this.focusReq = { type: 'node', id: to };
+      }
+      if (to && to !== d.from) {
+        const ex = this.state.edges.find(x => x.from === d.from && x.to === to);
+        const id = ex ? ex.id : this.uid();
+        this.setState(s => ({ edges: ex ? s.edges : [...s.edges, { id, from: d.from, to, label: '', both: false, locked: false }], selEdge: id, selNode: null }));
+        if (!nodeEl || true) this.focusReq = this.focusReq || { type: 'edge' };
+      }
+      this.setState({ linking: null });
+    }
+  };
+  onKey = (e) => {
+    const t = e.target, typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA');
+    if (e.key === 'Escape') { if (typing) t.blur(); this.setState({ selEdge: null, selNode: null, pick: null, nmPick: null }); }
+    else if ((e.key === 'Delete' || e.key === 'Backspace') && !typing && this.state.selEdge) this.delEdge(this.state.selEdge);
+  };
+
+  onCanvasDown = (e) => {
+    if (e.button !== 0) return;
+    this.drag = { type: 'pan', sx: e.clientX, sy: e.clientY, v0: this.state.view };
+    this.setState({ selEdge: null, selNode: null, arm: null, pick: null, nmPick: null, roster: false });
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  };
+  onCanvasDbl = (e) => {
+    const w = this.toWorld(e);
+    this.addNode(w.x - this.W / 2, w.y - 24);
+  };
+
+  addNode(x, y){
+    const id = this.uid();
+    if (x === undefined) {
+      const r = this.canvasRef.current.getBoundingClientRect(), v = this.state.view;
+      x = (r.width / 2 - v.x) / v.k - this.W / 2 + (Math.random() - 0.5) * 60;
+      y = (r.height / 2 - v.y) / v.k - 60 + (Math.random() - 0.5) * 60;
+    }
+    this.setState(s => ({ nodes: [...s.nodes, { id, name: 'New Location', x, y, subs: [] }], selNode: id, selEdge: null }));
+    this.focusReq = { type: 'node', id };
+  }
+  upd(id, fn){ this.setState(s => ({ nodes: s.nodes.map(n => n.id === id ? fn(n) : n) })); }
+  delNode(id){
+    delete this.sizes[id];
+    this.setState(s => ({ nodes: s.nodes.filter(n => n.id !== id), edges: s.edges.filter(e => e.from !== id && e.to !== id), arm: null, selNode: null }));
+  }
+  delEdge(id){ this.setState(s => ({ edges: s.edges.filter(e => e.id !== id), selEdge: null })); }
+  updEdge(id, p){ this.setState(s => ({ edges: s.edges.map(e => e.id === id ? { ...e, ...p } : e) })); }
+
+  renderVals(){
+    const s = this.state, v = s.view, W = this.W;
+    const RED = 'oklch(0.55 0.21 27)', RED2 = 'oklch(0.62 0.21 27)';
+    const byId = {}; s.nodes.forEach(n => byId[n.id] = n);
+    const cl = this.chars(), party = s.party || {};
+    const act = cl.filter(c => party[c.id] && party[c.id].on);
+    const here = {}; act.forEach(c => { const at = party[c.id].at; if (at && byId[at]) (here[at] = here[at] || []).push(c); });
+    const BONE = 'oklch(0.93 0.012 85)', GOLD = 'oklch(0.84 0.16 88)';
+    const tok = (c, size, bc) => ({ width: size, height: size, borderRadius: '50%', flexShrink: 0, backgroundColor: '#222', backgroundImage: 'url("' + c.url + '")', backgroundSize: 'cover', backgroundPosition: c.pos, border: '2px solid ' + (bc || BONE) });
+    const ctr = n => { const z = this.sizes[n.id] || { w: W, h: 180 }; return { x: n.x + z.w / 2, y: n.y + z.h / 2, w: z.w, h: z.h }; };
+    const edgePt = (c, tx, ty, pad) => {
+      const dx = tx - c.x, dy = ty - c.y; if (!dx && !dy) return { x: c.x, y: c.y };
+      const t = Math.min(dx ? (c.w / 2 + pad) / Math.abs(dx) : Infinity, dy ? (c.h / 2 + pad) / Math.abs(dy) : Infinity);
+      return { x: c.x + dx * t, y: c.y + dy * t };
+    };
+
+    const nodeViews = s.nodes.map(n => {
+      const sel = s.selNode === n.id, armed = s.arm === n.id;
+      const st = n.starts || [], pickOn = s.pick === n.id, over = !!(s.tokenDrag && s.tokenDrag.over === n.id);
+      return {
+        id: n.id, name: n.name,
+        onNotes: (e) => { e.stopPropagation(); if (this.props.onOpenNotes) { this.save(); this.props.onOpenNotes(n.id); } },
+        hasStarts: st.length > 0, pickOn,
+        starts: this.CHARS.filter(c => st.includes(c[0])).map(c => ({ name: c[1] })),
+        chars: this.CHARS.map(c => {
+          const on = st.includes(c[0]), elsewhere = !on && s.nodes.some(o => o.id !== n.id && (o.starts || []).includes(c[0]));
+          return { name: c[1], title: elsewhere ? 'Currently starts elsewhere — click to move here' : '', onToggle: () => this.toggleStart(n.id, c[0]),
+            style: { padding: '2px 8px', background: on ? 'oklch(0.84 0.16 88)' : 'transparent', border: '1px solid ' + (on ? 'oklch(0.84 0.16 88)' : 'oklch(0.93 0.012 85 / 0.3)'), color: on ? 'oklch(0.16 0.02 70)' : elsewhere ? 'oklch(0.5 0.01 70)' : 'oklch(0.88 0.01 80)', fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 600, fontSize: 14, letterSpacing: '0.04em', textTransform: 'uppercase', cursor: 'pointer' } };
+        }),
+        stop: (e) => e.stopPropagation(),
+        hasHere: (here[n.id] || []).length > 0,
+        here: (here[n.id] || []).map(c => ({ name: c.name, avatarStyle: tok(c, 26), onDown: (e) => this.startToken(c.id, e) })),
+        hasBoons: (n.boons || []).length > 0, boonCount: (n.boons || []).length, boonsOpen: !n.boonsClosed, boonsCaret: n.boonsClosed ? '▸' : '▾',
+        onToggleBoons: () => this.upd(n.id, o => ({ ...o, boonsClosed: !o.boonsClosed })),
+        onAddBoon: () => { const id = this.uid(); this.upd(n.id, o => ({ ...o, boonsClosed: false, boons: [...(o.boons || []), { id, name: '', note: '' }] })); this.focusReq = { type: 'boon', id }; },
+        boons: (n.boons || []).map(b => ({
+          id: b.id, name: b.name, note: b.note,
+          onName: (e) => { const val = e.target.value; this.upd(n.id, o => ({ ...o, boons: o.boons.map(x => x.id === b.id ? { ...x, name: val } : x) })); },
+          onNote: (e) => { const val = e.target.value; this.upd(n.id, o => ({ ...o, boons: o.boons.map(x => x.id === b.id ? { ...x, note: val } : x) })); },
+          onRemove: () => this.upd(n.id, o => ({ ...o, boons: o.boons.filter(x => x.id !== b.id) })),
+        })),
+        nightmare: n.nightmare || '', nmDesc: n.nmDesc || '', nmOpen: s.nm === n.id && !!(n.nightmare || '').trim(), nmTab: !!(n.nightmare || '').trim(),
+        nmPickOn: s.nmPick === n.id,
+        onNmKey: (e) => { if (e.key === 'Enter') { e.target.blur(); this.setState({ nmPick: null }); this.focusReq = null; } },
+        onNmToggle: () => { this.setState(x => ({ nm: x.nm === n.id ? null : n.id })); },
+        onNmPick: () => { this.setState(x => ({ nmPick: x.nmPick === n.id ? null : n.id, pick: null })); this.focusReq = { type: 'nm', id: n.id }; },
+        onNmDesc: (e) => { const val = e.target.value; this.upd(n.id, o => ({ ...o, nmDesc: val })); },
+        nmBtnStyle: { flexShrink: 0, width: 22, height: 22, padding: 0, background: s.nmPick === n.id ? RED : 'transparent', border: 'none', color: s.nmPick === n.id ? 'oklch(0.97 0.01 85)' : (n.nightmare || '').trim() ? 'oklch(0.72 0.18 30)' : 'oklch(0.5 0.01 70)', fontSize: 14, lineHeight: 1, cursor: 'pointer' },
+        nmTabStyle: { pointerEvents: 'auto', display: 'flex', alignItems: 'center', gap: 5, padding: '3px 9px 3px 7px', border: 'none', background: RED, color: 'oklch(0.97 0.01 85)', fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 14, letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 1.2, borderRadius: '2px 2px 0 0', cursor: 'pointer', outline: s.nm === n.id ? '1px solid oklch(0.97 0.01 85)' : 'none', outlineOffset: -3 },
+        onNightmare: (e) => { const val = e.target.value; this.upd(n.id, o => ({ ...o, nightmare: val })); },
+        starBtnStyle: { flexShrink: 0, width: 22, height: 22, padding: 0, background: pickOn ? 'oklch(0.84 0.16 88)' : 'transparent', border: 'none', color: pickOn ? 'oklch(0.16 0.02 70)' : st.length ? 'oklch(0.84 0.16 88)' : 'oklch(0.5 0.01 70)', fontSize: 14, lineHeight: 1, cursor: 'pointer' },
+        onTogglePick: () => this.setState(x => ({ pick: x.pick === n.id ? null : n.id, nmPick: null })),
+        style: { position: 'absolute', left: n.x, top: n.y, width: W, background: 'oklch(0.1 0.008 50)', border: '1px solid ' + (sel ? RED : 'oklch(0.93 0.012 85 / 0.35)'), borderTop: '3px solid ' + (sel ? RED : st.length ? 'oklch(0.84 0.16 88)' : 'oklch(0.92 0.012 85)'), boxShadow: over ? '0 0 0 2px ' + GOLD + ', 0 0 28px oklch(0.84 0.16 88 / 0.35), 0 12px 34px rgba(0,0,0,0.8)' : '0 12px 34px rgba(0,0,0,0.8)', zIndex: (pickOn || s.nmPick === n.id) ? 8 : sel ? 3 : 2 },
+        onDown: (e) => {
+          e.stopPropagation();
+          if (e.button !== 0) return;
+          this.setState({ selNode: n.id, selEdge: null });
+          if (e.target.closest('input,textarea,button')) return;
+          if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+          this.drag = { type: 'node', id: n.id, sx: e.clientX, sy: e.clientY, ox: n.x, oy: n.y };
+        },
+        onDbl: (e) => e.stopPropagation(),
+        onName: (e) => { const val = e.target.value; this.upd(n.id, o => ({ ...o, name: val })); },
+        delLabel: armed ? 'DELETE?' : '×',
+        delStyle: { flexShrink: 0, height: 22, minWidth: 22, padding: armed ? '0 6px' : 0, background: armed ? RED : 'transparent', border: 'none', color: armed ? 'oklch(0.97 0.01 85)' : 'oklch(0.5 0.01 70)', fontSize: armed ? 9 : 17, letterSpacing: armed ? '0.1em' : 0, lineHeight: 1, cursor: 'pointer' },
+        onDelete: (e) => {
+          e.stopPropagation();
+          if (s.arm === n.id) return this.delNode(n.id);
+          this.setState({ arm: n.id }); clearTimeout(this._armT);
+          this._armT = setTimeout(() => this.setState(st => st.arm === n.id ? { arm: null } : null), 2500);
+        },
+        onAddSub: () => { const id = this.uid(); this.upd(n.id, o => ({ ...o, subs: [...o.subs, { id, name: '' }] })); this.focusReq = { type: 'sub', id }; },
+        onLinkStart: (e) => {
+          e.stopPropagation(); e.preventDefault();
+          this.drag = { type: 'link', from: n.id };
+          this.setState({ linking: { from: n.id, ...this.toWorld(e) }, selNode: null, selEdge: null });
+        },
+        subs: n.subs.map((sub, i) => ({
+          id: sub.id, name: sub.name,
+          onName: (e) => { const val = e.target.value; this.upd(n.id, o => ({ ...o, subs: o.subs.map(x => x.id === sub.id ? { ...x, name: val } : x) })); },
+          onRemove: () => this.upd(n.id, o => ({ ...o, subs: o.subs.filter(x => x.id !== sub.id) })),
+          onKey: (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); const id = this.uid(); this.upd(n.id, o => { const a = o.subs.slice(); a.splice(i + 1, 0, { id, name: '' }); return { ...o, subs: a }; }); this.focusReq = { type: 'sub', id }; }
+            else if (e.key === 'Backspace' && sub.name === '') { e.preventDefault(); const prev = n.subs[i - 1]; this.upd(n.id, o => ({ ...o, subs: o.subs.filter(x => x.id !== sub.id) })); if (prev) this.focusReq = { type: 'sub', id: prev.id }; }
+          },
+        })),
+      };
+    });
+
+    const edgeViews = [], labelViews = [];
+    s.edges.forEach(ed => {
+      const a = byId[ed.from], b = byId[ed.to]; if (!a || !b) return;
+      const A = ctr(a), B = ctr(b);
+      const hasRev = s.edges.some(x => x.from === ed.to && x.to === ed.from);
+      let ox = 0, oy = 0;
+      if (hasRev) {
+        const L = Math.hypot(B.x - A.x, B.y - A.y) || 1, off = ed.from < ed.to ? 14 : -14;
+        ox = -(B.y - A.y) / L * off; oy = (B.x - A.x) / L * off;
+      }
+      const A2 = { ...A, x: A.x + ox, y: A.y + oy }, B2 = { ...B, x: B.x + ox, y: B.y + oy };
+      const p1 = edgePt(A2, B2.x, B2.y, ed.both ? 3 : 2), p2 = edgePt(B2, A2.x, A2.y, 3);
+      const sel = s.selEdge === ed.id, lk = !!ed.locked, mk = sel ? 'url(#mc-arrow-sel)' : lk ? 'url(#mc-arrow-lock)' : 'url(#mc-arrow)';
+      const select = (e) => { e.stopPropagation(); this.setState({ selEdge: ed.id, selNode: null }); this.focusReq = { type: 'edge' }; };
+      edgeViews.push({
+        d: `M${p1.x} ${p1.y} L${p2.x} ${p2.y}`, stroke: sel || lk ? RED2 : 'oklch(0.88 0.012 85)', width: sel ? 2.4 : 1.8, dash: lk ? '7 5' : 'none',
+        markerEnd: mk, markerStart: ed.both ? mk : 'none', onSelect: select,
+      });
+      const has = !!ed.label;
+      labelViews.push({
+        style: { position: 'absolute', left: (p1.x + p2.x) / 2, top: (p1.y + p2.y) / 2, transform: 'translate(-50%,-50%)', zIndex: sel ? 7 : 5, display: 'flex', alignItems: 'center', gap: 4 },
+        badgeOn: !sel, stop: (e) => e.stopPropagation(), shackle: lk ? 'M3.8 5.5V4a2.2 2.2 0 0 1 4.4 0v1.5' : 'M3.8 5.5V3.8a2.2 2.2 0 0 1 4.2-.9',
+        lockTitle: lk ? 'Locked — click to unlock' : 'Open — click to lock',
+        lockStyle: { width: 20, height: 20, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: lk ? RED : '#050506', border: '1px solid ' + (lk ? RED : 'oklch(0.93 0.012 85 / 0.45)'), color: lk ? 'oklch(0.98 0.01 85)' : 'oklch(0.7 0.01 70)', boxShadow: '0 3px 10px rgba(0,0,0,0.7)' },
+        onLock: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.updEdge(ed.id, { locked: !lk }); },
+        lockPanelLabel: lk ? 'PATH LOCKED — UNLOCK' : 'LOCK THIS PATH',
+        lockPanelStyle: { padding: '7px 0', background: lk ? RED : 'transparent', border: '1px solid ' + (lk ? RED : 'oklch(0.93 0.012 85 / 0.35)'), color: lk ? 'oklch(0.98 0.01 85)' : 'oklch(0.88 0.01 80)', fontSize:11, letterSpacing: '0.14em', cursor: 'pointer' },
+        onDown: select, selected: sel, pillOn: false, dotOn: !sel, dotTitle: has ? 'Show route notes' : 'Add route notes', dotStyle: { width:12, height:12, background: has ? RED : '#050506', border:'1.5px solid ' + (has ? RED2 : 'oklch(0.88 0.012 85)'), transform:'rotate(45deg)', cursor:'pointer' }, label: ed.label,
+        title: a.name + (ed.both ? ' ⇄ ' : ' → ') + b.name,
+        onLabel: (e) => this.updEdge(ed.id, { label: e.target.value }),
+        onReverse: () => this.updEdge(ed.id, { from: ed.to, to: ed.from }),
+        onBoth: () => this.updEdge(ed.id, { both: !ed.both }),
+        onDelete: () => this.delEdge(ed.id),
+        bothStyle: { flex: 1, padding: '6px 0', background: ed.both ? 'oklch(0.92 0.012 85)' : 'transparent', border: '1px solid ' + (ed.both ? 'oklch(0.92 0.012 85)' : 'oklch(0.93 0.012 85 / 0.35)'), color: ed.both ? 'oklch(0.12 0.01 50)' : 'oklch(0.88 0.01 80)', fontSize:11, letterSpacing: '0.12em', cursor: 'pointer' },
+      });
+    });
+
+    let linkOn = false, linkD = '';
+    if (s.linking && byId[s.linking.from]) {
+      const C = ctr(byId[s.linking.from]), p = edgePt(C, s.linking.x, s.linking.y, 2);
+      linkOn = true; linkD = `M${p.x} ${p.y} L${s.linking.x} ${s.linking.y}`;
+    }
+
+    const dot = 28 * v.k;
+    const td = s.tokenDrag, tc = td && cl.find(c => c.id === td.id);
+    const unplaced = act.filter(c => !(party[c.id].at && byId[party[c.id].at]));
+    return {
+      rootStyle: { height: this.props.embedded ? '100%' : '100vh', display: 'flex', flexDirection: 'column', background: '#050506', color: 'oklch(0.95 0.012 85)', overflow: 'hidden', userSelect: 'none' },
+      stop: (e) => e.stopPropagation(),
+      ghostOn: !!tc, ghostStyle: tc ? { position: 'absolute', left: td.x - 22, top: td.y - 22, zIndex: 30, pointerEvents: 'none', ...tok(tc, 44, GOLD), boxShadow: '0 10px 24px rgba(0,0,0,0.85)' } : {},
+      trayTokens: unplaced.map(c => ({ name: c.name, avatarStyle: tok(c, 40), onDown: (e) => this.startToken(c.id, e) })),
+      trayMsgOn: unplaced.length === 0, trayMsg: act.length === 0 ? 'CHOOSE WHO IS PLAYING →' : 'ALL ON THE MAP',
+      rosterOpen: s.roster,
+      rosterBtnStyle: { padding: '4px 8px', background: s.roster ? BONE : 'transparent', border: '1px solid oklch(0.93 0.012 85 / 0.45)', color: s.roster ? 'oklch(0.12 0.01 50)' : 'oklch(0.88 0.01 80)', fontSize:11, letterSpacing: '0.14em', cursor: 'pointer' },
+      onRoster: () => this.setState(x => ({ roster: !x.roster })),
+      rosterChars: cl.map(c => { const on = !!(party[c.id] && party[c.id].on); return { name: c.name, avatarStyle: { ...tok(c, 44, on ? GOLD : 'oklch(0.93 0.012 85 / 0.3)'), opacity: on ? 1 : 0.45 }, labelStyle: { fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 600, fontSize: 13, letterSpacing: '0.04em', textTransform: 'uppercase', lineHeight: 1, color: on ? GOLD : 'oklch(0.6 0.01 70)' }, onToggle: () => this.setState(x => ({ party: { ...x.party, [c.id]: { on: !on, at: on ? null : ((x.party || {})[c.id] || {}).at || null } } })) }; }),
+      onStarts: () => this.setState(x => { const p = { ...x.party }; cl.forEach(c => { if (p[c.id] && p[c.id].on) { const nd = x.nodes.find(n => (n.starts || []).includes(c.id)); if (nd) p[c.id] = { ...p[c.id], at: nd.id }; } }); return { party: p }; }),
+      canvasRef: this.canvasRef,
+      canvasStyle: { position: 'relative', flex: 1, minHeight: 0, overflow: 'hidden', cursor: 'grab', backgroundColor: '#050506', backgroundImage: 'radial-gradient(circle, oklch(0.93 0.012 85 / 0.16) 1px, transparent 1.4px)', backgroundSize: dot + 'px ' + dot + 'px', backgroundPosition: v.x + 'px ' + v.y + 'px' },
+      worldStyle: { position: 'absolute', left: 0, top: 0, width: 0, height: 0, transformOrigin: '0 0', transform: `translate(${v.x}px,${v.y}px) scale(${v.k})` },
+      nodeViews, edgeViews, labelViews, linkOn, linkD,
+      countText: `${s.nodes.length} LOCATIONS · ${s.edges.length} ROUTES`,
+      zoomText: Math.round(v.k * 100) + '%',
+      onAddNode: () => this.addNode(),
+      onZoomIn: () => this.zoomBy(1.2), onZoomOut: () => this.zoomBy(1 / 1.2), onFit: () => this.fit(),
+      onCanvasDown: this.onCanvasDown, onCanvasDbl: this.onCanvasDbl,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

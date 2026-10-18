@@ -1,6 +1,19 @@
 {
   "dashboards": [
     {
+      "t": "Don't Rest Your Head",
+      "c": "Don't Rest Your Head",
+      "sys": "Don't Rest Your Head",
+      "kind": "Dashboard",
+      "players": "3–6",
+      "tags": ["multiplayer", "GM screen", "live sync"],
+      "note": "A live table for Mad City: protagonists, Despair and Hope, conflicts, the Mad City map and the GM screen, synced for everyone.",
+      "shelfDesc": "Insomniacs lost in the Mad City. Exhaustion, Madness, Pain and the clock, all on one shared screen.",
+      "icon": "/app-icons/icon_dontrestyourhead.jpg",
+      "url": "/games/dont-rest-your-head/",
+      "host": "princefaline.com/games/dont-rest-your-head"
+    },
+    {
       "t": "Tokyo Brain Pop!?",
       "c": "Tokyo Brain Pop",
       "sys": "Tokyo Brain Pop",

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Share+Tech+Mono&family=Special+Elite&family=Crimson+Text:ital@0;1&family=Barlow:wght@500&family=Rubik+Mono+One&display=swap" rel="stylesheet">
+  <style>
+    html,body{margin:0;height:100%;background:#000;} a{color:oklch(0.62 0.21 27);text-decoration:none;} a:hover{color:oklch(0.72 0.19 30);}
+    @keyframes ts-in{0%{opacity:0;transform:translateX(16px)}100%{opacity:1;transform:none}}
+    @keyframes ts-face{0%{opacity:0;filter:blur(8px)}100%{opacity:1;filter:none}}
+    @keyframes ts-flick{0%,100%{opacity:1}48%{opacity:1}50%{opacity:0.4}52%{opacity:1}53%{opacity:0.6}55%{opacity:1}}
+  </style>
+</helmet>
+<div style="position:relative; width:100%; height:100vh; min-height:520px; background:#000; overflow:hidden; display:flex;">
+  <img src="uploads/Cover-7a2275a2.jpg" alt="" style="position:absolute; left:0; top:0; height:100%; width:auto; max-width:62%; object-fit:cover; object-position:left center; animation:ts-face 2.4s ease-out both;">
+  <div style="position:relative; margin-left:auto; width:min(560px, 46%); padding:7vh 6vw 8vh 0; display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end; box-sizing:border-box;">
+    <img src="uploads/pasted-1792353047131-0.png" alt="Don't Rest Your Head" style="width:100%; max-width:520px; margin-right:-6%; display:block; animation:ts-in 1.2s 0.6s ease-out both, ts-flick 6s 2s infinite;">
+    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:14px;">
+      <sc-for list="{{ items }}" as="it" hint-placeholder-count="4">
+        <a href="{{ it.href }}" onMouseEnter="{{ it.onEnter }}" style="{{ it.style }}"><span style="{{ it.barStyle }}"></span><span>{{ it.label }}</span></a>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;menuFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Barlow Condensed&quot;,&quot;Barlow&quot;,&quot;Special Elite&quot;,&quot;Share Tech Mono&quot;,&quot;Crimson Text&quot;,&quot;Crimson Italic&quot;,&quot;Rubik Mono One&quot;],&quot;default&quot;:&quot;Crimson Text&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { hov: 0 };
+  renderVals() {
+    const fonts = { 'Barlow Condensed':["'Barlow Condensed',sans-serif",600,17,'0.32em','uppercase'], 'Special Elite':["'Special Elite',monospace",400,16,'0.18em','uppercase'], 'Share Tech Mono':["'Share Tech Mono',monospace",400,14,'0.3em','uppercase'], 'Crimson Text':["'Crimson Text',serif",400,32,'0.08em','none'], 'Crimson Italic':["'Crimson Text',serif",400,21,'0.08em','none','italic'], 'Barlow':["'Barlow',sans-serif",500,14,'0.34em','uppercase'], 'Rubik Mono One':["'Rubik Mono One',sans-serif",400,13,'0.18em','uppercase'] };
+    const [ff, fw, fs, ls, tt, fst] = fonts[this.props.menuFont] || fonts['Crimson Text'];
+    const labels = ['New Game', 'Join Game', 'Game Master', 'Rulebook'];
+    return {
+      items: labels.map((label, i) => {
+        const on = this.state.hov === i;
+        return {
+          label, href: label==='Rulebook' ? 'Rulebook.dc.html' : label==='New Game' ? 'DRYH Dashboard.dc.html?new=1' : label==='Game Master' ? 'DRYH Dashboard.dc.html?gm=1' : 'DRYH Dashboard.dc.html',
+          onEnter: () => this.setState({ hov: i }),
+          style: { display:'flex', alignItems:'center', gap:12, fontFamily:ff, fontWeight:fw, fontSize:fs, letterSpacing:ls, textTransform:tt, fontStyle:fst||'normal', color: on ? 'oklch(0.97 0.01 85)' : 'oklch(0.55 0.01 70)', transition:'color 200ms', animation:`ts-in 0.9s ${1.4 + i*0.15}s ease-out both` },
+          barStyle: { display:'block', height:1, width: on ? 36 : 0, background:'oklch(0.6 0.22 27)', transition:'width 260ms ease-out' }
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

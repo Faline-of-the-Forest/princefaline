@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Crimson+Text:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Rubik+Mono+One&family=Barlow+Condensed:wght@500;600;700&family=Special+Elite&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  @keyframes domspin{to{transform:rotate(360deg)}}
+  @keyframes drift{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2.5px) scale(1.015)}}
+  @keyframes tumbleA{
+    0%{transform:translate(0,0) rotate(0deg) scale(1)}
+    20%{transform:translate(92%,-64%) rotate(150deg) scale(1.1)}
+    40%{transform:translate(120%,52%) rotate(300deg) scale(.92)}
+    60%{transform:translate(-34%,104%) rotate(430deg) scale(1.06)}
+    80%{transform:translate(-118%,6%) rotate(560deg) scale(.95)}
+    100%{transform:translate(0,0) rotate(720deg) scale(1)}
+  }
+  @keyframes tumbleB{
+    0%{transform:translate(0,0) rotate(0deg) scale(1)}
+    25%{transform:translate(-104%,58%) rotate(-170deg) scale(.93)}
+    50%{transform:translate(28%,118%) rotate(-330deg) scale(1.12)}
+    75%{transform:translate(110%,-46%) rotate(-520deg) scale(.96)}
+    100%{transform:translate(0,0) rotate(-720deg) scale(1)}
+  }
+  @keyframes tumbleC{
+    0%{transform:translate(0,0) rotate(0deg) scale(1)}
+    18%{transform:translate(-62%,-96%) rotate(190deg) scale(1.08)}
+    46%{transform:translate(96%,34%) rotate(390deg) scale(.9)}
+    72%{transform:translate(-18%,112%) rotate(560deg) scale(1.1)}
+    100%{transform:translate(0,0) rotate(720deg) scale(1)}
+  }
+  @keyframes dicepop{0%{transform:scale(.2);opacity:0;filter:brightness(2.2)}55%{transform:scale(1.28);opacity:1;filter:brightness(1.5)}100%{transform:scale(1);opacity:1;filter:none}}
+  @keyframes dompulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.34),0 0 22px rgba(255,255,255,.18)}50%{box-shadow:0 0 0 7px rgba(255,255,255,0),0 0 30px rgba(255,255,255,.42)}}
+</style>
+</helmet>
+<sc-if value="{{ isA }}" hint-placeholder-val="{{ true }}">
+<div style="width:640px;max-width:100%;background:oklch(0.1 0.008 50);border:1px solid oklch(0.93 0.012 85 / 0.25);box-shadow:0 26px 60px rgba(0,0,0,.75)">
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 18px 10px"><sc-if value="{{ hasTalent }}" hint-placeholder-val="{{ false }}"><div style="{{ talentTagStyle }}" onMouseEnter="{{ hovTal }}" onMouseLeave="{{ hovOff }}"><img src="{{ talentIcon }}" alt="" style="{{ talentImgStyle }}" /><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.1em">{{ talentLabel }}</span><sc-if value="{{ talentTipOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:100%;left:0;margin-top:8px;width:260px;pointer-events:none;background:#000;border-top:3px solid oklch(0.92 0.012 85);border-left:1px solid oklch(0.93 0.012 85 / 0.3);border-right:1px solid oklch(0.93 0.012 85 / 0.3);border-bottom:1px solid oklch(0.93 0.012 85 / 0.3);padding:10px 12px 11px;box-shadow:0 14px 34px rgba(0,0,0,0.85)"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;color:oklch(0.95 0.012 85);margin-bottom:4px">{{ talentLabel }}</div><div style="font-family:'Crimson Text',serif;font-size:15px;line-height:1.35;color:oklch(0.88 0.008 80);text-wrap:pretty">{{ talentText }}</div></div></sc-if></div></sc-if>
+    <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;line-height:1;color:oklch(0.95 0.012 85)">{{ badge }}</span>
+    <span style="font-family:'Crimson Text',serif;font-style:italic;font-size:17px;color:oklch(0.82 0.012 85);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1">{{ title }}</span>
+    <span onClick="{{ dismiss }}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:oklch(0.66 0.01 70);cursor:pointer" style-hover="color:oklch(0.95 0.012 85)">✕</span>
+  </div>
+  <div style="position:relative;height:320px;overflow:hidden;perspective:900px;background-color:#123026;background-image:radial-gradient(120% 110% at 50% 28%,rgba(52,112,88,.55) 0%,rgba(9,26,20,.9) 68%,rgba(4,12,9,1) 100%),repeating-conic-gradient(from 0deg,rgba(255,255,255,.035) 0deg 1.2deg,rgba(0,0,0,.05) 1.2deg 2.4deg),repeating-linear-gradient(64deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px),repeating-linear-gradient(-26deg,rgba(0,0,0,.05) 0 1px,transparent 1px 3px);background-size:auto,7px 7px,auto,auto;box-shadow:inset 0 0 0 7px #2b1a12,inset 0 0 0 8px rgba(0,0,0,.6),inset 0 12px 26px rgba(0,0,0,.65),inset 0 -14px 30px rgba(0,0,0,.6)"><sc-if value="{{ recallMode }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:0;right:0;bottom:14px;z-index:9;display:flex;justify-content:center;align-items:center;gap:12px;pointer-events:none"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.95 0.012 85);background:rgba(0,0,0,.72);padding:6px 10px">Recall · pick a pool</span><button onClick="{{ recallCancel }}" style="pointer-events:auto;padding:6px 14px;background:rgba(0,0,0,.72);border:1px solid oklch(0.95 0.012 85 / 0.6);color:oklch(0.95 0.012 85);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.14em;cursor:pointer" style-hover="background:oklch(0.95 0.012 85);color:oklch(0.12 0.01 50)">CANCEL</button></div></sc-if>
+        <div style="position:absolute;inset:0;opacity:{{ t3_laneop }};transition:opacity .4s">
+          <sc-for list="{{ t3_lanes }}" as="l" hint-placeholder-count="4">
+            <div style="position:absolute;left:0;right:0;top:{{ l.top }};height:{{ l.h }};box-sizing:border-box;border-bottom:1px dashed rgba(10,16,14,.55);display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:0 14px;background:{{ l.bg }};transition:background .2s;z-index:2">
+              <sc-if value="{{ l.canReroll }}" hint-placeholder-val="{{ false }}"><button onClick="{{ l.onReroll }}" style="display:flex;align-items:center;gap:6px;padding:5px 12px 5px 8px;background:oklch(0.95 0.012 85);color:oklch(0.12 0.01 50);border:0;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.08em;box-shadow:0 0 16px 2px rgba(255,236,168,.35)" style-hover="background:#ffffff"><span style="font-size:22px;line-height:.8">◀</span>REROLL</button></sc-if>
+              <span style="display:flex;align-items:center;gap:10px;transform:rotate({{ l.tilt }});transform-origin:right center">
+                <span style="font-family:'Special Elite',serif;font-size:17px;line-height:1.1;color:{{ l.labelc }};border-bottom:2px solid {{ l.linec }};padding-bottom:1px;transition:color .3s,border-color .3s">{{ l.name }}</span>
+                <span style="width:17px;height:15px;box-sizing:border-box;border:1.5px solid {{ l.boxc }};transform:rotate({{ l.boxtilt }});display:grid;place-items:center;color:{{ l.boxc }};font-size:14px;line-height:1;transition:color .3s,border-color .3s">{{ l.mark }}</span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+        <sc-for list="{{ t3_dice }}" as="d" hint-placeholder-count="8">
+          <div onClick="{{ d.onClick }}" style="cursor:{{ d.cur }};position:absolute;z-index:{{ d.z }};left:{{ d.left }};top:{{ d.top }};width:{{ d.size }};aspect-ratio:1;margin-left:{{ d.mo }};margin-top:{{ d.mo }};transform:rotate({{ d.rot }}) rotateX({{ d.tiltx }}) rotateY({{ d.tilty }});transform-style:preserve-3d;pointer-events:{{ d.pe }};filter:{{ d.blur }};opacity:{{ d.op }};transition:left 1.15s cubic-bezier(.16,.84,.2,1),top 1.15s cubic-bezier(.16,.84,.2,1),transform 1.35s cubic-bezier(.16,.84,.2,1),filter .8s ease-out,opacity .8s ease-out,width .6s ease,margin .6s ease">
+            <div style="position:absolute;inset:0;border-radius:14%;background:linear-gradient(152deg,#fffdf6 0%,#f3eee0 46%,#ded7c4 100%);box-shadow:{{ d.glow }};overflow:hidden;display:flex;align-items:center;justify-content:center;animation:{{ d.anim }};animation-delay:{{ d.delay }}">
+              <div style="position:absolute;inset:0;border-radius:14%;box-shadow:inset 0 1px 1px rgba(255,255,255,.95),inset 0 -2px 3px rgba(120,108,86,.4),inset 0 0 0 1px rgba(90,80,62,.22)"></div>
+              <div style="position:absolute;inset:0;border-radius:14%;background:linear-gradient(118deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 38%,rgba(0,0,0,.08) 100%)"></div>
+              <div style="position:absolute;top:6%;left:8%;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:26%;line-height:1;color:{{ d.cink }};opacity:.75">{{ d.corner }}</div>
+              <div style="position:absolute;bottom:6%;right:8%;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:26%;line-height:1;color:{{ d.cink }};opacity:.75;transform:rotate(180deg)">{{ d.corner }}</div>
+              <div style="font-family:{{ d.rankFam }};font-size:{{ d.rankSize }};line-height:.86;color:{{ d.cink }};text-shadow:0 1px 0 rgba(255,255,255,.7)">{{ d.rank }}</div>
+            </div>
+            <div style="position:absolute;inset:-7px;border-radius:14px;opacity:{{ d.domop }};animation:dompulse 1.5s infinite"></div>
+            <div style="position:absolute;inset:-13px;border:2px dashed #ffffff;border-radius:50%;opacity:{{ d.domop }};animation:domspin 5.5s linear infinite"></div>
+            <div style="position:absolute;inset:-6px;border:2px {{ d.ringst }} {{ d.ringc }};border-radius:16%;opacity:{{ d.ringop }};box-shadow:{{ d.ringbs }};pointer-events:none;transition:opacity .2s"></div>
+          </div>
+        </sc-for>
+        
+      </div>
+  <div style="padding:16px 18px;display:flex;flex-direction:column;gap:14px;border-top:1px solid oklch(0.93 0.012 85 / 0.25)">
+    <div style="display:flex;justify-content:center;align-items:center;gap:18px">
+      <div style="display:flex;gap:8px"><div style="display:flex;flex-direction:column;gap:3px;align-items:center;min-width:64px"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:34px;line-height:1;color:#eef2f4">{{ nD }}</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:.14em;color:oklch(0.86 0.012 85)">DISCIPLINE</span></div><div style="display:flex;flex-direction:column;gap:3px;align-items:center;min-width:64px"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:34px;line-height:1;color:#7ba0f5">{{ nE }}</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:.14em;color:oklch(0.86 0.012 85)">EXHAUSTION</span><sc-if value="{{ inlineLive }}" hint-placeholder-val="{{ false }}"><button onClick="{{ onPush }}" disabled="{{ pushDis }}" style="{{ inlinePushStyle }}">{{ pushInline }}</button></sc-if></div><div style="display:flex;flex-direction:column;gap:3px;align-items:center;min-width:64px"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:34px;line-height:1;color:#63d06d">{{ nM }}</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:.14em;color:oklch(0.86 0.012 85)">MADNESS</span><sc-if value="{{ inlineLive }}" hint-placeholder-val="{{ false }}"><div style="display:flex;margin-top:4px;border:1px solid oklch(0.95 0.012 85 / 0.3);opacity:{{ madOp }}"><button onClick="{{ onMadDec }}" style="width:28px;height:24px;background:transparent;border:0;border-right:1px solid oklch(0.95 0.012 85 / 0.3);color:oklch(0.95 0.012 85);cursor:pointer;font-size:14px">−</button><button onClick="{{ onMadInc }}" style="width:28px;height:24px;background:transparent;border:0;color:oklch(0.95 0.012 85);cursor:pointer;font-size:14px">+</button></div></sc-if></div></div>
+      <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.2em;color:oklch(0.72 0.01 70)">VS</span>
+      <div style="display:flex"><div style="display:flex;flex-direction:column;gap:3px;align-items:center;min-width:64px"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:34px;line-height:1;color:#f0555e">{{ nP }}</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:.14em;color:oklch(0.86 0.012 85)">PAIN</span></div></div>
+    </div>
+    <sc-if value="{{ live }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;justify-content:center;align-items:stretch;gap:10px;flex-wrap:wrap">
+        <sc-if value="{{ ctlTile }}" hint-placeholder-val="{{ true }}">
+          <div style="position:relative;display:flex" onMouseEnter="{{ hovPush }}" onMouseLeave="{{ hovOff }}"><sc-if value="{{ tipPOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;bottom:100%;left:50%;transform:translateX(-50%) rotate(-0.4deg);margin-bottom:10px;z-index:30;width:250px;pointer-events:none;background:#000;border-top:3px solid oklch(0.92 0.012 85);border-left:1px solid oklch(0.93 0.012 85 / 0.3);border-right:1px solid oklch(0.93 0.012 85 / 0.3);border-bottom:1px solid oklch(0.93 0.012 85 / 0.3);padding:10px 12px 11px;box-shadow:0 14px 34px rgba(0,0,0,0.85);text-align:left"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;color:oklch(0.95 0.012 85);margin-bottom:4px">{{ tipPTitle }}</div><div style="font-family:'Crimson Text',serif;font-size:15px;line-height:1.35;color:oklch(0.88 0.008 80);text-wrap:pretty">{{ tipPText }}</div></div></sc-if><button onClick="{{ onPush }}" disabled="{{ pushDis }}" style="{{ tilePushStyle }}"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;letter-spacing:.06em;text-transform:uppercase">Push Yourself</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;opacity:.75">{{ pushSub }}</span></button></div>
+          <div style="position:relative;display:flex" onMouseEnter="{{ hovMad }}" onMouseLeave="{{ hovOff }}"><sc-if value="{{ tipMOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;bottom:100%;left:50%;transform:translateX(-50%) rotate(-0.4deg);margin-bottom:10px;z-index:30;width:250px;pointer-events:none;background:#000;border-top:3px solid oklch(0.92 0.012 85);border-left:1px solid oklch(0.93 0.012 85 / 0.3);border-right:1px solid oklch(0.93 0.012 85 / 0.3);border-bottom:1px solid oklch(0.93 0.012 85 / 0.3);padding:10px 12px 11px;box-shadow:0 14px 34px rgba(0,0,0,0.85);text-align:left"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;color:oklch(0.95 0.012 85);margin-bottom:4px">{{ tipMTitle }}</div><div style="font-family:'Crimson Text',serif;font-size:15px;line-height:1.35;color:oklch(0.88 0.008 80);text-wrap:pretty">{{ tipMText }}</div></div></sc-if><div style="{{ madTileStyle }}">
+            <div style="display:flex;flex-direction:column;border-right:1px solid {{ madLine }}"><button onClick="{{ onMadInc }}" style="flex:1;width:30px;background:transparent;border:0;border-bottom:1px solid {{ madLine }};color:inherit;cursor:pointer;font-size:10px" style-hover="background:oklch(0.95 0.012 85 / 0.1)">▲</button><button onClick="{{ onMadDec }}" style="flex:1;width:30px;background:transparent;border:0;color:inherit;cursor:pointer;font-size:10px" style-hover="background:oklch(0.95 0.012 85 / 0.1)">▼</button></div>
+            <div style="display:flex;flex-direction:column;justify-content:center;gap:2px;padding:6px 16px;width:140px;box-sizing:border-box"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;letter-spacing:.06em;text-transform:uppercase">Go Mad</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;opacity:.75">+{{ madAddN }} MADNESS</span></div>
+          </div></div>
+        </sc-if>
+        <sc-if value="{{ ctlLedger }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ onPush }}" disabled="{{ pushDis }}" style="display:flex;align-items:center;gap:9px;background:transparent;border:0;padding:4px 6px;cursor:pointer;color:oklch(0.95 0.012 85);opacity:{{ pushOp }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:18px;line-height:1">{{ pushBox }}</span><span style="font-family:'Special Elite',serif;font-size:17px">Push yourself</span></button>
+          <div style="display:flex;align-items:center;gap:10px;padding:4px 6px"><span style="font-family:'Special Elite',serif;font-size:17px;color:oklch(0.95 0.012 85)">Go mad</span><div style="display:flex;gap:4px"><sc-for list="{{ madBoxes }}" as="b" hint-placeholder-count="6"><span onClick="{{ b.onClick }}" style="{{ b.style }}"></span></sc-for></div></div>
+        </sc-if>
+        <button onClick="{{ roll }}" style="padding:6px 22px;background:oklch(0.55 0.21 27);color:oklch(0.95 0.012 85);border:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase" style-hover="background:oklch(0.68 0.19 30)">Throw</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ waiting }}" hint-placeholder-val="{{ false }}"><div style="text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:oklch(0.72 0.01 70)">{{ status }}</div></sc-if>
+    <sc-if value="{{ settled }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div style="display:flex;align-items:baseline;justify-content:center;gap:14px;flex-wrap:wrap">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:34px;line-height:1;text-transform:uppercase;letter-spacing:.04em;color:{{ degreeColor }}">{{ degreeWord }}</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:18px;letter-spacing:.08em;color:oklch(0.86 0.012 85);display:flex;gap:6px;align-items:baseline">YOU {{ youSucc }}<sc-if value="{{ bonusOn }}" hint-placeholder-val="{{ false }}"><span onMouseEnter="{{ hovBonus }}" onMouseLeave="{{ hovOff }}" style="position:relative;padding:0 6px;background:oklch(0.95 0.012 85);color:oklch(0.12 0.01 50);cursor:default">+{{ bonus }}<sc-if value="{{ bonusTipOn }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:10px;width:220px;pointer-events:none;background:#000;border-top:3px solid oklch(0.92 0.012 85);border-left:1px solid oklch(0.93 0.012 85 / 0.3);border-right:1px solid oklch(0.93 0.012 85 / 0.3);border-bottom:1px solid oklch(0.93 0.012 85 / 0.3);padding:9px 12px 10px;box-shadow:0 14px 34px rgba(0,0,0,0.85);text-align:left;display:block;z-index:40"><span style="display:block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;color:oklch(0.95 0.012 85);margin-bottom:3px">From {{ talentLabelCap }}</span><span style="display:block;font-family:'Crimson Text',serif;font-size:15px;line-height:1.35;color:oklch(0.88 0.008 80)">{{ bonusTipText }}</span></span></sc-if></span></sc-if> − PAIN {{ painSucc }} = {{ net }}</span>
+      </div>
+      
+      <sc-if value="{{ dtShow }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;max-width:100%">
+        <sc-if value="{{ dtIdle }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ dtOnOpen }}" style="{{ dtBtnStyle }}" style-hover="filter:brightness(1.1)"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;letter-spacing:.06em;text-transform:uppercase">{{ dtName }}</span><span style="font-family:'Crimson Text',serif;font-size:15px;line-height:1.25;max-width:360px;text-wrap:pretty;opacity:.9">{{ dtSub }}</span></button>
+        </sc-if>
+        <sc-if value="{{ dtOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 16px;border:1px solid rgba(255,214,92,.6);background:rgba(255,214,92,.08)">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:#ffd65c;text-align:center">{{ dtHint }}</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:oklch(0.9 0.01 80)">{{ dtCount }}</span>
+              <sc-if value="{{ dtAll }}" hint-placeholder-val="{{ false }}"><button onClick="{{ dtOnAll }}" style="padding:5px 12px;background:transparent;border:1px solid oklch(0.95 0.012 85 / 0.5);color:oklch(0.95 0.012 85);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:14px;letter-spacing:.12em;cursor:pointer">SELECT ALL</button></sc-if>
+              <sc-if value="{{ dtShowAct }}" hint-placeholder-val="{{ false }}"><button onClick="{{ dtOnAct }}" disabled="{{ dtActDis }}" style="padding:5px 16px;background:oklch(0.55 0.21 27);border:0;color:oklch(0.97 0.01 85);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;opacity:{{ dtActOp }}">{{ dtActLabel }}</button></sc-if>
+              <sc-for list="{{ dtFaces }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.onClick }}" style="min-width:46px;padding:5px 12px;background:oklch(0.95 0.012 85);border:0;color:oklch(0.12 0.01 50);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.08em;cursor:pointer">{{ f.label }}</button></sc-for>
+              <button onClick="{{ dtCancel }}" style="padding:5px 12px;background:transparent;border:1px solid oklch(0.95 0.012 85 / 0.3);color:oklch(0.8 0.01 80);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:14px;letter-spacing:.12em;cursor:pointer">CANCEL</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      </sc-if>
+      <div style="display:flex;align-items:center;gap:16px">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase;color:{{ domColor }}">{{ verdict }} dominates</span>
+        <button onClick="{{ dismiss }}" style="padding:7px 16px;background:transparent;border:1px solid oklch(0.93 0.012 85 / 0.25);color:oklch(0.95 0.012 85);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:15px;letter-spacing:.16em;cursor:pointer" style-hover="border-color:oklch(0.95 0.012 85)">DONE</button>
+      </div>
+    </div></sc-if>
+  </div>
+</div>
+</sc-if>
+<sc-if value="{{ isB }}" hint-placeholder-val="{{ false }}">
+<div style="width:860px;max-width:100%;display:grid;grid-template-columns:150px minmax(0,1fr) 150px;background:oklch(0.1 0.008 50);border-top:1px solid oklch(0.93 0.012 85 / 0.5);border-bottom:1px solid oklch(0.93 0.012 85 / 0.5);box-shadow:0 26px 60px rgba(0,0,0,.75)">
+  <div style="padding:18px 16px;display:flex;flex-direction:column;gap:16px;border-right:1px solid oklch(0.93 0.012 85 / 0.25)">
+    <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;line-height:1;color:oklch(0.95 0.012 85)">{{ badge }}</span>
+    <div style="display:flex;flex-direction:column;gap:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.22em;color:oklch(0.66 0.01 70)">DISCIPLINE</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:44px;line-height:.9;color:oklch(0.95 0.012 85)">{{ nD }}</span></div>
+    <div style="display:flex;flex-direction:column;gap:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.22em;color:oklch(0.66 0.01 70)">EXHAUSTION</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:44px;line-height:.9;color:oklch(0.72 0.01 70)">{{ nE }}</span><sc-if value="{{ live }}" hint-placeholder-val="{{ true }}"><button onClick="{{ onPush }}" disabled="{{ pushDis }}" style="{{ pushStyle }}">PUSH +1</button></sc-if></div>
+    <div style="display:flex;flex-direction:column;gap:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.22em;color:oklch(0.66 0.01 70)">MADNESS</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:44px;line-height:.9;color:oklch(0.68 0.19 30)">{{ nM }}</span><sc-if value="{{ live }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:6px;opacity:{{ madOp }}"><button onClick="{{ onMadDec }}" style="flex:1;height:28px;background:transparent;border:1px solid oklch(0.93 0.012 85 / 0.25);color:oklch(0.95 0.012 85);cursor:pointer">−</button><button onClick="{{ onMadInc }}" style="flex:1;height:28px;background:transparent;border:1px solid oklch(0.93 0.012 85 / 0.25);color:oklch(0.95 0.012 85);cursor:pointer">+</button></div></sc-if></div>
+  </div>
+  <div style="display:flex;flex-direction:column;min-width:0">
+    <div style="padding:12px 16px;text-align:center;font-family:'Crimson Text',serif;font-style:italic;font-size:18px;color:oklch(0.85 0.012 85);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ title }}</div>
+    <div style="position:relative;height:340px;overflow:hidden;perspective:900px;background-color:#123026;background-image:radial-gradient(120% 110% at 50% 28%,rgba(52,112,88,.55) 0%,rgba(9,26,20,.9) 68%,rgba(4,12,9,1) 100%),repeating-conic-gradient(from 0deg,rgba(255,255,255,.035) 0deg 1.2deg,rgba(0,0,0,.05) 1.2deg 2.4deg),repeating-linear-gradient(64deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px),repeating-linear-gradient(-26deg,rgba(0,0,0,.05) 0 1px,transparent 1px 3px);background-size:auto,7px 7px,auto,auto;box-shadow:inset 0 0 0 7px #2b1a12,inset 0 0 0 8px rgba(0,0,0,.6),inset 0 12px 26px rgba(0,0,0,.65),inset 0 -14px 30px rgba(0,0,0,.6)">
+        <div style="position:absolute;inset:0;opacity:{{ t3_laneop }};transition:opacity .4s">
+          <sc-for list="{{ t3_lanes }}" as="l" hint-placeholder-count="4">
+            <div style="position:absolute;left:0;right:0;top:{{ l.top }};height:{{ l.h }};box-sizing:border-box;border-bottom:1px dashed rgba(10,16,14,.55);display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:0 14px;background:{{ l.bg }};transition:background .2s;z-index:2">
+              <span style="display:flex;align-items:center;gap:10px;transform:rotate({{ l.tilt }});transform-origin:right center">
+                <span style="font-family:'Special Elite',serif;font-size:17px;line-height:1.1;color:{{ l.labelc }};border-bottom:2px solid {{ l.linec }};padding-bottom:1px;transition:color .3s,border-color .3s">{{ l.name }}</span>
+                <span style="width:17px;height:15px;box-sizing:border-box;border:1.5px solid {{ l.boxc }};transform:rotate({{ l.boxtilt }});display:grid;place-items:center;color:{{ l.boxc }};font-size:14px;line-height:1;transition:color .3s,border-color .3s">{{ l.mark }}</span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+        <sc-for list="{{ t3_dice }}" as="d" hint-placeholder-count="8">
+          <div style="position:absolute;z-index:{{ d.z }};left:{{ d.left }};top:{{ d.top }};width:{{ d.size }};aspect-ratio:1;margin-left:{{ d.mo }};margin-top:{{ d.mo }};transform:rotate({{ d.rot }}) rotateX({{ d.tiltx }}) rotateY({{ d.tilty }});transform-style:preserve-3d;pointer-events:none;filter:{{ d.blur }};opacity:{{ d.op }};transition:left 1.15s cubic-bezier(.16,.84,.2,1),top 1.15s cubic-bezier(.16,.84,.2,1),transform 1.35s cubic-bezier(.16,.84,.2,1),filter .8s ease-out,opacity .8s ease-out,width .6s ease,margin .6s ease">
+            <div style="position:absolute;inset:0;border-radius:14%;background:linear-gradient(152deg,#fffdf6 0%,#f3eee0 46%,#ded7c4 100%);box-shadow:{{ d.glow }};overflow:hidden;display:flex;align-items:center;justify-content:center;animation:{{ d.anim }};animation-delay:{{ d.delay }}">
+              <div style="position:absolute;inset:0;border-radius:14%;box-shadow:inset 0 1px 1px rgba(255,255,255,.95),inset 0 -2px 3px rgba(120,108,86,.4),inset 0 0 0 1px rgba(90,80,62,.22)"></div>
+              <div style="position:absolute;inset:0;border-radius:14%;background:linear-gradient(118deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 38%,rgba(0,0,0,.08) 100%)"></div>
+              <div style="position:absolute;top:6%;left:8%;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:26%;line-height:1;color:{{ d.cink }};opacity:.75">{{ d.corner }}</div>
+              <div style="position:absolute;bottom:6%;right:8%;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:26%;line-height:1;color:{{ d.cink }};opacity:.75;transform:rotate(180deg)">{{ d.corner }}</div>
+              <div style="font-family:{{ d.rankFam }};font-size:{{ d.rankSize }};line-height:.86;color:{{ d.cink }};text-shadow:0 1px 0 rgba(255,255,255,.7)">{{ d.rank }}</div>
+            </div>
+            <div style="position:absolute;inset:-7px;border-radius:14px;opacity:{{ d.domop }};animation:dompulse 1.5s infinite"></div>
+            <div style="position:absolute;inset:-13px;border:2px dashed #ffffff;border-radius:50%;opacity:{{ d.domop }};animation:domspin 5.5s linear infinite"></div>
+          </div>
+        </sc-for>
+        
+      </div>
+    <div style="padding:12px 16px;display:flex;justify-content:center;align-items:center;gap:14px;min-height:62px">
+      <sc-if value="{{ live }}" hint-placeholder-val="{{ true }}"><button onClick="{{ roll }}" style="padding:10px 34px;background:oklch(0.55 0.21 27);color:oklch(0.95 0.012 85);border:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:19px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase" style-hover="background:oklch(0.68 0.19 30)">Throw {{ total }}</button></sc-if>
+      <sc-if value="{{ waiting }}" hint-placeholder-val="{{ false }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;color:oklch(0.66 0.01 70)">{{ status }}</span></sc-if>
+      <sc-if value="{{ settled }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;text-transform:uppercase;color:{{ domColor }}">{{ verdict }} dominates</span><button onClick="{{ dismiss }}" style="padding:8px 14px;background:transparent;border:1px solid oklch(0.93 0.012 85 / 0.25);color:oklch(0.95 0.012 85);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;cursor:pointer">DONE</button></sc-if>
+    </div>
+  </div>
+  <div style="padding:18px 16px;display:flex;flex-direction:column;gap:16px;border-left:1px solid oklch(0.93 0.012 85 / 0.25);align-items:flex-end;text-align:right">
+    <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;line-height:1;color:oklch(0.68 0.19 30)">THE GM</span>
+    <div style="display:flex;flex-direction:column;gap:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.22em;color:oklch(0.66 0.01 70)">PAIN</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:44px;line-height:.9;color:oklch(0.55 0.21 27)">{{ nP }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;color:oklch(0.66 0.01 70)">{{ painLabel }}</span></div>
+    <sc-if value="{{ settled }}" hint-placeholder-val="{{ false }}"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:oklch(0.66 0.01 70);line-height:1.7">YOU {{ youSucc }}<br>PAIN {{ painSucc }}</div></sc-if>
+    <span onClick="{{ dismiss }}" style="margin-top:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;color:oklch(0.66 0.01 70);cursor:pointer" style-hover="color:oklch(0.95 0.012 85)">WITHDRAW ✕</span>
+  </div>
+</div>
+</sc-if>
+<sc-if value="{{ isC }}" hint-placeholder-val="{{ false }}">
+<div style="width:620px;max-width:100%;position:relative;padding-top:18px">
+  <div style="position:absolute;top:0;left:18px;z-index:3;display:flex;gap:8px;align-items:center"><span style="display:inline-block;font-family:'Special Elite',serif;font-size:15px;padding:3px 9px;background:oklch(0.95 0.012 85);color:oklch(0.16 0.02 40);transform:rotate(-2deg);box-shadow:0 2px 4px rgba(0,0,0,.5)">{{ badge }}</span><span style="display:inline-block;font-family:'Special Elite',serif;font-size:15px;padding:3px 9px;background:oklch(0.16 0.02 40);color:oklch(0.95 0.012 85);transform:rotate(1deg);box-shadow:0 2px 4px rgba(0,0,0,.5)">{{ title }}</span></div>
+  <div style="box-shadow:0 26px 60px rgba(0,0,0,.75)"><div style="position:relative;height:330px;overflow:hidden;perspective:900px;background-color:#123026;background-image:radial-gradient(120% 110% at 50% 28%,rgba(52,112,88,.55) 0%,rgba(9,26,20,.9) 68%,rgba(4,12,9,1) 100%),repeating-conic-gradient(from 0deg,rgba(255,255,255,.035) 0deg 1.2deg,rgba(0,0,0,.05) 1.2deg 2.4deg),repeating-linear-gradient(64deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px),repeating-linear-gradient(-26deg,rgba(0,0,0,.05) 0 1px,transparent 1px 3px);background-size:auto,7px 7px,auto,auto;box-shadow:inset 0 0 0 7px #2b1a12,inset 0 0 0 8px rgba(0,0,0,.6),inset 0 12px 26px rgba(0,0,0,.65),inset 0 -14px 30px rgba(0,0,0,.6)">
+        <div style="position:absolute;inset:0;opacity:{{ t3_laneop }};transition:opacity .4s">
+          <sc-for list="{{ t3_lanes }}" as="l" hint-placeholder-count="4">
+            <div style="position:absolute;left:0;right:0;top:{{ l.top }};height:{{ l.h }};box-sizing:border-box;border-bottom:1px dashed rgba(10,16,14,.55);display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:0 14px;background:{{ l.bg }};transition:background .2s;z-index:2">
+              <span style="display:flex;align-items:center;gap:10px;transform:rotate({{ l.tilt }});transform-origin:right center">
+                <span style="font-family:'Special Elite',serif;font-size:17px;line-height:1.1;color:{{ l.labelc }};border-bottom:2px solid {{ l.linec }};padding-bottom:1px;transition:color .3s,border-color .3s">{{ l.name }}</span>
+                <span style="width:17px;height:15px;box-sizing:border-box;border:1.5px solid {{ l.boxc }};transform:rotate({{ l.boxtilt }});display:grid;place-items:center;color:{{ l.boxc }};font-size:14px;line-height:1;transition:color .3s,border-color .3s">{{ l.mark }}</span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+        <sc-for list="{{ t3_dice }}" as="d" hint-placeholder-count="8">
+          <div style="position:absolute;z-index:{{ d.z }};left:{{ d.left }};top:{{ d.top }};width:{{ d.size }};aspect-ratio:1;margin-left:{{ d.mo }};margin-top:{{ d.mo }};transform:rotate({{ d.rot }}) rotateX({{ d.tiltx }}) rotateY({{ d.tilty }});transform-style:preserve-3d;pointer-events:none;filter:{{ d.blur }};opacity:{{ d.op }};transition:left 1.15s cubic-bezier(.16,.84,.2,1),top 1.15s cubic-bezier(.16,.84,.2,1),transform 1.35s cubic-bezier(.16,.84,.2,1),filter .8s ease-out,opacity .8s ease-out,width .6s ease,margin .6s ease">
+            <div style="position:absolute;inset:0;border-radius:14%;background:linear-gradient(152deg,#fffdf6 0%,#f3eee0 46%,#ded7c4 100%);box-shadow:{{ d.glow }};overflow:hidden;display:flex;align-items:center;justify-content:center;animation:{{ d.anim }};animation-delay:{{ d.delay }}">
+              <div style="position:absolute;inset:0;border-radius:14%;box-shadow:inset 0 1px 1px rgba(255,255,255,.95),inset 0 -2px 3px rgba(120,108,86,.4),inset 0 0 0 1px rgba(90,80,62,.22)"></div>
+              <div style="position:absolute;inset:0;border-radius:14%;background:linear-gradient(118deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 38%,rgba(0,0,0,.08) 100%)"></div>
+              <div style="position:absolute;top:6%;left:8%;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:26%;line-height:1;color:{{ d.cink }};opacity:.75">{{ d.corner }}</div>
+              <div style="position:absolute;bottom:6%;right:8%;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:26%;line-height:1;color:{{ d.cink }};opacity:.75;transform:rotate(180deg)">{{ d.corner }}</div>
+              <div style="font-family:{{ d.rankFam }};font-size:{{ d.rankSize }};line-height:.86;color:{{ d.cink }};text-shadow:0 1px 0 rgba(255,255,255,.7)">{{ d.rank }}</div>
+            </div>
+            <div style="position:absolute;inset:-7px;border-radius:14px;opacity:{{ d.domop }};animation:dompulse 1.5s infinite"></div>
+            <div style="position:absolute;inset:-13px;border:2px dashed #ffffff;border-radius:50%;opacity:{{ d.domop }};animation:domspin 5.5s linear infinite"></div>
+          </div>
+        </sc-for>
+        
+      </div></div>
+  <div style="display:flex;align-items:flex-end;gap:16px;padding:14px 4px 0;flex-wrap:wrap">
+    <div style="display:flex;flex-direction:column;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:oklch(0.95 0.012 85)">
+      <div>YOU&nbsp;&nbsp;&nbsp;&nbsp;D {{ nD }} · E {{ nE }} · <span style="color:oklch(0.68 0.19 30)">M {{ nM }}</span></div>
+      <div style="color:oklch(0.68 0.19 30)">THE GM P {{ nP }} · {{ painLabel }}</div>
+    </div>
+    <sc-if value="{{ live }}" hint-placeholder-val="{{ true }}"><div style="margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><button onClick="{{ onPush }}" disabled="{{ pushDis }}" style="{{ pushStyle }}">PUSH YOURSELF +1</button><div style="display:flex;align-items:center;gap:6px;opacity:{{ madOp }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:oklch(0.68 0.19 30)">GO MAD</span><button onClick="{{ onMadDec }}" style="width:28px;height:28px;background:transparent;border:1px solid oklch(0.93 0.012 85 / 0.25);color:oklch(0.95 0.012 85);cursor:pointer;font-size:15px;line-height:1">−</button><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;min-width:16px;text-align:center;color:oklch(0.68 0.19 30)">{{ nM }}</span><button onClick="{{ onMadInc }}" style="width:28px;height:28px;background:transparent;border:1px solid oklch(0.93 0.012 85 / 0.25);color:oklch(0.95 0.012 85);cursor:pointer;font-size:15px;line-height:1">+</button></div><button onClick="{{ roll }}" style="padding:6px 16px;background:transparent;border:3px double oklch(0.55 0.21 27);color:oklch(0.68 0.19 30);font-family:'Rubik Mono One',sans-serif;font-size:14px;letter-spacing:.06em;cursor:pointer;transform:rotate(-2deg)" style-hover="background:oklch(0.55 0.21 27);color:oklch(0.95 0.012 85)">THROW</button></div></sc-if>
+    <sc-if value="{{ waiting }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;color:oklch(0.66 0.01 70)">{{ status }}</span></sc-if>
+    <sc-if value="{{ settled }}" hint-placeholder-val="{{ false }}"><div style="margin-left:auto;display:flex;align-items:center;gap:12px"><span style="font-family:'Rubik Mono One',sans-serif;font-size:15px;padding:4px 10px;border:3px double {{ domColor }};color:{{ domColor }};transform:rotate(-3deg);text-transform:uppercase">{{ verdict }}</span><span onClick="{{ dismiss }}" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;color:oklch(0.66 0.01 70);cursor:pointer" style-hover="color:oklch(0.95 0.012 85)">DISMISS ✕</span></div></sc-if>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:880,&quot;height&quot;:520},&quot;discipline&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;tsType&quot;:&quot;number&quot;},&quot;exhaustion&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;},&quot;pain&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:4,&quot;tsType&quot;:&quot;number&quot;},&quot;interactive&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;badge&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;BEN&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;title&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Pick the lock&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onResult&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(r:any)=>void&quot;},&quot;onDismiss&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;()=>void&quot;},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;A&quot;,&quot;B&quot;,&quot;C&quot;],&quot;default&quot;:&quot;A&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;permanentMadness&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;},&quot;controlStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Tile&quot;,&quot;Ledger&quot;,&quot;Inline&quot;],&quot;default&quot;:&quot;Tile&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;talent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;&quot;,&quot;hedge&quot;,&quot;raise&quot;],&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;recallMode&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;onRerollPick&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(k:string)=>void&quot;},&quot;onRecallCancel&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;()=>void&quot;},&quot;onPoolsChange&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(p:any)=>void&quot;},&quot;rerollReq&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;any&quot;},&quot;talentIcon&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;talentText&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.pools=[
+      {k:'d',n:'DISCIPLINE',trace:'#e9e4d9',die:{bg:'#e9e4d9',ink:'#141013',hex:0xe9e4d9}},
+      {k:'e',n:'EXHAUSTION',trace:'#9aa0b5',die:{bg:'#3b3f4b',ink:'#e2e6f2',hex:0x3b3f4b}},
+      {k:'m',n:'MADNESS',trace:'#8ff05a',die:{bg:'#2f9a3a',ink:'#06140a',hex:0x2f9a3a}},
+      {k:'p',n:'PAIN',trace:'#ff3b46',die:{bg:'#b8141d',ink:'#ffe2e0',hex:0xb8141d}}
+    ];
+    this.state={
+      dt:{open:false,sel:[],used:false},
+      t3:{c:{d:props.discipline??3,e:props.exhaustion??0,m:0,p:props.pain??4},dice:null,phase:'idle'}
+    };
+    this.tray={d:{bg:'#eef2f4',ink:'#12151c',edge:'#ffffff'},e:{bg:'#3b6fe0',ink:'#eaf1ff',edge:'#7ba0f5'},m:{bg:'#2f9a3a',ink:'#f0ffe8',edge:'#63d06d'},p:{bg:'#b8141d',ink:'#ffe6e4',edge:'#f0555e'}};
+    this.cardRank={1:'A',2:'A',3:'A',4:'J',5:'Q',6:'K'};
+    this.suit={d:'\u2660',e:'\u2666',m:'\u2663',p:'\u2665'};
+    this.cardInk={d:'#1b1e26',e:'#2f5fd0',m:'#1f7a2b',p:'#c4131d'};
+  }
+  bump(o,k,dir){
+    if(!this.props.interactive||this.state.t3.phase!=='idle'||k==='d'||k==='p') return;
+    const base=this.props.exhaustion??0, lo=k==='e'?base:0, hi=k==='e'?Math.min(6,base+1):Math.max(0,6-(this.props.permanentMadness??0));
+    this.setState(s=>{const c=Object.assign({},s[o].c);c[k]=Math.max(lo,Math.min(hi,c[k]+dir));return {[o]:Object.assign({},s[o],{c:c})};});
+  }
+  line(k){
+    return {
+      d:'You hold the line. Discipline answers, and the Mad City stays outside your skin.',
+      e:'Exhaustion talks. Answer with Fight or Flight — the crash is already in the room.',
+      m:'Madness talks. Your Madness rises. Something in the city takes an interest.',
+      p:'Pain talks. Whatever is out there finishes your sentence for you.'
+    }[k];
+  }
+  counts(){
+    const P=this.props, st=this.state.t3; if(st.phase!=='idle') return st.c;
+    const perm=P.permanentMadness??0, base=P.exhaustion??0, push=P.talent==='raise'||!!st.push;
+    return {d:P.discipline??3, e:Math.min(6,base+(push&&base<6?1:0)), m:Math.min(6,perm+(st.madAdd||0)), p:P.pain??4};
+  }
+  notify(extra){ const st=this.state.t3; this.props.onPoolsChange&&this.props.onPoolsChange(Object.assign({push:!!st.push,madAdd:st.madAdd||0},extra||{})); }
+  layout(dice){
+    const prio={m:3,e:2,d:1,p:0}, stats={};
+    this.pools.forEach(p=>{const vals=dice.filter(d=>d.k===p.k).map(d=>d.v);
+      stats[p.k]={n:vals.length,K:vals.filter(v=>v===6).length,Q:vals.filter(v=>v===5).length,J:vals.filter(v=>v===4).length,A:vals.filter(v=>v<=3).length,max:vals.length?Math.max.apply(null,vals):0};});
+    const tiers=['K','Q','J','A'];
+    const tier=tiers.find(t=>this.pools.some(p=>stats[p.k][t]>0))||'A';
+    const ranked=this.pools.slice().sort((a,b)=>{
+      const A=stats[a.k],B=stats[b.k];
+      if(!!A.n!==!!B.n) return A.n?-1:1;
+      if(A[tier]!==B[tier]) return B[tier]-A[tier];
+      return prio[b.k]-prio[a.k];
+    });
+    const laneOrder=['m','e','d','p'].filter(k=>stats[k].n>0);
+    const pct=100/Math.max(1,laneOrder.length);
+    const lanes=laneOrder.map((k,idx)=>{const p=this.pools.find(q=>q.k===k);return {k:k,name:p.n,idx:idx,n:stats[k].n,pct:pct};});
+    const laneIdx={}; lanes.forEach(l=>laneIdx[l.k]=l.idx);
+    const domPool=ranked.find(p=>stats[p.k].n>0)||null;
+    const domKey=domPool?domPool.k:null;
+    const tierVal={K:6,Q:5,J:4,A:3}[tier];
+    const rankOrder=v=>v===6?0:v===5?1:v===4?2:3;
+    dice.forEach(d=>{
+      d.lane=laneIdx[d.k];
+      d.dom=d.k===domKey&&(tier==='A'?d.v<=3:d.v===tierVal);
+    });
+    this._meta={lanes:lanes,stats:stats,dom:domKey,tier:tier};
+    laneOrder.forEach(k=>{
+      const laneDice=dice.filter(d=>d.k===k).slice().sort((a,b)=>rankOrder(a.v)-rankOrder(b.v)||a.i-b.i);
+      laneDice.forEach((d,pos)=>{
+        const pitch=Math.min(8.4,86/Math.max(1,d.ln));
+        d.size=Math.max(2.8,Math.min(7,pitch*0.82));
+        d.tx=6+(pos+0.5)*pitch;
+        d.ty=(d.lane+0.5)*pct;
+      });
+    });
+    
+    return this._meta;
+  }
+  settle(){
+    const t3=this.state.t3; if(!t3.dice) return;
+    const by={d:[],e:[],m:[],p:[]}; t3.dice.forEach(d=>by[d.k].push(d.v));
+    const A=a=>a.filter(v=>v<=3).length, you=A(by.d)+A(by.e)+A(by.m), pain=A(by.p), E=t3.c.e||0, tal=this.props.talent;
+    const bonus=tal==='raise'?E:(tal==='hedge'&&you<E?E-you:0);
+    const rep={dice:by,dom:t3.meta&&t3.meta.dom,push:(t3.c.e||0)>(this.props.exhaustion??0),madness:t3.c.m||0,you:you,pain:pain,bonus:bonus};
+    if(bonus>0){ this._t5=setTimeout(()=>{ this.setState(s=>({t3:Object.assign({},s.t3,{bonus:bonus,bonusOn:true})})); this.props.onResult&&this.props.onResult(rep); },900); }
+    else { this.setState(s=>({t3:Object.assign({},s.t3,{bonus:0,bonusOn:false})})); this.props.onResult&&this.props.onResult(rep); }
+  }
+  rerollPool(k){
+    const t3=this.state.t3; if(!t3.dice||t3.phase!=='sorted'||t3.spin) return;
+    [this._t3,this._t4,this._t5,this._fl,this._r1,this._r2,this._r3].forEach(t=>t&&clearTimeout(t));
+    const R=Math.random;
+    const dice=t3.dice.map(d=>d.k!==k?Object.assign({},d,{dom:false}):Object.assign({},d,{dom:false,ph:'gather',v:1+Math.floor(R()*6),
+      cx:46+R()*8,cy:45+R()*10,crot:R()*40-20,sx:8+R()*84,sy:9+R()*80,srot:R()*720-360,tiltX:R()*44-22,tiltY:R()*44-22}));
+    this.setState(s=>({t3:Object.assign({},s.t3,{dice:dice,spin:k,bonus:0,bonusOn:false})}));
+    const setPh=ph=>this.setState(s=>({t3:Object.assign({},s.t3,{dice:s.t3.dice.map(d=>d.ph?Object.assign({},d,{ph:ph}):d)})}));
+    this._r1=setTimeout(()=>setPh('shake'),780);
+    this._r2=setTimeout(()=>setPh('throw'),1520);
+    this._r3=setTimeout(()=>setPh('reveal'),2520);
+    this._fl=setTimeout(()=>{
+      const fin=this.state.t3.dice.map(d=>{const c=Object.assign({},d); delete c.ph; return c;});
+      this.layout(fin);
+      this.setState(s=>({t3:Object.assign({},s.t3,{dice:fin,meta:this._meta,spin:null})}),()=>this.settle());
+    },3220);
+  }
+  stackDeck(){
+    const t3=this.state.t3; if(!t3.dice||t3.phase!=='sorted'||t3.spin) return;
+    [this._t5].forEach(t=>t&&clearTimeout(t));
+    const ds=t3.dice.filter(d=>d.k==='d'), n=ds.length+1, mx=Math.max(-1,...ds.map(d=>d.i));
+    const dice=t3.dice.map(d=>Object.assign({},d,d.k==='d'?{ln:n}:{})).concat([{k:'d',i:mx+1,ln:n,v:1,tiltX:0,tiltY:0,fresh:1}]);
+    this.layout(dice);
+    this.setState(s=>({t3:Object.assign({},s.t3,{dice:dice,meta:this._meta,bonus:0,bonusOn:false,c:Object.assign({},s.t3.c,{d:n})})}),()=>this.settle());
+  }
+  dtInfo(){
+    const P=this.props, key=P.dtalent, lv=P.dlevel; if(!key||!lv) return null;
+    const c=lv==='composed';
+    const D={
+      relapse:{name:'Relapse',act:'Reroll',max:c?99:1,desc:c?'Reroll any number of Madness dice once.':'Reroll one Madness die.',hint:c?'Select any Madness dice':'Select one Madness die',elig:d=>d.k==='m'},
+      greedy:{name:'Greedy Guts',act:'Reroll',max:c?99:1,desc:c?'Reroll any number of Jacks, from any pool.':'Reroll one Jack, from any pool.',hint:c?'Select any Jacks':'Select one Jack',elig:d=>d.v===4},
+      wheel:{name:'Wheel and Deal',act:'Make Ace',n:c?2:3,max:c?2:3,desc:c?'Turn a pair of matching Jacks, Queens or Kings in one pool into an Ace.':'Turn three matching Jacks, Queens or Kings in one pool into an Ace.',hint:c?'Click a pair of matching face cards':'Click three matching face cards'},
+      tough:{name:'Tough Crowd',act:'Discard',max:c?2:1,desc:c?'Discard up to two Pain dice.':'Discard one Pain die.',hint:c?'Select up to two Pain dice':'Select one Pain die',elig:d=>d.k==='p'},
+      cut:{name:'Cut Your Losses',act:'Discard',max:c?2:1,desc:c?'Discard up to two of your dice.':'Discard one of your dice.',hint:c?'Select up to two dice':'Select one die',elig:d=>d.k!=='p'},
+      making:{name:'Making It Right',act:'Change',max:1,desc:c?'Change any one die, from any pool, to the face of your choice.':'Change one Madness or Exhaustion die to the face of your choice.',hint:c?'Select any die, then pick a face':'Select a Madness or Exhaustion die, then pick a face',elig:d=>c?true:(d.k==='m'||d.k==='e')}
+    };
+    const def=D[key]; if(!def) return null; def.key=key; def.c=c; return def;
+  }
+  eligFn(def,dice){
+    if(def.key==='wheel'){ const cnt={}; dice.forEach(d=>{ if(d.v>=4) cnt[d.k+d.v]=(cnt[d.k+d.v]||0)+1; }); return d=>d.v>=4&&cnt[d.k+d.v]>=def.n; }
+    return def.elig;
+  }
+  dtToggle(d){
+    const def=this.dtInfo(), dt=this.state.dt, t3=this.state.t3; if(!def||!dt.open||t3.spin||t3.phase!=='sorted') return;
+    if(!this.eligFn(def,t3.dice)(d)) return;
+    const id=d.k+d.i; let sel=dt.sel.slice();
+    if(def.key==='wheel'){
+      if(sel.indexOf(id)>=0) sel=[];
+      else sel=[id].concat(t3.dice.filter(x=>x.k===d.k&&x.v===d.v&&x.i!==d.i).map(x=>x.k+x.i)).slice(0,def.n);
+    } else if(sel.indexOf(id)>=0) sel=sel.filter(x=>x!==id);
+    else if(sel.length<def.max) sel.push(id);
+    else if(def.max===1) sel=[id];
+    this.setState({dt:Object.assign({},dt,{sel:sel})});
+  }
+  dtFinish(txt){ this.setState({dt:{open:false,sel:[],used:true}}); this.props.onDtUse&&this.props.onDtUse(txt); }
+  dtApply(dice,keep){
+    const cnt={}; dice.forEach(d=>cnt[d.k]=(cnt[d.k]||0)+1);
+    const out=dice.map(d=>Object.assign({},d,{ln:cnt[d.k],dom:false}));
+    this.layout(out);
+    this.setState(s=>({t3:Object.assign({},s.t3,{dice:out,meta:this._meta,bonus:0,bonusOn:false})}),()=>this.settle());
+  }
+  dtAct(){
+    const def=this.dtInfo(), dt=this.state.dt, t3=this.state.t3; if(!def||!dt.sel.length||t3.spin||t3.phase!=='sorted') return;
+    const ids=dt.sel, N=ids.length, w=N>1?'dice':'die';
+    if(def.act==='Reroll'){ this.dtFinish(def.name+': rerolled '+N+' '+(def.key==='greedy'?(N>1?'Jacks':'Jack'):'Madness '+w)+'.'); this.rerollIds(ids); }
+    else if(def.act==='Discard'){ this.dtFinish(def.name+': discarded '+N+' '+(def.key==='tough'?'Pain ':'')+w+'.'); this.dtApply(t3.dice.filter(d=>ids.indexOf(d.k+d.i)<0)); }
+    else if(def.key==='wheel'){
+      const k=ids[0].charAt(0), left=t3.dice.filter(d=>ids.indexOf(d.k+d.i)<0), mx=Math.max(-1,...t3.dice.filter(d=>d.k===k).map(d=>d.i));
+      this.dtFinish(def.name+': '+N+' '+({4:'Jacks',5:'Queens',6:'Kings'})[t3.dice.find(d=>(d.k+d.i)===ids[0]).v]+' became an Ace.');
+      this.dtApply(left.concat([{k:k,i:mx+1,ln:1,v:1,tiltX:0,tiltY:0,fresh:1}]));
+    }
+  }
+  dtFace(v,label){
+    const def=this.dtInfo(), dt=this.state.dt, t3=this.state.t3; if(!def||dt.sel.length!==1||t3.spin||t3.phase!=='sorted') return;
+    const id=dt.sel[0];
+    this.dtFinish(def.name+': changed a die to '+label+'.');
+    this.dtApply(t3.dice.map(d=>(d.k+d.i)===id?Object.assign({},d,{v:v,fresh:1}):d));
+  }
+  rerollIds(ids){
+    const t3=this.state.t3; if(!t3.dice||t3.phase!=='sorted'||t3.spin) return;
+    [this._t5,this._fl,this._r1,this._r2,this._r3].forEach(t=>t&&clearTimeout(t));
+    const R=Math.random, has=d=>ids.indexOf(d.k+d.i)>=0;
+    const dice=t3.dice.map(d=>!has(d)?Object.assign({},d,{dom:false}):Object.assign({},d,{dom:false,ph:'gather',v:1+Math.floor(R()*6),
+      cx:46+R()*8,cy:45+R()*10,crot:R()*40-20,sx:8+R()*84,sy:9+R()*80,srot:R()*720-360,tiltX:R()*44-22,tiltY:R()*44-22}));
+    this.setState(s=>({t3:Object.assign({},s.t3,{dice:dice,spin:'x',bonus:0,bonusOn:false})}));
+    const setPh=ph=>this.setState(s=>({t3:Object.assign({},s.t3,{dice:s.t3.dice.map(d=>d.ph?Object.assign({},d,{ph:ph}):d)})}));
+    this._r1=setTimeout(()=>setPh('shake'),780);
+    this._r2=setTimeout(()=>setPh('throw'),1520);
+    this._r3=setTimeout(()=>setPh('reveal'),2520);
+    this._fl=setTimeout(()=>{
+      const fin=this.state.t3.dice.map(d=>{const c=Object.assign({},d); delete c.ph; return c;});
+      this.layout(fin);
+      this.setState(s=>({t3:Object.assign({},s.t3,{dice:fin,meta:this._meta,spin:null})}),()=>this.settle());
+    },3220);
+  }
+  gmDie(req){
+    const t3=this.state.t3;
+    if(!t3.dice||t3.phase!=='sorted'||t3.spin){ return; }
+    let dice;
+    if(req.op==='add'){ const ds=t3.dice.filter(d=>d.k===req.k), mx=ds.length?Math.max(...ds.map(d=>d.i)):-1; dice=t3.dice.concat([{k:req.k,i:mx+1,ln:1,v:req.v,tiltX:0,tiltY:0,fresh:1}]); }
+    else if(req.op==='rm'){ const idx=t3.dice.findIndex(d=>d.k===req.k&&d.v===req.v); if(idx<0) return this.settle(); dice=t3.dice.filter((_,j)=>j!==idx); }
+    else if(req.op==='addk'){ const ds=t3.dice.filter(d=>d.k===req.k); if(!ds.length) return this.settle(); const mx=Math.max(...ds.map(d=>d.i)); dice=t3.dice.concat([{k:req.k,i:mx+1,ln:1,v:6,tiltX:0,tiltY:0,fresh:1}]); }
+    else { const idx=t3.dice.findIndex(d=>d.k===req.k&&d.v===6); if(idx<0) return this.settle(); dice=t3.dice.filter((_,j)=>j!==idx); }
+    this.dtApply(dice);
+  }
+  componentDidUpdate(prev){ const r=this.props.rerollReq, p=prev.rerollReq; if(r&&(!p||p.n!==r.n)) this.rerollPool(r.k);
+    const g=this.props.gmReq, gp=prev.gmReq; if(g&&(!gp||gp.n!==g.n)) this.gmDie(g);
+    const q=this.props.stackReq, qp=prev.stackReq; if(q&&(!qp||qp.n!==q.n)) this.stackDeck(); }
+  componentWillUnmount(){ [this._t0,this._t1,this._t2,this._t3,this._t4,this._t5,this._fl,this._r1,this._r2,this._r3].forEach(t=>t&&clearTimeout(t)); }
+  rollTray3(){
+    if(!this.props.interactive||this.state.t3.phase!=='idle') return;
+    const valsBy={};
+    [this._t0,this._t1,this._t2,this._t3,this._t4].forEach(t=>t&&clearTimeout(t));
+    const st=Object.assign({},this.state.t3,{c:this.counts()}), dice=[], prio={m:3,e:2,d:1,p:0}, stats={};
+    this.pools.forEach(p=>{
+      const n=st.c[p.k]||0, vals=[]; valsBy[p.k]=vals;
+      for(let i=0;i<n;i++){
+        const v=1+Math.floor(Math.random()*6); vals.push(v);
+        dice.push({k:p.k,i:i,ln:n,v:v,
+          cx:46+Math.random()*8,cy:45+Math.random()*10,crot:Math.random()*40-20,
+          sx:8+Math.random()*84,sy:9+Math.random()*80,srot:Math.random()*720-360,
+          bx:8+Math.random()*84,by:9+Math.random()*80,brot:Math.random()*500-250,
+          tiltX:Math.random()*44-22,tiltY:Math.random()*44-22});
+      }
+      stats[p.k]={n:n,K:vals.filter(v=>v===6).length,Q:vals.filter(v=>v===5).length,J:vals.filter(v=>v===4).length,A:vals.filter(v=>v<=3).length,max:vals.length?Math.max.apply(null,vals):0};
+    });
+    this.layout(dice);
+    this.setState(s=>({t3:Object.assign({},s.t3,{c:st.c,dice:dice,phase:'gather',meta:this._meta,bonus:0,bonusOn:false})}));
+    this.notify({rolling:true});
+    this._t0=setTimeout(()=>this.setState(s=>({t3:Object.assign({},s.t3,{phase:'shake'})})),780);
+    this._t1=setTimeout(()=>this.setState(s=>({t3:Object.assign({},s.t3,{phase:'throw'})})),1520);
+    this._t3=setTimeout(()=>this.setState(s=>({t3:Object.assign({},s.t3,{phase:'reveal'})})),2520);
+    this._t4=setTimeout(()=>{this.setState(s=>({t3:Object.assign({},s.t3,{phase:'sorted'})}),()=>this.settle());},3220);
+  }
+  renderVals(){
+    const out={};
+    const t3=Object.assign({},this.state.t3,{c:this.counts()}), phase=t3.phase, sorted=phase==='sorted';
+    const revealed=phase==='reveal'||phase==='sorted';
+    let t3tot=0;
+    this.pools.forEach(p=>{
+      out['t3_n_'+p.k]=t3.c[p.k];
+      out['t3_inc_'+p.k]=()=>this.bump('t3',p.k,1);
+      out['t3_dec_'+p.k]=()=>this.bump('t3',p.k,-1);
+      t3tot+=t3.c[p.k]||0;
+    });
+    out['t3_total']=t3tot;
+    out['t3_roll']=()=>this.rollTray3();
+    const live=!!this.props.interactive&&phase==='idle';
+    ['d','p'].forEach(k=>out['t3_vis_'+k]='hidden');
+    ['e','m'].forEach(k=>out['t3_vis_'+k]=live?'visible':'hidden');
+    out['t3_rolldis']=!live; out['t3_rollop']=live?1:0.35; out['t3_rollcur']=live?'pointer':'default';
+    out['t3_rolltext']=phase!=='idle'?'Thrown':(this.props.interactive?'Throw '+t3tot+' dice':'Waiting on '+(this.props.badge||'player'));
+    out['t3_settled']=sorted;
+    out['badge']=this.props.badge||'—';
+    out['titleText']=(this.props.title||'AN UNNAMED CONFLICT').toUpperCase();
+    const v=this.props.variant||'A'; out.isA=v==='A'; out.isB=v==='B'; out.isC=v==='C';
+    const isRaise=this.props.talent==='raise', perm0=this.props.permanentMadness??0, madAdd=this.state.t3.madAdd||0;
+    const base=this.props.exhaustion??0, pushed=(t3.c.e||0)>base, madCap=Math.max(0,6-(this.props.permanentMadness??0));
+    out.settled=sorted; out.live=live; out.waiting=phase==='idle'&&!this.props.interactive;
+    out.status=phase==='idle'?('WAITING ON '+(this.props.badge||'PLAYER')):'ROLLING…';
+    if(!live&&phase!=='idle'&&!sorted){out.waiting=true;}
+    out.nD=t3.c.d; out.nE=t3.c.e; out.nM=t3.c.m; out.nP=t3.c.p; out.total=t3tot; out.roll=out.t3_roll;
+    out.badge=(this.props.badge||'—'); out.title=this.props.title||'An unnamed conflict';
+    out.painLabel=({2:'SIMPLE',4:'DIFFICULT',6:'DANGEROUS',8:'EXTREME',10:'IMPOSSIBLE'})[t3.c.p]||'';
+    out.pushDis=base>=6||isRaise;
+    
+    out.madAddN=madAdd;
+    out.onPush=()=>{ if(!live||isRaise||base>=6) return; this.setState(s=>({t3:Object.assign({},s.t3,{push:!s.t3.push})}),()=>this.notify()); };
+    const setMad=n=>{ if(!live) return; n=Math.max(0,Math.min(6-perm0,n)); this.setState(s=>({t3:Object.assign({},s.t3,{madAdd:n})}),()=>this.notify()); };
+    out.onMadInc=()=>setMad(madAdd+1); out.onMadDec=()=>setMad(madAdd-1);
+    out.madOp=madCap===0?0.35:1;
+    const cs=this.props.controlStyle||'Tile'; out.ctlTile=cs==='Tile'; out.ctlLedger=cs==='Ledger'; out.inlineLive=cs==='Inline'&&live;
+    out.pushSub='+1 EXHAUSTION';
+    const hv=this.state.hov; out.hovPush=()=>this.setState({hov:'p'}); out.hovMad=()=>this.setState({hov:'m'}); out.hovOff=()=>this.setState({hov:null});
+    out.tipPOn=hv==='p'; out.tipPTitle='Push Yourself';
+    out.tipPText=isRaise?'Raise already pushes you: +1 Exhaustion, and it stays after the roll.':'Add one Exhaustion die to this roll. Your Exhaustion rises by 1 and stays there after the roll.';
+    out.tipMOn=hv==='m'; out.tipMTitle='Go Mad';
+    out.tipMText='Add up to '+madCap+' Madness dice to this roll only. Your Permanent Madness does not change.';
+    const madOn=(this.state.t3.madAdd||0)>0;
+    out.madLine=madOn?'oklch(0.12 0.01 50 / 0.25)':'oklch(0.95 0.012 85 / 0.3)';
+    out.madTileStyle={display:'flex',alignItems:'stretch',boxSizing:'border-box',border:'1px solid '+(madOn?'oklch(0.95 0.012 85)':'oklch(0.95 0.012 85 / 0.3)'),
+      background:madOn?'oklch(0.95 0.012 85)':'transparent',color:madOn?'oklch(0.12 0.01 50)':'oklch(0.95 0.012 85)',opacity:madCap===0?0.35:1}; out.pushBox=pushed?'☒':'☐'; out.pushOp=base>=6?0.35:1;
+    out.tilePushStyle={display:'flex',flexDirection:'column',justifyContent:'center',gap:2,padding:'6px 16px',width:170,boxSizing:'border-box',cursor:base>=6?'not-allowed':'pointer',opacity:base>=6?0.35:1,
+      background:pushed?'oklch(0.95 0.012 85)':'transparent',color:pushed?'oklch(0.12 0.01 50)':'oklch(0.95 0.012 85)',border:'1px solid '+(pushed?'oklch(0.95 0.012 85)':'oklch(0.95 0.012 85 / 0.3)'),textAlign:'left'};
+    out.pushInline=pushed?'PUSHED ✓':'PUSH +1';
+    out.inlinePushStyle={marginTop:4,height:26,padding:'0 8px',cursor:base>=6?'not-allowed':'pointer',opacity:base>=6?0.35:1,fontFamily:"'IBM Plex Mono',monospace",fontSize:10.5,letterSpacing:'0.1em',
+      background:pushed?'#3b6fe0':'transparent',color:pushed?'#fff':'oklch(0.95 0.012 85)',border:'1px solid '+(pushed?'#3b6fe0':'oklch(0.95 0.012 85 / 0.3)')};
+    const perm=this.props.permanentMadness??0, curM=t3.c.m||0;
+    out.madBoxes=Array.from({length:6},(_,i)=>{const isPerm=i>=6-perm, on=i<curM;
+      return {style:{width:16,height:16,boxSizing:'border-box',cursor:isPerm||!live?'default':'pointer',
+        border:'1.5px solid '+(isPerm?'oklch(0.55 0.21 27 / 0.6)':'oklch(0.95 0.012 85 / 0.7)'),
+        background:isPerm?'repeating-linear-gradient(45deg,oklch(0.55 0.21 27 / 0.5) 0 2px,transparent 2px 4px)':(on?'#2f9a3a':'transparent')},
+        onClick:()=>{ if(isPerm||!live) return; this.setState(s=>({t3:Object.assign({},s.t3,{c:Object.assign({},s.t3.c,{m:curM===i+1?i:i+1})})})); }};});
+    out.pushMark=pushed?'✓':'+1';
+    out.pushStyle={display:'flex',alignItems:'stretch',padding:0,whiteSpace:'nowrap',cursor:base>=6?'not-allowed':'pointer',
+      background:pushed?'oklch(0.95 0.012 85 / 0.14)':'transparent',border:'1px solid oklch(0.95 0.012 85 / '+(pushed?0.95:0.5)+')',color:'oklch(0.92 0.012 85)',opacity:base>=6?0.35:1};
+    const M=t3.meta||null, st=M?M.stats:null;
+    out.youSucc=st?(st.d.A+st.e.A+st.m.A):0; out.painSucc=st?st.p.A:0;
+    const dk=M&&M.dom; out.verdict=dk?({d:'Discipline',e:'Exhaustion',m:'Madness',p:'Pain'})[dk]:'Nothing';
+    out.domColor=({d:'#eef2f4',e:'#7ba0f5',m:'#63d06d',p:'#f0555e'})[dk]||'oklch(0.66 0.01 70)';
+    const tal=this.props.talent; out.hasTalent=tal==='hedge'||tal==='raise';
+    out.talentLabel=tal==='raise'?'RAISE':'HEDGE'; out.talentIcon=this.props.talentIcon||''; out.talentText=this.props.talentText||'';
+    out.talentTipOn=this.state.hov==='t'; out.hovBonus=()=>this.setState({hov:'b'}); out.bonusTipOn=this.state.hov==='b';
+    out.talentLabelCap=tal==='raise'?'Raise':'Hedge';
+    out.bonusTipText=tal==='raise'?'Successes equal to your new Exhaustion level.':'Your successes were raised to match your Exhaustion.'; out.hovTal=()=>this.setState({hov:'t'});
+    const bOn=!!t3.bonusOn, bonus=t3.bonus||0; out.bonusOn=bOn; out.bonus=bonus;
+    const net=out.youSucc+(bOn?bonus:0)-out.painSucc; out.net=net;
+    out.degreeWord=net<=0?'Failure':net===1?'Okay':net===2?'Good':net===3?'Amazing':'Unreal';
+    out.degreeColor=net<=0?'#f0555e':'oklch(0.95 0.012 85)';
+    out.talentTagStyle={position:'relative',zIndex:8,display:'flex',alignSelf:'center',alignItems:'center',gap:6,padding:'4px 9px 4px 5px',cursor:'default',
+      background:bOn?'oklch(0.95 0.012 85)':'rgba(0,0,0,.72)',color:bOn?'oklch(0.12 0.01 50)':'oklch(0.95 0.012 85)',
+      border:'1px solid '+(bOn?'oklch(0.95 0.012 85)':'oklch(0.95 0.012 85 / 0.4)'),boxShadow:bOn?'0 0 18px 3px rgba(255,236,168,.45)':'none',transition:'all .35s'};
+    out.talentImgStyle={width:24,height:24,objectFit:'contain',filter:bOn?'invert(1)':'none'};
+    out.recallMode=!!this.props.recallMode&&sorted&&!t3.spin; out.recallCancel=()=>this.props.onRecallCancel&&this.props.onRecallCancel();
+    out['dismiss']=()=>{ if(this.state.t3.spin) return; this.props.onDismiss&&this.props.onDismiss(); };
+    const dtd=this.dtInfo(), dt=this.state.dt, dtDice=t3.dice||[], dtEl=dtd?this.eligFn(dtd,dtDice):null;
+    const dtCanUse=!!dtd&&sorted&&!!this.props.interactive&&!this.props.recallMode;
+    const dtHas=!!dtd&&dtDice.some(dtEl), dtBtnOn=dtCanUse&&!t3.spin&&!dt.used&&dtHas;
+    const dtLive=dtCanUse&&dt.open;
+    out.dtShow=dtCanUse; out.dtIdle=dtCanUse&&!dt.open; out.dtOpen=dtLive;
+    out.dtName=dtd?dtd.name:''; out.dtDesc=dtd?dtd.desc:''; out.dtLevel=dtd?(dtd.c?'COMPOSED':'FRAYED'):''; out.dtHint=dtd?dtd.hint:'';
+    out.dtSub=dt.used?'USED':(!dtHas?'NOTHING TO USE IT ON':dtd.desc);
+    out.dtBtnStyle={display:'flex',flexDirection:'column',alignItems:'center',gap:2,padding:'6px 18px',cursor:dtBtnOn?'pointer':'not-allowed',opacity:dtBtnOn?1:0.45,textAlign:'center',
+      background:dtBtnOn?'oklch(0.95 0.012 85)':'transparent',color:dtBtnOn?'oklch(0.12 0.01 50)':'oklch(0.8 0.01 80)',border:'1px solid '+(dtBtnOn?'oklch(0.95 0.012 85)':'oklch(0.95 0.012 85 / 0.3)'),boxShadow:dtBtnOn?'0 0 0 3px rgba(255,214,92,.25)':'none'};
+    out.dtOnOpen=()=>{ if(dtBtnOn) this.setState({dt:{open:true,sel:[],used:false}}); };
+    out.dtCancel=()=>this.setState({dt:{open:false,sel:[],used:dt.used}});
+    const dtElN=dtd?dtDice.filter(dtEl).length:0;
+    out.dtCount=dt.sel.length+' / '+(dtd?(dtd.max>=99?dtElN:dtd.max):0)+' SELECTED';
+    out.dtAll=!!dtd&&dtd.max>=99&&dtElN>1; out.dtOnAll=()=>{ if(dtd) this.setState({dt:Object.assign({},dt,{sel:dtDice.filter(dtEl).map(d=>d.k+d.i)})}); };
+    out.dtShowAct=!!dtd&&dtd.key!=='making'; out.dtActLabel=dtd?dtd.act:'';
+    const dtNeed=dtd&&dtd.key==='wheel'?dtd.n:1; out.dtActDis=dt.sel.length<dtNeed; out.dtActOp=out.dtActDis?0.4:1;
+    out.dtOnAct=()=>this.dtAct();
+    out.dtFaces=dtd&&dtd.key==='making'&&dt.sel.length===1?[['Ace',1],['Jack',4],['Queen',5],['King',6]].map(f=>({label:f[0],onClick:()=>this.dtFace(f[1],f[0])})):[];
+    const t3d=t3.dice||[], meta=t3.meta||null;
+    let s3succ=0;
+    t3d.forEach(d=>{ if(d.v<=3)s3succ++; });
+    out['t3_lanes']=(meta?meta.lanes:[]).map(l=>{
+      const isDom=sorted&&meta&&meta.dom===l.k;
+      const hi=l.k==='d'?'#ffffff':this.tray[l.k].edge;
+      return {canReroll:!!this.props.recallMode&&sorted&&!t3.spin&&l.k!=='p', onReroll:()=>this.props.onRerollPick&&this.props.onRerollPick(l.k),
+        name:l.name.charAt(0).toUpperCase()+l.name.slice(1).toLowerCase(),
+        tilt:[-2,1.4,-1,1.8][l.idx%4]+'deg',boxtilt:[-3,2,-2,3][l.idx%4]+'deg',
+        linec:isDom?hi:'rgba(230,225,212,.5)',boxc:isDom?hi:'#e6e1d4',mark:isDom?'\u2715':'',
+        h:l.pct.toFixed(3)+'%',
+        top:(l.idx*l.pct).toFixed(3)+'%',
+        bg:isDom?'rgba(255,255,255,.06)':'transparent',
+        labelc:isDom?hi:'#e6e1d4'};
+    });
+    const PH=phase;
+    out['t3_dice']=t3d.map((d,i)=>{
+      const phase=d.ph||PH, sorted=phase==='sorted', revealed=phase==='reveal'||sorted;
+      const dom=sorted&&d.dom, sz=sorted?d.size:5.6;
+      let left,top,rot,blur,op;
+      if(phase==='gather'){ left=d.cx; top=d.cy; rot=d.crot; blur='blur(1.4px)'; op=0.95; }
+      else if(phase==='shake'){ left=d.cx; top=d.cy; rot=d.crot; blur='blur(3.2px)'; op=0.85; }
+      else if(phase==='throw'){ left=d.sx; top=d.sy; rot=d.srot; blur='blur(2.2px)'; op=0.95; }
+      else if(phase==='reveal'){ left=d.sx; top=d.sy; rot=0; blur='none'; op=1; }
+      else { left=d.tx; top=d.ty; rot=0; blur='none'; op=1; }
+      const did=d.k+d.i, isEl=dtLive&&PH==='sorted'&&!t3.spin&&dtEl(d), isSel=dtLive&&dt.sel.indexOf(did)>=0;
+      return {
+        pe:isEl?'auto':'none', cur:isEl?'pointer':'default', onClick:()=>this.dtToggle(d),
+        ringop:isSel?1:(isEl?0.6:0), ringc:isSel?'#ffd65c':'#ffffff', ringst:isSel?'solid':'dashed', ringbs:isSel?'0 0 14px 3px rgba(255,214,92,.7)':'none',
+        left:left.toFixed(2)+'%', top:top.toFixed(2)+'%',
+        size:sz.toFixed(2)+'%', mo:(-sz/2).toFixed(2)+'%',
+        rot:rot.toFixed(0)+'deg',
+        bg:'#f4f1e8', edge:this.cardInk[d.k],
+        corner:revealed?(d.v<=3?'A':this.cardRank[d.v])+this.suit[d.k]:'',
+        tiltx:(revealed?d.tiltX*0.35:d.tiltX).toFixed(0)+'deg',
+        tilty:(revealed?d.tiltY*0.35:d.tiltY).toFixed(0)+'deg',
+        glow:((revealed&&d.v<=3)?'0 0 0 2px rgba(255,236,168,.6),0 0 24px 7px rgba(255,214,92,.5),':'')+(revealed?'0 2px 2px rgba(0,0,0,.5),0 7px 11px rgba(0,0,0,.55)':'0 18px 26px rgba(0,0,0,.6),0 6px 8px rgba(0,0,0,.45)'),
+        blur:blur, op:op,
+        dur:(5.5+(i%5)*0.7).toFixed(1)+'s',
+        anim:d.fresh&&sorted ? 'dicepop .7s cubic-bezier(.2,.8,.3,1) both, drift '+(5.5+(i%5)*0.7).toFixed(1)+'s ease-in-out infinite'
+          : phase==='shake'
+          ? 'tumbleA 0.62s cubic-bezier(.45,.05,.55,.95) infinite'
+          : 'drift '+(5.5+(i%5)*0.7).toFixed(1)+'s ease-in-out infinite',
+        delay:d.fresh&&sorted?'0s, 0.7s':phase==='shake'?(-(i/Math.max(1,t3d.length))*0.62).toFixed(3)+'s':(-(i%7)*0.5).toFixed(1)+'s',
+        domop:dom?1:0, z:isEl?8:(d.ph?6:1),
+        rank:revealed?(d.v<=3?this.suit[d.k]:this.cardRank[d.v]):'?',
+        rankFam:(revealed&&d.v<=3)?"'Barlow Condensed',sans-serif":"'Archivo Black',sans-serif",
+        rankSize:(revealed&&d.v<=3)?'84%':'74%',
+        cink:revealed?this.cardInk[d.k]:'#c7c2b4'
+      };
+    });
+    out['t3_empty']=!t3.dice;
+    out['t3_laneop']=sorted?1:0;
+    out['t3_status']=phase==='idle'?'READY':(sorted?'SETTLED · SORTED BY POOL':(phase==='shake'?'SHAKING…':(phase==='reveal'?'REVEALED…':'ROLLING…')));
+    out['t3_succ']=revealed?s3succ:'—';
+    const t3dom=revealed&&meta&&meta.dom?this.pools.find(p=>p.k===meta.dom):null;
+    out['t3_domhi']=t3dom?(meta.stats[meta.dom][meta.tier]+'× '+{K:'KING',Q:'QUEEN',J:'JACK',A:'ACE'}[meta.tier]):'—';
+    out['t3_dom']=revealed?(t3dom?t3dom.n:'FLATLINE'):(phase&&phase!=='idle'?'…':'AWAITING');
+    out['t3_domac']=t3dom?this.tray[t3dom.k].bg:'#5a545c';
+    out['t3_line']=revealed?(t3dom?this.line(t3dom.k):'No dice in the pool.'):'Build the pool and throw. The dice sort themselves.';
+    return out;
+  }
+}
+</script>
+</body>
+</html>

@@ -793,7 +793,7 @@ reviews.forEach(renderReviewDetail);
 renderOneShotsIndex();
 oneShots.forEach(renderOneShotDetail);
 renderGames();
-dashboards.filter(d => d.t !== "Tokyo Brain Pop!?").forEach(renderAppStub);
+dashboards.filter(d => d.t !== "Tokyo Brain Pop!?" && d.t !== "Don't Rest Your Head").forEach(renderAppStub);
 
 // copy static assets
 function copyDir(src, dest) {
@@ -824,5 +824,6 @@ function copyDirAll(src, dest) {
   }
 }
 copyDirAll(path.join(ROOT, "Games", "Tokyo Brain Pop", "app"), path.join(DIST, "games", "tokyo-brain-pop"));
+copyDirAll(path.join(ROOT, "Games", "Dont Rest Your Head", "app"), path.join(DIST, "games", "dont-rest-your-head"));
 
 console.log("Built", campaigns.length + 1, "campaign pages,", reviews.length + 1, "review pages, home, games.");

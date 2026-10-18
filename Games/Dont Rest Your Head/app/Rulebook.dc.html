@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>html,body{margin:0;height:100%;background:#050506;} a{color:oklch(0.68 0.19 30);text-decoration:none;} a:hover{color:oklch(0.78 0.16 30);}</style>
+</helmet>
+<div style="position:relative; width:100%; height:100%; min-height:{{ minH }}; display:flex; flex-direction:column; background:oklch(0.09 0.008 50); color:oklch(0.88 0.01 80); font-family:'Crimson Text',serif; box-sizing:border-box;">
+  <div style="flex-shrink:0; display:flex; align-items:center; gap:18px; padding:18px 28px 0;">
+    <sc-if value="{{ standalone }}" hint-placeholder-val="{{ false }}"><a href="Title Screen.dc.html" aria-label="Back to title" style="display:flex; color:oklch(0.95 0.012 85);"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M20 12H5"></path><path d="M11 5l-7 7 7 7"></path></svg></a></sc-if>
+    <span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.3em; color:oklch(0.62 0.14 27);">RULEBOOK</span>
+    <sc-if value="{{ embedded }}" hint-placeholder-val="{{ true }}"><button onClick="{{ onClose }}" aria-label="Close rulebook" style="margin-left:auto; background:transparent; border:none; color:oklch(0.8 0.01 80); font-size:24px; line-height:1; cursor:pointer; padding:0;" style-hover="color:oklch(0.97 0.01 85);">×</button></sc-if>
+  </div>
+  <div style="flex-shrink:0; display:flex; gap:4px; overflow-x:auto; padding:10px 28px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.25); scrollbar-width:none;">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="7"><button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button></sc-for>
+  </div>
+  <div ref="{{ bodyRef }}" style="flex:1; min-height:0; overflow-y:auto; scrollbar-width:thin; scrollbar-color:oklch(0.93 0.012 85 / 0.25) transparent;">
+  <div style="max-width:720px; margin:0 auto; padding:28px 28px 64px; display:flex; flex-direction:column; gap:14px; font-size:18px; line-height:1.5; text-wrap:pretty;">
+
+  <sc-if value="{{ is.protagonists }}" hint-placeholder-val="{{ true }}">
+    <h2 style="margin:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:38px; text-transform:uppercase; color:oklch(0.96 0.012 85);">The Protagonists</h2>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:4px;">
+      <li>You are an insomniac of some sort who has Awakened to the Mad City.</li>
+      <li>You are, or eventually will be, stalked by Nightmares and by other people and creatures from the City.</li>
+      <li>As one of the Awake, you have access to strange powers, from the unusual to the impossible.</li>
+    </ul>
+    <p style="margin:0;">Each player takes one of the starter protagonists.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Traits</h3>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:6px;">
+      <li><b>Discipline:</b> Your general skill and a measure of your self-control. Starts at 3.</li>
+      <li><b>Responses:</b> Your boxes in Fight and Flight. <b>Fight</b> is how angry and aggressive you are; <b>Flight</b> is how fearful and passive you are.</li>
+      <li><b>Exhaustion:</b> Starts at 0, maximum 6.</li>
+      <li><b>Talents:</b> Every protagonist has three (see <a href="#" onClick="{{ go.talents }}">Talents</a>). The <b>Exhaustion Talent</b> makes you supernaturally exceptional at something you can already do. The <b>Madness Talent</b> lets you do something outside the realm of human possibility. The <b>Discipline Talent</b> changes how your dice are read, as long as you keep your composure.</li>
+      <li><b>Personal Nightmare:</b> A monster that embodies your greatest fear. Overcoming it earns <b>Closure</b> (see <a href="#" onClick="{{ go.end }}">End of Game</a>).</li>
+    </ul>
+  </sc-if>
+
+  <sc-if value="{{ is.conflict }}" hint-placeholder-val="{{ false }}">
+    <h2 style="margin:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:38px; text-transform:uppercase; color:oklch(0.96 0.012 85);">Conflict</h2>
+    <p style="margin:0;">To resolve a conflict, the player states what they are trying to do, and the GM states what opposes that effort.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Building the Pool</h3>
+    <p style="margin:0;">The player always rolls:</p>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:4px;">
+      <li>All of their <b>Discipline</b> dice.</li>
+      <li>A number of <b>Exhaustion</b> dice equal to their current Exhaustion score.</li>
+      <li>Any number of <b>Madness</b> dice they choose to add, up to six, including any permanent ones.</li>
+    </ul>
+    <p style="margin:0;">Once per roll, the player may voluntarily increase their Exhaustion by one, adding an Exhaustion die to the pool. Exhaustion cannot be increased beyond six. It also doesn't come back down after the roll; it must be reduced some other way.</p>
+    <p style="margin:0;">Madness dice are added for the current roll only, but they put the character at risk of serious psychological strain. Adding Madness dice is also what lets a character use their Madness Talent in the action.</p>
+    <p style="margin:0;">The GM rolls <b>Pain</b> dice against the player.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Pain Dice</h3>
+    <p style="margin:0;">The GM sets the difficulty of the conflict as a number from 1 to 10, and rolls that many Pain dice. Obstacles and opponents have their own <b>Pain rating</b>, which is how many dice they roll.</p>
+    <div style="display:grid; grid-template-columns:90px 1fr; border-top:1px solid oklch(0.93 0.012 85 / 0.2);">
+      <sc-for list="{{ painRows }}" as="r" hint-placeholder-count="5"><b style="padding:6px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.12); font-family:'Barlow Condensed',sans-serif; font-size:20px; color:oklch(0.68 0.19 30);">{{ r.a }}</b><span style="padding:6px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.12);">{{ r.b }}</span></sc-for>
+    </div>
+    <p style="margin:0;">When several obstacles or opponents act together, take the highest rating and add +1 for each additional one, or +2 for each one whose rating equals the leader's.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Successes</h3>
+    <p style="margin:0;">Every <b>Ace</b> is one success. The total number of successes on a side is its <b>degree</b>. If the player meets or beats the GM's degree, they win the conflict.</p>
+    <div style="display:grid; grid-template-columns:90px 1fr; border-top:1px solid oklch(0.93 0.012 85 / 0.2);">
+      <sc-for list="{{ degreeRows }}" as="r" hint-placeholder-count="4"><b style="padding:6px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.12); font-family:'Barlow Condensed',sans-serif; font-size:20px; color:oklch(0.68 0.19 30);">{{ r.a }}</b><span style="padding:6px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.12);">{{ r.b }}</span></sc-for>
+    </div>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Dominance</h3>
+    <p style="margin:0;">One pool, counting Pain, is <b>dominant</b> and decides what the conflict costs. Go down the faces until a step decides it:</p>
+    <ol style="margin:0; padding-left:22px; display:flex; flex-direction:column; gap:4px;">
+      <li><b>Kings:</b> If any pool shows a King, the pool with the most Kings dominates.</li>
+      <li><b>Queens:</b> If no pool shows a King, the pool with the most Queens dominates.</li>
+      <li><b>Jacks:</b> If no pool shows a Queen either, the pool with the most Jacks dominates.</li>
+      <li><b>Aces:</b> If every pool shows only Aces, the pool with the most Aces dominates.</li>
+    </ol>
+    <p style="margin:0;"><b>Ties</b> at any step go to <b>Madness</b>, then <b>Exhaustion</b>, then <b>Discipline</b>, then <b>Pain</b>.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">What the Dominant Pool Costs</h3>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px;">
+      <li><b>Discipline:</b> The situation remains under control, or at least doesn't spiral into greater chaos, and skill and focus rule the day. <i>The player may reduce their Exhaustion by one or remove a check mark from a response.</i></li>
+      <li><b>Exhaustion:</b> The situation taxes the protagonist's resources. <i>Increase Exhaustion by 1.</i></li>
+      <li><b>Madness:</b> The situation puts great psychological or emotional strain on the protagonist, and circumstances become more chaotic. <i>The player checks a response box. If there are no response boxes left to check, they <b>Snap</b> instead.</i>
+        <ul style="margin:6px 0 0; padding-left:20px; display:flex; flex-direction:column; gap:4px;">
+          <li><i>Flight:</i> The character reacts with total fear. They run away, freeze in complete paralysis, or scream incredibly loudly.</li>
+          <li><i>Fight:</i> The character reacts with consuming rage. They lash out unthinkingly at friend and foe alike, throw themselves at an opponent no matter the odds, or smash otherwise useful resources into useless bits.</li>
+        </ul>
+      </li>
+      <li><b>Pain:</b> The situation exacts a price on the protagonist, even in victory. <i>Place a coin in the despair bowl.</i></li>
+    </ul>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Failure</h3>
+    <p style="margin:0;">After a failed action, the GM inflicts one extra consequence: increase the character's Exhaustion by 1, <b>or</b> check off one of the character's responses. The GM cannot inflict a consequence that the dominant pool has already inflicted.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Helping</h3>
+    <p style="margin:0;">Helping is possible, but costly. Each player helping may roll a single Discipline die, which counts toward successes but not toward dominance. Everyone who participated suffers the consequences of the roll.</p>
+  </sc-if>
+
+  <sc-if value="{{ is.talents }}" hint-placeholder-val="{{ false }}">
+    <h2 style="margin:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:38px; text-transform:uppercase; color:oklch(0.96 0.012 85);">Talents</h2>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Exhaustion Talent</h3>
+    <p style="margin:0;">Before you roll, if the roll is relevant to your talent, declare either <b>Hedge</b> or <b>Raise</b>. You can't use both on the same roll.</p>
+    <p style="margin:0;"><b>Hedge.</b> Roll as normal and count your successes. If the total is lower than your current Exhaustion level, raise it to equal your Exhaustion.</p>
+    <p style="margin:0;"><b>Raise.</b> Raise your Exhaustion by 1 before you roll. This counts as your one voluntary Exhaustion increase for the roll. Roll as normal, then add a number of successes to your roll equal to your new Exhaustion level.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Madness Talent</h3>
+    <p style="margin:0;">To use a Madness Talent, at least one Madness die must be in the roll. The more Madness dice used, the more intense, complex or impossible the effect can be.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Discipline Talent</h3>
+    <p style="margin:0;">A Discipline Talent is used after the dice land, and changes how they're read. Its strength depends on your current Discipline:</p>
+    <div style="display:grid; grid-template-columns:90px 140px 1fr; border-top:1px solid oklch(0.93 0.012 85 / 0.2);">
+      <sc-for list="{{ discRows }}" as="r" hint-placeholder-count="3"><b style="padding:6px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.12); font-family:'Barlow Condensed',sans-serif; font-size:20px; color:oklch(0.68 0.19 30);">{{ r.a }}</b><span style="padding:6px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.12);">{{ r.b }}</span><span style="padding:6px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.12);">{{ r.c }}</span></sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ is.coins }}" hint-placeholder-val="{{ false }}">
+    <h2 style="margin:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:38px; text-transform:uppercase; color:oklch(0.96 0.012 85);">Coins</h2>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:4px;">
+      <li>When Pain dominates a roll, the player adds a coin to the <b>despair reserve</b>.</li>
+      <li>Whenever the GM spends a coin of despair, it moves to the <b>hope reserve</b>.</li>
+      <li>When a player uses a coin of hope, it is removed from the game.</li>
+    </ul>
+    <p style="margin:0;">Despair and hope coins are lost between sessions, so unspent coins are wasted.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">GM</h3>
+    <p style="margin:0;">On any roll, the GM may spend a coin of despair to add a King to any pool in play, or to remove a King from any pool in play. A die cannot be added to a pool that has no dice in it. If spending the coin causes Pain to dominate, no despair coin is gained from that domination.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Players</h3>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:6px;">
+      <li><b>Getting a Break</b> <i>(1 coin):</i> Reduce Exhaustion by 1, or remove a check mark from a response. Only possible while not in active conflict.</li>
+      <li><b>Restoring Discipline</b> <i>(5 − current Discipline):</i> Replace a permanent Madness die with a point of Discipline. Requires a few hours of calm.</li>
+      <li><b>Improving Success</b> <i>(1 or more):</i> On any roll, add one Ace to the Discipline pool per coin spent.</li>
+    </ul>
+  </sc-if>
+
+  <sc-if value="{{ is.control }}" hint-placeholder-val="{{ false }}">
+    <h2 style="margin:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:38px; text-transform:uppercase; color:oklch(0.96 0.012 85);">Losing Control</h2>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Crashing</h3>
+    <p style="margin:0;">A protagonist <b>Crashes</b> when their Exhaustion would increase beyond 6, <b>or</b> their Discipline drops to 0.</p>
+    <p style="margin:0;">They are in imminent danger of falling asleep, by the end of the scene or sooner. When they crash:</p>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:4px;">
+      <li>All their response boxes clear.</li>
+      <li>Their Exhaustion drops to 0.</li>
+      <li>Their Discipline drops to 1.</li>
+      <li>They gain a <b>Lost Hours</b> mark (see <a href="#" onClick="{{ go.end }}">End of Game</a>).</li>
+    </ul>
+    <p style="margin:0;">Their talents remain available.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Snapping</h3>
+    <p style="margin:0;">When a character is required to check off a response and has none left, they <b>Snap</b>: a moment of extreme stress that leaves them in imminent danger of going starkly insane, by the end of the scene or sooner.</p>
+    <p style="margin:0;">When a protagonist snaps, they must spend at least one scene acting on their psychotic break. All of their response boxes are then reset, their Discipline drops by one, and they gain a single permanent Madness die. If this drops their Discipline to 0, they <b>Crash</b>.</p>
+  </sc-if>
+
+  <sc-if value="{{ is.scars }}" hint-placeholder-val="{{ false }}">
+    <h2 style="margin:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:38px; text-transform:uppercase; color:oklch(0.96 0.012 85);">Scars</h2>
+    <p style="margin:0;">At the end of each session, a protagonist may create a <b>scar</b>: something traumatic they experienced this session that has changed them, or a hard lesson learned under duress.</p>
+    <p style="margin:0;">In a later session, if a roll can be related to one of their scars, they may do one of the following:</p>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:4px;">
+      <li><b>Recall:</b> Once per session, reroll one pool.</li>
+      <li><b>Absorb:</b> Cross out the scar so it can never be used again, add 5 Hope to the reserve.</li>
+    </ul>
+  </sc-if>
+
+  <sc-if value="{{ is.end }}" hint-placeholder-val="{{ false }}">
+    <h2 style="margin:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:38px; text-transform:uppercase; color:oklch(0.96 0.012 85);">End of Game</h2>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Marks</h3>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:4px;">
+      <li><b>Lost Hours</b> <i>(bad, max 3):</i> Gained each time the protagonist Crashes.</li>
+      <li><b>Closure</b> <i>(good, max 1):</i> Gained by overcoming their Personal Nightmare.</li>
+    </ul>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Final Roll</h3>
+    <p style="margin:0;">At the end of the game, each protagonist rolls a d6: <b>−2 per Lost Hours</b>, <b>+2 for Closure</b>.</p>
+    <div style="display:grid; grid-template-columns:120px 1fr; border-top:1px solid oklch(0.93 0.012 85 / 0.2);">
+      <sc-for list="{{ fateRows }}" as="r" hint-placeholder-count="4"><b style="padding:6px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.12); font-family:'Barlow Condensed',sans-serif; font-size:20px; color:oklch(0.68 0.19 30);">{{ r.a }}</b><span style="padding:6px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.12);">{{ r.b }}</span></sc-for>
+    </div>
+  </sc-if>
+
+  </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;embedded&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;onClose&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;}}">
+class Component extends DCLogic {
+  state = { tab: 'protagonists' };
+  bodyRef = React.createRef();
+  setTab(tab){ this.setState({ tab }); if (this.bodyRef.current) this.bodyRef.current.scrollTop = 0; }
+  renderVals() {
+    const T = [['protagonists','Protagonists'],['conflict','Conflict'],['talents','Talents'],['coins','Coins'],['control','Losing Control'],['scars','Scars'],['end','End of Game']];
+    const tab = this.state.tab, embedded = !!this.props.embedded, is = {}, go = {};
+    T.forEach(([k])=>{ is[k] = tab===k; go[k] = (e)=>{ if (e) e.preventDefault(); this.setTab(k); }; });
+    const rows = a => a.map(([x,y,z])=>({ a:x, b:y, c:z }));
+    return {
+      embedded, standalone: !embedded, minH: embedded ? '0' : '100vh', is, go, bodyRef: this.bodyRef,
+      onClose: () => this.props.onClose && this.props.onClose(),
+      tabs: T.map(([k,label])=>({ label, onClick: ()=>this.setTab(k), style:{ flexShrink:0, background:'transparent', border:'none', borderBottom:'2px solid '+(tab===k?'oklch(0.62 0.21 27)':'transparent'), padding:'8px 12px', cursor:'pointer',
+        fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:17, letterSpacing:'0.06em', textTransform:'uppercase', color: tab===k?'oklch(0.96 0.012 85)':'oklch(0.6 0.01 70)' } })),
+      painRows: rows([['2','Simple'],['4','Difficult'],['6','Dangerous'],['8','Extreme'],['10','Impossible']]),
+      degreeRows: rows([['1','Competent'],['2','Impressive'],['3','Extraordinary'],['4','Supernatural']]),
+      discRows: rows([['3','Composed','Full effect'],['2','Frayed','Lessened effect'],['1','Unravelled','Unavailable']]),
+      fateRows: rows([['0 or less','They become a Nightmare and stay in the Mad City.'],['1–2','They become a resident of the Mad City.'],['3–4','They leave, but something stays broken.'],['5–6','They leave stronger.']]),
+    };
+  }
+}
+</script>
+</body>
+</html>
