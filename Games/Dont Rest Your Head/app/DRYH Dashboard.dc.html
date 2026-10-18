@@ -762,7 +762,7 @@
       <sc-if value="{{ hasPendingConflict }}" hint-placeholder-val="{{ false }}">
         <div ref="{{ trayFitRef }}" style="position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(2,2,3,0.55);">
           <div style="flex-shrink:0; width:640px; transform:{{ trayTransform }}; transform-origin:center center;">
-          <sc-if value="{{ trayOn }}" hint-placeholder-val="{{ true }}"><dc-import name="Conflict Tray" key="{{ pendingConflict.id }}" discipline="{{ pendingConflict.discipline }}" exhaustion="{{ pendingConflict.exhaustion }}" pain="{{ pendingConflict.pain }}" permanent-madness="{{ pendingConflict.perm }}" talent="{{ pendingConflict.talent }}" talent-icon="{{ pendingConflict.talentIcon }}" talent-text="{{ pendingConflict.talentText }}" reroll-req="{{ pendingConflict.rerollReq }}" stack-req="{{ pendingConflict.stackReq }}" gm-req="{{ pendingConflict.gmReq }}" dtalent="{{ pendingConflict.dtalent }}" dlevel="{{ pendingConflict.dlevel }}" on-dt-use="{{ onDtUse }}" on-pools-change="{{ onTrayPools }}" recall-mode="{{ pendingConflict.recallMode }}" on-reroll-pick="{{ onRerollPick }}" on-recall-cancel="{{ onRecallCancel }}" variant="A" control-style="Tile" interactive="{{ pendingConflict.interactive }}" badge="{{ pendingConflict.badge }}" title="{{ pendingConflict.title }}" on-result="{{ onTrayResult }}" on-dismiss="{{ onTrayDismiss }}" hint-size="640px,480px" style="width:640px;"></dc-import></sc-if>
+          <sc-if value="{{ trayOn }}" hint-placeholder-val="{{ true }}"><dc-import name="Conflict Tray" key="{{ pendingConflict.id }}" discipline="{{ pendingConflict.discipline }}" exhaustion="{{ pendingConflict.exhaustion }}" pain="{{ pendingConflict.pain }}" permanent-madness="{{ pendingConflict.perm }}" talent="{{ pendingConflict.talent }}" talent-icon="{{ pendingConflict.talentIcon }}" talent-text="{{ pendingConflict.talentText }}" reroll-req="{{ pendingConflict.rerollReq }}" stack-req="{{ pendingConflict.stackReq }}" gm-req="{{ pendingConflict.gmReq }}" dtalent="{{ pendingConflict.dtalent }}" dlevel="{{ pendingConflict.dlevel }}" on-dt-use="{{ onDtUse }}" on-pools-change="{{ onTrayPools }}" recall-mode="{{ pendingConflict.recallMode }}" on-reroll-pick="{{ onRerollPick }}" on-recall-cancel="{{ onRecallCancel }}" variant="A" control-style="Tile" interactive="{{ pendingConflict.interactive }}" badge="{{ pendingConflict.badge }}" title="{{ pendingConflict.title }}" on-result="{{ onTrayResult }}" shown="{{ trayShown }}" on-dismiss="{{ onTrayDismiss }}" hint-size="640px,480px" style="width:640px;"></dc-import></sc-if>
           <sc-if value="{{ domOn }}" hint-placeholder-val="{{ false }}">
           <div style="width:640px;max-width:100%;background:oklch(0.1 0.008 50);border:1px solid oklch(0.93 0.012 85 / 0.25);box-shadow:0 26px 60px rgba(0,0,0,.75);padding:20px 26px 22px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box;">
             <div style="display:flex;align-items:baseline;gap:12px;">
@@ -3035,7 +3035,7 @@ class DRYHBase extends DCLogic {
 // Shared = durable game state + the live conflict. Everything else
 // (tabs, sheets, hovers, panels) stays on each viewer's own screen.
 // ===================================================================
-const MP_LOCAL = new Set(['sheetCharId','clockOpen','dragOver','conflictModal','roomCode','picks','vw','mapOpen','gmOpen','gmTab','gmFull',
+const MP_LOCAL = new Set(['actingCharId','sheetCharId','clockOpen','dragOver','conflictModal','roomCode','picks','vw','mapOpen','gmOpen','gmTab','gmFull',
   'sbSection','notesOpen','notesIdx','notesView','notesConfirm','invOpen','invGm','invIdx','tokOff','tokH','trayScale','cityV','cityPop','cityOpen',
   'cityFocus','citySj','citySjHover','citySjRect','cityHover','citySubArm','rulesOpen','dragging','itemPop','breathFlash','breathPick','recallPick',
   'kingPick','scarModal','scarHover','hopeHover','tokenHover','resetArm','charResetArm','gmProtoSel','gmSecItem','gmSecStatus','statDraftName',
@@ -3246,6 +3246,7 @@ class Component extends DRYHBase {
     v.mpUnstickLabel = this.state.mpUnstickArm ? 'SURE?' : 'UNSTICK';
     v.onMpUnstick = () => { if (this.state.mpUnstickArm) { clearTimeout(this._unT); this.setState({ mpUnstickArm:false }); this.unstick(); }
       else { this.setState({ mpUnstickArm:true }); clearTimeout(this._unT); this._unT = setTimeout(()=>this.setState({ mpUnstickArm:false }), 3000); } };
+    v.trayShown = (this.state.pendingConflict && this.state.pendingConflict.result) || null;
     v.onCityExport = () => { const d = this.cityLoad(true); if (d) window.MadCityIO.exportZip(d); };
     v.onCityImport = () => window.MadCityIO.importFlow({ get: () => this.cityLoad(true) || { nodes: [], edges: [] },
       apply: (d) => { try { localStorage.setItem(this.CITY_KEY, JSON.stringify(d)); } catch(e) {} window.dispatchEvent(new Event('dryh-city-edit')); this.setState({ cityV: Date.now() }); } });

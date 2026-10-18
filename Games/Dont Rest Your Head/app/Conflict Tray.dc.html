@@ -409,12 +409,35 @@ class Component extends DCLogic {
     else { const idx=t3.dice.findIndex(d=>d.k===req.k&&d.v===6); if(idx<0) return this.settle(); dice=t3.dice.filter((_,j)=>j!==idx); }
     this.dtApply(dice);
   }
-  componentDidUpdate(prev){ const r=this.props.rerollReq, p=prev.rerollReq; if(r&&(!p||p.n!==r.n)) this.rerollPool(r.k);
-    const g=this.props.gmReq, gp=prev.gmReq; if(g&&(!gp||gp.n!==g.n)) this.gmDie(g);
-    const q=this.props.stackReq, qp=prev.stackReq; if(q&&(!qp||qp.n!==q.n)) this.stackDeck(); }
+  componentDidMount(){ if(this.props.shown) this.adopt(this.props.shown); }
+  componentDidUpdate(prev){
+    if(this._own){ const r=this.props.rerollReq, p=prev.rerollReq; if(r&&(!p||p.n!==r.n)) this.rerollPool(r.k);
+      const g=this.props.gmReq, gp=prev.gmReq; if(g&&(!gp||gp.n!==g.n)) this.gmDie(g);
+      const q=this.props.stackReq, qp=prev.stackReq; if(q&&(!qp||qp.n!==q.n)) this.stackDeck(); }
+    else if(this.props.shown&&this.props.shown!==prev.shown) this.adopt(this.props.shown); }
+  // Multiplayer: show the dice another screen rolled (its reported result), animating a first throw.
+  adopt(rep){
+    if(this._own||!rep||!rep.dice) return;
+    const sig=JSON.stringify(rep.dice)+'|'+(rep.bonus||0); if(sig===this._adoptSig) return; this._adoptSig=sig;
+    [this._t0,this._t1,this._t3,this._t4,this._t5,this._fl,this._r1,this._r2,this._r3].forEach(t=>t&&clearTimeout(t));
+    const R=Math.random, dice=[], c={};
+    ['d','e','m','p'].forEach(k=>{ const vals=rep.dice[k]||[]; c[k]=vals.length;
+      vals.forEach((v,i)=>dice.push({k:k,i:i,ln:vals.length,v:v,cx:46+R()*8,cy:45+R()*10,crot:R()*40-20,sx:8+R()*84,sy:9+R()*80,srot:R()*720-360,
+        bx:8+R()*84,by:9+R()*80,brot:R()*500-250,tiltX:R()*44-22,tiltY:R()*44-22})); });
+    this.layout(dice);
+    const done={bonus:rep.bonus||0,bonusOn:(rep.bonus||0)>0};
+    if(this.state.t3.phase==='idle'){
+      this.setState(s=>({t3:Object.assign({},s.t3,{c:c,dice:dice,phase:'gather',meta:this._meta,bonus:0,bonusOn:false,spin:null})}));
+      this._t0=setTimeout(()=>this.setState(s=>({t3:Object.assign({},s.t3,{phase:'shake'})})),780);
+      this._t1=setTimeout(()=>this.setState(s=>({t3:Object.assign({},s.t3,{phase:'throw'})})),1520);
+      this._t3=setTimeout(()=>this.setState(s=>({t3:Object.assign({},s.t3,{phase:'reveal'})})),2520);
+      this._t4=setTimeout(()=>this.setState(s=>({t3:Object.assign({},s.t3,{phase:'sorted'},done)})),3220);
+    } else this.setState(s=>({t3:Object.assign({},s.t3,{c:c,dice:dice,phase:'sorted',meta:this._meta,spin:null},done)}));
+  }
   componentWillUnmount(){ [this._t0,this._t1,this._t2,this._t3,this._t4,this._t5,this._fl,this._r1,this._r2,this._r3].forEach(t=>t&&clearTimeout(t)); }
   rollTray3(){
     if(!this.props.interactive||this.state.t3.phase!=='idle') return;
+    this._own=true;
     const valsBy={};
     [this._t0,this._t1,this._t2,this._t3,this._t4].forEach(t=>t&&clearTimeout(t));
     const st=Object.assign({},this.state.t3,{c:this.counts()}), dice=[], prio={m:3,e:2,d:1,p:0}, stats={};

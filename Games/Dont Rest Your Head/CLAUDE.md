@@ -31,3 +31,8 @@
   so a round trip is lossless. Files without the block fall back to the
   Markdown parser. To rebuild the seed from a new zip, parse it with
   `MadCityIO.parseMd` and resolve `## Routes` by name.
+- Dice: the Conflict Tray rolls in its own local state. The screen that
+  throws owns the roll (`_own`) and is the only one that handles reroll /
+  GM / stack requests. Every other tray replays the shared
+  `pendingConflict.result` through `adopt()` (prop `shown`).
+- `actingCharId` (which protagonist you're looking at) is per screen.
