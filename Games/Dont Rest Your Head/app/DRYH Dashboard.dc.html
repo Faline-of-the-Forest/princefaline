@@ -400,6 +400,9 @@
       </sc-if>
     </div>
 
+    <sc-if value="{{ isPrologue }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Prologue" data-dryh-prologue="1" style="position:relative; flex:1; min-width:0; min-height:0; overflow:hidden; background:#000; cursor:{{ prologueCursor }};"></div>
+    </sc-if>
     <sc-if value="{{ isSelect }}" hint-placeholder-val="{{ false }}">
       <div data-screen-label="Character Select" style="position:relative; flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden; background:#050506;">
         <div style="position:absolute; inset:0 0 170px; pointer-events:none; background:repeating-linear-gradient(to bottom, transparent 0 59px, oklch(0.93 0.012 85 / 0.12) 59px 60px);"></div>
@@ -3053,40 +3056,38 @@ class Component extends DRYHBase {
   plSync(){
     const s = this.state, pr = s.screen === 'prologue' ? s.prologue : null, gm = this.isGm();
     const data = pr && (window.DRYH_PROLOGUES || []).find(x => x.id === pr.id);
-    let el = document.getElementById('dryh-prologue');
-    if (!data || (gm && s.gmOpen)) { if (el) el.style.display = 'none'; if (!data) { this._plSig = null; clearInterval(this._plT); } return; }
-    if (!el) {
-      const st = document.createElement('style');
-      st.textContent = "#dryh-prologue{position:fixed;inset:0;z-index:9500;background:#000;color:oklch(0.97 0.01 85);display:flex;flex-direction:column;align-items:center;overflow:auto;-webkit-user-select:none;user-select:none}"
-        + "#dryh-prologue .pl-col{width:min(760px,100%);margin:auto 0;padding:clamp(48px,9vh,96px) 16px 72px;box-sizing:border-box}"
-        + "#dryh-prologue .pl-name{font:700 12px 'Barlow',sans-serif;letter-spacing:.42em;color:oklch(0.62 0.21 27);margin:0 0 28px}"
-        + "#dryh-prologue p{font:400 clamp(19px,2.1vw,25px)/1.6 'Crimson Text',serif;margin:0 0 .85em;text-wrap:pretty}"
-        + "#dryh-prologue b{font-weight:600}#dryh-prologue .hl{color:oklch(0.62 0.21 27);font-weight:600}"
-        + "#dryh-prologue .ch{opacity:0;transition:opacity 260ms ease}#dryh-prologue .ch.on{opacity:1}"
-        + "#dryh-prologue .pl-foot{position:fixed;left:0;right:0;bottom:16px;display:flex;justify-content:center;gap:18px;font:600 10px 'Barlow',sans-serif;letter-spacing:.3em;color:oklch(0.5 0.01 70);pointer-events:none}"
-        + "#dryh-prologue .pl-gm{position:fixed;top:18px;right:0;width:30px;height:64px;padding:0 0 0 4px;border:none;cursor:pointer;background:oklch(0.55 0.21 27);color:oklch(0.97 0.01 85);font:600 12px 'Barlow',sans-serif;letter-spacing:.24em;writing-mode:vertical-rl;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,22% 50%)}";
+    const host = document.querySelector('[data-dryh-prologue]');
+    if (!data || !host) { clearInterval(this._plT); return; }
+    if (!document.getElementById('dryh-pl-css')) {
+      const st = document.createElement('style'); st.id = 'dryh-pl-css';
+      st.textContent = "[data-dryh-prologue]{color:oklch(0.97 0.01 85);-webkit-user-select:none;user-select:none}"
+        + "[data-dryh-prologue] .pl-scroll{position:absolute;inset:0 0 40px;overflow:auto;display:flex;flex-direction:column;align-items:center}"
+        + "[data-dryh-prologue] .pl-col{width:min(760px,100%);margin:auto 0;padding:clamp(32px,7vh,80px) 16px 32px;box-sizing:border-box}"
+        + "[data-dryh-prologue] .pl-name{font:700 12px 'Barlow',sans-serif;letter-spacing:.42em;color:oklch(0.62 0.21 27);margin:0 0 28px}"
+        + "[data-dryh-prologue] p{font:400 clamp(19px,2.1vw,25px)/1.6 'Crimson Text',serif;margin:0 0 .85em;text-wrap:pretty}"
+        + "[data-dryh-prologue] b{font-weight:600}[data-dryh-prologue] .hl{color:oklch(0.62 0.21 27);font-weight:600}"
+        + "[data-dryh-prologue] .ch{opacity:0;transition:opacity 260ms ease}[data-dryh-prologue] .ch.on{opacity:1}"
+        + "[data-dryh-prologue] .pl-foot{position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:center;gap:18px;font:600 10px 'Barlow',sans-serif;letter-spacing:.3em;color:oklch(0.5 0.01 70);pointer-events:none}";
       document.head.appendChild(st);
-      el = document.createElement('div'); el.id = 'dryh-prologue';
-      el.innerHTML = '<div class="pl-col"><div class="pl-name"></div><div class="pl-body"></div></div><div class="pl-foot"><span class="pl-pg"></span><span class="pl-hint"></span></div><button class="pl-gm">GM</button>';
-      document.body.appendChild(el);
-      el.addEventListener('click', e => {
+    }
+    if (!host.__pl) {   // a freshly mounted screen
+      host.__pl = { sig:null };
+      host.innerHTML = '<div class="pl-scroll"><div class="pl-col"><div class="pl-name"></div><div class="pl-body"></div></div></div><div class="pl-foot"><span class="pl-pg"></span><span class="pl-hint"></span></div>';
+      host.addEventListener('click', () => {
         if (!this.isGm()) return;
-        if (e.target.closest('.pl-gm')) { this.setState({ gmOpen:true, gmTab:'screen' }); return; }
         const cur = this.state.prologue, d = (window.DRYH_PROLOGUES || []).find(x => x.id === (cur && cur.id)); if (!d) return;
         if (!this._plDone) this.commit({ prologue:{ ...cur, full:true } });
         else if (cur.page < d.pages.length - 1) this.commit({ prologue:{ ...cur, page: cur.page + 1, full:false } });
       });
     }
-    el.style.display = 'flex'; el.style.cursor = gm ? 'pointer' : 'default';
-    el.querySelector('.pl-gm').style.display = gm ? 'block' : 'none';
     const page = Math.max(0, Math.min(pr.page || 0, data.pages.length - 1)), sig = pr.id + '|' + page + '|' + pr.n;
-    el.querySelector('.pl-pg').textContent = (page + 1) + ' / ' + data.pages.length;
-    if (sig !== this._plSig) {
-      this._plSig = sig; this._plDone = false; clearInterval(this._plT);
-      el.querySelector('.pl-name').textContent = data.title;
-      const body = el.querySelector('.pl-body');
+    host.querySelector('.pl-pg').textContent = (page + 1) + ' / ' + data.pages.length;
+    if (sig !== host.__pl.sig) {
+      host.__pl.sig = sig; this._plDone = false; clearInterval(this._plT);
+      host.querySelector('.pl-name').textContent = data.title;
+      const body = host.querySelector('.pl-body');
       body.innerHTML = data.pages[page].map(l => '<p>' + l + '</p>').join('');
-      el.scrollTop = 0;
+      host.querySelector('.pl-scroll').scrollTop = 0;
       // wrap every character so the lines can write themselves in
       const chars = [];
       body.querySelectorAll('p').forEach((pe, li) => {
@@ -3109,13 +3110,17 @@ class Component extends DRYHBase {
       }, 22);
     }
     if (pr.full && !this._plDone) this.plFinish();
-    el.querySelector('.pl-hint').textContent = !gm ? '' : !this._plDone ? 'CLICK TO REVEAL' : page < data.pages.length - 1 ? 'CLICK TO CONTINUE' : 'END';
+    this.plHint();
+  }
+  plHint(){
+    const host = document.querySelector('[data-dryh-prologue]'), pr = this.state.prologue, d = pr && (window.DRYH_PROLOGUES || []).find(x => x.id === pr.id);
+    if (!host || !host.__pl || !d) return;
+    host.querySelector('.pl-hint').textContent = !this.isGm() ? '' : !this._plDone ? 'CLICK TO REVEAL' : (pr.page || 0) < d.pages.length - 1 ? 'CLICK TO CONTINUE' : 'END';
   }
   plFinish(){
     clearInterval(this._plT); this._plDone = true;
     (this._plChars || []).forEach(c => c.classList.add('on'));
-    const el = document.getElementById('dryh-prologue'), pr = this.state.prologue, d = pr && (window.DRYH_PROLOGUES || []).find(x => x.id === pr.id);
-    if (el && d && this.isGm()) el.querySelector('.pl-hint').textContent = (pr.page || 0) < d.pages.length - 1 ? 'CLICK TO CONTINUE' : 'END';
+    this.plHint();
   }
   mpShared(){ const o = {}; this.mpKeys().forEach(k=>{ if (this.state[k] !== undefined) o[k] = this.state[k]; }); return o; }
   mpDiff(){
@@ -3238,6 +3243,8 @@ class Component extends DRYHBase {
     v.onMpBackups = () => { if (this._mpNet) this.mpBackups(); };
     const s = this.state, PL = window.DRYH_PROLOGUES || [], onPl = s.screen === 'prologue' && s.prologue;
     const btnStyle = on => ({ height:40, background:on?'oklch(0.55 0.21 27)':'transparent', border:'1px solid '+(on?'oklch(0.55 0.21 27)':'oklch(0.93 0.012 85 / 0.4)'), color:'oklch(0.95 0.012 85)', fontFamily:"'Barlow',sans-serif", fontWeight:700, fontSize:12, letterSpacing:'0.18em', cursor:'pointer' });
+    v.isPrologue = !!onPl; if (onPl) { v.isDash = false; v.isSelect = false; v.mapBtnOn = false; }
+    v.prologueCursor = gm ? 'pointer' : 'default';
     if (onPl && v.screenBtns) v.screenBtns = v.screenBtns.map(b => ({ ...b, style: btnStyle(false) }));
     v.prologueBtns = PL.map(pl => ({ label: pl.title, style: btnStyle(onPl && s.prologue.id === pl.id),
       onClick: () => this.commit({ gmOpen:false, screen:'prologue', mapOpen:false, prologue:{ id:pl.id, page:0, full:false, n:Date.now() } }) }));

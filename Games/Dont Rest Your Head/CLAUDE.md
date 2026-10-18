@@ -16,8 +16,8 @@
 - Preference: no native `title` tooltips in new UI.
 - Read `Games/Tokyo Brain Pop/CLAUDE.md` §0 and §3: same requirements, same traps.
 - Prologues: `app/js/dryh-prologues.js` is generated from the GM's per-character
-  `.md` files (`---` = new page, `==text==` = red protagonist dialogue). Launched
-  from GM ▸ SCREEN ▸ PROLOGUES; shared state `screen:'prologue'` +
-  `prologue:{id,page,full,n}`. Only the GM's click fills/advances
-  (`plSync`, run from `componentDidUpdate`). The overlay hides for the GM while
-  the GM panel is open.
+  `.md` files (`---` = new page, `==text==` = red protagonist dialogue). It is
+  its own screen in the template (`isPrologue`, a sibling of Character Select),
+  launched from GM > SCREEN > PROLOGUES; shared state `screen:'prologue'` +
+  `prologue:{id,page,full,n}`. `plSync` (run from `componentDidUpdate`) fills
+  the `[data-dryh-prologue]` host. Only the GM's click fills/advances.
