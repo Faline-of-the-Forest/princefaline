@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>window.__dryhURL = location.href;</script>
 <script type="module" src="./js/dryh-net.js"></script>
+<script src="./js/dryh-prologues.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -176,6 +177,8 @@
         <div style="display:flex; flex-direction:column; gap:8px; padding:16px;">
           <span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.24em; color:oklch(0.6 0.01 70);">SCREEN</span>
           <sc-for list="{{ screenBtns }}" as="b" hint-placeholder-count="2"><button onClick="{{ b.onClick }}" style="{{ b.style }}">{{ b.label }}</button></sc-for>
+          <span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.24em; color:oklch(0.6 0.01 70); margin-top:14px;">PROLOGUES</span>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"><sc-for list="{{ prologueBtns }}" as="b" hint-placeholder-count="8"><button onClick="{{ b.onClick }}" style="{{ b.style }}">{{ b.label }}</button></sc-for></div>
         </div>
       </sc-if>
       <sc-if value="{{ gmIsGame }}" hint-placeholder-val="{{ true }}">
@@ -3030,7 +3033,7 @@ const MP_LOCAL = new Set(['sheetCharId','clockOpen','dragOver','conflictModal','
   'cityFocus','citySj','citySjHover','citySjRect','cityHover','citySubArm','rulesOpen','dragging','itemPop','breathFlash','breathPick','recallPick',
   'kingPick','scarModal','scarHover','hopeHover','tokenHover','resetArm','charResetArm','gmProtoSel','gmSecItem','gmSecStatus','statDraftName',
   'statDraftDesc','mpUnstickArm','invDraftName','invDraftFlavor','lawNoun','lawAction','lawReq','lawKind','lawYear','lawSec']);
-const MP_EXTRA = ['pendingConflict','lastResult','laws','screen','hereRef','hereTick','timerRunning','timerStart','timerElapsed','cityAct','unstickAt'];
+const MP_EXTRA = ['prologue','pendingConflict','lastResult','laws','screen','hereRef','hereTick','timerRunning','timerStart','timerElapsed','cityAct','unstickAt'];
 const MP_HOLD_MS = 2500;
 class Component extends DRYHBase {
   mpKeys(){
@@ -3043,6 +3046,76 @@ class Component extends DRYHBase {
     const r = super.setState(p, cb);
     if (!this._mpApplying && this._mpNet) { clearTimeout(this._mpT); this._mpT = setTimeout(()=>this.mpDiff(), 150); }
     return r;
+  }
+  componentDidUpdate(){ if (super.componentDidUpdate) super.componentDidUpdate(...arguments); this.plSync(); }
+  // ---- Prologue screens: full-screen, line-by-line write-in. The GM's click
+  // fills the page, the next click turns it; everyone sees the same page. ----
+  plSync(){
+    const s = this.state, pr = s.screen === 'prologue' ? s.prologue : null, gm = this.isGm();
+    const data = pr && (window.DRYH_PROLOGUES || []).find(x => x.id === pr.id);
+    let el = document.getElementById('dryh-prologue');
+    if (!data || (gm && s.gmOpen)) { if (el) el.style.display = 'none'; if (!data) { this._plSig = null; clearInterval(this._plT); } return; }
+    if (!el) {
+      const st = document.createElement('style');
+      st.textContent = "#dryh-prologue{position:fixed;inset:0;z-index:9500;background:#000;color:oklch(0.97 0.01 85);display:flex;flex-direction:column;align-items:center;overflow:auto;-webkit-user-select:none;user-select:none}"
+        + "#dryh-prologue .pl-col{width:min(760px,100%);margin:auto 0;padding:clamp(48px,9vh,96px) 16px 72px;box-sizing:border-box}"
+        + "#dryh-prologue .pl-name{font:700 12px 'Barlow',sans-serif;letter-spacing:.42em;color:oklch(0.62 0.21 27);margin:0 0 28px}"
+        + "#dryh-prologue p{font:400 clamp(19px,2.1vw,25px)/1.6 'Crimson Text',serif;margin:0 0 .85em;text-wrap:pretty}"
+        + "#dryh-prologue b{font-weight:600}#dryh-prologue .hl{color:oklch(0.62 0.21 27);font-weight:600}"
+        + "#dryh-prologue .ch{opacity:0;transition:opacity 260ms ease}#dryh-prologue .ch.on{opacity:1}"
+        + "#dryh-prologue .pl-foot{position:fixed;left:0;right:0;bottom:16px;display:flex;justify-content:center;gap:18px;font:600 10px 'Barlow',sans-serif;letter-spacing:.3em;color:oklch(0.5 0.01 70);pointer-events:none}"
+        + "#dryh-prologue .pl-gm{position:fixed;top:18px;right:0;width:30px;height:64px;padding:0 0 0 4px;border:none;cursor:pointer;background:oklch(0.55 0.21 27);color:oklch(0.97 0.01 85);font:600 12px 'Barlow',sans-serif;letter-spacing:.24em;writing-mode:vertical-rl;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,22% 50%)}";
+      document.head.appendChild(st);
+      el = document.createElement('div'); el.id = 'dryh-prologue';
+      el.innerHTML = '<div class="pl-col"><div class="pl-name"></div><div class="pl-body"></div></div><div class="pl-foot"><span class="pl-pg"></span><span class="pl-hint"></span></div><button class="pl-gm">GM</button>';
+      document.body.appendChild(el);
+      el.addEventListener('click', e => {
+        if (!this.isGm()) return;
+        if (e.target.closest('.pl-gm')) { this.setState({ gmOpen:true, gmTab:'screen' }); return; }
+        const cur = this.state.prologue, d = (window.DRYH_PROLOGUES || []).find(x => x.id === (cur && cur.id)); if (!d) return;
+        if (!this._plDone) this.commit({ prologue:{ ...cur, full:true } });
+        else if (cur.page < d.pages.length - 1) this.commit({ prologue:{ ...cur, page: cur.page + 1, full:false } });
+      });
+    }
+    el.style.display = 'flex'; el.style.cursor = gm ? 'pointer' : 'default';
+    el.querySelector('.pl-gm').style.display = gm ? 'block' : 'none';
+    const page = Math.max(0, Math.min(pr.page || 0, data.pages.length - 1)), sig = pr.id + '|' + page + '|' + pr.n;
+    el.querySelector('.pl-pg').textContent = (page + 1) + ' / ' + data.pages.length;
+    if (sig !== this._plSig) {
+      this._plSig = sig; this._plDone = false; clearInterval(this._plT);
+      el.querySelector('.pl-name').textContent = data.title;
+      const body = el.querySelector('.pl-body');
+      body.innerHTML = data.pages[page].map(l => '<p>' + l + '</p>').join('');
+      el.scrollTop = 0;
+      // wrap every character so the lines can write themselves in
+      const chars = [];
+      body.querySelectorAll('p').forEach((pe, li) => {
+        const walk = n => { [...n.childNodes].forEach(c => {
+          if (c.nodeType === 3) { const f = document.createDocumentFragment();
+            for (const ch of c.textContent) { const sp = document.createElement('span'); sp.className = 'ch'; sp.textContent = ch; sp.dataset.l = li; f.appendChild(sp); chars.push(sp); }
+            c.replaceWith(f); }
+          else walk(c); }); };
+        walk(pe);
+      });
+      let i = 0, wait = 0;
+      this._plChars = chars;
+      this._plT = setInterval(() => {
+        if (wait > 0) { wait--; return; }
+        for (let k = 0; k < 2 && i < chars.length; k++, i++) {
+          chars[i].classList.add('on');
+          if (i + 1 < chars.length && chars[i + 1].dataset.l !== chars[i].dataset.l) { wait = 14; i++; break; }
+        }
+        if (i >= chars.length) this.plFinish();
+      }, 22);
+    }
+    if (pr.full && !this._plDone) this.plFinish();
+    el.querySelector('.pl-hint').textContent = !gm ? '' : !this._plDone ? 'CLICK TO REVEAL' : page < data.pages.length - 1 ? 'CLICK TO CONTINUE' : 'END';
+  }
+  plFinish(){
+    clearInterval(this._plT); this._plDone = true;
+    (this._plChars || []).forEach(c => c.classList.add('on'));
+    const el = document.getElementById('dryh-prologue'), pr = this.state.prologue, d = pr && (window.DRYH_PROLOGUES || []).find(x => x.id === pr.id);
+    if (el && d && this.isGm()) el.querySelector('.pl-hint').textContent = (pr.page || 0) < d.pages.length - 1 ? 'CLICK TO CONTINUE' : 'END';
   }
   mpShared(){ const o = {}; this.mpKeys().forEach(k=>{ if (this.state[k] !== undefined) o[k] = this.state[k]; }); return o; }
   mpDiff(){
@@ -3163,6 +3236,11 @@ class Component extends DRYHBase {
     v.onMpUnstick = () => { if (this.state.mpUnstickArm) { clearTimeout(this._unT); this.setState({ mpUnstickArm:false }); this.unstick(); }
       else { this.setState({ mpUnstickArm:true }); clearTimeout(this._unT); this._unT = setTimeout(()=>this.setState({ mpUnstickArm:false }), 3000); } };
     v.onMpBackups = () => { if (this._mpNet) this.mpBackups(); };
+    const s = this.state, PL = window.DRYH_PROLOGUES || [], onPl = s.screen === 'prologue' && s.prologue;
+    const btnStyle = on => ({ height:40, background:on?'oklch(0.55 0.21 27)':'transparent', border:'1px solid '+(on?'oklch(0.55 0.21 27)':'oklch(0.93 0.012 85 / 0.4)'), color:'oklch(0.95 0.012 85)', fontFamily:"'Barlow',sans-serif", fontWeight:700, fontSize:12, letterSpacing:'0.18em', cursor:'pointer' });
+    if (onPl && v.screenBtns) v.screenBtns = v.screenBtns.map(b => ({ ...b, style: btnStyle(false) }));
+    v.prologueBtns = PL.map(pl => ({ label: pl.title, style: btnStyle(onPl && s.prologue.id === pl.id),
+      onClick: () => this.commit({ gmOpen:false, screen:'prologue', mapOpen:false, prologue:{ id:pl.id, page:0, full:false, n:Date.now() } }) }));
     if (!gm) {   // players: the GM panel and its tab are the GM's alone
       if (v.gmToggleStyle) v.gmToggleStyle = { ...v.gmToggleStyle, display:'none' };
       if (v.gmPanelStyle) v.gmPanelStyle = { ...v.gmPanelStyle, transform:'translateX(100%)', visibility:'hidden' };
