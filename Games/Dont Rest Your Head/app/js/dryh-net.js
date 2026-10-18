@@ -98,7 +98,7 @@ const css = `
 #dryh-gate button,#dryh-pill button,#dryh-bk button{cursor:pointer;font:700 11px 'Barlow',sans-serif;letter-spacing:.18em;border:1px solid oklch(0.55 0.21 27);background:oklch(0.55 0.21 27);color:oklch(0.97 0.01 85);height:34px;padding:0 12px}
 #dryh-gate button.ghost,#dryh-pill button.ghost,#dryh-bk button.ghost{background:transparent;border-color:oklch(0.93 0.012 85 / 0.35);color:oklch(0.85 0.01 80)}
 #dryh-gate .err{min-height:18px;margin-top:10px;font:500 12px 'Barlow',sans-serif;color:oklch(0.68 0.19 30)}
-#dryh-pill{position:fixed;left:10px;bottom:10px;z-index:9000;display:flex;align-items:center;gap:6px;padding:5px 6px 5px 10px;background:oklch(0.1 0.008 50 / 0.92);border:1px solid oklch(0.93 0.012 85 / 0.25);font:600 11px 'Barlow',sans-serif;letter-spacing:.2em;color:oklch(0.8 0.01 80)}
+#dryh-pill{position:fixed;left:8px;bottom:8px;z-index:9000;display:flex;align-items:center;pointer-events:none;font:600 11px 'Barlow',sans-serif;letter-spacing:.2em;color:oklch(0.8 0.01 80)}
 #dryh-pill b{font:400 14px 'Special Elite',monospace;letter-spacing:.2em;color:oklch(0.97 0.01 85)}
 #dryh-pill button{height:24px;padding:0 8px;font-size:10px}
 #dryh-pill .dot{width:7px;height:7px;border-radius:50%;background:oklch(0.7 0.15 150)}

@@ -58,7 +58,7 @@
     </button>
     <img src="uploads/pasted-1790474354800-0.png" alt="Don't Rest Your Head" style="height:40px; width:300px; object-fit:cover; object-position:center; filter:invert(1); mix-blend-mode:screen; display:block;" />
     <button onClick="{{ onToggleRules }}" aria-label="Rulebook" style="{{ mapBtnStyle }}" style-hover="transform:rotate(0deg) scale(1.05);"><span style="font-family:'Crimson Text',serif; font-weight:600; font-size:38px; line-height:1; color:oklch(0.95 0.012 85); transform:translateY(-1px);">?</span></button>
-    <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}"><button onClick="{{ onToggleMap }}" style="{{ mapBtnStyle }}" style-hover="transform:rotate(0deg) scale(1.05);"><sc-if value="{{ mapOn }}" hint-placeholder-val="{{ false }}"><img src="icons/person.png" style="width:30px; height:30px; display:block;"></sc-if><sc-if value="{{ mapOff }}" hint-placeholder-val="{{ true }}"><img src="icons/map.png" style="width:30px; height:30px; display:block;"></sc-if></button></sc-if>
+    <sc-if value="{{ mapBtnOn }}" hint-placeholder-val="{{ true }}"><button onClick="{{ onToggleMap }}" style="{{ mapBtnStyle }}" style-hover="transform:rotate(0deg) scale(1.05);"><sc-if value="{{ mapOn }}" hint-placeholder-val="{{ false }}"><img src="icons/person.png" style="width:30px; height:30px; display:block;"></sc-if><sc-if value="{{ mapOff }}" hint-placeholder-val="{{ true }}"><img src="icons/map.png" style="width:30px; height:30px; display:block;"></sc-if></button></sc-if>
     </div>
 
     <div style="display:flex; align-items:center; gap:18px; flex-wrap:nowrap; flex:1; min-width:0;">
@@ -109,7 +109,7 @@
       </sc-if>
       <div style="position:relative; margin-left:auto; flex-shrink:0; display:flex; align-items:center; gap:22px;">
         <div style="display:flex; flex-direction:column; align-items:flex-end; gap:2px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:10px; letter-spacing:0.28em; color:oklch(0.6 0.01 70);">ROOM</span><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:26px; line-height:1; letter-spacing:0.14em; color:oklch(0.95 0.012 85);">{{ roomCode }}</span></div>
-        <div onClick="{{ onCityAct }}" title="Change Act" style="display:flex; align-items:center; gap:10px; padding:2px 4px; cursor:pointer;">
+        <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}"><div onClick="{{ onCityAct }}" style="display:flex; align-items:center; gap:10px; padding:2px 4px; cursor:{{ actCursor }};">
           <div style="display:flex; flex-direction:column; gap:2px; align-items:flex-end;">
             <span style="{{ clockDisplayStyle }}">{{ clockQuarter }}</span>
           </div>
@@ -119,7 +119,7 @@
             <line x1="50" y1="50" x2="{{ clockHand.x }}" y2="{{ clockHand.y }}" stroke="oklch(0.1 0.008 50)" stroke-width="3.5" stroke-linecap="square"></line>
             <circle cx="50" cy="50" r="5" fill="oklch(0.1 0.008 50)" stroke="oklch(0.94 0.012 85)" stroke-width="1.5"></circle>
           </svg>
-        </div>
+        </div></sc-if>
       </div>
 
     </div>
@@ -189,6 +189,7 @@
             <div style="display:flex; align-items:center; gap:8px;"><button style="{{ tinyBtnStyle }}" onClick="{{ onActDec }}">−</button><button style="{{ tinyBtnStyle }}" onClick="{{ onActInc }}">+</button></div>
           </div>
           <button onClick="{{ onResetGame }}" style="margin:0 0 12px; width:100%; height:36px; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.85 0.01 80); font-family:'Barlow',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.18em; cursor:pointer;" style-hover="border-color:oklch(0.68 0.19 30); color:oklch(0.68 0.19 30);">{{ resetLabel }}</button>
+          <div style="display:flex; gap:8px; margin:0 0 12px;"><button onClick="{{ onMpUnstick }}" style="flex:1; height:36px; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.85 0.01 80); font-family:'Barlow',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.18em; cursor:pointer;" style-hover="border-color:oklch(0.68 0.19 30); color:oklch(0.68 0.19 30);">{{ mpUnstickLabel }}</button><button onClick="{{ onMpBackups }}" style="flex:1; height:36px; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.85 0.01 80); font-family:'Barlow',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.18em; cursor:pointer;" style-hover="border-color:oklch(0.68 0.19 30); color:oklch(0.68 0.19 30);">BACKUPS ⟲</button></div>
           <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-top:1px solid oklch(0.93 0.012 85 / 0.15);">
             <span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:18px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Despair</span>
             <div style="display:flex; align-items:center; gap:8px;"><button style="{{ tinyBtnStyle }}" onClick="{{ onDespairDec }}">−</button><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:22px; line-height:1; min-width:14px; text-align:center; color:oklch(0.68 0.19 30);">{{ despair }}</span><button style="{{ tinyBtnStyle }}" onClick="{{ onDespairInc }}">+</button></div>
@@ -3028,7 +3029,7 @@ const MP_LOCAL = new Set(['sheetCharId','clockOpen','dragOver','conflictModal','
   'sbSection','notesOpen','notesIdx','notesView','notesConfirm','invOpen','invGm','invIdx','tokOff','tokH','trayScale','cityV','cityPop','cityOpen',
   'cityFocus','citySj','citySjHover','citySjRect','cityHover','citySubArm','rulesOpen','dragging','itemPop','breathFlash','breathPick','recallPick',
   'kingPick','scarModal','scarHover','hopeHover','tokenHover','resetArm','charResetArm','gmProtoSel','gmSecItem','gmSecStatus','statDraftName',
-  'statDraftDesc','invDraftName','invDraftFlavor','lawNoun','lawAction','lawReq','lawKind','lawYear','lawSec']);
+  'statDraftDesc','mpUnstickArm','invDraftName','invDraftFlavor','lawNoun','lawAction','lawReq','lawKind','lawYear','lawSec']);
 const MP_EXTRA = ['pendingConflict','lastResult','laws','screen','hereRef','hereTick','timerRunning','timerStart','timerElapsed','cityAct','unstickAt'];
 const MP_HOLD_MS = 2500;
 class Component extends DRYHBase {
@@ -3121,13 +3122,8 @@ class Component extends DRYHBase {
     let p = document.getElementById('dryh-pill');
     if (!p) {
       p = document.createElement('div'); p.id = 'dryh-pill';
-      p.innerHTML = '<span class="dot"></span>ROOM <b>' + n.room + '</b>' + (n.role === 'gm'
-        ? ' <span style="color:oklch(0.68 0.19 30)">GM</span><button class="ghost un">UNSTICK</button><button class="ghost bk">BACKUPS ⟲</button>' : '');
+      p.innerHTML = '<span class="dot"></span>';   // connection light only; the code is top right, the tools in GM ▸ GAME
       document.body.appendChild(p);
-      const un = p.querySelector('.un');
-      if (un) un.onclick = ()=>{ if (un.dataset.arm) { delete un.dataset.arm; un.textContent = 'UNSTICK'; this.unstick(); }
-        else { un.dataset.arm = '1'; un.textContent = 'SURE?'; setTimeout(()=>{ delete un.dataset.arm; un.textContent = 'UNSTICK'; }, 3000); } };
-      const bk = p.querySelector('.bk'); if (bk) bk.onclick = ()=>this.mpBackups();
     }
     p.querySelector('.dot').className = 'dot' + (this.mpSynced ? '' : ' off');
   }
@@ -3158,8 +3154,16 @@ class Component extends DRYHBase {
     paint(); load();
   }
   renderVals(){
-    const v = super.renderVals();
-    if (!this.isGm()) {   // players: the GM panel and its tab are the GM's alone
+    const v = super.renderVals(), gm = this.isGm(), n = window.DRYHNet;
+    if (n && n.room) v.roomCode = n.room;
+    v.mapBtnOn = !!v.isDash && gm;
+    v.actCursor = gm ? 'pointer' : 'default';
+    if (!gm) v.onCityAct = () => {};
+    v.mpUnstickLabel = this.state.mpUnstickArm ? 'SURE?' : 'UNSTICK';
+    v.onMpUnstick = () => { if (this.state.mpUnstickArm) { clearTimeout(this._unT); this.setState({ mpUnstickArm:false }); this.unstick(); }
+      else { this.setState({ mpUnstickArm:true }); clearTimeout(this._unT); this._unT = setTimeout(()=>this.setState({ mpUnstickArm:false }), 3000); } };
+    v.onMpBackups = () => { if (this._mpNet) this.mpBackups(); };
+    if (!gm) {   // players: the GM panel and its tab are the GM's alone
       if (v.gmToggleStyle) v.gmToggleStyle = { ...v.gmToggleStyle, display:'none' };
       if (v.gmPanelStyle) v.gmPanelStyle = { ...v.gmPanelStyle, transform:'translateX(100%)', visibility:'hidden' };
     }
