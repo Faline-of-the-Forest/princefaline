@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./js/madcity-seed.js"></script>
+<script src="./js/madcity-io.js"></script>
+<script>try { if (!localStorage.getItem('dryh_madcity_map_v1') && window.DRYH_MADCITY_SEED) localStorage.setItem('dryh_madcity_map_v1', JSON.stringify(window.DRYH_MADCITY_SEED)); } catch (e) {}</script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -31,6 +34,8 @@
     </div>
     <div style="display:flex; align-items:center; gap:10px;">
       <button onClick="{{ onAddNode }}" style="height:32px; padding:0 14px; background:transparent; border:1px solid oklch(0.55 0.21 27); color:oklch(0.68 0.19 30); font-size:12.5px; font-weight:600; letter-spacing:0.18em; cursor:pointer;" style-hover="background:oklch(0.55 0.21 27); color:oklch(0.97 0.01 85);">+ LOCATION</button>
+      <button onClick="{{ onExportMd }}" style="height:32px; padding:0 12px; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.9 0.01 80); font-size:12px; letter-spacing:0.18em; cursor:pointer;" style-hover="border-color:oklch(0.95 0.012 85);">EXPORT .MD</button>
+      <button onClick="{{ onImportMd }}" style="height:32px; padding:0 12px; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.9 0.01 80); font-size:12px; letter-spacing:0.18em; cursor:pointer;" style-hover="border-color:oklch(0.95 0.012 85);">IMPORT .MD</button>
       <span style="width:1px; height:20px; background:oklch(0.93 0.012 85 / 0.25); margin:0 4px;"></span>
       <button onClick="{{ onZoomOut }}" title="Zoom out" style="width:32px; height:32px; padding:0; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.9 0.01 80); font-size:16px; cursor:pointer;" style-hover="border-color:oklch(0.95 0.012 85);">−</button>
       <span style="min-width:44px; text-align:center; font-family:'Barlow',sans-serif; font-weight:600; font-size:13px; color:oklch(0.85 0.01 80);">{{ zoomText }}</span>
@@ -505,6 +510,9 @@ class Component extends DCLogic {
       countText: `${s.nodes.length} LOCATIONS · ${s.edges.length} ROUTES`,
       zoomText: Math.round(v.k * 100) + '%',
       onAddNode: () => this.addNode(),
+      onExportMd: () => { this.save(); window.MadCityIO.exportZip({ nodes: s.nodes, edges: s.edges, view: s.view, party: s.party }); },
+      onImportMd: () => window.MadCityIO.importFlow({ get: () => ({ nodes: this.state.nodes, edges: this.state.edges, view: this.state.view, party: this.state.party }),
+        apply: (d) => { this.setState({ nodes: d.nodes, edges: d.edges }); setTimeout(() => { this.save(); this.fit(); }, 0); } }),
       onZoomIn: () => this.zoomBy(1.2), onZoomOut: () => this.zoomBy(1 / 1.2), onFit: () => this.fit(),
       onCanvasDown: this.onCanvasDown, onCanvasDbl: this.onCanvasDbl,
     };

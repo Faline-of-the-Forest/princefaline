@@ -6,6 +6,9 @@
 <script>window.__dryhURL = location.href;</script>
 <script type="module" src="./js/dryh-net.js"></script>
 <script src="./js/dryh-prologues.js"></script>
+<script src="./js/madcity-seed.js"></script>
+<script src="./js/madcity-io.js"></script>
+<script>try { if (!localStorage.getItem('dryh_madcity_map_v1') && window.DRYH_MADCITY_SEED) localStorage.setItem('dryh_madcity_map_v1', JSON.stringify(window.DRYH_MADCITY_SEED)); } catch (e) {}</script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -242,6 +245,7 @@
             </select>
             
           </div>
+          <div style="display:flex; gap:8px; padding:12px 0 0;"><button onClick="{{ onCityExport }}" style="flex:1; height:32px; padding:0 12px; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.9 0.01 80); font-size:12px; letter-spacing:0.18em; cursor:pointer;" style-hover="border-color:oklch(0.95 0.012 85);">EXPORT .MD</button><button onClick="{{ onCityImport }}" style="flex:1; height:32px; padding:0 12px; background:transparent; border:1px solid oklch(0.93 0.012 85 / 0.35); color:oklch(0.9 0.01 80); font-size:12px; letter-spacing:0.18em; cursor:pointer;" style-hover="border-color:oklch(0.95 0.012 85);">IMPORT .MD</button></div>
           <sc-if value="{{ cityEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-family:'Crimson Text',serif; font-size:16px; color:oklch(0.7 0.01 70); padding:16px 0;">Open the map once to load Mad City.</div></sc-if>
           <sc-for list="{{ cityLocs }}" as="L" hint-placeholder-count="1">
             <div data-city-loc="{{ L.id }}" data-cols="{{ cityCols }}" style="{{ cityLocStyle }}">
@@ -3175,7 +3179,9 @@ class Component extends DRYHBase {
     (window.__dryhNet || Promise.resolve(null)).then(net=>{
       if (!net || net.offline || !net.room) return;
       this._mpNet = net;
-      if (net.fresh) {   // the GM seeds a brand-new room with this browser's table
+      if (net.fresh) {   // the GM seeds a brand-new room; Mad City starts from the New Game notes
+        try { const old = localStorage.getItem(this.CITY_KEY); if (old) localStorage.setItem(this.CITY_KEY + '_backup', old);
+          if (window.DRYH_MADCITY_SEED) { localStorage.setItem(this.CITY_KEY, JSON.stringify(window.DRYH_MADCITY_SEED)); this._cityApplying = true; window.dispatchEvent(new Event('dryh-city-edit')); this._cityApplying = false; super.setState({ cityV: Date.now() }); } } catch(e) {}
         this.mpSynced = true; this.mpDiff(); this.mpPushCity();
       }
       this._mpUnsub = net.subscribe((d, cached)=>{
@@ -3240,6 +3246,9 @@ class Component extends DRYHBase {
     v.mpUnstickLabel = this.state.mpUnstickArm ? 'SURE?' : 'UNSTICK';
     v.onMpUnstick = () => { if (this.state.mpUnstickArm) { clearTimeout(this._unT); this.setState({ mpUnstickArm:false }); this.unstick(); }
       else { this.setState({ mpUnstickArm:true }); clearTimeout(this._unT); this._unT = setTimeout(()=>this.setState({ mpUnstickArm:false }), 3000); } };
+    v.onCityExport = () => { const d = this.cityLoad(true); if (d) window.MadCityIO.exportZip(d); };
+    v.onCityImport = () => window.MadCityIO.importFlow({ get: () => this.cityLoad(true) || { nodes: [], edges: [] },
+      apply: (d) => { try { localStorage.setItem(this.CITY_KEY, JSON.stringify(d)); } catch(e) {} window.dispatchEvent(new Event('dryh-city-edit')); this.setState({ cityV: Date.now() }); } });
     v.onMpBackups = () => { if (this._mpNet) this.mpBackups(); };
     const s = this.state, PL = window.DRYH_PROLOGUES || [], onPl = s.screen === 'prologue' && s.prologue;
     const btnStyle = on => ({ height:40, background:on?'oklch(0.55 0.21 27)':'transparent', border:'1px solid '+(on?'oklch(0.55 0.21 27)':'oklch(0.93 0.012 85 / 0.4)'), color:'oklch(0.95 0.012 85)', fontFamily:"'Barlow',sans-serif", fontWeight:700, fontSize:12, letterSpacing:'0.18em', cursor:'pointer' });

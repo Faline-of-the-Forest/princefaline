@@ -21,3 +21,13 @@
   launched from GM > SCREEN > PROLOGUES; shared state `screen:'prologue'` +
   `prologue:{id,page,full,n}`. `plSync` (run from `componentDidUpdate`) fills
   the `[data-dryh-prologue]` host. Only the GM's click fills/advances.
+- Mad City notes: `localStorage['dryh_madcity_map_v1']` is only a working copy.
+  The room doc's `cityJson` and every backup snapshot carry the real thing.
+  A New Game (`?new=1`) resets it to `js/madcity-seed.js` (18 locations
+  generated from the GM's `Mad City Locations.zip`; the old copy goes to
+  `dryh_madcity_map_v1_backup`). `js/madcity-io.js` (`window.MadCityIO`) is
+  the shared EXPORT .MD / IMPORT .MD code used by the map and GM ▸ MAD CITY:
+  front matter (id, x, y) + readable Markdown + a `<!-- dryh-data -->` block,
+  so a round trip is lossless. Files without the block fall back to the
+  Markdown parser. To rebuild the seed from a new zip, parse it with
+  `MadCityIO.parseMd` and resolve `## Routes` by name.
