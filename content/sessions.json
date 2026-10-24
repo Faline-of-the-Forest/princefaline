@@ -1421,6 +1421,16 @@
       "s": "Don't Rest Your Head",
       "h": 4.5,
       "rt": "4:30"
+    },
+    {
+      "n": 145,
+      "d": "2026-10-23",
+      "t": "Kids Attack!",
+      "campaignSlug": "tbd",
+      "s": "Monster of the Week",
+      "h": 5.5,
+      "rt": "5:30",
+      "ed": "2e"
     }
   ]
 }
