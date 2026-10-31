@@ -39,7 +39,10 @@ Pop. Design them in from the start. Never leave them for later.
 | Running order | Scene Control → RUNNING ORDER ◀ ▶ |
 | Class Vote used | Scene Control → CLASS VOTE — SPENT toggles |
 | PSI cost | Scene Control → PSI COST — OVERRIDE |
-| Demon present or absent; name and goal | Scene Control → DEMON chips; RENAME |
+| Demon present or absent | Scene Control → DEMON chips |
+| Who is playing, player names, Quirks, Goals; the Demon's name, goal and four traits | Scene Control → **TABLE ✎** (also opened by RENAME). A DOM panel, `mpShowTable()`, that calls `setSeatActive` (refuses to go below 3), `setSeatQuirks`/`setSeatGoals` (written as pool indices in `quirkPicks`/`goalPicks` so they sync), `setPlayerName`, `setDemonText` and `setDemonTrait` |
+| Skip setup at any time | **SKIP TO GAME** on Character Select *and* Today's Demon (Headmaster only). `skipToRoom()` keeps whoever is chosen, uses all four if fewer than 3 are, and gives random Quirks/Goals to anyone without them |
+| Read every girl's sheet | The Journal button is shown for the Headmaster too, opening on the first girl in play |
 | Achievements | Scene Control → Achievements tab, +/− on every cell |
 | Clean refresh | **UNSTICK** on the Headmaster's roster (two taps). `unstickTable()` resets `rollMode`, `challenge`, `demonRoll`, `vote` (the caller's vote is given back), `endKind`, roll deadlines, picks and every card's roll/PSI phase. It stamps `unstickAt`, so every screen also clears its own local animation loops (`mpUnstickLocal`). Durable state is untouched |
 | Stuck setup | Today's Demon → SKIP TO ROOM. A CANCEL appears on an orphaned Demon Challenge |

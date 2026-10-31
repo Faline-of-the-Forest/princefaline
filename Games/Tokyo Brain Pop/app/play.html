@@ -5016,6 +5016,7 @@
             <div style="transform:skewX(-8deg); background:#F6A7CA; padding:3px 18px 6px; box-shadow:5px 5px 0 rgba(0,0,0,.45)">
               <div style="transform:skewX(8deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:40px; line-height:1; color:#231F20">CHARACTER SELECT</div>
             </div>
+            <div data-mp="skip-btn" sc-camel-on-click="{{ f.setup.skip }}" title="Go straight to the game — who plays, their Quirks and Goals, and the Demon can all be changed from Scene Control → TABLE" style="flex:none; cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.09em; color:#EFE6C8; border:3px solid rgba(239,230,200,.35); border-radius:11px; padding:10px 16px; white-space:nowrap">SKIP TO GAME</div>
             <div style="flex:1; height:3px; background:linear-gradient(90deg, rgba(246,167,202,.6), rgba(239,230,200,0))"></div>
             <div title="Share this code so others can join" style="flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:1px">
               <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; letter-spacing:.16em; line-height:1; color:rgba(239,230,200,.55)">ROOM CODE</div>
@@ -5094,7 +5095,7 @@
                   <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S GOAL</div>
                   <input data-mp="demon-goal" value="{{ f.setup.goalText }}" sc-camel-on-change="{{ f.setup.setGoal }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:16px; color:#EFE6C8; outline:none">
                 </div>
-                <div data-mp="skip-btn" sc-camel-on-click="{{ f.setup.skip }}" title="Go straight to the table — the Demon can be renamed later from Scene Control" style="flex:none; cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.09em; color:#EFE6C8; background:transparent; border:3px solid rgba(239,230,200,.35); border-radius:11px; padding:12px 18px; white-space:nowrap">SKIP TO ROOM</div>
+                <div data-mp="skip-btn" sc-camel-on-click="{{ f.setup.skip }}" title="Go straight to the table — the Demon can be renamed later from Scene Control" style="flex:none; cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; letter-spacing:.09em; color:#EFE6C8; background:transparent; border:3px solid rgba(239,230,200,.35); border-radius:11px; padding:12px 18px; white-space:nowrap">SKIP TO GAME</div>
                 <div data-mp="play-btn" sc-camel-on-click="{{ f.setup.start }}" style="flex:none; cursor:pointer; opacity:{{ f.setup.startOpacity }}; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:21px; letter-spacing:.09em; color:#EFE6C8; background:#B4322C; border:4px solid #E23A3A; border-radius:11px; padding:12px 40px; box-shadow:0 6px 0 rgba(0,0,0,.45)">PLAY</div>
               </div>
             </div>
@@ -5196,10 +5197,10 @@
         <div style="flex:none; display:flex; align-items:center; gap:14px; padding:14px 20px; background:#EDE31B; border-bottom:5px solid #231F20">
           <div style="flex:1; display:flex; align-items:baseline; gap:12px; min-width:0">
             <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; line-height:1; color:#231F20">Scene Control</div>
-            <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.18em; line-height:1; color:#EDE31B; background:#231F20; border-radius:5px; padding:5px 9px">HEADMASTER ONLY</div>
           </div>
           <div sc-camel-on-click="{{ f.gm.tabSceneClick }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; letter-spacing:.08em; color:{{ f.gm.tabSceneInk }}; background:{{ f.gm.tabSceneBg }}; border:3px solid #231F20; border-radius:8px; padding:7px 12px; line-height:1">SCENE</div>
           <div sc-camel-on-click="{{ f.gm.tabAchClick }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; letter-spacing:.08em; color:{{ f.gm.tabAchInk }}; background:{{ f.gm.tabAchBg }}; border:3px solid #231F20; border-radius:8px; padding:7px 12px; line-height:1">ACHIEVEMENTS</div>
+          <div sc-camel-on-click="{{ f.gm.openTable }}" title="Who is playing, their Quirks, Goals and player names, and the Demon" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; letter-spacing:.08em; color:#231F20; background:transparent; border:3px solid #231F20; border-radius:8px; padding:7px 12px; line-height:1">TABLE ✎</div>
           <div sc-camel-on-click="{{ f.gm.fireGood }}" title="Show the table the Good End screen" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12.5px; letter-spacing:.08em; color:#231F20; background:#EDE31B; border:3px solid #231F20; border-radius:8px; padding:8px 13px; line-height:1">FIRE GOOD END</div>
           <div sc-camel-on-click="{{ f.gm.fireBad }}" title="Show the table the Bad End screen" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12.5px; letter-spacing:.08em; color:#EFE6C8; background:#E23A3A; border:3px solid #231F20; border-radius:8px; padding:8px 13px; line-height:1">FIRE BAD END</div>
           <div style="font-family:'Lora',serif; font-style:italic; font-size:15px; color:rgba(35,31,32,.65)">Nothing changes at the table until you Apply.</div>
@@ -6360,7 +6361,7 @@ class TBPBase extends DCLogic {
       show: this.state.gmOpen, stop,
       demonAvail, voteSpent, orderEdit,
       demonName: this.state.demonName,
-      renameDemon: () => this.renameDemon(),
+      renameDemon: () => { if (this.mpShowTable) this.mpShowTable(); else this.renameDemon(); },
       open: () => this.setState({gmOpen: true}),
       close: () => this.setState({gmOpen: false, gmDraft: null}),
       fireGood: () => this.setState({endKind: 'good', gmOpen: false}),
@@ -6369,6 +6370,7 @@ class TBPBase extends DCLogic {
       tabScene: gmTab === 'scene', tabAch: gmTab === 'achievements',
       tabSceneClick: () => this.setState({gmTab: 'scene'}),
       tabAchClick: () => this.setState({gmTab: 'achievements'}),
+      openTable: () => { if (this.mpShowTable) this.mpShowTable(); },
       tabSceneBg: gmTab === 'scene' ? '#231F20' : 'transparent',
       tabSceneInk: gmTab === 'scene' ? '#EDE31B' : '#231F20',
       tabAchBg: gmTab === 'achievements' ? '#231F20' : 'transparent',
@@ -6892,10 +6894,52 @@ class TBPBase extends DCLogic {
   // the name and goal. Whatever is filled in is kept; anything blank keeps the
   // Demon's current name/goal, which the Headmaster can rename later from
   // Scene Control. An empty reel gets one roll so the dossier is not blank.
+  // Two different random indices into a pool.
+  pickTwo(n) {
+    const a = Math.floor(Math.random() * n);
+    let b = a;
+    while (b === a) b = Math.floor(Math.random() * n);
+    return [a, b];
+  }
+
+  // Quirks and Goals for a seat, as pool indices — the same shape Character
+  // Select stores in quirkPicks / goalPicks, which is what travels between
+  // browsers. Applies them to this screen too (SEATS / BIOS / the card).
+  applyPicks(k, quirkIdx, goalIdx, base) {
+    const st = base || {};
+    const who = SEATS[k].who;
+    const out = {};
+    if (quirkIdx) {
+      SEATS[k].quirks = quirkIdx.map(i => QUIRK_POOL[who][i]);
+      out.quirkPicks = Object.assign({}, st.quirkPicks || this.state.quirkPicks, {[k]: quirkIdx.slice()});
+      const chars = (st.chars || this.state.chars).slice();
+      chars[k] = Object.assign({}, chars[k], {quirks: SEATS[k].quirks});
+      out.chars = chars;
+      if (this.mpTouch) this.mpTouch(['chars.' + k + '.quirks']);
+    }
+    if (goalIdx) {
+      BIOS[who].goals = goalIdx.map(i => GOAL_POOL[who][i]);
+      SEATS[k].goal = '\u201c' + BIOS[who].goals[0] + '\u201d';
+      out.goalPicks = Object.assign({}, st.goalPicks || this.state.goalPicks, {[k]: goalIdx.slice()});
+    }
+    return out;
+  }
+
+  // Straight to the table from ANY setup step — Character Select or Today's
+  // Demon. Whoever is chosen stays chosen; if fewer than three are, all four
+  // play. Any girl without Quirks or Goals gets random ones. Everything here
+  // can be changed afterwards from Scene Control → TABLE.
   skipToRoom() {
-    const locks = this.state.locks || [true,true,true,true];
+    let locks = (this.state.locks || [false,false,false,false]).slice();
+    if (locks.filter(Boolean).length < 3) locks = [true, true, true, true];
     const activeSeats = locks.map((l, k) => l ? k : -1).filter(k => k >= 0);
-    if (activeSeats.length < 3) return;
+    let picks = {quirkPicks: this.state.quirkPicks || {}, goalPicks: this.state.goalPicks || {}, chars: this.state.chars};
+    activeSeats.forEach(k => {
+      const who = SEATS[k].who;
+      const q = (picks.quirkPicks[k] || []).length === 2 ? null : this.pickTwo(QUIRK_POOL[who].length);
+      const g = (picks.goalPicks[k] || []).length === 2 ? null : this.pickTwo(GOAL_POOL[who].length);
+      if (q || g) picks = Object.assign(picks, this.applyPicks(k, q, g, picks));
+    });
     const rolled = Object.assign({}, this.state.rolled);
     ['type','power','complication','goal'].forEach(cat => {
       if (!(rolled[cat] || []).length) {
@@ -6909,9 +6953,56 @@ class TBPBase extends DCLogic {
       demonName: name ? name.toUpperCase() : this.state.demonName,
       demonGoal: goal ? '“' + goal + '”' : this.state.demonGoal,
       activeSeats: activeSeats.length === 3 ? activeSeats : [0,1,2,3],
+      locks, quirkPicks: picks.quirkPicks, goalPicks: picks.goalPicks, chars: picks.chars,
+      picking: null, pickingBy: {}, mpReady: true,
       rolled, rollEnds: {},
       setupOpen: false
     });
+  }
+
+  // ---- Scene Control → TABLE: the Headmaster's override for the cast ------
+
+  // Put a girl in or out of the game. The game runs with 3 or 4, so this
+  // refuses to go below 3. A girl coming in with no Quirks/Goals gets random
+  // ones. Anything mid-flight that involves her is cleared.
+  setSeatActive(k, on) {
+    const cur = (this.state.activeSeats || [0,1,2,3]).slice();
+    const next = (on ? cur.concat(cur.indexOf(k) >= 0 ? [] : [k]) : cur.filter(x => x !== k)).sort((a, b) => a - b);
+    if (next.length < 3) return false;
+    const locks = [0,1,2,3].map(x => next.indexOf(x) >= 0);
+    let patch = {activeSeats: next, locks};
+    if (on) {
+      const who = SEATS[k].who;
+      const q = ((this.state.quirkPicks || {})[k] || []).length === 2 ? null : this.pickTwo(QUIRK_POOL[who].length);
+      const g = ((this.state.goalPicks || {})[k] || []).length === 2 ? null : this.pickTwo(GOAL_POOL[who].length);
+      if (q || g) patch = Object.assign(patch, this.applyPicks(k, q, g));
+    } else {
+      const ch = this.state.challenge;
+      if (this.state.rollMode === k || (ch && (ch.by === k || ch.target === k))) Object.assign(patch, {rollMode: null, challenge: null});
+      if (this.state.leadOverride === k) patch.leadOverride = null;
+    }
+    this.setState(patch);
+    return true;
+  }
+
+  setSeatQuirks(k, idx) { if (idx.length === 2 && idx[0] !== idx[1]) this.setState(this.applyPicks(k, idx, null)); }
+  setSeatGoals(k, idx) { if (idx.length === 2 && idx[0] !== idx[1]) this.setState(this.applyPicks(k, null, idx)); }
+  setPlayerName(k, name) {
+    const names = Object.assign({}, this.state.playerNames);
+    if (String(name || '').trim()) names[k] = String(name).trim(); else delete names[k];
+    this.setState({playerNames: names});
+  }
+  setDemonText(name, goal) {
+    const patch = {};
+    if (name != null && String(name).trim()) patch.demonName = String(name).trim().toUpperCase();
+    if (goal != null && String(goal).trim()) patch.demonGoal = '\u201c' + String(goal).trim().replace(/^\u201c|\u201d$/g, '') + '\u201d';
+    if (Object.keys(patch).length) this.setState(patch);
+  }
+  setDemonTrait(cat, value) {
+    const rolled = Object.assign({}, this.state.rolled, {[cat]: value == null ? this.rollFresh(cat) : [value]});
+    const rollEnds = Object.assign({}, this.state.rollEnds);
+    delete rollEnds[cat];
+    this.setState({rolled, rollEnds});
   }
 
   // The Headmaster renaming the Demon mid-game, from Scene Control.
@@ -7991,9 +8082,11 @@ class TBPBase extends DCLogic {
       isHeadmaster,
       portraitSize: isHeadmaster ? '0px' : 'min(4.6vw,58px)',
       portraitOpacity: isHeadmaster ? 0 : 1,
-      diaryOpacity: isHeadmaster ? 0 : 1,
-      diaryDisplay: isHeadmaster ? 'none' : 'grid',
-      openDiary: () => this.setUi({diary: true, diarySeat: null}),
+      diaryOpacity: 1,
+      diaryDisplay: 'grid',
+      // The Headmaster has no girl of her own: her Journal opens on the first
+      // girl in play, and the tabs flip through the rest.
+      openDiary: () => this.setUi({diary: true, diarySeat: isHeadmaster ? (this.state.activeSeats || [0])[0] : null}),
       openRulebook: () => this.setUi({rulebook: true}),
       diaryPress: ui.diaryPress ? 'scale(1.08)' : 'scale(1)',
       helpPress: ui.helpPress ? 'scale(1.08)' : 'scale(1)',
@@ -8014,7 +8107,8 @@ class TBPBase extends DCLogic {
     // play has a tab — you need to be able to read who someone else holds as
     // her Friend and Rival, and what she is trying to do, to Challenge her well.
     const diarySeats = (this.state.activeSeats || [0, 1, 2, 3]);
-    const dSeat = (ui.diarySeat != null && diarySeats.indexOf(ui.diarySeat) >= 0) ? ui.diarySeat : player;
+    const dSeat = (ui.diarySeat != null && diarySeats.indexOf(ui.diarySeat) >= 0) ? ui.diarySeat
+      : (diarySeats.indexOf(player) >= 0 ? player : diarySeats[0]);
     const dc = this.state.chars[dSeat];
     const ex = BIOS[dc.who];
     const dBonds = this.bondsOf(dSeat);
@@ -8029,8 +8123,8 @@ class TBPBase extends DCLogic {
       close: () => this.setUi({diary: false}),
       stop,
       name: dc.label,
-      isMine: dSeat === player,
-      ownerLabel: dSeat === player ? 'MY NAME IS…' : 'HER NAME IS…',
+      isMine: dSeat === player && !isHeadmaster,
+      ownerLabel: dSeat === player && !isHeadmaster ? 'MY NAME IS…' : 'HER NAME IS…',
       playerName: ((this.state.playerNames || {})[dSeat] || '').toUpperCase(),
       tabs: diarySeats.map(k => {
         const on = k === dSeat;
@@ -8928,6 +9022,128 @@ class Component extends TBPBase {
     // Make it the room's state for everyone, not just this screen.
     var self = this;
     setTimeout(function () { self.mpPush(); }, 60);
+  }
+
+  // Scene Control → TABLE. A DOM panel (like BACKUPS) rather than template
+  // markup: who is playing, each girl's player name, Quirks and Goals, and the
+  // Demon's name, goal and traits — every Character Select / Today's Demon
+  // choice, editable at any time. Changes apply as soon as they are made.
+  mpShowTable() {
+    var self = this;
+    var old = document.getElementById('tbp-table');
+    if (old) old.remove();
+    var el = document.createElement('div');
+    el.id = 'tbp-table';
+    el.style.cssText = 'position:fixed; inset:0; z-index:200001; background:rgba(27,24,25,.9); display:flex; align-items:center; justify-content:center; padding:20px; ' +
+      "font-family:'Baloo 2',sans-serif";
+    document.body.appendChild(el);
+    el.onclick = function (e) { if (e.target === el) el.remove(); };
+    var note = '';
+    var opt = function (list, sel) {
+      return list.map(function (t, i) { return '<option value="' + i + '"' + (i === sel ? ' selected' : '') + '>' + mpEsc(t) + '</option>'; }).join('');
+    };
+    var selStyle = 'width:100%; box-sizing:border-box; background:#2b2527; color:#EFE6C8; border:2px solid rgba(239,230,200,.25); border-radius:7px; padding:5px 7px; font-family:Lora,serif; font-size:12.5px';
+    var inStyle = 'width:100%; box-sizing:border-box; background:#2b2527; color:#EFE6C8; border:2px solid rgba(239,230,200,.25); border-radius:7px; padding:6px 8px; font-family:\'Baloo 2\',sans-serif; font-weight:800; font-size:13px';
+    var lab = function (t) { return '<div style="font-size:9.5px; font-weight:800; letter-spacing:.16em; color:rgba(239,230,200,.5); margin:7px 0 3px">' + t + '</div>'; };
+    var render = function () {
+      var st = self.state;
+      var active = st.activeSeats || [0, 1, 2, 3];
+      var cards = SEATS.map(function (s, k) {
+        var on = active.indexOf(k) >= 0;
+        var who = s.who;
+        var qp = (st.quirkPicks || {})[k] || [];
+        var gp = (st.goalPicks || {})[k] || [];
+        var name = (st.playerNames || {})[k] || '';
+        return '<div style="flex:1 1 0; min-width:200px; background:#231F20; border:3px solid ' + (on ? SEAT_TONE[who] : 'rgba(239,230,200,.15)') + '; border-radius:11px; padding:10px 12px; opacity:' + (on ? 1 : .55) + '">' +
+          '<div style="display:flex; align-items:center; gap:8px">' +
+            '<img src="assets/head-' + who + '.png" alt="" style="width:34px; height:34px; object-fit:contain; flex:none">' +
+            '<div style="flex:1; font-size:17px; font-weight:800; color:' + SEAT_TONE[who] + '">' + s.label + '</div>' +
+            '<span data-active="' + k + '" style="cursor:pointer; flex:none; font-size:10.5px; font-weight:800; letter-spacing:.1em; color:' + (on ? '#231F20' : '#EFE6C8') + '; background:' + (on ? '#9CB39A' : 'transparent') + '; border:2px solid ' + (on ? '#9CB39A' : 'rgba(239,230,200,.35)') + '; border-radius:6px; padding:3px 8px">' + (on ? 'PLAYING' : 'OUT') + '</span>' +
+          '</div>' +
+          lab('PLAYER NAME') + '<input data-name="' + k + '" value="' + mpEsc(name) + '" placeholder="Player ' + (k + 1) + '" style="' + inStyle + '">' +
+          lab('QUIRKS') +
+          '<select data-q="' + k + '" data-slot="0" style="' + selStyle + '">' + opt(QUIRK_POOL[who], qp[0]) + '</select>' +
+          '<select data-q="' + k + '" data-slot="1" style="' + selStyle + '; margin-top:4px">' + opt(QUIRK_POOL[who], qp[1]) + '</select>' +
+          lab('GOALS') +
+          '<select data-g="' + k + '" data-slot="0" style="' + selStyle + '">' + opt(GOAL_POOL[who], gp[0]) + '</select>' +
+          '<select data-g="' + k + '" data-slot="1" style="' + selStyle + '; margin-top:4px">' + opt(GOAL_POOL[who], gp[1]) + '</select>' +
+        '</div>';
+      }).join('');
+      var cats = ['type', 'power', 'complication', 'goal'];
+      var catName = {type: 'TYPE', power: 'POWER', complication: 'COMPLICATION', goal: 'GOAL'};
+      var demonTraits = cats.map(function (c) {
+        var list = DEMON_TABLES[c].slice(0, -1);       // the last row is "roll twice", an instruction
+        var cur = ((st.rolled || {})[c] || []).filter(function (v) { return list.indexOf(v) >= 0; });
+        var sel = cur.length === 1 ? list.indexOf(cur[0]) : -1;
+        var shown = ((st.rolled || {})[c] || []).join(' + ');
+        return '<div style="flex:1 1 0; min-width:150px">' + lab(catName[c]) +
+          '<select data-trait="' + c + '" style="' + selStyle + '">' +
+            (sel < 0 ? '<option value="" selected>' + mpEsc(shown || '—') + '</option>' : '') + opt(list, sel) + '</select>' +
+          '<span data-reroll="' + c + '" style="cursor:pointer; display:inline-block; margin-top:4px; font-size:10px; font-weight:800; letter-spacing:.1em; color:#EFE6C8; border:1px solid rgba(239,230,200,.35); border-radius:5px; padding:2px 7px">REROLL</span>' +
+        '</div>';
+      }).join('');
+      var dGoal = String(st.demonGoal || '').replace(/^\u201c|\u201d$/g, '');
+      el.innerHTML = '<div style="width:min(1100px,96vw); max-height:90vh; overflow:auto; background:#2b2527; border:3px solid #EDE31B; border-radius:14px; padding:16px 18px">' +
+        '<div style="display:flex; align-items:center; gap:10px; margin-bottom:4px">' +
+          '<div style="flex:1; font-size:22px; font-weight:800; letter-spacing:.08em; color:#EDE31B">THE TABLE</div>' +
+          '<span data-close style="cursor:pointer; font-size:20px; color:#EFE6C8; padding:0 4px">\u2715</span>' +
+        '</div>' +
+        '<div style="font-family:Lora,serif; font-style:italic; font-size:13px; color:rgba(239,230,200,.65)">Everything Character Select and Today\u2019s Demon decide, changeable at any time. Changes reach every screen as soon as you make them. The game needs 3 or 4 girls playing.</div>' +
+        '<div data-note style="min-height:16px; font-size:11.5px; font-weight:800; color:#E23A3A; margin:4px 0">' + mpEsc(note) + '</div>' +
+        '<div style="display:flex; gap:10px; flex-wrap:wrap">' + cards + '</div>' +
+        '<div style="margin-top:14px; background:#231F20; border:3px solid #B4322C; border-radius:11px; padding:10px 12px">' +
+          '<div style="font-size:17px; font-weight:800; color:#E23A3A">THE DEMON</div>' +
+          '<div style="display:flex; gap:10px; flex-wrap:wrap">' +
+            '<div style="flex:0 1 260px">' + lab('NAME') + '<input data-dname value="' + mpEsc(st.demonName || '') + '" style="' + inStyle + '"></div>' +
+            '<div style="flex:1 1 360px">' + lab('GOAL') + '<input data-dgoal value="' + mpEsc(dGoal) + '" style="' + inStyle + '; font-family:Lora,serif; font-style:italic; font-weight:400"></div>' +
+          '</div>' +
+          '<div style="display:flex; gap:10px; flex-wrap:wrap">' + demonTraits + '</div>' +
+        '</div>' +
+      '</div>';
+      el.querySelector('[data-close]').onclick = function () { el.remove(); };
+      var after = function () { setTimeout(render, 60); };
+      Array.prototype.forEach.call(el.querySelectorAll('[data-active]'), function (b) {
+        b.onclick = function () {
+          var k = +b.getAttribute('data-active');
+          var on = (self.state.activeSeats || [0, 1, 2, 3]).indexOf(k) < 0;
+          note = self.setSeatActive(k, on) ? '' : 'The game needs at least 3 girls playing.';
+          after();
+        };
+      });
+      Array.prototype.forEach.call(el.querySelectorAll('[data-name]'), function (inp) {
+        inp.onchange = function () { self.setPlayerName(+inp.getAttribute('data-name'), inp.value); after(); };
+      });
+      var pair = function (attr, k) {
+        return Array.prototype.map.call(el.querySelectorAll('[' + attr + '="' + k + '"]'), function (x) { return +x.value; });
+      };
+      Array.prototype.forEach.call(el.querySelectorAll('[data-q]'), function (sel) {
+        sel.onchange = function () {
+          var k = +sel.getAttribute('data-q'), idx = pair('data-q', k);
+          if (idx[0] === idx[1]) { note = 'Pick two different Quirks.'; after(); return; }
+          note = ''; self.setSeatQuirks(k, idx); after();
+        };
+      });
+      Array.prototype.forEach.call(el.querySelectorAll('[data-g]'), function (sel) {
+        sel.onchange = function () {
+          var k = +sel.getAttribute('data-g'), idx = pair('data-g', k);
+          if (idx[0] === idx[1]) { note = 'Pick two different Goals.'; after(); return; }
+          note = ''; self.setSeatGoals(k, idx); after();
+        };
+      });
+      el.querySelector('[data-dname]').onchange = function () { self.setDemonText(this.value, null); after(); };
+      el.querySelector('[data-dgoal]').onchange = function () { self.setDemonText(null, this.value); after(); };
+      Array.prototype.forEach.call(el.querySelectorAll('[data-trait]'), function (sel) {
+        sel.onchange = function () {
+          if (sel.value === '') return;
+          var c = sel.getAttribute('data-trait');
+          self.setDemonTrait(c, DEMON_TABLES[c][+sel.value]); after();
+        };
+      });
+      Array.prototype.forEach.call(el.querySelectorAll('[data-reroll]'), function (b) {
+        b.onclick = function () { self.setDemonTrait(b.getAttribute('data-reroll'), null); after(); };
+      });
+    };
+    render();
   }
 
   mpShowBackups() {
