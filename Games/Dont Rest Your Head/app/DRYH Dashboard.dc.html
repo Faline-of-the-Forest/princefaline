@@ -1082,6 +1082,15 @@ class DRYHBase extends DCLogic {
     pain: 'oklch(0.55 0.21 27)',
   };
 
+  // Mad City location art (locations/), by node id; shown for the location and all its sub-locations.
+  cityArt = {
+    'breakers-yard':'breakers_yard', district13:'district_13', 'howlers-realm':'howlers_realm', rooftop:'rooftop_jungle',
+    'big-house':'big_house', bazaar:'bizarre_bazaar', 'chop-shop':'chop_shop', 'counting-house':'counting_house',
+    'crack-house':'crack_house', highschool:'high_school', hoggery:'hoggery', 'main-line':'main_line',
+    playground:'playground', 'safe-house':'safe_house', theater:'theater', warrens:'warrens',
+    'wax-works':'wax_works', 'wild-wood':'wild_wood',
+  };
+
   majors = [
     { id:'district13', name:'District 13', art:'uploads/img_city.png',
       dangerNote:'OFFICER TOCK — 6P (+2 IN THE DISTRICT, +2 WITH A WARRANT, +2 ON THE THIRTEENTH HOUR)',
@@ -2049,6 +2058,8 @@ class DRYHBase extends DCLogic {
       if (nd) { const sb = s.hereRef.s ? (nd.subs || []).find(x => x.id === s.hereRef.s) : nd; if (sb) { hereTitle = sb.name || 'Untitled'; hereDesc = sb.desc || ''; } } }
     let hereDistrict = currentMajor.name;
     const hereBlank = !!(s.hereRef && s.hereRef.blank); if (hereBlank) { hereTitle=''; hereDesc=''; hereDistrict=''; }
+    let hereArt = currentLocation.art;
+    if (s.hereRef && s.hereRef.n) { const f = this.cityArt[s.hereRef.n]; hereArt = f ? 'locations/dryh_' + f + '.png' : null; }
     if (s.hereRef && s.hereRef.s) { const cd2 = this.cityLoad(), nd2 = cd2 && cd2.nodes.find(x => x.id === s.hereRef.n); if (nd2) hereDistrict = nd2.name || ''; }
     const hereStyle = 'max-width:640px; width:100%; margin:calc(36vh - 40px) auto auto; align-self:center; min-height:0; overflow-y:auto; flex-shrink:0; animation:' + ((s.hereTick || 0) % 2 ? 'dryh-here-a' : 'dryh-here-b') + ' 420ms ease-out both;';
 
@@ -2949,7 +2960,7 @@ class DRYHBase extends DCLogic {
       itemPop: s.itemPop ? { show:true, icon:s.itemPop.icon || '', key:s.itemPop.key, verb:s.itemPop.verb, name:s.itemPop.name, flavor:s.itemPop.flavor,
         verbStyle:{ fontFamily:"'Barlow',sans-serif", fontWeight:700, fontSize:12, letterSpacing:'0.22em', color: s.itemPop.used ? 'oklch(0.68 0.19 30)' : 'oklch(0.8 0.1 195)' } } : { show:false },
       majorTabs, subCards, currentLocation, hereTitle, hereDesc, hereStyle,
-      hereDistrict, hereBannerStyle: { position:'absolute', left:0, right:0, top:14, height:'36%', zIndex:-1, pointerEvents:'none', background: hereBlank ? 'none' : 'url(' + currentLocation.art + ') center/cover' },
+      hereDistrict, hereBannerStyle: { position:'absolute', left:0, right:0, top:14, height:'36%', zIndex:-1, pointerEvents:'none', background: hereBlank || !hereArt ? 'none' : 'url(' + hereArt + ') center/cover' },
       logDisplay, logCount: s.log.length,
       hope:s.hope, despair:s.despair,
       despairCoins, hopeCoins, despairZoneStyle, hopeZoneStyle, handZoneStyle,
