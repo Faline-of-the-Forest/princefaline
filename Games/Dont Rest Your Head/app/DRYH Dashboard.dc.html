@@ -187,7 +187,7 @@
       <sc-if value="{{ gmIsGame }}" hint-placeholder-val="{{ true }}">
         <div style="display:flex; flex-direction:column; gap:0; padding:8px 16px;">
           <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0;">
-            <div style="display:flex; flex-direction:column; gap:3px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.22em; color:oklch(0.6 0.01 70);">TIMER</span><span style="font-family:'Barlow',sans-serif; font-weight:600; font-weight:600; font-size:20px; letter-spacing:0.04em; color:oklch(0.95 0.012 85);">{{ timerText }}</span></div>
+            <div style="display:flex; flex-direction:column; gap:3px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.22em; color:oklch(0.6 0.01 70);">TIMER</span><sc-if value="{{ timerRunning }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:20px; letter-spacing:0.04em; color:oklch(0.95 0.012 85);">{{ timerText }}</span></sc-if><sc-if value="{{ timerEditable }}" hint-placeholder-val="{{ true }}"><input value="{{ timerInput }}" onChange="{{ onTimerInput }}" onBlur="{{ onTimerCommit }}" onKeyDown="{{ onTimerKey }}" aria-label="Timer (edit while paused)" style="width:120px; box-sizing:border-box; padding:0 0 1px; background:transparent; border:none; border-bottom:1px dashed oklch(0.93 0.012 85 / 0.4); outline:none; font-family:'Barlow',sans-serif; font-weight:600; font-size:20px; letter-spacing:0.04em; color:oklch(0.95 0.012 85);"></sc-if></div>
             <button style="{{ timerBtnStyle }}" onClick="{{ onToggleTimer }}">{{ timerBtnLabel }}</button>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-top:1px solid oklch(0.93 0.012 85 / 0.15);">
@@ -483,7 +483,6 @@
           </button>
           <button title="Notes" onClick="{{ notes.onToggle }}" style="{{ notes.btnStyle }}" style-hover="transform:scale(1.08);">
             <img src="icons/notes.png" alt="" style="width:34px; height:34px; object-fit:contain; filter:drop-shadow(0 3px 6px rgba(0,0,0,0.75));">
-            <sc-if value="{{ notes.has }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; right:-3px; bottom:-3px; min-width:18px; height:18px; padding:0 4px; display:flex; align-items:center; justify-content:center; background:oklch(0.55 0.21 27); color:oklch(0.97 0.01 85); font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:14px; line-height:1;">{{ notes.count }}</span></sc-if>
             <sc-if value="{{ notes.open }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; left:6px; right:6px; bottom:-3px; height:3px; background:oklch(0.55 0.21 27); transform-origin:left; animation:dryh-bar 240ms ease-out both;"></span></sc-if>
           </button>
           <button title="Open character record" onClick="{{ panel.onOpenDossier }}" style="flex-shrink:0; width:46px; height:46px; padding:0; display:flex; align-items:center; justify-content:center; background:transparent; border:none; cursor:pointer; transition:transform 120ms;" style-hover="transform:scale(1.08);">
@@ -1532,8 +1531,18 @@ class DRYHBase extends DCLogic {
   timerMs(){ const s=this.state; return (s.timerElapsed||0) + (s.timerRunning && s.timerStart ? Date.now()-s.timerStart : 0); }
   fmtTimer(ms){ const t=Math.floor(ms/1000), hh=Math.floor(t/3600), mm=Math.floor(t/60)%60, ss=t%60, p=n=>String(n).padStart(2,'0');
     return hh ? hh+':'+p(mm)+':'+p(ss) : p(mm)+':'+p(ss); }
+  // Paused timer typed in by the GM: h:mm:ss, mm:ss or plain minutes.
+  setTimerText(txt){
+    const parts=String(txt).trim().split(':').map(x=>x.trim());
+    this.setState({ timerDraft:null });
+    if (!parts.length || parts.some(x=>!/^\d+$/.test(x)) || parts.length>3) return;
+    const n=parts.map(Number), sec = n.length===1 ? n[0]*60 : n.length===2 ? n[0]*60+n[1] : n[0]*3600+n[1]*60+n[2];
+    if (sec*1000===this.timerMs()) return;
+    this.withLog('The timer is set to '+this.fmtTimer(sec*1000)+'.', null, { timerElapsed:sec*1000, timerStart:null, timerRunning:false });
+  }
   toggleTimer(){
     const s=this.state;
+    if (s.timerDraft!=null) this.setState({ timerDraft:null });
     if (s.timerRunning){
       const elapsed=this.timerMs();
       this.commit({ timerRunning:false, timerStart:null, timerElapsed:elapsed, log:[{ ...this.logEntry('The timer pauses.', null), time:this.fmtTimer(elapsed) }, ...s.log].slice(0,60) });
@@ -1725,7 +1734,9 @@ class DRYHBase extends DCLogic {
       exhaustion:pick('exhaustion'), permanentMadness:pick('permanentMadness'), crashed:false, snapped:false, lostHours:0, closure:0, statuses:[], items:[], scars:[] });
     this.setState({ charResetArm:null }); this.withLog(this.nm(c0)+' was reset to starting stats.', null, { characters }); }
   resetGame(){ const characters=this.state.characters.map(c=>({ ...c, scars:(c.scars||[]).map(x=>x.recalled?{...x,recalled:false}:x) }));
-    this.setState({ resetArm:false }); this.withLog('Game reset. Despair and Hope cleared; recalled Scars restored.', null, { characters, despair:0, hope:0 }); }
+    this.setState({ resetArm:false, timerDraft:null });
+    this.commit({ characters, despair:0, hope:0, timerRunning:false, timerStart:null, timerElapsed:0,
+      log:[{ ...this.logEntry('Game reset. Despair and Hope cleared; recalled Scars restored; timer and record cleared.', null), time:this.fmtTimer(0) }] }); }
   toggleScarAbsorbed(id, scarId){
     const was = this.state.characters.find(x=>x.id===id).scars.find(s=>s.id===scarId);
     if (!was || was.absorbed || was.recalled) return;
@@ -2971,6 +2982,11 @@ class DRYHBase extends DCLogic {
       clockText: this.padTime(s.clockHour)+':'+this.padTime(s.clockMinute),
       timerText: this.fmtTimer(this.timerMs()), timerBtnLabel: s.timerRunning ? 'PAUSE' : (s.timerElapsed ? 'RESUME' : 'START'),
       onToggleTimer: ()=>this.toggleTimer(),
+      timerRunning: !!s.timerRunning, timerEditable: !s.timerRunning,
+      timerInput: s.timerDraft!=null ? s.timerDraft : this.fmtTimer(this.timerMs()),
+      onTimerInput: (e)=>this.setState({ timerDraft:e.target.value }),
+      onTimerCommit: ()=>{ if (this.state.timerDraft!=null) this.setTimerText(this.state.timerDraft); },
+      onTimerKey: (e)=>{ if (e.key==='Enter') e.target.blur(); else if (e.key==='Escape') { this.setState({ timerDraft:null }); setTimeout(()=>e.target.blur()); } },
       timerBtnStyle:{ fontFamily:"'Barlow',sans-serif", fontSize:12, letterSpacing:'0.18em', padding:'8px 14px', cursor:'pointer', minWidth:80,
         background: s.timerRunning ? 'transparent' : this.red, color:'oklch(0.97 0.01 85)', border:'1px solid '+(s.timerRunning ? 'oklch(0.95 0.012 85 / 0.5)' : this.red) },
       ...(()=>{
@@ -3050,7 +3066,7 @@ const MP_LOCAL = new Set(['actingCharId','sheetCharId','clockOpen','dragOver','c
   'sbSection','notesOpen','notesIdx','notesView','notesConfirm','invOpen','invGm','invIdx','tokOff','tokH','trayScale','cityV','cityPop','cityOpen',
   'cityFocus','citySj','citySjHover','citySjRect','cityHover','citySubArm','rulesOpen','dragging','itemPop','breathFlash','breathPick','recallPick',
   'kingPick','scarModal','scarHover','hopeHover','tokenHover','resetArm','charResetArm','gmProtoSel','gmSecItem','gmSecStatus','statDraftName',
-  'statDraftDesc','mpUnstickArm','invDraftName','invDraftFlavor','lawNoun','lawAction','lawReq','lawKind','lawYear','lawSec']);
+  'statDraftDesc','mpUnstickArm','timerDraft','invDraftName','invDraftFlavor','lawNoun','lawAction','lawReq','lawKind','lawYear','lawSec']);
 const MP_EXTRA = ['prologue','pendingConflict','lastResult','laws','screen','hereRef','hereTick','timerRunning','timerStart','timerElapsed','cityAct','unstickAt'];
 const MP_HOLD_MS = 2500;
 class Component extends DRYHBase {
