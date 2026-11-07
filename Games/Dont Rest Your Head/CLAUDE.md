@@ -41,4 +41,4 @@
   by `nmState`). Panel in GM ▸ PROTAGONISTS (`nmView`). Encounter 4 auto-escalates
   (Difficulty locked at 10, bound to the current location); Defeated / Lucy
   found set `closure`. Only escalation, defeat and Lucy are logged, since the
-  Record is visible to players. Rulebook ▸ NIGHTMARES holds the spoiler-free rules.
+  Record is visible to players. Rulebook ▸ NIGHTMARES stays vague on purpose: no clue timing, no escalation details.

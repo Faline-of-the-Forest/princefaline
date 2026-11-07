@@ -143,11 +143,11 @@
     </sc-if>
     <div style="{{ gmPanelStyle }}">
       <button title="Toggle GM panel" aria-label="Toggle GM panel" style="{{ gmToggleStyle }}" onClick="{{ onToggleGm }}">GM</button>
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px 10px;">
+      <div style="flex-shrink:0; display:flex; justify-content:space-between; align-items:center; padding:14px 16px 10px;">
         <span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.3em; color:oklch(0.62 0.14 27);">GM PANEL</span>
         <div style="display:flex; align-items:center; gap:16px;"><button aria-label="Toggle full screen" style="background:transparent; border:none; color:oklch(0.8 0.01 80); font-size:18px; line-height:1; cursor:pointer; padding:0;" style-hover="color:oklch(0.97 0.01 85);" onClick="{{ onToggleFull }}">{{ fullGlyph }}</button><button aria-label="Close GM panel" style="background:transparent; border:none; color:oklch(0.8 0.01 80); font-size:18px; line-height:1; cursor:pointer; padding:0;" onClick="{{ onToggleGm }}">×</button></div>
       </div>
-      <div style="display:flex; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:thin; scrollbar-color:oklch(0.93 0.012 85 / 0.25) transparent; border-bottom:1px solid oklch(0.93 0.012 85 / 0.25); padding:0 16px;">
+      <div style="flex-shrink:0; display:flex; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:thin; scrollbar-color:oklch(0.93 0.012 85 / 0.25) transparent; border-bottom:1px solid oklch(0.93 0.012 85 / 0.25); padding:0 16px;">
         <sc-for list="{{ gmTabs }}" as="t" hint-placeholder-count="3"><button style="{{ t.style }}" onClick="{{ t.onClick }}">{{ t.label }}</button></sc-for>
       </div>
       <sc-if value="{{ gmIsConflict }}" hint-placeholder-val="{{ false }}">
@@ -376,7 +376,7 @@
         </div>
       </sc-if>
       <sc-if value="{{ gmIsOther }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex; flex-direction:column; gap:12px; padding:16px;">
+        <div style="flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding:16px 16px 40px; scrollbar-width:thin; scrollbar-color:oklch(0.93 0.012 85 / 0.25) transparent;">
           <span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">ROSTER</span>
           <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px;">
             <sc-for list="{{ gmProtos }}" as="g" hint-placeholder-count="8">
