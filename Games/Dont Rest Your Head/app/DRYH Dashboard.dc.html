@@ -7,6 +7,7 @@
 <script type="module" src="./js/dryh-net.js"></script>
 <script src="./js/dryh-prologues.js"></script>
 <script src="./js/dryh-nightmares.js"></script>
+<script src="./js/dryh-pregens.js"></script>
 <script src="./js/madcity-seed.js"></script>
 <script src="./js/madcity-io.js"></script>
 <script>try { if (!localStorage.getItem('dryh_madcity_map_v1') && window.DRYH_MADCITY_SEED) localStorage.setItem('dryh_madcity_map_v1', JSON.stringify(window.DRYH_MADCITY_SEED)); } catch (e) {}</script>
@@ -394,6 +395,11 @@
                 <sc-if value="{{ gmProto.noScars }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Barlow',sans-serif; font-size:12px; color:oklch(0.6 0.01 70);">No scars.</span></sc-if>
                 <sc-for list="{{ gmProto.scars }}" as="sc" hint-placeholder-count="0"><div style="display:flex; align-items:center; gap:10px;"><span style="flex:1; min-width:0; font-family:'Crimson Text',serif; font-size:14px; line-height:1.3; color:oklch(0.86 0.01 80);">{{ sc.text }}<span style="font-family:'Barlow',sans-serif; font-size:10px; letter-spacing:0.14em; color:oklch(0.62 0.14 27); margin-left:6px;">{{ sc.state }}</span></span><button role="switch" aria-label="Scar usable" style="{{ sc.sw.track }}" onClick="{{ sc.onToggle }}"><span style="{{ sc.sw.knob }}"></span></button></div></sc-for>
               </div>
+              <sc-if value="{{ gmProto.pgHas }}" hint-placeholder-val="{{ false }}"><div style="display:flex; flex-direction:column; gap:6px; padding:8px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.15);">
+                <span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:18px; text-transform:uppercase; color:oklch(0.95 0.012 85);">{{ gmProto.pgPower }} · Fight, Flight &amp; Becoming</span>
+                <div style="display:flex; gap:6px;"><sc-for list="{{ gmProto.pgBoxes }}" as="b" hint-placeholder-count="3"><div onMouseEnter="{{ b.onEnter }}" onMouseLeave="{{ b.onLeave }}" style="{{ b.style }}">{{ b.label }}</div></sc-for></div>
+                <sc-if value="{{ gmProto.pgOpen }}" hint-placeholder-val="{{ false }}"><div style="padding:10px 12px; background:oklch(0.07 0.008 50); border:1px solid oklch(0.93 0.012 85 / 0.3); font-family:'Crimson Text',serif; font-size:14px; line-height:1.4; color:oklch(0.86 0.01 80);">{{ gmProto.pgText }}</div></sc-if>
+              </div></sc-if>
               <sc-if value="{{ gmProto.nmHas }}" hint-placeholder-val="{{ true }}">
               <div data-dryh-nightmare="1" style="{{ gmProto.nmBoxStyle }}">
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;"><div style="display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">PERSONAL NIGHTMARE</span><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; text-transform:uppercase; color:oklch(0.68 0.19 30);">{{ gmProto.nmName }}</span></div><sc-if value="{{ gmProto.nmHasBadge }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.14em; color:oklch(0.68 0.19 30); border:2px double oklch(0.68 0.19 30); padding:1px 6px; transform:rotate(-3deg);">{{ gmProto.nmBadge }}</span></sc-if></div>
@@ -1783,6 +1789,14 @@ class DRYHBase extends DCLogic {
     if (r.closure!=null) patch.closure=r.closure;
     const characters=this.state.characters.map(x=>x.id===id?{ ...x, ...patch }:x);
     if (r.log) this.withLog(r.log, r.color||null, { characters }); else this.commit({ characters }); }
+  pgView(sel){
+    const d = (window.DRYH_PREGENS||[]).find(x=>x.protagonist===sel.shortName); if (!d) return { pgHas:false };
+    const hv = this.state.pgHover, defs = [['fight','FIGHT'],['flight','FLIGHT'],['becoming','BECOMING']];
+    return { pgHas:true, pgPower:d.power, pgOpen:!!(hv && d[hv]), pgText: hv ? d[hv] : '',
+      pgBoxes: defs.map(([k,l])=>({ label:l, onEnter:()=>this.setState({ pgHover:k }), onLeave:()=>this.setState({ pgHover:null }),
+        style:{ flex:1, textAlign:'center', padding:'8px 4px', cursor:'default', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:15, letterSpacing:'0.1em',
+          border:'1px solid '+(hv===k?'oklch(0.55 0.21 27)':'oklch(0.93 0.012 85 / 0.3)'), background: hv===k?'oklch(0.55 0.21 27 / 0.25)':'transparent', color:'oklch(0.95 0.012 85)' } })) };
+  }
   nmView(sel){
     const d=this.nmDef(sel), n=this.nmState(sel); if (!d) return { nmHas:false };
     const who=this.nm(sel), name=d.name, id=sel.id;
@@ -2911,7 +2925,7 @@ class DRYHBase extends DCLogic {
             boxShadow: sel&&sel.id===c.id ? '0 0 0 2px '+this.redBright : '0 0 0 1px oklch(0.95 0.012 85 / 0.25)',
             filter: c.disabled ? 'grayscale(1) brightness(0.3)' : 'none', opacity: c.disabled?0.6:1 } })),
           gmProtoHas: !!sel,
-          gmProto: sel ? { name: sel.shortName||sel.name, lost: sel.lostHours||0, ...this.nmView(sel),
+          gmProto: sel ? { name: sel.shortName||sel.name, lost: sel.lostHours||0, ...this.nmView(sel), ...this.pgView(sel),
             resetLabel: this.state.charResetArm===sel.id ? 'CONFIRM RESET' : 'RESET CHARACTER',
             onReset:()=>{ if (this.state.charResetArm===sel.id) this.resetChar(sel.id); else { this.setState({ charResetArm:sel.id }); clearTimeout(this._crt); this._crt=setTimeout(()=>this.setState({ charResetArm:null }),3000); } },
             onLostInc:()=>{ const n=(sel.lostHours||0)+1; this.withLog(this.nm(sel)+' gained Lost Hours ('+n+').','pain',{ characters:this.state.characters.map(c=>c.id===sel.id?{...c,lostHours:n}:c) }); },
@@ -3196,7 +3210,7 @@ const MP_LOCAL = new Set(['actingCharId','sheetCharId','clockOpen','dragOver','c
   'sbSection','notesOpen','notesIdx','notesView','notesConfirm','invOpen','invGm','invIdx','tokOff','tokH','trayScale','cityV','cityPop','cityOpen',
   'cityFocus','citySj','citySjHover','citySjRect','cityHover','citySubArm','rulesOpen','dragging','itemPop','breathFlash','breathPick','recallPick',
   'kingPick','scarModal','scarHover','hopeHover','tokenHover','resetArm','charResetArm','gmProtoSel','gmSecItem','gmSecStatus','statDraftName',
-  'statDraftDesc','statDraftSign','mpUnstickArm','timerDraft','invDraftName','invDraftFlavor','lawNoun','lawAction','lawReq','lawKind','lawYear','lawSec']);
+  'statDraftDesc','statDraftSign','pgHover','mpUnstickArm','timerDraft','invDraftName','invDraftFlavor','lawNoun','lawAction','lawReq','lawKind','lawYear','lawSec']);
 const MP_EXTRA = ['prologue','pendingConflict','lastResult','laws','screen','hereRef','hereTick','timerRunning','timerStart','timerElapsed','cityAct','unstickAt'];
 const MP_HOLD_MS = 2500;
 class Component extends DRYHBase {
