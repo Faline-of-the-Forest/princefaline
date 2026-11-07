@@ -6,6 +6,7 @@
 <script>window.__dryhURL = location.href;</script>
 <script type="module" src="./js/dryh-net.js"></script>
 <script src="./js/dryh-prologues.js"></script>
+<script src="./js/dryh-nightmares.js"></script>
 <script src="./js/madcity-seed.js"></script>
 <script src="./js/madcity-io.js"></script>
 <script>try { if (!localStorage.getItem('dryh_madcity_map_v1') && window.DRYH_MADCITY_SEED) localStorage.setItem('dryh_madcity_map_v1', JSON.stringify(window.DRYH_MADCITY_SEED)); } catch (e) {}</script>
@@ -392,6 +393,38 @@
                 <sc-if value="{{ gmProto.noScars }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Barlow',sans-serif; font-size:12px; color:oklch(0.6 0.01 70);">No scars.</span></sc-if>
                 <sc-for list="{{ gmProto.scars }}" as="sc" hint-placeholder-count="0"><div style="display:flex; align-items:center; gap:10px;"><span style="flex:1; min-width:0; font-family:'Crimson Text',serif; font-size:14px; line-height:1.3; color:oklch(0.86 0.01 80);">{{ sc.text }}<span style="font-family:'Barlow',sans-serif; font-size:10px; letter-spacing:0.14em; color:oklch(0.62 0.14 27); margin-left:6px;">{{ sc.state }}</span></span><button role="switch" aria-label="Scar usable" style="{{ sc.sw.track }}" onClick="{{ sc.onToggle }}"><span style="{{ sc.sw.knob }}"></span></button></div></sc-for>
               </div>
+              <sc-if value="{{ gmProto.nmHas }}" hint-placeholder-val="{{ true }}">
+              <div data-dryh-nightmare="1" style="{{ gmProto.nmBoxStyle }}">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;"><div style="display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">PERSONAL NIGHTMARE</span><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; text-transform:uppercase; color:oklch(0.68 0.19 30);">{{ gmProto.nmName }}</span></div><sc-if value="{{ gmProto.nmHasBadge }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.14em; color:oklch(0.68 0.19 30); border:2px double oklch(0.68 0.19 30); padding:1px 6px; transform:rotate(-3deg);">{{ gmProto.nmBadge }}</span></sc-if></div>
+                <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">LOOK</span><span style="font-family:'Crimson Text',serif; font-size:14px; line-height:1.35; color:oklch(0.86 0.01 80);">{{ gmProto.nmLook }}</span></div>
+                <sc-if value="{{ gmProto.nmRegular }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex; flex-direction:column; gap:8px;">
+                  <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">EFFECT</span><span style="font-family:'Crimson Text',serif; font-size:14px; line-height:1.35; color:oklch(0.86 0.01 80);">{{ gmProto.nmEffect }}</span></div>
+                  <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">WEAKNESS</span><span style="font-family:'Crimson Text',serif; font-size:14px; line-height:1.35; color:oklch(0.86 0.01 80);">{{ gmProto.nmWeak }}</span></div>
+                  <sc-if value="{{ gmProto.nmNoEnc }}" hint-placeholder-val="{{ true }}"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70); letter-spacing:0.12em;">NOT YET ENCOUNTERED</span></sc-if>
+                  <sc-if value="{{ gmProto.nmFirst }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70); letter-spacing:0.12em;">ENCOUNTER 1 · THE WEAKNESS IS PRESENT, UNREMARKED</span></sc-if>
+                  <sc-if value="{{ gmProto.nmShowClue2 }}" hint-placeholder-val="{{ false }}"><div style="display:flex; flex-direction:column; gap:2px; "><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">CLUE (ENCOUNTER 2)</span><span style="font-family:'Crimson Text',serif; font-size:14px; line-height:1.35; color:oklch(0.86 0.01 80);">{{ gmProto.nmClue2 }}</span></div></sc-if>
+                  <sc-if value="{{ gmProto.nmShowClue3 }}" hint-placeholder-val="{{ false }}"><div style="display:flex; flex-direction:column; gap:2px; "><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">CLUE LAID OUT (ENCOUNTER 3)</span><span style="font-family:'Crimson Text',serif; font-size:14px; line-height:1.35; color:oklch(0.86 0.01 80);">{{ gmProto.nmClue3 }}</span></div></sc-if>
+                  <sc-if value="{{ gmProto.nmShowEsc }}" hint-placeholder-val="{{ false }}"><div style="display:flex; flex-direction:column; gap:2px; border-left:2px solid oklch(0.55 0.21 27); padding-left:8px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">ESCALATION</span><span style="font-family:'Crimson Text',serif; font-size:14px; line-height:1.35; color:oklch(0.86 0.01 80);">{{ gmProto.nmEsc }}</span></div></sc-if>
+                  <div style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px solid oklch(0.93 0.012 85 / 0.15);"><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px; text-transform:uppercase; color:oklch(0.95 0.012 85);">Encounters</span><div style="display:flex; align-items:center; gap:8px;"><button style="{{ tinyBtnStyle }}" onClick="{{ gmProto.onNmEncDec }}">−</button><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; line-height:1; min-width:18px; text-align:center; color:oklch(0.95 0.012 85);">{{ gmProto.nmEnc }}</span><button style="{{ tinyBtnStyle }}" onClick="{{ gmProto.onNmEncInc }}">+</button></div></div>
+                  <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px; text-transform:uppercase; color:oklch(0.95 0.012 85);">Difficulty</span><div style="display:flex; align-items:center; gap:8px;"><button style="{{ gmProto.nmDiffBtn }}" onClick="{{ gmProto.onNmDiffDec }}">−</button><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; line-height:1; min-width:18px; text-align:center; color:oklch(0.95 0.012 85);">{{ gmProto.nmDiff }}</span><button style="{{ gmProto.nmDiffBtn }}" onClick="{{ gmProto.onNmDiffInc }}">+</button></div></div>
+                  <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px; text-transform:uppercase; color:oklch(0.95 0.012 85);">Escalated</span><button role="switch" aria-label="Escalated" style="{{ gmProto.nmEscSw.track }}" onClick="{{ gmProto.onNmEsc }}"><span style="{{ gmProto.nmEscSw.knob }}"></span></button></div>
+                  <sc-if value="{{ gmProto.nmShowEsc }}" hint-placeholder-val="{{ false }}"><label style="display:flex; flex-direction:column; gap:4px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">BOUND TO (LOCATION RUINED)</span><input value="{{ gmProto.nmBound }}" onChange="{{ gmProto.onNmBound }}" placeholder="Location" style="font-family:'Barlow',sans-serif; font-size:14px; padding:6px 8px; background:transparent; color:oklch(0.95 0.012 85); border:1px solid oklch(0.55 0.21 27 / 0.7); outline:none;" /></label></sc-if>
+                  <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px; text-transform:uppercase; color:oklch(0.95 0.012 85);">Defeated (Closure)</span><button role="switch" aria-label="Defeated" style="{{ gmProto.nmDefSw.track }}" onClick="{{ gmProto.onNmDef }}"><span style="{{ gmProto.nmDefSw.knob }}"></span></button></div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ gmProto.nmSpecial }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex; flex-direction:column; gap:8px;">
+                  <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">HOW IT WORKS</span><span style="font-family:'Crimson Text',serif; font-size:14px; line-height:1.35; color:oklch(0.86 0.01 80);">{{ gmProto.nmHow }}</span></div>
+                  <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">THE CATCH</span><span style="font-family:'Crimson Text',serif; font-size:14px; line-height:1.35; color:oklch(0.86 0.01 80);">{{ gmProto.nmCatch }}</span></div>
+                  <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">HELD BY</span><span style="font-family:'Crimson Text',serif; font-size:14px; line-height:1.35; color:oklch(0.86 0.01 80);">{{ gmProto.nmHeld }}</span></div>
+                  <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.2em; color:oklch(0.6 0.01 70);">END OF GAME</span><span style="font-family:'Crimson Text',serif; font-size:14px; line-height:1.35; color:oklch(0.86 0.01 80);">{{ gmProto.nmEnd }}</span></div>
+                  <div style="{{ gmProto.nmFoundStyle }}"><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px; text-transform:uppercase; color:oklch(0.95 0.012 85);">Lucy found (Closure)</span><button role="switch" aria-label="Lucy found" style="{{ gmProto.nmFoundSw.track }}" onClick="{{ gmProto.onNmFound }}"><span style="{{ gmProto.nmFoundSw.knob }}"></span></button></div>
+                  <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px; text-transform:uppercase; color:oklch(0.95 0.012 85);">Lucy lost</span><button role="switch" aria-label="Lucy lost" style="{{ gmProto.nmLostSw.track }}" onClick="{{ gmProto.onNmLost }}"><span style="{{ gmProto.nmLostSw.knob }}"></span></button></div>
+                  </div>
+                </sc-if>
+              </div>
+              </sc-if>
               <button onClick="{{ gmProto.onReset }}" style="font-family:'Barlow',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.15em; padding:8px 0; cursor:pointer; background:transparent; color:oklch(0.85 0.01 80); border:1px solid oklch(0.93 0.012 85 / 0.4);" style-hover="border-color:oklch(0.68 0.19 30); color:oklch(0.68 0.19 30);">{{ gmProto.resetLabel }}</button>
               <button onClick="{{ gmProto.onToggle }}" style="{{ gmProto.btnStyle }}">{{ gmProto.btnLabel }}</button>
               <label style="display:flex; flex-direction:column; gap:4px;">
@@ -1728,10 +1761,55 @@ class DRYHBase extends DCLogic {
   }
   gmSw(on){ return { track:{ position:'relative', width:40, height:22, flexShrink:0, padding:0, cursor:'pointer', border:'1px solid '+(on?'oklch(0.62 0.21 27)':'oklch(0.93 0.012 85 / 0.35)'), background:on?'oklch(0.55 0.21 27)':'transparent' },
     knob:{ position:'absolute', top:2, left:on?20:2, width:16, height:16, background:'oklch(0.95 0.012 85)', transition:'left 150ms ease' } }; }
+  // ---- Personal Nightmares (GM ▸ PROTAGONISTS). Data: js/dryh-nightmares.js; state: character.nightmare.
+  nmDef(c){ return (window.DRYH_NIGHTMARES||[]).find(n=>n.protagonist===c.shortName) || null; }
+  nmState(c){ const d=this.nmDef(c); if (!d) return null;
+    return d.special ? { id:d.id, found:false, lost:false, ...(c.nightmare||{}) }
+      : { id:d.id, encounters:0, difficulty:10, escalated:false, boundLocation:'', defeated:false, ...(c.nightmare||{}) }; }
+  // Name of the location the table is in now (the major location, not the sub-location).
+  nmHereName(){ const r=this.state.hereRef; if (!r || r.blank || !r.n) return ''; const cd=this.cityLoad(), nd=cd && cd.nodes.find(x=>x.id===r.n); return nd ? (nd.name||'') : ''; }
+  setNm(id, fn){ const c=this.state.characters.find(x=>x.id===id); if (!c) return; const d=this.nmDef(c), cur=this.nmState(c); if (!d) return;
+    const r=fn(cur)||{}, nm={ ...cur, ...(r.nm||{}) }; let patch={ nightmare:nm };
+    if (r.closure!=null) patch.closure=r.closure;
+    const characters=this.state.characters.map(x=>x.id===id?{ ...x, ...patch }:x);
+    if (r.log) this.withLog(r.log, r.color||null, { characters }); else this.commit({ characters }); }
+  nmView(sel){
+    const d=this.nmDef(sel), n=this.nmState(sel); if (!d) return { nmHas:false };
+    const who=this.nm(sel), name=d.name, id=sel.id;
+    const base={ nmHas:true, nmName:d.name, nmLook:d.look, nmSpecial:!!d.special, nmRegular:!d.special };
+    const box=(hot, off)=>({ display:'flex', flexDirection:'column', gap:8, padding:'10px 12px', border:'1px solid '+(hot?'oklch(0.62 0.21 27)':'oklch(0.93 0.012 85 / 0.25)'),
+      background: hot?'oklch(0.55 0.21 27 / 0.12)':'transparent', boxShadow: hot?'0 0 0 1px oklch(0.55 0.21 27 / 0.5), 0 0 14px oklch(0.55 0.21 27 / 0.25)':'none',
+      filter: off?'grayscale(1)':'none', opacity: off?0.55:1 });
+    if (d.special) return { ...base, nmBoxStyle:box(false, n.lost),
+      nmHow:d.howItWorks, nmCatch:d.catch, nmHeld:d.heldBy, nmEnd:d.endOfGame,
+      nmBadge: n.lost ? 'LOST' : n.found ? 'CLOSURE' : '', nmHasBadge: n.lost || n.found,
+      nmFoundSw:this.gmSw(n.found && !n.lost), nmLostSw:this.gmSw(n.lost),
+      nmFoundStyle:{ display:'flex', justifyContent:'space-between', alignItems:'center', opacity:n.lost?0.4:1, pointerEvents:n.lost?'none':'auto' },
+      onNmFound:()=>this.setNm(id, o=>o.lost?null:(o.found ? { nm:{ found:false }, closure:0 } : { nm:{ found:true }, closure:1, log:who+' found Lucy. Closure.' })),
+      onNmLost:()=>this.setNm(id, o=>o.lost ? { nm:{ lost:false }, closure:o.found?1:0 } : { nm:{ lost:true }, closure:0, log:who+' lost Lucy. Closure lost.', color:'pain' }) };
+    const enc=n.encounters, esc=!!n.escalated, diff=esc?10:n.difficulty;
+    return { ...base, nmBoxStyle:box(esc && !n.defeated, n.defeated),
+      nmEffect:d.effect, nmWeak:d.weakness, nmClue2:d.clue2, nmClue3:d.clue3, nmEsc:d.escalation,
+      nmEnc:enc, nmDiff:diff, nmShowClue2:enc>=2, nmShowClue3:enc>=3, nmShowEsc:esc, nmFirst:enc===1, nmNoEnc:enc===0,
+      nmBadge: n.defeated ? 'CLOSURE' : esc ? 'ESCALATED' : '', nmHasBadge: n.defeated || esc,
+      nmBound:n.boundLocation||'', nmEscSw:this.gmSw(esc), nmDefSw:this.gmSw(!!n.defeated),
+      nmDiffBtn:{ ...this.tinyBtnStyleObj(), opacity:esc?0.3:1, pointerEvents:esc?'none':'auto' },
+      onNmEncInc:()=>this.setNm(id, o=>{ const e=o.encounters+1, up=e>=4 && !o.escalated, here=this.nmHereName();
+        return { nm:{ encounters:e, ...(up?{ escalated:true, difficulty:10, boundLocation:o.boundLocation||here }:{}) },
+          ...(up ? { log:name+' ESCALATES'+(here?' and is bound to '+here:'')+'.', color:'pain' } : {}) }; }),
+      onNmEncDec:()=>this.setNm(id, o=>o.encounters>0?{ nm:{ encounters:o.encounters-1 } }:null),
+      onNmDiffDec:()=>this.setNm(id, o=>o.escalated||o.difficulty<=6?null:{ nm:{ difficulty:o.difficulty-2 } }),
+      onNmDiffInc:()=>this.setNm(id, o=>o.escalated||o.difficulty>=10?null:{ nm:{ difficulty:o.difficulty+2 } }),
+      onNmEsc:()=>this.setNm(id, o=>o.escalated ? { nm:{ escalated:false } }
+        : { nm:{ escalated:true, difficulty:10, boundLocation:o.boundLocation||this.nmHereName() }, log:name+' ESCALATES.', color:'pain' }),
+      onNmBound:(e)=>this.setNm(id, ()=>({ nm:{ boundLocation:e.target.value } })),
+      onNmDef:()=>this.setNm(id, o=>o.defeated ? { nm:{ defeated:false }, closure:0 } : { nm:{ defeated:true }, closure:1, log:who+' defeated '+name+'. Closure.' }) };
+  }
+  tinyBtnStyleObj(){ return { background:'transparent', border:'1px solid oklch(0.95 0.012 85 / 0.45)', color:'oklch(0.9 0.012 85)', width:20, height:20, lineHeight:1, padding:0, cursor:'pointer', fontSize:12 }; }
   resetChar(id){ const d=(this.defaultState().characters||[]).find(x=>x.id===id)||{}, pick=k=>d[k]??0;
     const c0=this.state.characters.find(x=>x.id===id);
     const characters=this.state.characters.map(c=>c.id!==id?c:{ ...c, discipline:d.discipline??3, fight:pick('fight'), flight:pick('flight'), fightChecked:0, flightChecked:0,
-      exhaustion:pick('exhaustion'), permanentMadness:pick('permanentMadness'), crashed:false, snapped:false, lostHours:0, closure:0, statuses:[], items:[], scars:[] });
+      exhaustion:pick('exhaustion'), permanentMadness:pick('permanentMadness'), crashed:false, snapped:false, lostHours:0, closure:0, statuses:[], items:[], scars:[], nightmare:null });
     this.setState({ charResetArm:null }); this.withLog(this.nm(c0)+' was reset to starting stats.', null, { characters }); }
   resetGame(){ const characters=this.state.characters.map(c=>({ ...c, scars:(c.scars||[]).map(x=>x.recalled?{...x,recalled:false}:x) }));
     this.setState({ resetArm:false, timerDraft:null });
@@ -2786,7 +2864,7 @@ class DRYHBase extends DCLogic {
             boxShadow: sel&&sel.id===c.id ? '0 0 0 2px '+this.redBright : '0 0 0 1px oklch(0.95 0.012 85 / 0.25)',
             filter: c.disabled ? 'grayscale(1) brightness(0.3)' : 'none', opacity: c.disabled?0.6:1 } })),
           gmProtoHas: !!sel,
-          gmProto: sel ? { name: sel.shortName||sel.name, lost: sel.lostHours||0,
+          gmProto: sel ? { name: sel.shortName||sel.name, lost: sel.lostHours||0, ...this.nmView(sel),
             resetLabel: this.state.charResetArm===sel.id ? 'CONFIRM RESET' : 'RESET CHARACTER',
             onReset:()=>{ if (this.state.charResetArm===sel.id) this.resetChar(sel.id); else { this.setState({ charResetArm:sel.id }); clearTimeout(this._crt); this._crt=setTimeout(()=>this.setState({ charResetArm:null }),3000); } },
             onLostInc:()=>{ const n=(sel.lostHours||0)+1; this.withLog(this.nm(sel)+' gained Lost Hours ('+n+').','pain',{ characters:this.state.characters.map(c=>c.id===sel.id?{...c,lostHours:n}:c) }); },

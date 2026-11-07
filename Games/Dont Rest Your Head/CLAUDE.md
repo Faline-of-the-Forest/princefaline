@@ -36,3 +36,9 @@
   GM / stack requests. Every other tray replays the shared
   `pendingConflict.result` through `adopt()` (prop `shown`).
 - `actingCharId` (which protagonist you're looking at) is per screen.
+- Personal Nightmares: data in `app/js/dryh-nightmares.js` (matched by
+  `shortName`), state on each character as `nightmare` (shared, defaults filled
+  by `nmState`). Panel in GM ▸ PROTAGONISTS (`nmView`). Encounter 4 auto-escalates
+  (Difficulty locked at 10, bound to the current location); Defeated / Lucy
+  found set `closure`. Only escalation, defeat and Lucy are logged, since the
+  Record is visible to players. Rulebook ▸ NIGHTMARES holds the spoiler-free rules.

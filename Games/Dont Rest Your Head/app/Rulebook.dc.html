@@ -37,7 +37,7 @@
       <li><b>Responses:</b> Your boxes in Fight and Flight. <b>Fight</b> is how angry and aggressive you are; <b>Flight</b> is how fearful and passive you are.</li>
       <li><b>Exhaustion:</b> Starts at 0, maximum 6.</li>
       <li><b>Talents:</b> Every protagonist has three (see <a href="#" onClick="{{ go.talents }}">Talents</a>). The <b>Exhaustion Talent</b> makes you supernaturally exceptional at something you can already do. The <b>Madness Talent</b> lets you do something outside the realm of human possibility. The <b>Discipline Talent</b> changes how your dice are read, as long as you keep your composure.</li>
-      <li><b>Personal Nightmare:</b> A monster that embodies your greatest fear. Overcoming it earns <b>Closure</b> (see <a href="#" onClick="{{ go.end }}">End of Game</a>).</li>
+      <li><b>Personal Nightmare:</b> A monster that embodies your greatest fear. Overcoming it earns <b>Closure</b> (see <a href="#" onClick="{{ go.nightmares }}">Personal Nightmares</a>).</li>
     </ul>
   </sc-if>
 
@@ -152,6 +152,32 @@
     </ul>
   </sc-if>
 
+  <sc-if value="{{ is.nightmares }}" hint-placeholder-val="{{ false }}">
+    <h2 style="margin:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:38px; text-transform:uppercase; color:oklch(0.96 0.012 85);">Personal Nightmares</h2>
+    <p style="margin:0;">Each protagonist has one <b>Personal Nightmare</b>: a monster made from their greatest fear. It keeps finding them in the Mad City until they deal with it, and dealing with it is how they earn <b>Closure</b> (see <a href="#" onClick="{{ go.end }}">End of Game</a>).</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Facing It</h3>
+    <p style="margin:0;">Overcoming your Nightmare is a conflict. Its <b>Difficulty</b> starts at <b>10</b>.</p>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:4px;">
+      <li><b>Fail:</b> It retreats. The Difficulty stays the same.</li>
+      <li><b>Succeed without exploiting its weakness:</b> It retreats, and the Difficulty drops by 2 (10, then 8, then 6; never lower than 6).</li>
+      <li><b>Succeed by exploiting its weakness:</b> It is <b>defeated</b>, and you gain Closure.</li>
+    </ul>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Clues</h3>
+    <p style="margin:0;">Every Nightmare has a weakness, and it is there from the first encounter. Each time it returns, the signs get harder to miss:</p>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:4px;">
+      <li><b>Encounter 1:</b> The weakness is present, but nothing points to it.</li>
+      <li><b>Encounter 2:</b> Something in the scene hints at it.</li>
+      <li><b>Encounter 3:</b> The clue is laid out plainly.</li>
+    </ul>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Escalation</h3>
+    <p style="margin:0;">If it is still around at its <b>fourth encounter</b>, the Nightmare <b>escalates</b> into something worse. From then on:</p>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:4px;">
+      <li>Its Difficulty is locked at <b>10</b> for good.</li>
+      <li>It is bound to the location of that encounter, and that location is ruined for the rest of the game.</li>
+    </ul>
+    <p style="margin:0;">Not every Nightmare is a monster to beat. One protagonist's Closure works differently, and the GM will explain it when it matters.</p>
+  </sc-if>
+
   <sc-if value="{{ is.end }}" hint-placeholder-val="{{ false }}">
     <h2 style="margin:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:38px; text-transform:uppercase; color:oklch(0.96 0.012 85);">End of Game</h2>
     <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Marks</h3>
@@ -176,7 +202,7 @@ class Component extends DCLogic {
   bodyRef = React.createRef();
   setTab(tab){ this.setState({ tab }); if (this.bodyRef.current) this.bodyRef.current.scrollTop = 0; }
   renderVals() {
-    const T = [['protagonists','Protagonists'],['conflict','Conflict'],['talents','Talents'],['coins','Coins'],['control','Losing Control'],['scars','Scars'],['end','End of Game']];
+    const T = [['protagonists','Protagonists'],['conflict','Conflict'],['talents','Talents'],['coins','Coins'],['control','Losing Control'],['scars','Scars'],['nightmares','Nightmares'],['end','End of Game']];
     const tab = this.state.tab, embedded = !!this.props.embedded, is = {}, go = {};
     T.forEach(([k])=>{ is[k] = tab===k; go[k] = (e)=>{ if (e) e.preventDefault(); this.setTab(k); }; });
     const rows = a => a.map(([x,y,z])=>({ a:x, b:y, c:z }));
