@@ -2798,7 +2798,7 @@ class DRYHBase extends DCLogic {
           [{ label:'+2', style:modStyle(true) }], "It's no use going back to yesterday, because I was a different person then.", cl));
         if (pc.snapped) out.push({ ...mk('snapped','icons/snapped.png','Snapped','Madness has taken hold.',[],'',0), showRule:false });
         if (pc.crashed) out.push({ ...mk('crashed','icons/crashed.png','Crashed','Fast asleep.',[],'',0), showRule:false });
-        (pc.statuses||[]).forEach(st=>{ const pos = st.sign==='pos'; out.push({ ...mk('st:'+st.id, pos?'':'icons/status.png', st.name||'Status', st.desc||'No description.', [], '', 0), showRule:false, isStatus:pos, letter:(st.name||'?').trim().charAt(0) || '?' }); });
+        (pc.statuses||[]).forEach(st=>{ const pos = st.sign==='pos'; out.push({ ...mk('st:'+st.id, pos?'icons/status-pos.png':'icons/status.png', st.name||'Status', st.desc||'No description.', [], '', 0), showRule:false, isStatus:false, letter:(st.name||'?').trim().charAt(0) || '?' }); });
         const w = this.tokWin(out.length);
         return out.slice(w.off, w.off+w.cap); })(),
       ...(()=>{ const total = ((pc.lostHours||0)>0?1:0) + ((pc.closure||0)>0?1:0) + (pc.snapped?1:0) + (pc.crashed?1:0) + (pc.statuses||[]).length, w = this.tokWin(total);
