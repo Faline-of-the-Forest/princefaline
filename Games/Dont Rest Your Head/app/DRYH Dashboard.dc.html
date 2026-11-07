@@ -2594,8 +2594,8 @@ class DRYHBase extends DCLogic {
       const mods = (()=>{ const sts = pc.sts||[], item = pc.item||null, base = pc.basePain ?? pc.pain, gm = this.isGm ? this.isGm() : true, calc = this.painCalc(base, sts, item);
         const edit = !!tc && gm && !pc.result && !pc.rolling && pc.phase!=='dominant';
         const set = (fn)=>{ const cur = this.state.pendingConflict; if (!cur || cur.result) return; const ns = fn({ sts:[...(cur.sts||[])], item:cur.item||null }); this.commit({ pendingConflict:{ ...cur, sts:ns.sts, item:ns.item, pain:this.painCalc(cur.basePain ?? cur.pain, ns.sts, ns.item).pain } }); };
-        const chip = (kind, label, onToggle, onRemove)=>{ const cs = this.chipSet(kind); return { label, glyph:cs.glyph, style:{ ...cs.box, padding:0, gap:0 }, faceStyle:{ display:'inline-flex', alignItems:'center', gap:6, padding:'2px 8px 2px 3px', cursor: edit && kind!=='item' ? 'pointer' : 'default' }, dotStyle:cs.dot, onToggle, onRemove }; };
-        const chips = [ ...sts.map(x=>chip(x.sign==='pos'?'pos':'neg', x.name, ()=>{ if (edit) set(o=>({ ...o, sts:o.sts.map(y=>y.id===x.id?{ ...y, sign:y.sign==='pos'?'neg':'pos' }:y) })); }, ()=>set(o=>({ ...o, sts:o.sts.filter(y=>y.id!==x.id) })))),
+        const chip = (kind, label, onToggle, onRemove)=>{ const cs = this.chipSet(kind); return { label, glyph:cs.glyph, style:{ ...cs.box, padding:0, gap:0 }, faceStyle:{ display:'inline-flex', alignItems:'center', gap:6, padding:'2px 8px 2px 3px', cursor:'default' }, dotStyle:cs.dot, onToggle, onRemove }; };
+        const chips = [ ...sts.map(x=>chip(x.sign==='pos'?'pos':'neg', x.name, ()=>{}, ()=>set(o=>({ ...o, sts:o.sts.filter(y=>y.id!==x.id) })))),
           ...(item ? [chip('item', item.name, ()=>{}, ()=>set(o=>({ ...o, item:null })))] : []) ];
         const opts = [];
         if (edit && tc) { (tc.statuses||[]).filter(x=>!sts.some(y=>y.id===x.id)).forEach(x=>opts.push({ key:'s:'+x.id, label:(x.sign==='pos'?'+ ':'− ')+(x.name||'Status') }));
