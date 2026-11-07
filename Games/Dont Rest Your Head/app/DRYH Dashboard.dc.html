@@ -217,7 +217,8 @@
           <div style="display:flex; flex-direction:column; gap:6px; padding:12px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.15);">
             <button onClick="{{ gmSec.onStatus }}" style="display:flex; align-items:center; gap:8px; background:transparent; border:none; padding:0; cursor:pointer; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:18px; text-transform:uppercase; color:oklch(0.95 0.012 85); text-align:left;"><span style="font-size:10px; color:oklch(0.62 0.21 27); width:12px;">{{ gmSec.statusCaret }}</span><span>Status → {{ gmTargetName }}</span><span style="font-family:'Barlow',sans-serif; font-size:12px; font-weight:600; color:oklch(0.55 0.01 70);">{{ stat.countText }}</span></button>
             <sc-if value="{{ gmSec.status }}" hint-placeholder-val="{{ false }}"><div style="display:flex; flex-direction:column; gap:6px;">
-            <sc-for list="{{ stat.list }}" as="st" hint-placeholder-count="0"><div style="display:flex; align-items:center; gap:8px; min-height:28px; border-bottom:1px solid oklch(0.93 0.012 85 / 0.08);"><span style="flex:1; min-width:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px; text-transform:uppercase; color:oklch(0.9 0.01 80);">{{ st.name }}</span><button onClick="{{ st.onRemove }}" title="Remove status" style="background:transparent; border:none; padding:0 4px; color:oklch(0.5 0.01 70); font-size:15px; cursor:pointer;" style-hover="color:oklch(0.68 0.19 30);">×</button></div></sc-for>
+            <sc-for list="{{ stat.list }}" as="st" hint-placeholder-count="0"><div style="display:flex; align-items:center; gap:8px; min-height:28px; border-bottom:1px solid oklch(0.93 0.012 85 / 0.08);"><button onClick="{{ st.onSign }}" style="{{ st.signStyle }}">{{ st.signGlyph }}</button><span style="flex:1; min-width:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px; text-transform:uppercase; color:oklch(0.9 0.01 80);">{{ st.name }}</span><button onClick="{{ st.onRemove }}" title="Remove status" style="background:transparent; border:none; padding:0 4px; color:oklch(0.5 0.01 70); font-size:15px; cursor:pointer;" style-hover="color:oklch(0.68 0.19 30);">×</button></div></sc-for>
+            <div style="display:flex; gap:6px;"><button onClick="{{ stat.onNeg }}" style="{{ stat.negStyle }}">− NEGATIVE</button><button onClick="{{ stat.onPos }}" style="{{ stat.posStyle }}">+ POSITIVE</button></div>
             <input maxlength="28" value="{{ stat.draftName }}" onChange="{{ stat.onName }}" placeholder="Status name" style="height:32px; padding:0 8px; background:oklch(0.07 0.008 50); border:1px solid oklch(0.93 0.012 85 / 0.3); color:oklch(0.95 0.012 85); font-family:'Barlow',sans-serif; font-weight:600; font-size:14px;">
             <textarea rows="2" value="{{ stat.draftDesc }}" onChange="{{ stat.onDesc }}" placeholder="Description…" style="resize:vertical; padding:6px 8px; background:oklch(0.07 0.008 50); border:1px solid oklch(0.93 0.012 85 / 0.3); color:oklch(0.85 0.01 80); font-family:'Crimson Text',serif; font-style:italic; font-size:15px;"></textarea>
             <button onClick="{{ stat.onAdd }}" style="height:32px; background:transparent; border:1px solid oklch(0.68 0.19 30 / 0.7); color:oklch(0.68 0.19 30); font-family:'Barlow',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.18em; cursor:pointer;">+ ADD STATUS</button>
@@ -485,7 +486,7 @@
           <sc-for list="{{ panel.tokens }}" as="tk" hint-placeholder-count="0">
             <div style="position:relative; width:52px; height:52px; flex-shrink:0; overflow:visible; pointer-events:auto;" onMouseEnter="{{ tk.onEnter }}" onMouseLeave="{{ tk.onLeave }}">
               <sc-if value="{{ tk.img }}" hint-placeholder-val="{{ false }}"><img src="{{ tk.img }}" loading="lazy" alt="" style="display:block; width:52px; height:52px; padding:1px; object-fit:contain; overflow:visible; filter:drop-shadow(0 3px 6px rgba(0,0,0,0.8)); animation:dryh-coinpop 200ms ease-out both; cursor:default;"></sc-if>
-              <sc-if value="{{ tk.isStatus }}" hint-placeholder-val="{{ false }}"><div style="box-sizing:border-box; width:52px; height:52px; padding:2px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:oklch(0.1 0.008 50); border:2px solid oklch(0.55 0.21 27); box-shadow:0 3px 8px rgba(0,0,0,0.8); font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; line-height:1; text-transform:uppercase; color:oklch(0.95 0.012 85); animation:dryh-coinpop 200ms ease-out both; cursor:default;">{{ tk.letter }}</div></sc-if>
+              <sc-if value="{{ tk.isStatus }}" hint-placeholder-val="{{ false }}"><div style="box-sizing:border-box; width:52px; height:52px; padding:2px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:oklch(0.97 0.005 85); border:2px solid oklch(0.97 0.005 85); box-shadow:0 3px 8px rgba(0,0,0,0.8); font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; line-height:1; text-transform:uppercase; color:oklch(0.1 0.008 50); animation:dryh-coinpop 200ms ease-out both; cursor:default;">{{ tk.letter }}</div></sc-if>
               <sc-if value="{{ tk.hasCount }}" hint-placeholder-val="{{ false }}">
                 <span style="position:absolute; right:-4px; bottom:-3px; min-width:20px; height:20px; padding:0 4px; display:flex; align-items:center; justify-content:center; background:oklch(0.55 0.21 27); color:oklch(0.97 0.01 85); font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:15px; line-height:1; box-shadow:0 0 0 1.5px oklch(0.1 0.008 50);">{{ tk.count }}</span>
               </sc-if>
@@ -794,7 +795,7 @@
       <sc-if value="{{ hasPendingConflict }}" hint-placeholder-val="{{ false }}">
         <div ref="{{ trayFitRef }}" style="position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(2,2,3,0.55);">
           <div style="flex-shrink:0; width:640px; transform:{{ trayTransform }}; transform-origin:center center;">
-          <sc-if value="{{ trayOn }}" hint-placeholder-val="{{ true }}"><dc-import name="Conflict Tray" key="{{ pendingConflict.id }}" discipline="{{ pendingConflict.discipline }}" exhaustion="{{ pendingConflict.exhaustion }}" pain="{{ pendingConflict.pain }}" permanent-madness="{{ pendingConflict.perm }}" talent="{{ pendingConflict.talent }}" talent-icon="{{ pendingConflict.talentIcon }}" talent-text="{{ pendingConflict.talentText }}" reroll-req="{{ pendingConflict.rerollReq }}" stack-req="{{ pendingConflict.stackReq }}" gm-req="{{ pendingConflict.gmReq }}" dtalent="{{ pendingConflict.dtalent }}" dlevel="{{ pendingConflict.dlevel }}" on-dt-use="{{ onDtUse }}" on-pools-change="{{ onTrayPools }}" recall-mode="{{ pendingConflict.recallMode }}" on-reroll-pick="{{ onRerollPick }}" on-recall-cancel="{{ onRecallCancel }}" variant="A" control-style="Tile" interactive="{{ pendingConflict.interactive }}" badge="{{ pendingConflict.badge }}" title="{{ pendingConflict.title }}" on-result="{{ onTrayResult }}" shown="{{ trayShown }}" on-dismiss="{{ onTrayDismiss }}" hint-size="640px,480px" style="width:640px;"></dc-import></sc-if>
+          <sc-if value="{{ trayOn }}" hint-placeholder-val="{{ true }}"><dc-import name="Conflict Tray" key="{{ pendingConflict.id }}" discipline="{{ pendingConflict.discipline }}" exhaustion="{{ pendingConflict.exhaustion }}" pain="{{ pendingConflict.pain }}" mods="{{ pendingConflict.mods }}" permanent-madness="{{ pendingConflict.perm }}" talent="{{ pendingConflict.talent }}" talent-icon="{{ pendingConflict.talentIcon }}" talent-text="{{ pendingConflict.talentText }}" reroll-req="{{ pendingConflict.rerollReq }}" stack-req="{{ pendingConflict.stackReq }}" gm-req="{{ pendingConflict.gmReq }}" dtalent="{{ pendingConflict.dtalent }}" dlevel="{{ pendingConflict.dlevel }}" on-dt-use="{{ onDtUse }}" on-pools-change="{{ onTrayPools }}" recall-mode="{{ pendingConflict.recallMode }}" on-reroll-pick="{{ onRerollPick }}" on-recall-cancel="{{ onRecallCancel }}" variant="A" control-style="Tile" interactive="{{ pendingConflict.interactive }}" badge="{{ pendingConflict.badge }}" title="{{ pendingConflict.title }}" on-result="{{ onTrayResult }}" shown="{{ trayShown }}" on-dismiss="{{ onTrayDismiss }}" hint-size="640px,480px" style="width:640px;"></dc-import></sc-if>
           <sc-if value="{{ domOn }}" hint-placeholder-val="{{ false }}">
           <div style="width:640px;max-width:100%;background:oklch(0.1 0.008 50);border:1px solid oklch(0.93 0.012 85 / 0.25);box-shadow:0 26px 60px rgba(0,0,0,.75);padding:20px 26px 22px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box;">
             <div style="display:flex;align-items:baseline;gap:12px;">
@@ -1050,6 +1051,15 @@
                   <button style="{{ pb.style }}" onClick="{{ pb.onClick }}">{{ pb.n }}</button>
                 </sc-for>
               </div>
+              <sc-if value="{{ conflictModal.hasStChips }}" hint-placeholder-val="{{ false }}"><div style="margin-top:12px;">
+                <div style="font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:13px; letter-spacing:0.08em; color:oklch(0.66 0.01 70); margin-bottom:5px;">STATUSES THAT APPLY</div>
+                <div style="display:flex; flex-wrap:wrap; gap:6px;"><sc-for list="{{ conflictModal.stChips }}" as="ch" hint-placeholder-count="2"><button onClick="{{ ch.onClick }}" style="{{ ch.style }}"><span style="{{ ch.dotStyle }}">{{ ch.glyph }}</span>{{ ch.label }}</button></sc-for></div>
+              </div></sc-if>
+              <sc-if value="{{ conflictModal.hasItemChips }}" hint-placeholder-val="{{ false }}"><div style="margin-top:12px;">
+                <div style="font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:13px; letter-spacing:0.08em; color:oklch(0.66 0.01 70); margin-bottom:5px;">USEFUL ITEM · ONE · COUNTS AS +</div>
+                <div style="display:flex; flex-wrap:wrap; gap:6px;"><sc-for list="{{ conflictModal.itemChips }}" as="ch" hint-placeholder-count="2"><button onClick="{{ ch.onClick }}" style="{{ ch.style }}"><span style="{{ ch.dotStyle }}">{{ ch.glyph }}</span>{{ ch.label }}</button></sc-for></div>
+              </div></sc-if>
+              <sc-if value="{{ conflictModal.hasMods }}" hint-placeholder-val="{{ false }}"><div style="margin-top:10px; font-family:'Barlow',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.12em; color:oklch(0.9 0.01 80);">{{ conflictModal.tally }} · {{ conflictModal.painNote }} · PAIN {{ conflictModal.pain }} → {{ conflictModal.effPain }}</div></sc-if>
             </div>
           </div>
           <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:22px;">
@@ -1946,6 +1956,19 @@ class DRYHBase extends DCLogic {
             hover:{ background:'oklch(0.3 0.08 30)' } })),
           adds:[[1,'A'],[4,'J'],[5,'Q'],[6,'K']].map(([v,lb])=>({ label:lb, onClick:()=>send('add',k,v) })) }; }) };
   }
+  painCalc(base, sts, item){ const score = (sts||[]).reduce((a,x)=>a+(x.sign==='pos'?1:-1),0) + (item?1:0);
+    return { score, pain: Math.max(0, base + (score>0 ? -2 : score<0 ? 2 : 0)), changed: score!==0 }; }
+  modNote(c){ return c.score>0 ? 'MORE + · −2' : c.score<0 ? 'MORE − · +2' : ((c.n||0)?'EVEN':''); }
+  chipSet(kind, on){
+    const pos = kind==='pos' || kind==='item';
+    const base = { display:'inline-flex', alignItems:'center', gap:6, padding:'2px 8px 2px 3px', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:14, letterSpacing:'0.06em', textTransform:'uppercase', lineHeight:1.2 };
+    const box = on===false
+      ? { ...base, background:'transparent', color: pos?'oklch(0.85 0.01 80)':'oklch(0.68 0.19 30)', border:'1px solid '+(pos?'oklch(0.93 0.012 85 / 0.45)':'oklch(0.55 0.21 27 / 0.7)') }
+      : { ...base, background: pos?'oklch(0.97 0.005 85)':this.red, color: pos?'oklch(0.1 0.008 50)':'oklch(0.97 0.01 85)', border:'1px solid '+(pos?'oklch(0.97 0.005 85)':this.red) };
+    const dot = { width:16, height:16, borderRadius:'50%', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:13, lineHeight:1, fontWeight:700,
+      background: pos?'oklch(0.1 0.008 50)':'oklch(0.97 0.01 85)', color: pos?'oklch(0.97 0.005 85)':this.red };
+    return { box, dot, glyph: pos?'+':'−' };
+  }
   painLabel(n){ return ({2:'SIMPLE',4:'DIFFICULT',6:'DANGEROUS',8:'EXTREME',10:'IMPOSSIBLE'})[n] || 'CUSTOM'; }
 
   compareStrength(pools){
@@ -1993,7 +2016,7 @@ class DRYHBase extends DCLogic {
 
   openConflictModal(){
     const targetId = this.state.actingCharId || (this.state.characters[0] && this.state.characters[0].id) || null;
-    this.setState({ conflictModal:{ phase:'gm', targetId, title:'', pain:this.props.defaultPainRating ?? 4, pushExhaustion:false, madnessDice:0 } });
+    this.setState({ conflictModal:{ phase:'gm', targetId, title:'', pain:this.props.defaultPainRating ?? 4, pushExhaustion:false, madnessDice:0, sts:[], itemId:null } });
   }
   closeConflictModal(){ this.setState({ conflictModal:null }); }
   updateConflictField(patch){ this.setState(s=>({ conflictModal:{ ...s.conflictModal, ...patch } })); }
@@ -2001,7 +2024,9 @@ class DRYHBase extends DCLogic {
     const m = this.state.conflictModal; if (!m || !m.targetId) return;
     const c = this.state.characters.find(x=>x.id===m.targetId);
     this.setState({ conflictModal:null });
-    this.withLog((c?(c.shortName||c.name):'Someone').toUpperCase()+' is challenged: '+(m.title||'an unnamed conflict')+'.', null, { pendingConflict:{ id:Date.now(), targetId:m.targetId, title:m.title, pain:m.pain, resolved:false } });
+    const sts = c ? (c.statuses||[]).filter(x=>(m.sts||[]).includes(x.id)).map(x=>({ id:x.id, name:x.name||'Status', sign:x.sign==='pos'?'pos':'neg' })) : [];
+    const itm = c ? (c.items||[]).find(x=>x.id===m.itemId) : null, item = itm ? { id:itm.id, name:itm.name||'Item' } : null, calc = this.painCalc(m.pain, sts, item);
+    this.withLog((c?(c.shortName||c.name):'Someone').toUpperCase()+' is challenged: '+(m.title||'an unnamed conflict')+(calc.changed?' (Pain '+m.pain+' → '+calc.pain+')':'')+'.', null, { pendingConflict:{ id:Date.now(), targetId:m.targetId, title:m.title, pain:calc.pain, basePain:m.pain, sts, item, resolved:false } });
   }
   resolveTrayConflict(r){
     const pc = this.state.pendingConflict; if (!pc) return;
@@ -2551,13 +2576,35 @@ class DRYHBase extends DCLogic {
         effectiveExhaustion: targetChar ? targetChar.exhaustion + (conflictModal.pushExhaustion?1:0) : 0,
         charOptions: s.characters.map(c=>({ id:c.id, name:c.shortName||c.name })),
         painButtons: painButtonsFor(conflictModal.pain, (n)=>this.updateConflictField({ pain:n })),
+        ...(()=>{ const cm = conflictModal, chs = targetChar ? (targetChar.statuses||[]) : [], its = targetChar ? (targetChar.items||[]) : [];
+          const selS = chs.filter(x=>(cm.sts||[]).includes(x.id)), selI = its.find(x=>x.id===cm.itemId) || null, calc = this.painCalc(cm.pain, selS, selI);
+          const mk = (kind, on, label, onClick)=>{ const cs = this.chipSet(kind, on); return { label, glyph:cs.glyph, style:{ ...cs.box, cursor:'pointer' }, dotStyle:cs.dot, onClick }; };
+          return { stChips: chs.map(x=>mk(x.sign==='pos'?'pos':'neg', (cm.sts||[]).includes(x.id), x.name||'Status', ()=>this.updateConflictField({ sts: (cm.sts||[]).includes(x.id) ? cm.sts.filter(i=>i!==x.id) : [...(cm.sts||[]), x.id] }))),
+            hasStChips: chs.length>0,
+            itemChips: its.map(x=>mk('item', cm.itemId===x.id, x.name||'Item', ()=>this.updateConflictField({ itemId: cm.itemId===x.id ? null : x.id }))),
+            hasItemChips: its.length>0,
+            effPain: calc.pain, hasMods: calc.changed || !!(selS.length||selI), painNote: this.modNote({ ...calc, n:selS.length+(selI?1:0) }),
+            tally: selS.filter(x=>x.sign!=='pos').map(()=>'−').concat(selS.filter(x=>x.sign==='pos').map(()=>'+'), selI?['+']:[]).join(' ') }; })(),
       };
     }
 
     let pendingView = null;
     if (s.pendingConflict){
       const pc = s.pendingConflict, tc = s.characters.find(c=>c.id===pc.targetId);
-      if (tc) pendingView = { id:pc.id, discipline:tc.discipline, exhaustion:tc.exhaustion, pain:pc.pain, perm:tc.permanentMadness||0, talent:pc.talent||null,
+      const mods = (()=>{ const sts = pc.sts||[], item = pc.item||null, base = pc.basePain ?? pc.pain, gm = this.isGm ? this.isGm() : true, calc = this.painCalc(base, sts, item);
+        const edit = !!tc && gm && !pc.result && !pc.rolling && pc.phase!=='dominant';
+        const set = (fn)=>{ const cur = this.state.pendingConflict; if (!cur || cur.result) return; const ns = fn({ sts:[...(cur.sts||[])], item:cur.item||null }); this.commit({ pendingConflict:{ ...cur, sts:ns.sts, item:ns.item, pain:this.painCalc(cur.basePain ?? cur.pain, ns.sts, ns.item).pain } }); };
+        const chip = (kind, label, onToggle, onRemove)=>{ const cs = this.chipSet(kind); return { label, glyph:cs.glyph, style:{ ...cs.box, padding:0, gap:0 }, faceStyle:{ display:'inline-flex', alignItems:'center', gap:6, padding:'2px 8px 2px 3px', cursor: edit && kind!=='item' ? 'pointer' : 'default' }, dotStyle:cs.dot, onToggle, onRemove }; };
+        const chips = [ ...sts.map(x=>chip(x.sign==='pos'?'pos':'neg', x.name, ()=>{ if (edit) set(o=>({ ...o, sts:o.sts.map(y=>y.id===x.id?{ ...y, sign:y.sign==='pos'?'neg':'pos' }:y) })); }, ()=>set(o=>({ ...o, sts:o.sts.filter(y=>y.id!==x.id) })))),
+          ...(item ? [chip('item', item.name, ()=>{}, ()=>set(o=>({ ...o, item:null })))] : []) ];
+        const opts = [];
+        if (edit && tc) { (tc.statuses||[]).filter(x=>!sts.some(y=>y.id===x.id)).forEach(x=>opts.push({ key:'s:'+x.id, label:(x.sign==='pos'?'+ ':'− ')+(x.name||'Status') }));
+          (tc.items||[]).filter(x=>!item || item.id!==x.id).forEach(x=>opts.push({ key:'i:'+x.id, label:'Item: '+(x.name||'Item')+(item?' (replaces)':'') })); }
+        return { show: chips.length>0 || (edit && opts.length>0), edit, chips, opts, basePain:base, pain:pc.pain, changed:calc.changed, note:this.modNote({ ...calc, n:chips.length }),
+          onAdd: (e)=>{ const k = String(e.target.value||''); e.target.value=''; if (!k || !tc) return;
+            set(o=>{ if (k[0]==='s') { const x = (tc.statuses||[]).find(y=>'s:'+y.id===k); return x ? { ...o, sts:[...o.sts, { id:x.id, name:x.name||'Status', sign:x.sign==='pos'?'pos':'neg' }] } : o; }
+              const it = (tc.items||[]).find(y=>'i:'+y.id===k); return it ? { ...o, item:{ id:it.id, name:it.name||'Item' } } : o; }); } }; })();
+      if (tc) pendingView = { id:pc.id, mods, discipline:tc.discipline, exhaustion:tc.exhaustion, pain:pc.pain, perm:tc.permanentMadness||0, talent:pc.talent||null,
         talentIcon: pc.talent==='raise'?'uploads/ChatGPT Image Sep 26, 2026, 11_37_35 PM-44c4c912.png':'uploads/ChatGPT Image Sep 26, 2026, 11_35_11 PM-2420647d.png', talentText: pc.talent==='raise'?'Push Yourself, increasing your Exhaustion by 1, and roll as normal, then add a number of successes to your roll equal to your new Exhaustion level.':'Roll as normal and count your successes. If the total is lower than your current Exhaustion level, raise it to equal your Exhaustion.', rerollReq:pc.rerollReq||null, stackReq:pc.stackReq||null, gmReq:pc.gmReq||null, domOn:pc.phase==='dominant',
         dtalent: ({'Relapse':'relapse','Greedy Guts':'greedy','Wheel and Deal':'wheel','Tough Crowd':'tough','Cut Your Losses':'cut','Making It Right':'making'})[String(tc.disciplineTalent||'').split('\n')[0].trim()]||null,
         dlevel: tc.discipline===3?'composed':tc.discipline===2?'frayed':null, recallMode: !!(s.recallPick && pc.result), title:pc.title||'An unnamed conflict',
@@ -2751,7 +2798,7 @@ class DRYHBase extends DCLogic {
           [{ label:'+2', style:modStyle(true) }], "It's no use going back to yesterday, because I was a different person then.", cl));
         if (pc.snapped) out.push({ ...mk('snapped','icons/snapped.png','Snapped','Madness has taken hold.',[],'',0), showRule:false });
         if (pc.crashed) out.push({ ...mk('crashed','icons/crashed.png','Crashed','Fast asleep.',[],'',0), showRule:false });
-        (pc.statuses||[]).forEach(st=>out.push({ ...mk('st:'+st.id, 'icons/status.png', st.name||'Status', st.desc||'No description.', [], '', 0), showRule:false, isStatus:false, letter:(st.name||'?').trim().charAt(0) || '?' }));
+        (pc.statuses||[]).forEach(st=>{ const pos = st.sign==='pos'; out.push({ ...mk('st:'+st.id, pos?'':'icons/status.png', st.name||'Status', st.desc||'No description.', [], '', 0), showRule:false, isStatus:pos, letter:(st.name||'?').trim().charAt(0) || '?' }); });
         const w = this.tokWin(out.length);
         return out.slice(w.off, w.off+w.cap); })(),
       ...(()=>{ const total = ((pc.lostHours||0)>0?1:0) + ((pc.closure||0)>0?1:0) + (pc.snapped?1:0) + (pc.crashed?1:0) + (pc.statuses||[]).length, w = this.tokWin(total);
@@ -2999,10 +3046,15 @@ class DRYHBase extends DCLogic {
       gmSec: { item: !!s.gmSecItem, status: !!s.gmSecStatus, itemCaret: s.gmSecItem ? '▼' : '▶', statusCaret: s.gmSecStatus ? '▼' : '▶',
         onItem: ()=>this.setState({ gmSecItem: !s.gmSecItem }), onStatus: ()=>this.setState({ gmSecStatus: !s.gmSecStatus }) },
       stat: (()=>{ const list = (pc && pc.statuses) || [];
-        return { countText: list.length ? String(list.length) : '', list: list.map(st=>({ name: st.name||'Status', onRemove: ()=>{ this.withLog(this.nm(pc)+' lost status '+(st.name||'Status')+'.', null, { characters: this.state.characters.map(c=>c.id===pc.id ? { ...c, statuses: list.filter(x=>x.id!==st.id) } : c) }); this.popItem('STATUS LOST · '+this.nm(pc), st.name||'Status', st.desc||'', true, 'icons/status.png'); } })),
+        const setSign = (st, sign)=>this.commit({ characters: this.state.characters.map(c=>c.id===pc.id ? { ...c, statuses: list.map(x=>x.id===st.id ? { ...x, sign } : x) } : c) });
+        const dSign = s.statDraftSign==='pos' ? 'pos' : 'neg', sgBtn = (on, pos)=>({ flex:1, height:28, cursor:'pointer', fontFamily:"'Barlow',sans-serif", fontWeight:700, fontSize:11, letterSpacing:'0.14em', background: on ? (pos?'oklch(0.97 0.005 85)':this.red) : 'transparent', color: on ? (pos?'oklch(0.1 0.008 50)':'oklch(0.97 0.01 85)') : 'oklch(0.7 0.01 80)', border:'1px solid '+(on?(pos?'oklch(0.97 0.005 85)':this.red):'oklch(0.93 0.012 85 / 0.3)') });
+        return { countText: list.length ? String(list.length) : '',
+          onNeg: ()=>this.setState({ statDraftSign:'neg' }), onPos: ()=>this.setState({ statDraftSign:'pos' }), negStyle: sgBtn(dSign==='neg', false), posStyle: sgBtn(dSign==='pos', true),
+          list: list.map(st=>({ name: st.name||'Status', signGlyph: st.sign==='pos'?'+':'−', onSign: ()=>setSign(st, st.sign==='pos'?'neg':'pos'),
+            signStyle: { width:22, height:22, padding:0, borderRadius:'50%', cursor:'pointer', fontWeight:700, fontSize:14, lineHeight:1, border:'none', background: st.sign==='pos'?'oklch(0.97 0.005 85)':this.red, color: st.sign==='pos'?'oklch(0.1 0.008 50)':'oklch(0.97 0.01 85)' }, onRemove: ()=>{ this.withLog(this.nm(pc)+' lost status '+(st.name||'Status')+'.', null, { characters: this.state.characters.map(c=>c.id===pc.id ? { ...c, statuses: list.filter(x=>x.id!==st.id) } : c) }); this.popItem('STATUS LOST · '+this.nm(pc), st.name||'Status', st.desc||'', true, 'icons/status.png'); } })),
           draftName: s.statDraftName||'', draftDesc: s.statDraftDesc||'',
           onName: e=>this.setState({ statDraftName: e.target.value }), onDesc: e=>this.setState({ statDraftDesc: e.target.value }),
-          onAdd: ()=>{ const nm = (s.statDraftName||'').trim(); if (!nm || !pc) return; this.setState({ statDraftName:'', statDraftDesc:'' }); this.withLog(this.nm(pc)+' gained status '+nm+'.', null, { characters: this.state.characters.map(c=>c.id===pc.id ? { ...c, statuses: [...list, { id: Date.now(), name: nm, desc: (s.statDraftDesc||'').trim() }] } : c) }); this.popItem('STATUS GAINED · '+this.nm(pc), nm, (s.statDraftDesc||'').trim(), false, 'icons/status.png'); } }; })(),
+          onAdd: ()=>{ const nm = (s.statDraftName||'').trim(); if (!nm || !pc) return; this.setState({ statDraftName:'', statDraftDesc:'' }); this.withLog(this.nm(pc)+' gained status '+nm+'.', null, { characters: this.state.characters.map(c=>c.id===pc.id ? { ...c, statuses: [...list, { id: Date.now(), name: nm, desc: (s.statDraftDesc||'').trim(), sign: s.statDraftSign==='pos'?'pos':'neg' }] } : c) }); this.popItem('STATUS GAINED · '+this.nm(pc), nm, (s.statDraftDesc||'').trim(), false, 'icons/status.png'); } }; })(),
       notes: (()=>{
         const list = (pc && pc.notes) || [], n = list.length, i = n ? Math.min(s.notesIdx||0, n-1) : 0, cur = list[i] || { title:'', body:'' };
         const st = this.props.notesStyle ?? 'Pages', view = (s.notesView==='edit' && n) ? 'edit' : 'list';
@@ -3099,7 +3151,7 @@ class DRYHBase extends DCLogic {
       conflictModalOpen, conflictIsGmPhase, conflictIsPlayerPhase, conflictModal: conflictModalView,
       conflictNextDisabled: !(conflictModal && conflictModal.targetId),
       modalLabelStyle, modalInputStyle, modalSelectStyle, modalGhostBtnStyle, modalPrimaryBtnStyle, modalRollBtnStyle,
-      onConflictTargetChange: (e)=>this.updateConflictField({ targetId:e.target.value }),
+      onConflictTargetChange: (e)=>this.updateConflictField({ targetId:e.target.value, sts:[], itemId:null }),
       onConflictTitleChange: (e)=>this.updateConflictField({ title:e.target.value }),
       onCancelConflict: ()=>this.closeConflictModal(),
       onGoPlayerPhase: ()=>this.goPlayerPhase(),
@@ -3144,7 +3196,7 @@ const MP_LOCAL = new Set(['actingCharId','sheetCharId','clockOpen','dragOver','c
   'sbSection','notesOpen','notesIdx','notesView','notesConfirm','invOpen','invGm','invIdx','tokOff','tokH','trayScale','cityV','cityPop','cityOpen',
   'cityFocus','citySj','citySjHover','citySjRect','cityHover','citySubArm','rulesOpen','dragging','itemPop','breathFlash','breathPick','recallPick',
   'kingPick','scarModal','scarHover','hopeHover','tokenHover','resetArm','charResetArm','gmProtoSel','gmSecItem','gmSecStatus','statDraftName',
-  'statDraftDesc','mpUnstickArm','timerDraft','invDraftName','invDraftFlavor','lawNoun','lawAction','lawReq','lawKind','lawYear','lawSec']);
+  'statDraftDesc','statDraftSign','mpUnstickArm','timerDraft','invDraftName','invDraftFlavor','lawNoun','lawAction','lawReq','lawKind','lawYear','lawSec']);
 const MP_EXTRA = ['prologue','pendingConflict','lastResult','laws','screen','hereRef','hereTick','timerRunning','timerStart','timerElapsed','cityAct','unstickAt'];
 const MP_HOLD_MS = 2500;
 class Component extends DRYHBase {

@@ -60,6 +60,10 @@
       <sc-for list="{{ painRows }}" as="r" hint-placeholder-count="5"><b style="padding:6px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.12); font-family:'Barlow Condensed',sans-serif; font-size:20px; color:oklch(0.68 0.19 30);">{{ r.a }}</b><span style="padding:6px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.12);">{{ r.b }}</span></sc-for>
     </div>
     <p style="margin:0;">When several obstacles or opponents act together, take the highest rating and add +1 for each additional one, or +2 for each one whose rating equals the leader's.</p>
+    <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Statuses and Items</h3>
+    <p style="margin:0;">A <b>status</b> is either <b>negative</b> (red) or <b>positive</b> (white). When a conflict begins, the GM may name the statuses that apply to it, and one <b>useful item</b> the protagonist has equipped. Each negative status counts as <b>&minus;</b>, each positive status as <b>+</b>, and an item always counts as <b>+</b>.</p>
+    <p style="margin:0;">If there are more <b>+</b> than <b>&minus;</b>, the Pain is lowered by 2. If there are more <b>&minus;</b>, the Pain is raised by 2, so a Pain of 10 can become 12. An even count changes nothing. Pain can drop to 0: the player still rolls, and must beat 0, which is far from guaranteed but not hard.</p>
+    <p style="margin:0;">The conflict tray shows the statuses and the item, the original Pain and the changed one. Only the GM may change them, live, if a player argues an item is useful or that a status would or wouldn&rsquo;t apply.</p>
     <h3 style="margin:14px 0 0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:oklch(0.68 0.19 30);">Successes</h3>
     <p style="margin:0;">Every <b>Ace</b> is one success. The total number of successes on a side is its <b>degree</b>. If the player meets or beats the GM's degree, they win the conflict.</p>
     <div style="display:grid; grid-template-columns:90px 1fr; border-top:1px solid oklch(0.93 0.012 85 / 0.2);">
