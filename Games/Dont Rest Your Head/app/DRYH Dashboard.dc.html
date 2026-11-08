@@ -8,6 +8,7 @@
 <script src="./js/dryh-prologues.js"></script>
 <script src="./js/dryh-nightmares.js"></script>
 <script src="./js/dryh-pregens.js"></script>
+<script src="./js/dryh-bazaar.js"></script>
 <script src="./js/madcity-seed.js"></script>
 <script src="./js/madcity-io.js"></script>
 <script>try { if (!localStorage.getItem('dryh_madcity_map_v1') && window.DRYH_MADCITY_SEED) localStorage.setItem('dryh_madcity_map_v1', JSON.stringify(window.DRYH_MADCITY_SEED)); } catch (e) {}</script>
@@ -374,6 +375,24 @@
                 <button aria-label="Remove law" onClick="{{ lw.onRemove }}" style="flex-shrink:0; background:transparent; border:none; color:oklch(0.55 0.01 70); font-size:16px; line-height:1; cursor:pointer; padding:0;" style-hover="color:oklch(0.97 0.01 85);">×</button>
               </div>
             </sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ gmIsBazaar }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1; min-height:0; overflow-y:auto; padding:0 16px 40px; display:flex; flex-direction:column; scrollbar-width:thin; scrollbar-color:oklch(0.93 0.012 85 / 0.25) transparent;">
+          <div style="display:flex; flex-direction:column; gap:8px; padding:14px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.15);">
+            <span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.22em; color:oklch(0.6 0.01 70);">THE SHELF · 2 × ●● · 3 × ●</span>
+            <div style="display:flex; gap:8px;"><button onClick="{{ bzGm.shuffle }}" style="{{ bzGm.shuffleStyle }}">SHUFFLE</button><button onClick="{{ bzGm.display }}" style="{{ bzGm.displayStyle }}">{{ bzGm.displayLabel }}</button></div>
+            <sc-if value="{{ bzGm.noShelf }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Barlow',sans-serif; font-size:12px; color:oklch(0.6 0.01 70);">Shuffle to stock the shelf.</span></sc-if>
+            <sc-for list="{{ bzGm.shelf }}" as="it" hint-placeholder-count="0"><div style="display:flex; align-items:center; gap:8px; min-height:26px; border-bottom:1px solid oklch(0.93 0.012 85 / 0.08);"><span style="width:26px; color:oklch(0.68 0.19 30); font-size:11px;">{{ it.cost }}</span><span style="flex:1; min-width:0; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px; text-transform:uppercase; color:oklch(0.9 0.01 80);">{{ it.name }}</span><sc-if value="{{ it.sold }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Barlow',sans-serif; font-weight:700; font-size:10px; letter-spacing:0.18em; color:oklch(0.68 0.19 30);">SOLD</span></sc-if></div></sc-for>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; padding:14px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.15);">
+            <span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.22em; color:oklch(0.6 0.01 70);">ABLE TO BUY</span>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;"><sc-for list="{{ bzGm.buyers }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button></sc-for></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px; padding:14px 0;">
+            <span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.22em; color:oklch(0.6 0.01 70);">ALL ITEMS · {{ bzGm.boughtCount }} BOUGHT</span>
+            <sc-for list="{{ bzGm.all }}" as="it" hint-placeholder-count="3"><div style="display:flex; align-items:flex-start; gap:8px; padding:4px 0; border-bottom:1px solid oklch(0.93 0.012 85 / 0.08);"><span style="width:26px; padding-top:3px; color:oklch(0.68 0.19 30); font-size:11px;">{{ it.cost }}</span><div style="flex:1; min-width:0; display:flex; flex-direction:column;"><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px; text-transform:uppercase; color:oklch(0.9 0.01 80);">{{ it.name }}</span><span style="font-family:'Crimson Text',serif; font-size:13px; line-height:1.3; color:oklch(0.7 0.01 75);">{{ it.effect }}</span></div><button onClick="{{ it.onToggle }}" style="{{ it.tagStyle }}">{{ it.tag }}</button></div></sc-for>
           </div>
         </div>
       </sc-if>
@@ -1021,6 +1040,25 @@
     </div>
   </sc-if>
 
+  <sc-if value="{{ bzOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(2,2,3,0.7);">
+      <div style="max-width:100%; max-height:100%; overflow:auto; display:flex; flex-direction:column; align-items:center; gap:14px;">
+        <div style="display:flex; align-items:baseline; gap:16px;"><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:40px; line-height:1; text-transform:uppercase; color:oklch(0.96 0.012 85);">The Bizarre Bazaar</span><span onClick="{{ bzClose }}" style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:oklch(0.66 0.01 70); cursor:pointer;" style-hover="color:oklch(0.95 0.012 85)">CLOSE ✕</span></div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:2px;"><span style="font-family:'Barlow',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.2em; color:oklch(0.8 0.01 80);">{{ bzWho }}</span><span style="font-family:'Crimson Text',serif; font-style:italic; font-size:15px; color:oklch(0.66 0.01 70);">{{ bzWhoNote }}</span></div>
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:12px;">
+          <sc-for list="{{ bzCards }}" as="c" hint-placeholder-count="5"><div style="{{ c.cardStyle }}">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;"><span style="color:oklch(0.68 0.19 30); font-size:14px; letter-spacing:0.1em;">{{ c.cost }}</span><span style="font-family:'Barlow',sans-serif; font-weight:700; font-size:10px; letter-spacing:0.18em; color:oklch(0.6 0.01 70);">{{ c.costText }}</span></div>
+            <span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; line-height:1; text-transform:uppercase; color:oklch(0.96 0.012 85); text-wrap:balance;">{{ c.name }}</span>
+            <span style="font-family:'Crimson Text',serif; font-style:italic; font-size:15px; color:oklch(0.72 0.01 75);">{{ c.form }}</span>
+            <span style="flex:1; font-family:'Crimson Text',serif; font-size:15px; line-height:1.35; color:oklch(0.88 0.01 80);">{{ c.effect }}</span>
+            <sc-if value="{{ c.showBuy }}" hint-placeholder-val="{{ true }}"><button onClick="{{ c.onBuy }}" style="{{ c.buyStyle }}">{{ c.buyLabel }}</button></sc-if>
+            <sc-if value="{{ c.sold }}" hint-placeholder-val="{{ false }}"><span style="align-self:center; font-family:'Rubik Mono One',sans-serif; font-size:18px; padding:4px 12px; border:3px double oklch(0.68 0.19 30); color:oklch(0.68 0.19 30); transform:rotate(-4deg);">SOLD</span></sc-if>
+          </div></sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <sc-if value="{{ itemPop.show }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed; inset:0; z-index:90; display:flex; align-items:center; justify-content:center; pointer-events:none;">
       <div key="{{ itemPop.key }}" style="min-width:300px; max-width:440px; padding:20px 30px 22px; background:oklch(0.1 0.008 50); border:1px solid oklch(0.93 0.012 85 / 0.45); box-shadow:0 20px 60px rgba(0,0,0,0.85); display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; animation:dryh-coinpop 260ms ease-out both;">
@@ -1321,6 +1359,7 @@ class DRYHBase extends DCLogic {
       conflictModal: null,
       lastResult: null,
       pendingConflict: null,
+      bazaar: { shelf:[], bought:{}, buyers:{}, shown:false, n:0 },
     };
   }
 
@@ -1789,6 +1828,58 @@ class DRYHBase extends DCLogic {
     if (r.closure!=null) patch.closure=r.closure;
     const characters=this.state.characters.map(x=>x.id===id?{ ...x, ...patch }:x);
     if (r.log) this.withLog(r.log, r.color||null, { characters }); else this.commit({ characters }); }
+  // ---- Bizarre Bazaar. Data: js/dryh-bazaar.js; shared state: bazaar.
+  bz(){ const b = this.state.bazaar || {}; return { shelf:b.shelf||[], bought:b.bought||{}, buyers:b.buyers||{}, shown:!!b.shown, n:b.n||0 }; }
+  bzSet(patch){ this.commit({ bazaar:{ ...this.bz(), ...patch } }); }
+  bzShuffle(){
+    const all = window.DRYH_BAZAAR||[], b = this.bz(), free = all.filter(x=>!b.bought[x.id]);
+    const pick = (list, n)=>{ const a = list.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a.slice(0,n); };
+    const two = free.filter(x=>x.cost===2), pin = two.filter(x=>x.pinned), rest2 = two.filter(x=>!x.pinned);
+    const shelf = [ ...pin.slice(0,2), ...pick(rest2, 2-Math.min(2,pin.length)), ...pick(free.filter(x=>x.cost===1), 3) ].map(x=>x.id);
+    this.bzSet({ shelf });
+  }
+  bzBuy(itemId, cid){
+    const it = (window.DRYH_BAZAAR||[]).find(x=>x.id===itemId), b = this.bz(), c = this.state.characters.find(x=>x.id===cid);
+    if (!it || !c || !b.shown || !b.buyers[cid] || b.bought[itemId] || !b.shelf.includes(itemId) || (c.discipline||0)-it.cost < 0) return;
+    const items = [...(c.items||[]), { id: Date.now()+Math.random(), name: it.name.slice(0,28), flavor: (it.effect.length>90 ? it.effect.slice(0,89).trimEnd()+'…' : it.effect) }];
+    const left = (c.discipline||0)-it.cost, crash = left===0 && !c.crashed;
+    const characters = this.state.characters.map(x=>x.id===cid ? { ...x, discipline:left, items, ...(left===0 ? { crashed:true } : {}) } : x);
+    const log = [ ...(crash ? [this.logEntry(this.nm(c)+' has Crashed.', 'pain')] : []), this.logEntry(this.nm(c)+' bought '+it.name+' at the Bizarre Bazaar for '+it.cost+' Discipline.', null), ...this.state.log ].slice(0,60);
+    this.commit({ characters, log, bazaar:{ ...b, bought:{ ...b.bought, [itemId]:true } } });
+    this.popItem('BOUGHT BY '+this.nm(c), it.name, it.effect, false);
+  }
+  bzVals(){
+    const s = this.state, b = this.bz(), all = window.DRYH_BAZAAR||[], byId = id=>all.find(x=>x.id===id);
+    const me = s.characters.find(c=>c.id===s.actingCharId) || null, gm = this.isGm ? this.isGm() : true;
+    const dots = n=>'●'.repeat(n);
+    const btn = (on, red)=>({ height:32, padding:'0 12px', cursor:'pointer', fontFamily:"'Barlow',sans-serif", fontWeight:700, fontSize:12, letterSpacing:'0.16em',
+      background: on ? (red?this.red:'oklch(0.97 0.005 85)') : 'transparent', color: on ? (red?'oklch(0.97 0.01 85)':'oklch(0.1 0.008 50)') : 'oklch(0.85 0.01 80)',
+      border:'1px solid '+(on ? (red?this.red:'oklch(0.97 0.005 85)') : 'oklch(0.93 0.012 85 / 0.35)') });
+    const meCan = !!(me && b.buyers[me.id]);
+    const cards = b.shelf.map(byId).filter(Boolean).map(it=>{ const sold = !!b.bought[it.id], afford = !!me && (me.discipline||0)-it.cost >= 0, can = meCan && !sold && afford;
+      return { name:it.name, form:it.form, effect:it.effect, cost:dots(it.cost), costText:it.cost+' DISCIPLINE', sold, showBuy:!sold && meCan,
+        buyLabel: afford ? 'BUY' : 'NOT ENOUGH',
+        buyStyle:{ ...btn(can, true), width:'100%', cursor: can?'pointer':'default', opacity: can?1:0.45 },
+        cardStyle:{ width:200, minHeight:250, display:'flex', flexDirection:'column', gap:8, padding:'16px 16px 14px', background:'oklch(0.1 0.008 50)',
+          border:'1px solid '+(it.cost===2?'oklch(0.68 0.19 30 / 0.7)':'oklch(0.93 0.012 85 / 0.35)'), opacity: sold?0.5:1 },
+        onBuy: ()=>{ if (can) this.bzBuy(it.id, me.id); } }; });
+    return {
+      bzOn: b.shown && b.shelf.length>0 && s.bzHideN!==b.n && !!this.state.characters.length,
+      bzCards: cards, bzWho: me ? 'BUYING AS '+this.nm(me).toUpperCase()+' · DISCIPLINE '+(me.discipline||0) : 'PICK A PROTAGONIST TO BUY',
+      bzWhoNote: me && !meCan ? 'Not able to buy here.' : 'Buying spends Discipline. Spending your last point means you Crash.',
+      bzClose: ()=>this.setState({ bzHideN: b.n }),
+      bzGm: {
+        shuffle: ()=>this.bzShuffle(), shuffleStyle: btn(false),
+        displayLabel: b.shown ? 'HIDE' : 'DISPLAY', displayStyle: btn(b.shown, true), noShelf: !b.shelf.length,
+        display: ()=>{ if (!b.shelf.length) return; this.bzSet(b.shown ? { shown:false } : { shown:true, n:Date.now() }); },
+        buyers: s.characters.map(c=>({ label:(c.shortName||c.name).toUpperCase(), style:{ ...btn(!!b.buyers[c.id]), height:28, fontSize:11 },
+          onClick: ()=>this.bzSet({ buyers:{ ...b.buyers, [c.id]: !b.buyers[c.id] } }) })),
+        shelf: b.shelf.map(byId).filter(Boolean).map(it=>({ name:it.name, cost:dots(it.cost), sold: !!b.bought[it.id] })),
+        all: all.map(it=>({ name:it.name, cost:dots(it.cost), effect:it.effect, bought: !!b.bought[it.id], onShelf: b.shelf.includes(it.id),
+          tag: b.bought[it.id] ? 'BOUGHT' : 'IN STOCK', tagStyle:{ ...btn(!!b.bought[it.id], true), height:24, fontSize:10, padding:'0 8px', flexShrink:0 },
+          onToggle: ()=>{ const bought = { ...b.bought }; if (bought[it.id]) delete bought[it.id]; else bought[it.id] = true; this.bzSet({ bought }); } })),
+        boughtCount: Object.keys(b.bought).length } };
+  }
   pgView(sel){
     const d = (window.DRYH_PREGENS||[]).find(x=>x.protagonist===sel.shortName); if (!d) return { pgHas:false };
     const hv = this.state.pgHover, defs = [['fight','FIGHT'],['flight','FLIGHT'],['becoming','BECOMING']];
@@ -3047,16 +3138,16 @@ class DRYHBase extends DCLogic {
             background: this.red, color:'oklch(0.97 0.01 85)', border:'none', boxShadow:'-4px 4px 14px rgba(0,0,0,0.6)',
             clipPath:'polygon(0 0, 100% 0, 100% 100%, 0 100%, 22% 50%)', paddingLeft:4 },
           onToggleGm: ()=>this.setState({ gmOpen: !this.state.gmOpen }),
-          gmTabs: [['screen','Screen'],['game','Game'],['protagonists','Protagonists'],['city','Mad City'],['laws','Laws'],['conflict','Conflict']].map(([k,l])=>({ label:l.toUpperCase(),
+          gmTabs: [['screen','Screen'],['game','Game'],['protagonists','Protagonists'],['city','Mad City'],['laws','Laws'],['bazaar','Bazaar'],['conflict','Conflict']].map(([k,l])=>({ label:l.toUpperCase(),
             onClick: ()=>this.setState({ gmTab:k }),
             style:{ fontFamily:"'Barlow',sans-serif", fontSize:11, letterSpacing:'0.1em', padding:'8px 0', marginRight:11, flexShrink:0, whiteSpace:'nowrap', background:'transparent', border:'none', cursor:'pointer',
               borderBottom:'2px solid '+(tab===k?this.red:'transparent'), color: tab===k?'oklch(0.95 0.012 85)':'oklch(0.6 0.01 70)' } })),
-          gmIsScreen: tab==='screen', gmIsGame: tab==='game', gmIsOther: tab==='protagonists', gmIsCity: tab==='city', gmIsLaws: tab==='laws', gmIsConflict: tab==='conflict', ...this.dbgVals(), ...this.cityVals(),
+          gmIsScreen: tab==='screen', gmIsGame: tab==='game', gmIsOther: tab==='protagonists', gmIsCity: tab==='city', gmIsLaws: tab==='laws', gmIsBazaar: tab==='bazaar', gmIsConflict: tab==='conflict', ...this.dbgVals(), ...this.cityVals(),
           tokRef: this.tokRef, gmTargetName: pc ? (pc.shortName||pc.name).toUpperCase() : '—',
           gmLostSwitch: sw(pc && (pc.lostHours||0)>0), gmClosureSwitch: sw(pc && (pc.closure||0)>0),
         };
       })(),
-      law: this.lawVals(),
+      law: this.lawVals(), ...this.bzVals(),
       gmSec: { item: !!s.gmSecItem, status: !!s.gmSecStatus, itemCaret: s.gmSecItem ? '▼' : '▶', statusCaret: s.gmSecStatus ? '▼' : '▶',
         onItem: ()=>this.setState({ gmSecItem: !s.gmSecItem }), onStatus: ()=>this.setState({ gmSecStatus: !s.gmSecStatus }) },
       stat: (()=>{ const list = (pc && pc.statuses) || [];
@@ -3210,8 +3301,8 @@ const MP_LOCAL = new Set(['actingCharId','sheetCharId','clockOpen','dragOver','c
   'sbSection','notesOpen','notesIdx','notesView','notesConfirm','invOpen','invGm','invIdx','tokOff','tokH','trayScale','cityV','cityPop','cityOpen',
   'cityFocus','citySj','citySjHover','citySjRect','cityHover','citySubArm','rulesOpen','dragging','itemPop','breathFlash','breathPick','recallPick',
   'kingPick','scarModal','scarHover','hopeHover','tokenHover','resetArm','charResetArm','gmProtoSel','gmSecItem','gmSecStatus','statDraftName',
-  'statDraftDesc','statDraftSign','pgHover','mpUnstickArm','timerDraft','invDraftName','invDraftFlavor','lawNoun','lawAction','lawReq','lawKind','lawYear','lawSec']);
-const MP_EXTRA = ['prologue','pendingConflict','lastResult','laws','screen','hereRef','hereTick','timerRunning','timerStart','timerElapsed','cityAct','unstickAt'];
+  'statDraftDesc','statDraftSign','pgHover','bzHideN','mpUnstickArm','timerDraft','invDraftName','invDraftFlavor','lawNoun','lawAction','lawReq','lawKind','lawYear','lawSec']);
+const MP_EXTRA = ['bazaar','prologue','pendingConflict','lastResult','laws','screen','hereRef','hereTick','timerRunning','timerStart','timerElapsed','cityAct','unstickAt'];
 const MP_HOLD_MS = 2500;
 class Component extends DRYHBase {
   mpKeys(){

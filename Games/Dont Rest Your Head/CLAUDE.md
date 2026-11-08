@@ -42,3 +42,7 @@
   (Difficulty locked at 10, bound to the current location); Defeated / Lucy
   found set `closure`. Only escalation, defeat and Lucy are logged, since the
   Record is visible to players. Rulebook ▸ NIGHTMARES stays vague on purpose: no clue timing, no escalation details.
+- Bizarre Bazaar: stock in `app/js/dryh-bazaar.js` (from the GM's xlsx; the King's
+  Summons is `pinned`, always on the shelf until bought). Shared state `bazaar`
+  {shelf, bought, buyers, shown, n}; GM ▸ BAZAAR shuffles/displays/toggles. Buying
+  costs Discipline; spending down to 0 Crashes them. CLOSE is per screen (`bzHideN`).
