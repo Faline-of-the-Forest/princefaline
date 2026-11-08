@@ -12,7 +12,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, setDoc, onSnapshot, runTransaction, serverTimestamp,
+  getFirestore, doc, getDoc, setDoc, updateDoc, deleteField, onSnapshot, runTransaction, serverTimestamp,
   collection, getDocs, query, where, limit
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
@@ -146,3 +146,90 @@ async function boot() {
   return Net;
 }
 window.__dryhNet = boot().catch((e) => { console.error("[dryh] offline", e); Net.offline = true; return Net; });
+
+// ---------------------------------------------------------------- who's online
+// A draggable, foldable window listing everyone in the room. Each screen writes
+// {name, color, role, ts} into `rooms/dryh-<code>-online` (a map keyed by session)
+// every 20s; anyone silent for 60s drops off. Name/color/position are per browser.
+const ON_PAL = ["oklch(0.55 0.21 27)", "oklch(0.68 0.19 30)", "#f0555e", "oklch(0.95 0.012 85)", "#eef2f4", "oklch(0.66 0.01 70)",
+  "#7ba0f5", "#3b6fe0", "#63d06d", "#2f9a3a", "#ffd65c", "oklch(0.8 0.1 195)"];
+const ON_KEY = "dryh-online-ui";
+const onCss = `
+#dryh-on{position:fixed;z-index:9002;width:220px;background:oklch(0.1 0.008 50);border:1px solid oklch(0.93 0.012 85 / 0.3);box-shadow:0 14px 40px rgba(0,0,0,.7);font-family:'Barlow',sans-serif;color:oklch(0.9 0.01 80);user-select:none}
+#dryh-on .hd{display:flex;align-items:center;gap:8px;padding:7px 8px 7px 10px;cursor:grab;border-bottom:1px solid oklch(0.93 0.012 85 / 0.15)}
+#dryh-on.min .hd{border-bottom:none}
+#dryh-on .sw{width:14px;height:14px;border-radius:50%;flex-shrink:0;cursor:pointer;border:1px solid rgba(0,0,0,.5)}
+#dryh-on .me{flex:1;min-width:0;font:700 16px 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:text}
+#dryh-on input{flex:1;min-width:0;height:24px;padding:0 6px;background:oklch(0.07 0.008 50);border:1px solid oklch(0.93 0.012 85 / 0.4);color:oklch(0.97 0.01 85);font:700 15px 'Barlow Condensed',sans-serif;text-transform:uppercase}
+#dryh-on .n{font:600 10px 'Barlow',sans-serif;letter-spacing:.16em;color:oklch(0.6 0.01 70)}
+#dryh-on .fold{background:transparent;border:none;color:oklch(0.7 0.01 80);font-size:16px;line-height:1;cursor:pointer;padding:0 2px}
+#dryh-on .pal{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px 10px;border-bottom:1px solid oklch(0.93 0.012 85 / 0.15)}
+#dryh-on .pal span{aspect-ratio:1;border-radius:50%;cursor:pointer;border:1px solid rgba(0,0,0,.5)}
+#dryh-on .pal span.on{outline:2px solid oklch(0.97 0.01 85);outline-offset:1px}
+#dryh-on .ls{padding:6px 10px 8px;display:flex;flex-direction:column;gap:4px;max-height:240px;overflow:auto}
+#dryh-on .ls div{display:flex;align-items:center;gap:8px;font:700 15px 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em}
+#dryh-on .ls i{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+#dryh-on .ls em{margin-left:auto;font:600 9px 'Barlow',sans-serif;font-style:normal;letter-spacing:.2em;color:oklch(0.6 0.01 70)}
+#dryh-on.min .pal,#dryh-on.min .ls{display:none}
+`;
+function onUi() { try { return JSON.parse(localStorage.getItem(ON_KEY) || "{}"); } catch (e) { return {}; } }
+function onSave(p) { try { localStorage.setItem(ON_KEY, JSON.stringify(Object.assign(onUi(), p))); } catch (e) {} }
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+async function online(net) {
+  if (!net || !net.room || net.offline) return;
+  await authReady;
+  const oref = doc(db, "rooms", "dryh-" + net.room + "-online");
+  const ui = onUi(), gm = net.role === "gm";
+  let me = { name: (ui.name || (gm ? "GM" : "Player")).slice(0, 20), color: ON_PAL.includes(ui.color) ? ui.color : ON_PAL[gm ? 0 : 3] };
+  let people = {}, palOpen = false, editing = false;
+  const s2 = document.createElement("style"); s2.textContent = onCss; document.head.appendChild(s2);
+  const w = document.createElement("div"); w.id = "dryh-on"; if (ui.min) w.classList.add("min");
+  const place = (x, y) => { x = Math.max(0, Math.min(window.innerWidth - 220, x)); y = Math.max(0, Math.min(window.innerHeight - 36, y)); w.style.left = x + "px"; w.style.top = y + "px"; return { x, y }; };
+  document.body.appendChild(w);
+  place(ui.x ?? window.innerWidth - 236, ui.y ?? 70);
+
+  const beat = () => setDoc(oref, { game: "dryh", people: { [sid]: { name: me.name, color: me.color, role: net.role, ts: Date.now() } } }, { merge: true })
+    .catch((e) => console.error("[dryh] online beat failed", e));
+  const live = () => { const now = Date.now();
+    const L = Object.entries(people).filter(([k, p]) => p && k !== sid && now - (p.ts || 0) < 60000).map(([, p]) => p);
+    L.push({ name: me.name, color: me.color, role: net.role });
+    return L.sort((x, y) => ((y.role === "gm") - (x.role === "gm")) || String(x.name).localeCompare(String(y.name))); };
+
+  const render = () => {
+    if (editing) return;
+    const L = live();
+    w.innerHTML = `<div class="hd"><span class="sw" style="background:${me.color}"></span><span class="me" style="color:${me.color}">${esc(me.name)}</span><span class="n">${L.length}</span><button class="fold">${w.classList.contains("min") ? "▢" : "–"}</button></div>`
+      + (palOpen ? `<div class="pal">${ON_PAL.map((c) => `<span data-c="${c}" class="${c === me.color ? "on" : ""}" style="background:${c}"></span>`).join("")}</div>` : "")
+      + `<div class="ls">${L.map((p) => `<div style="color:${p.color}"><i style="background:${p.color}"></i>${esc(p.name)}${p.role === "gm" ? "<em>GM</em>" : ""}</div>`).join("")}</div>`;
+    w.querySelector(".sw").onclick = (e) => { e.stopPropagation(); palOpen = !palOpen; if (palOpen) { w.classList.remove("min"); onSave({ min: false }); } render(); };
+    w.querySelector(".fold").onclick = (e) => { e.stopPropagation(); w.classList.toggle("min"); onSave({ min: w.classList.contains("min") }); render(); };
+    w.querySelectorAll(".pal span").forEach((el) => { el.onclick = () => { me.color = el.dataset.c; onSave({ color: me.color }); palOpen = false; render(); beat(); }; });
+    w.querySelector(".me").onclick = (e) => {
+      e.stopPropagation(); editing = true;
+      const inp = document.createElement("input"); inp.maxLength = 20; inp.value = me.name; e.target.replaceWith(inp); inp.focus(); inp.select();
+      const done = (ok) => { if (!editing) return; editing = false; const v = inp.value.trim(); if (ok && v) { me.name = v.slice(0, 20); onSave({ name: me.name }); beat(); } render(); };
+      inp.onkeydown = (k) => { k.stopPropagation(); if (k.key === "Enter") done(true); if (k.key === "Escape") done(false); };
+      inp.onblur = () => done(true); inp.onpointerdown = (k) => k.stopPropagation();
+    };
+  };
+
+  // drag by the header
+  w.addEventListener("pointerdown", (e) => {
+    if (!e.target.closest(".hd") || e.target.closest(".sw,.fold,.me,input")) return;
+    const r = w.getBoundingClientRect(), ox = e.clientX - r.left, oy = e.clientY - r.top, hd = w.querySelector(".hd");
+    hd.style.cursor = "grabbing"; w.setPointerCapture(e.pointerId);
+    const mv = (m) => place(m.clientX - ox, m.clientY - oy);
+    const up = (u) => { w.removeEventListener("pointermove", mv); w.removeEventListener("pointerup", up); hd.style.cursor = ""; onSave(place(u.clientX - ox, u.clientY - oy)); };
+    w.addEventListener("pointermove", mv); w.addEventListener("pointerup", up);
+  });
+  window.addEventListener("resize", () => { const r = w.getBoundingClientRect(); place(r.left, r.top); });
+
+  onSnapshot(oref, (snap) => { people = (snap.exists() && snap.data().people) || {}; render(); }, (e) => console.error("[dryh] online watch failed", e));
+  render(); beat();
+  setInterval(beat, 20000);
+  setInterval(render, 15000);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") beat(); });
+  window.addEventListener("pagehide", () => { updateDoc(oref, { ["people." + sid]: deleteField() }).catch(() => {}); });
+}
+window.__dryhNet.then(online);

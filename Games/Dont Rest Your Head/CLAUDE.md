@@ -46,3 +46,7 @@
   Summons is `pinned`, always on the shelf until bought). Shared state `bazaar`
   {shelf, bought, buyers, shown, n}; GM ▸ BAZAAR shuffles/displays/toggles. Buying
   costs Discipline; spending down to 0 Crashes them. CLOSE is per screen (`bzHideN`).
+- Who's online: bottom of `app/js/dryh-net.js`. Draggable/foldable window; each
+  screen heartbeats {name,color,role,ts} into `rooms/dryh-<code>-online` (map
+  `people` keyed by session) every 20s, 60s silence = offline. Name, color (12-swatch
+  palette), position and fold state live in `localStorage['dryh-online-ui']`.
