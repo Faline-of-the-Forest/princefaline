@@ -70,24 +70,6 @@
       "logo": "/app-logo/logo_baktosterrifyingcuisine.png",
       "url": "/games/baktos-terifying-cuisine/",
       "host": "princefaline.com/games/baktos-terifying-cuisine"
-    },
-    {
-      "t": "Eat the Reich",
-      "c": "Eat the Reich",
-      "sys": "Eat the Reich",
-      "kind": "Playset",
-      "players": "4–6",
-      "tags": [
-        "Playset",
-        "Abridged"
-      ],
-      "note": "An abridged playset dashboard for Eat the Reich.",
-      "shelfDesc": "Vampire commandos parachute into occupied Paris to drink Hitler. Sheets for all six.",
-      "icon": "/app-icons/icon_eatthereich.jpg",
-      "logo": "/app-logo/logo_eatthereich.png",
-      "logoStyle": "white",
-      "url": "/games/eat-the-reich/",
-      "host": "princefaline.com/games/eat-the-reich"
     }
   ]
 }
