@@ -6,7 +6,11 @@
       "sys": "Don't Rest Your Head",
       "kind": "Dashboard",
       "players": "3–6",
-      "tags": ["multiplayer", "GM screen", "live sync"],
+      "tags": [
+        "multiplayer",
+        "GM screen",
+        "live sync"
+      ],
       "note": "A live table for Mad City: protagonists, Despair and Hope, conflicts, the Mad City map and the GM screen, synced for everyone.",
       "shelfDesc": "Insomniacs lost in the Mad City. Exhaustion, Madness, Pain and the clock, all on one shared screen.",
       "icon": "/app-icons/icon_dontrestyourhead.jpg",
@@ -37,7 +41,12 @@
       "sys": "CBR+PNK",
       "kind": "Playset",
       "players": "3",
-      "tags": ["Scenario collection", "Mind the Gap", "PRDTR", "Basilisk"],
+      "tags": [
+        "Scenario collection",
+        "Mind the Gap",
+        "PRDTR",
+        "Basilisk"
+      ],
       "note": "A scenario collection for CBR+PNK, gathering Mind the Gap, PRDTR and Basilisk in one dashboard.",
       "shelfDesc": "Three cyberpunk jobs gathered into one dashboard: Mind the Gap, PRDTR and Basilisk.",
       "icon": "/app-icons/icon_cbr-pnk.jpg",
@@ -52,7 +61,9 @@
       "sys": "Knave [2e]",
       "kind": "Playset",
       "players": "3–5",
-      "tags": ["The Vanilla Game"],
+      "tags": [
+        "The Vanilla Game"
+      ],
       "note": "A Knave one-shot dashboard for Bakto's Terifying Cuisine, including The Vanilla Game.",
       "shelfDesc": "A kitchen dungeon beneath a mad chef's restaurant. Recipes, reactions, and one very bad night in the pantry.",
       "icon": "/app-icons/icon_bakto.jpg",
@@ -66,7 +77,10 @@
       "sys": "Eat the Reich",
       "kind": "Playset",
       "players": "4–6",
-      "tags": ["Playset", "Abridged"],
+      "tags": [
+        "Playset",
+        "Abridged"
+      ],
       "note": "An abridged playset dashboard for Eat the Reich.",
       "shelfDesc": "Vampire commandos parachute into occupied Paris to drink Hitler. Sheets for all six.",
       "icon": "/app-icons/icon_eatthereich.jpg",
@@ -81,7 +95,10 @@
       "sys": "Jim Henson's Labyrinth",
       "kind": "Playset",
       "players": "3–6",
-      "tags": ["Playset", "Abridged"],
+      "tags": [
+        "Playset",
+        "Abridged"
+      ],
       "note": "An abridged playset dashboard for Jim Henson's Labyrinth.",
       "shelfDesc": "Thirteen hours to reach the centre. A live clock tracks every trade and every trick.",
       "icon": "/app-icons/icon_jimhensonslabyrinth.jpg",
@@ -96,7 +113,12 @@
       "sys": "Ghostbusters",
       "kind": "Playset",
       "players": "3–5",
-      "tags": ["Scenario collection", "Hot Rods of the Gods", "Scared Stiffs", "Ghost Toasties"],
+      "tags": [
+        "Scenario collection",
+        "Hot Rods of the Gods",
+        "Scared Stiffs",
+        "Ghost Toasties"
+      ],
       "note": "A scenario collection for Ghostbusters, gathering Hot Rods of the Gods, Scared Stiffs and Ghost Toasties.",
       "shelfDesc": "Ghost dice, brownie points and the paperwork of the Los Angeles franchise.",
       "icon": "/app-icons/icon_ghostbusters.jpg",
@@ -110,7 +132,9 @@
       "sys": "Something Is Wrong With This House",
       "kind": "Playset",
       "players": "2–4",
-      "tags": ["Playset"],
+      "tags": [
+        "Playset"
+      ],
       "note": "A playset dashboard for Something Is Wrong With This House.",
       "shelfDesc": "A haunted house drawn room by room, filling in as the players make it worse.",
       "icon": "/app-icons/icon_somethingiswrongwiththishouse.jpg",
@@ -118,20 +142,6 @@
       "logoStyle": "white",
       "url": "/games/something-is-wrong-with-this-house/",
       "host": "princefaline.com/games/something-is-wrong-with-this-house"
-    },
-    {
-      "t": "Everyone Is John",
-      "c": "Everyone Is John",
-      "sys": "Everyone is John",
-      "kind": "Playset",
-      "players": "3–5",
-      "tags": ["Scenario collection", "Evil Dead", "Die Hard", "Alien Invasion"],
-      "note": "A scenario collection for Everyone Is John, gathering Evil Dead, Die Hard and Alien Invasion.",
-      "shelfDesc": "Several voices bid for control of one very unstable man named John.",
-      "icon": "/app-icons/icon_everyoneisjohn.jpg",
-      "logo": "/app-logo/logo_everyoneisjohn.png",
-      "url": "/games/everyone-is-john/",
-      "host": "princefaline.com/games/everyone-is-john"
     }
   ]
 }
