@@ -34,26 +34,6 @@
       "logo": "/app-logo/logo_tokyobrainpop.png",
       "url": "/games/tokyo-brain-pop/",
       "host": "princefaline.com/games/tokyo-brain-pop"
-    },
-    {
-      "t": "CBR+PNK",
-      "c": "CBR+PNK",
-      "sys": "CBR+PNK",
-      "kind": "Playset",
-      "players": "3",
-      "tags": [
-        "Scenario collection",
-        "Mind the Gap",
-        "PRDTR",
-        "Basilisk"
-      ],
-      "note": "A scenario collection for CBR+PNK, gathering Mind the Gap, PRDTR and Basilisk in one dashboard.",
-      "shelfDesc": "Three cyberpunk jobs gathered into one dashboard: Mind the Gap, PRDTR and Basilisk.",
-      "icon": "/app-icons/icon_cbr-pnk.jpg",
-      "logo": "/app-logo/logo_cbr-pnk.png",
-      "logoStyle": "white",
-      "url": "/games/cbr-pnk/",
-      "host": "princefaline.com/games/cbr-pnk"
     }
   ]
 }
