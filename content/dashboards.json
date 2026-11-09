@@ -14,21 +14,15 @@
     },
     {
       "t": "Tokyo Brain Pop!?",
-      "c": "Tokyo Brain Pop",
-      "sys": "Tokyo Brain Pop",
-      "kind": "Playset",
-      "players": "3–5",
+      "c": "Tokyo Brain Pop!?",
+      "sys": "Tokyo Brain Pop!?",
       "tags": [
-        "multiplayer",
-        "GM screen",
-        "live sync"
+        "3-4 players",
+        "Playset"
       ],
-      "note": "A real-time room for the whole table: character select, Demon selection, Scene Control, Drama and the Class Vote, all synced live.",
-      "shelfDesc": "Neon idols and psychic weirdness. Moves, clocks and countdowns, all on one screen.",
-      "icon": "/app-icons/icon_tokyobrainpop.jpg",
-      "logo": "/app-logo/logo_tokyobrainpop.png",
+      "note": "Demons hunt Atarashi High, where schoolgirls with PSI abilities must fight side by side with their friends and rivals, hiding their powers to avoid becoming outcasts.",
       "url": "/games/tokyo-brain-pop/",
-      "host": "princefaline.com/games/tokyo-brain-pop"
+      "host": ""
     }
   ]
 }
