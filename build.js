@@ -140,7 +140,7 @@ ${FONT_LINK}
   <header style="position:sticky;top:0;z-index:30;background:#F6F1E4;border-bottom:2px solid #24211B">
     <div style="max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 22px">
       <a href="/" style="display:flex;align-items:center;gap:11px;margin-right:auto">
-        <img src="/uploads/faline-s-rpg-guild-icon-1024.webp" alt="" style="display:block;width:34px;height:34px">
+        <img src="/assets/wordmark.webp" alt="Prince Faline's RPG Diaries" style="display:block;height:38px;width:auto">
       </a>
       <nav style="display:flex;flex-wrap:wrap;gap:4px">${nav(active)}</nav>
     </div>
@@ -148,14 +148,6 @@ ${FONT_LINK}
   <main style="max-width:1180px;margin:0 auto;padding:0 20px">
 ${body}
   </main>
-  <footer style="border-top:2px solid #24211B;margin-top:20px;background:#EDE7D6">
-    <div style="max-width:1180px;margin:0 auto;padding:26px 20px;display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between;align-items:flex-end">
-      <div>
-        <img src="/assets/wordmark.webp" alt="Prince Faline's RPG Diaries" style="display:block;height:44px;width:auto">
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px">${nav("").replace(/font:400 18px/g, "font:400 16.1px")}</div>
-    </div>
-  </footer>
 </div>
 </body>
 </html>`;
@@ -614,9 +606,9 @@ function renderReviewDetail(r) {
 }
 
 // ---------- GAMES ----------
-const GAME_KINDS = ["Dashboard", "Playset", "Character sheets"];
+const GAME_KINDS = ["Dashboard", "Playset", "Character Sheet"];
 const GAME_FILTERS = ["All", "Dashboards", "Playsets", "Character Sheets"];
-const GAME_FILTER_KIND = { Dashboards: "Dashboard", Playsets: "Playset", "Character Sheets": "Character sheets" };
+const GAME_FILTER_KIND = { Dashboards: "Dashboard", Playsets: "Playset", "Character Sheets": "Character Sheet" };
 
 function renderGames() {
   const sorted = dashboards.slice().sort((a, b) => a.t.localeCompare(b.t));
@@ -643,7 +635,6 @@ function renderGames() {
     <div style="margin:34px 0 26px">
       <div id="gm-eyebrow" style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${dashboards.length} apps</div>
       <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">Games</h1>
-      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0 0 22px">The interactive character sheets, playsets and dashboards I build for the games I run.</p>
       ${distinctKinds > 1 ? `<div style="display:flex;flex-wrap:wrap;gap:7px">${filterBtns}</div>` : ""}
     </div>
     <div id="gm-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:26px 24px;padding-bottom:56px">${tiles}</div>
@@ -695,7 +686,7 @@ function renderAppStub(d) {
         </div>
       </div>
       <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0 0 18px">${esc(d.note)}</p>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:26px">${(d.tags || []).map(t => `<span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">${esc(t)}</span>`).join("")}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:26px">${[d.kind, d.players ? d.players + " players" : ""].filter(Boolean).map(t => `<span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">${esc(t)}</span>`).join("")}</div>
       <div style="border:2px dashed #C8BFA6;background:#FBF8EF;padding:26px;font:400 17px/1.4 'EB Garamond',serif;color:#8A836F">This dashboard is in the works — check back soon.</div>
     </div>`;
   write(`games/${slug}/index.html`, layout({ title: d.t + " — Prince Faline's RPG Diaries", active: "Games", body, description: d.note }));

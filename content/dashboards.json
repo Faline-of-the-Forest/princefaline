@@ -4,25 +4,28 @@
       "t": "Don't Rest Your Head",
       "c": "Don't Rest Your Head",
       "sys": "Don't Rest Your Head",
-      "tags": [
-        "1-8 players",
-        "Dashboard"
-      ],
       "note": "London, 2006. You haven’t slept in weeks, and now you’ve slipped through the cracks into the Mad City. Madness has given you strange powers, but here, Nightmares hunt people like you.",
       "url": "/games/dont-rest-your-head/",
-      "host": ""
+      "host": "",
+      "kind": "Dashboard",
+      "players": "1–8",
+      "shelfDesc": "Insomniacs lost in the Mad City. Exhaustion, Madness, Pain and the clock, all on one shared screen.",
+      "icon": "/app-icons/icon_dontrestyourhead.jpg",
+      "logo": "/app-logo/logo_dontrestyourhead.png",
+      "logoStyle": "white"
     },
     {
       "t": "Tokyo Brain Pop!?",
       "c": "Tokyo Brain Pop!?",
       "sys": "Tokyo Brain Pop!?",
-      "tags": [
-        "3-4 players",
-        "Playset"
-      ],
       "note": "Demons hunt Atarashi High, where schoolgirls with PSI abilities must fight side by side with their friends and rivals, hiding their powers to avoid becoming outcasts.",
       "url": "/games/tokyo-brain-pop/",
-      "host": ""
+      "host": "",
+      "kind": "Playset",
+      "players": "3–4",
+      "shelfDesc": "Neon idols and psychic weirdness. Moves, clocks and countdowns, all on one screen.",
+      "icon": "/app-icons/icon_tokyobrainpop.jpg",
+      "logo": "/app-logo/logo_tokyobrainpop.png"
     }
   ]
 }

@@ -254,7 +254,7 @@ async function handleApi(request, env, url) {
       const file = await getFile("content/dashboards.json", env);
       const rec = {
         t: body.t, c: body.c, sys: body.sys,
-        tags: (body.tags || "").split(",").map(s => s.trim()).filter(Boolean),
+        kind: body.kind || "", players: body.players || "",
         note: body.note, url: body.url, host: body.host || "",
       };
       if (body.index !== undefined && body.index !== "") {
@@ -538,7 +538,8 @@ function adminPage() {
       <label>Title</label><input name="t" required>
       <label>Campaign</label><input name="c" required>
       <label>System</label><input name="sys" required>
-      <label>Tags (comma-separated)</label><input name="tags">
+      <label>Type</label><select name="kind"><option>Dashboard</option><option>Playset</option><option>Character Sheet</option></select>
+      <label>Players (e.g. 3–5)</label><input name="players">
       <label>Note</label><textarea name="note"></textarea>
       <label>Live URL</label><input name="url" required>
     </form>
