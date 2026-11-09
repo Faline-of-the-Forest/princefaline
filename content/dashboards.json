@@ -106,25 +106,6 @@
       "logoStyle": "white",
       "url": "/games/jim-hensons-labyrinth/",
       "host": "princefaline.com/games/jim-hensons-labyrinth"
-    },
-    {
-      "t": "Ghostbusters",
-      "c": "Ghostbusters",
-      "sys": "Ghostbusters",
-      "kind": "Playset",
-      "players": "3–5",
-      "tags": [
-        "Scenario collection",
-        "Hot Rods of the Gods",
-        "Scared Stiffs",
-        "Ghost Toasties"
-      ],
-      "note": "A scenario collection for Ghostbusters, gathering Hot Rods of the Gods, Scared Stiffs and Ghost Toasties.",
-      "shelfDesc": "Ghost dice, brownie points and the paperwork of the Los Angeles franchise.",
-      "icon": "/app-icons/icon_ghostbusters.jpg",
-      "logo": "/app-logo/logo_ghostbusters.png",
-      "url": "/games/ghostbusters/",
-      "host": "princefaline.com/games/ghostbusters"
     }
   ]
 }
