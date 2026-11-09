@@ -548,7 +548,7 @@ function adminPage() {
       <img class="thumb hidden" id="thumb-logo" style="background:#24211B;object-fit:contain">
       <input name="logoFile" type="file" accept="image/*">
       <label>Logo colour</label><select name="logoStyle"><option value="">Dark / black logo (inverted to light)</option><option value="white">White / light logo</option></select>
-      <label>Note</label><textarea name="note"></textarea>
+      <label>Description (max 110 characters, so it fits the tile) <span id="note-count" style="color:var(--faint)"></span></label><textarea name="note" maxlength="110" rows="3" oninput="document.getElementById('note-count').textContent=this.value.length+'/110'"></textarea>
       <label>Live URL</label><input name="url" required>
     </form>
 
