@@ -9,7 +9,6 @@
       "host": "",
       "kind": "Dashboard",
       "players": "1–8",
-      "shelfDesc": "Insomniacs lost in the Mad City. Exhaustion, Madness, Pain and the clock, all on one shared screen.",
       "icon": "/app-icons/icon_dontrestyourhead.jpg",
       "logo": "/app-logo/logo_dontrestyourhead.png",
       "logoStyle": "white"
@@ -23,7 +22,6 @@
       "host": "",
       "kind": "Playset",
       "players": "3–4",
-      "shelfDesc": "Neon idols and psychic weirdness. Moves, clocks and countdowns, all on one screen.",
       "icon": "/app-icons/icon_tokyobrainpop.jpg",
       "logo": "/app-logo/logo_tokyobrainpop.png"
     }

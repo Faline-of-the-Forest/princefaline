@@ -258,7 +258,7 @@ async function handleApi(request, env, url) {
         note: body.note, url: body.url, host: body.host || "",
       };
       if (body.index !== undefined && body.index !== "") {
-        file.content.dashboards[Number(body.index)] = rec;
+        file.content.dashboards[Number(body.index)] = { ...file.content.dashboards[Number(body.index)], ...rec };
       } else {
         file.content.dashboards.push(rec);
       }

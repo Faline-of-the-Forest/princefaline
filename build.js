@@ -617,7 +617,7 @@ function renderGames() {
     <div class="gm-panel" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2%;padding:6% 7%;background:radial-gradient(120% 90% at 50% 50%,rgba(22,18,13,.58) 0%,rgba(22,18,13,.9) 100%)">
       ${d.logo ? `<img src="${d.logo}" alt="${esc(d.t)}" class="gm-logo" style="display:block;max-width:98%;max-height:52%;width:auto;height:auto;object-fit:contain;filter:${d.logoStyle === "white" ? "brightness(0) invert(1)" : "grayscale(1) invert(1)"};flex:0 1 auto">` : `<div style="font:400 22px/1.2 'EB Garamond',serif;color:#F6F1E4">${esc(d.t)}</div>`}
       <div class="gm-line" style="width:15%;height:1px;background:#C4553F;flex:none"></div>
-      <div class="gm-desc" style="max-width:92%;font:400 13.5px/1.4 'EB Garamond',serif;color:#D9D1BE;text-wrap:pretty;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">${esc(d.shelfDesc || d.note)}</div>
+      <div class="gm-desc" style="max-width:92%;font:400 13.5px/1.4 'EB Garamond',serif;color:#D9D1BE;text-wrap:pretty;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">${esc(d.note || "")}</div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:none">
         ${d.players ? `<span style="font:500 9px 'EB Garamond',serif;letter-spacing:.14em;text-transform:uppercase;color:#A79E8B">${esc(d.players)} players</span>` : ""}
         <span style="font:400 13.5px/1 'EB Garamond',serif;color:#E08A72;white-space:nowrap">▸ ${esc(d.kind || "Game")}</span>
