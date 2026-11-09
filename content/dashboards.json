@@ -54,22 +54,6 @@
       "logoStyle": "white",
       "url": "/games/cbr-pnk/",
       "host": "princefaline.com/games/cbr-pnk"
-    },
-    {
-      "t": "Bakto's Terifying Cuisine",
-      "c": "Bakto's Terifying Cuisine",
-      "sys": "Knave [2e]",
-      "kind": "Playset",
-      "players": "3–5",
-      "tags": [
-        "The Vanilla Game"
-      ],
-      "note": "A Knave one-shot dashboard for Bakto's Terifying Cuisine, including The Vanilla Game.",
-      "shelfDesc": "A kitchen dungeon beneath a mad chef's restaurant. Recipes, reactions, and one very bad night in the pantry.",
-      "icon": "/app-icons/icon_bakto.jpg",
-      "logo": "/app-logo/logo_baktosterrifyingcuisine.png",
-      "url": "/games/baktos-terifying-cuisine/",
-      "host": "princefaline.com/games/baktos-terifying-cuisine"
     }
   ]
 }
