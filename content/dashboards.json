@@ -88,24 +88,6 @@
       "logoStyle": "white",
       "url": "/games/eat-the-reich/",
       "host": "princefaline.com/games/eat-the-reich"
-    },
-    {
-      "t": "Jim Henson's Labyrinth",
-      "c": "Jim Henson's Labyrinth",
-      "sys": "Jim Henson's Labyrinth",
-      "kind": "Playset",
-      "players": "3–6",
-      "tags": [
-        "Playset",
-        "Abridged"
-      ],
-      "note": "An abridged playset dashboard for Jim Henson's Labyrinth.",
-      "shelfDesc": "Thirteen hours to reach the centre. A live clock tracks every trade and every trick.",
-      "icon": "/app-icons/icon_jimhensonslabyrinth.jpg",
-      "logo": "/app-logo/logo_labyrinth.png",
-      "logoStyle": "white",
-      "url": "/games/jim-hensons-labyrinth/",
-      "host": "princefaline.com/games/jim-hensons-labyrinth"
     }
   ]
 }
