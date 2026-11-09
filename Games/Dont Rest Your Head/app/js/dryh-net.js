@@ -12,7 +12,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, setDoc, updateDoc, deleteField, onSnapshot, runTransaction, serverTimestamp,
+  getFirestore, doc, getDoc, getDocFromServer, setDoc, updateDoc, deleteField, onSnapshot, runTransaction, serverTimestamp,
   collection, getDocs, query, where, limit
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
@@ -63,12 +63,36 @@ const Net = {
       .catch((e) => console.error("[dryh] push failed", e));
     return this._chain;
   },
+  // The listener can die (error) or go quiet (stalled connection) without the
+  // page knowing, which used to need a refresh. So: resubscribe on error, and a
+  // watchdog reads the doc from the server every 10s (and on focus / back
+  // online); if it's newer than what we last got, apply it and resubscribe.
   subscribe(cb) {
-    return onSnapshot(ref(this.room), { includeMetadataChanges: true }, (snap) => {
+    const room = this.room; let un = null, lastAt = 0, dead = false;
+    const take = (snap) => {
       if (snap.metadata.hasPendingWrites) return;
       if (!snap.exists()) { if (!snap.metadata.fromCache) cb(null); return; }
-      cb(snap.data(), snap.metadata.fromCache);
-    });
+      const d = snap.data(); if (!snap.metadata.fromCache) lastAt = Math.max(lastAt, d.at || 0);
+      cb(d, snap.metadata.fromCache);
+    };
+    const listen = () => {
+      if (dead) return; if (un) un();
+      un = onSnapshot(ref(room), { includeMetadataChanges: true }, take, (e) => {
+        console.error("[dryh] room watch failed, retrying", e); un = null; setTimeout(listen, 2000);
+      });
+    };
+    const check = async () => {
+      if (dead || document.visibilityState === "hidden") return;
+      try {
+        const s = await getDocFromServer(ref(room));
+        if (s.exists() && (s.data().at || 0) > lastAt) { console.warn("[dryh] room watch was stale, resyncing"); take(s); listen(); }
+      } catch (e) {}
+    };
+    listen();
+    const iv = setInterval(check, 10000);
+    const wake = () => { check(); };
+    document.addEventListener("visibilitychange", wake); window.addEventListener("online", wake); window.addEventListener("focus", wake);
+    return () => { dead = true; clearInterval(iv); if (un) un(); document.removeEventListener("visibilitychange", wake); window.removeEventListener("online", wake); window.removeEventListener("focus", wake); };
   },
   // ---- backups: browser (last 40) + cloud (never overwritten) ----
   localBackups() { try { return JSON.parse(localStorage.getItem(B_KEY) || "[]"); } catch (e) { return []; } },
