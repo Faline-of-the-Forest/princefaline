@@ -125,23 +125,6 @@
       "logo": "/app-logo/logo_ghostbusters.png",
       "url": "/games/ghostbusters/",
       "host": "princefaline.com/games/ghostbusters"
-    },
-    {
-      "t": "Something Is Wrong With This House",
-      "c": "Something Is Wrong With This House",
-      "sys": "Something Is Wrong With This House",
-      "kind": "Playset",
-      "players": "2–4",
-      "tags": [
-        "Playset"
-      ],
-      "note": "A playset dashboard for Something Is Wrong With This House.",
-      "shelfDesc": "A haunted house drawn room by room, filling in as the players make it worse.",
-      "icon": "/app-icons/icon_somethingiswrongwiththishouse.jpg",
-      "logo": "/app-logo/logo_somethingiswrongwiththishouse.png",
-      "logoStyle": "white",
-      "url": "/games/something-is-wrong-with-this-house/",
-      "host": "princefaline.com/games/something-is-wrong-with-this-house"
     }
   ]
 }
