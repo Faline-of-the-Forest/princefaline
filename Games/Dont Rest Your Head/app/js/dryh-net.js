@@ -59,8 +59,10 @@ const Net = {
   push(fields) {
     if (!this.room) return;
     const room = this.room;
+    this._inFlight = (this._inFlight || 0) + 1; this._lastPush = Date.now();
     this._chain = this._chain.then(() => setDoc(ref(room), Object.assign({ by: sid, at: Date.now() }, fields), { merge: true }))
-      .catch((e) => console.error("[dryh] push failed", e));
+      .catch((e) => console.error("[dryh] push failed", e))
+      .finally(() => { this._inFlight--; this._lastPush = Date.now(); });
     return this._chain;
   },
   // The listener can die (error) or go quiet (stalled connection) without the
@@ -82,9 +84,13 @@ const Net = {
       });
     };
     const check = async () => {
-      if (dead || document.visibilityState === "hidden") return;
+      // Never while this screen is saving or just saved: the server copy could
+      // predate our own change and briefly revert it.
+      const busy = () => this._inFlight > 0 || Date.now() - (this._lastPush || 0) < 5000;
+      if (dead || document.visibilityState === "hidden" || busy()) return;
       try {
         const s = await getDocFromServer(ref(room));
+        if (busy()) return;
         if (s.exists() && (s.data().at || 0) > lastAt) { console.warn("[dryh] room watch was stale, resyncing"); take(s); listen(); }
       } catch (e) {}
     };
