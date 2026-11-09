@@ -254,7 +254,8 @@ async function handleApi(request, env, url) {
       const file = await getFile("content/dashboards.json", env);
       const rec = {
         t: body.t, c: body.c, sys: body.sys,
-        kind: body.kind || "", players: body.players || "",
+        kind: body.kind || "", players: body.players || "", logoStyle: body.logoStyle || "",
+        ...(body.icon ? { icon: body.icon } : {}), ...(body.logo ? { logo: body.logo } : {}),
         note: body.note, url: body.url, host: body.host || "",
       };
       if (body.index !== undefined && body.index !== "") {
@@ -540,6 +541,13 @@ function adminPage() {
       <label>System</label><input name="sys" required>
       <label>Type</label><select name="kind"><option>Dashboard</option><option>Playset</option><option>Character Sheet</option></select>
       <label>Players (e.g. 3–5)</label><input name="players">
+      <label>Photo (tile background)</label>
+      <img class="thumb hidden" id="thumb-icon">
+      <input name="photoFile" type="file" accept="image/*">
+      <label>Logo (shown over the photo on hover)</label>
+      <img class="thumb hidden" id="thumb-logo" style="background:#24211B;object-fit:contain">
+      <input name="logoFile" type="file" accept="image/*">
+      <label>Logo colour</label><select name="logoStyle"><option value="">Dark / black logo (inverted to light)</option><option value="white">White / light logo</option></select>
       <label>Note</label><textarea name="note"></textarea>
       <label>Live URL</label><input name="url" required>
     </form>
@@ -916,6 +924,12 @@ async function openModal(type, id) {
       renderEpisodeRows(item.episodes || []);
       await populateSysSelect(item.sys, item.ed);
     }
+    if (type === "dashboards") {
+      [["#thumb-icon", item.icon], ["#thumb-logo", item.logo]].forEach(([s, src]) => {
+        const t = el(s, form);
+        if (t && src) { t.src = src; t.classList.remove("hidden"); }
+      });
+    }
     const thumb = el(".thumb", form);
     if (thumb && (item.banner || item.cover)) {
       thumb.src = item.banner || item.cover;
@@ -986,6 +1000,15 @@ el("#modal-save").addEventListener("click", async () => {
       data.cover = up.path;
     }
 
+    if (type === "dashboards") {
+      for (const [name, key] of [["photoFile", "icon"], ["logoFile", "logo"]]) {
+        const f = el('[name="' + name + '"]', form);
+        if (f && f.files[0]) {
+          const up = await api("POST", "/api/upload-image", { filename: f.files[0].name, base64: await fileToBase64(f.files[0]) });
+          data[key] = up.path;
+        }
+      }
+    }
     await api("POST", "/api/" + singularEndpoint(type), data);
     msg.textContent = "Saved. Site will rebuild shortly.";
     msg.className = "msg ok";
