@@ -17,13 +17,51 @@ function unauthorized() {
   return new Response("Auth required", { status: 401, headers: { "www-authenticate": 'Basic realm="admin"' } });
 }
 
-function checkAuth(request, env) {
+// ---------- auth ----------
+// Two ways in, both keyed on the ADMIN_PASSWORD secret:
+//  - "Sign in" on the public site posts the password to /api/login and gets back
+//    a signed session token (HMAC, 30 days), sent as "Authorization: Bearer …".
+//  - The legacy /admin panel still uses HTTP Basic auth with the same password.
+// Changing ADMIN_PASSWORD invalidates every outstanding token.
+const TOKEN_DAYS = 30;
+const enc = new TextEncoder();
+function b64url(bytes) {
+  let s = "";
+  new Uint8Array(bytes).forEach(b => { s += String.fromCharCode(b); });
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function safeEqual(a, b) {
+  a = String(a); b = String(b);
+  if (a.length !== b.length) return false;
+  let r = 0;
+  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return r === 0;
+}
+async function sign(env, msg) {
+  const key = await crypto.subtle.importKey("raw", enc.encode(env.ADMIN_PASSWORD + "|session"), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  return b64url(await crypto.subtle.sign("HMAC", key, enc.encode(msg)));
+}
+async function makeToken(env) {
+  const payload = b64url(enc.encode(JSON.stringify({ exp: Date.now() + TOKEN_DAYS * 864e5 })));
+  return payload + "." + (await sign(env, payload));
+}
+async function checkToken(token, env) {
+  const [payload, sig] = String(token).split(".");
+  if (!payload || !sig || !safeEqual(sig, await sign(env, payload))) return false;
+  try {
+    const { exp } = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    return Date.now() < exp;
+  } catch (e) { return false; }
+}
+async function checkAuth(request, env) {
+  if (!env.ADMIN_PASSWORD) return false;
   const auth = request.headers.get("authorization") || "";
+  if (auth.startsWith("Bearer ")) return checkToken(auth.slice(7), env);
   if (!auth.startsWith("Basic ")) return false;
   const decoded = atob(auth.slice(6));
   const idx = decoded.indexOf(":");
   const pass = idx >= 0 ? decoded.slice(idx + 1) : "";
-  return pass === env.ADMIN_PASSWORD;
+  return safeEqual(pass, env.ADMIN_PASSWORD);
 }
 
 async function ghRequest(path, env, opts = {}) {
@@ -83,7 +121,7 @@ async function listDir(path, env) {
 // The ledger keeps decimal hours for the running totals, but runtime "HH:MM" is
 // what actually gets typed, so hours are always derived from it.
 function hoursFromRuntime(rt, fallback) {
-  const m = /^s*(d+)s*:s*([0-5]?d)s*$/.exec(String(rt || ""));
+  const m = /^\s*(\d+)\s*:\s*([0-5]?\d)\s*$/.exec(String(rt || ""));
   if (!m) return Number(fallback) || 0;
   return Math.round((Number(m[1]) + Number(m[2]) / 60) * 100) / 100;
 }
@@ -120,9 +158,27 @@ async function loadCampaignsIndex(env) {
 }
 
 async function handleApi(request, env, url) {
-  if (!checkAuth(request, env)) return unauthorized();
   const path = url.pathname;
   const q = url.searchParams;
+
+  // Public-site sign in: password in, signed token out. A failed attempt waits a
+  // second so guessing stays slow (the password itself is long and random).
+  if (path === "/api/login" && request.method === "POST") {
+    const body = await request.json().catch(() => ({}));
+    if (env.ADMIN_PASSWORD && safeEqual(body.password || "", env.ADMIN_PASSWORD)) {
+      return json({ ok: true, token: await makeToken(env), days: TOKEN_DAYS });
+    }
+    await new Promise(r => setTimeout(r, 1000));
+    return json({ error: "Incorrect password." }, 401);
+  }
+
+  if (!(await checkAuth(request, env))) {
+    // Bearer callers get a plain 401, not a Basic challenge, so the browser
+    // doesn't throw its own password popup over the site's sign-in dialog.
+    if ((request.headers.get("authorization") || "").startsWith("Bearer ")) return json({ error: "unauthorized" }, 401);
+    return unauthorized();
+  }
+  if (path === "/api/whoami") return json({ ok: true });
 
   try {
     // ---------- LIST ----------
@@ -1034,7 +1090,7 @@ export default {
     }
 
     if (url.pathname === "/admin" || url.pathname === "/admin/" || url.pathname === "/admin/index.html") {
-      if (!checkAuth(request, env)) return unauthorized();
+      if (!(await checkAuth(request, env))) return unauthorized();
       return adminPage();
     }
 

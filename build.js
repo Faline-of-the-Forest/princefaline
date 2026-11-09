@@ -54,20 +54,7 @@ stats.longest = longest;
 // ---------- helpers ----------
 function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 function mon(d) { const m = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; return d ? m[+d.slice(5,7)-1] + " " + d.slice(0,4) : ""; }
-function stripes(a, b) { return `repeating-linear-gradient(135deg,${a} 0 7px,${b} 7px 14px)`; }
-function statusStyle(s) {
-  if (s === "running") return { label: "Running", pillBg: "#2F4633", pillFg: "#F6F1E4", pillBd: "#2F4633" };
-  if (s === "between arcs") return { label: "Between Arcs", pillBg: "#E8C87A", pillFg: "#3A2E10", pillBd: "#B8892E" };
-  return { label: "Concluded", pillBg: "transparent", pillFg: "#5B5648", pillBd: "#c8bfa6" };
-}
 function stars(n) { return { full: "★".repeat(n), empty: "☆".repeat(5 - n) }; }
-// System name plus an optional small pill for the edition/version played (e.g. "Kids on Bikes" + "2e").
-function sysTag(base, ed, opts) {
-  const o = opts || {};
-  const nameStyle = o.nameStyle || "font:400 16.1px/1.4 'EB Garamond',serif";
-  const pillStyle = o.pillStyle || "font:400 12.5px/1 'EB Garamond',serif;color:#8A836F;border:1px solid #C8BFA6;padding:2px 5px;letter-spacing:.02em";
-  return `<span style="display:inline-flex;align-items:center;gap:6px;vertical-align:middle"><span style="${nameStyle}">${esc(base)}</span>${ed ? `<span style="${pillStyle}">${esc(ed)}</span>` : ""}</span>`;
-}
 const CAMPAIGN_BLURBS = {
   "bloodletting": "New Orleans, 1990. Three dead men circle each other while the living city bleeds.",
   "Yazeba's Bed & Breakfast": "A house, its residents, and whichever chapter we feel like turning to that night.",
@@ -110,16 +97,39 @@ function bookCover(review) {
   return map[review.t] ? `/uploads/${map[review.t]}.webp` : "";
 }
 
+// ---------- formatting ----------
+const MONTHS_LONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+function monthLong(d) { return MONTHS_LONG[+d.slice(5, 7) - 1] + " " + d.slice(0, 4); }
+function fmtDate(d) { return +d.slice(8, 10) + " " + MONTHS_LONG[+d.slice(5, 7) - 1] + " " + d.slice(0, 4); }
+function fmtRt(rt) { return String(rt || "").replace(/^0/, ""); }
+function same(a, b) { return String(a).trim().toLowerCase() === String(b).trim().toLowerCase(); }
+function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
+function statusLabel(s) { return s === "running" ? "Running" : s === "between arcs" ? "Between arcs" : "Concluded"; }
+function runSpan(c) { return mon(c.first) + " – " + (c.status === "running" ? "present" : mon(c.last)); }
+function sysLine(base, ed) { return esc(base) + (ed ? `<span class="ed">${esc(ed)}</span>` : ""); }
+function starsHtml(n) { return `<span class="stars" aria-label="${n} out of 5">${"★".repeat(n)}<i>${"☆".repeat(5 - n)}</i></span>`; }
+function label(title, aside, add) { return `<div class="label"><h2>${title}</h2><span class="rule"></span>${aside ? `<span class="aside">${aside}</span>` : ""}${add || ""}</div>`; }
+// Signed-in editing hooks (assets/edit.js): "+ New" buttons and per-item edit tools.
+function addBtn(type, text, campaign) { return `<button type="button" class="add admin-only" data-add="${type}"${campaign ? ` data-campaign="${esc(campaign)}"` : ""}>+ ${text}</button>`; }
+function editAttr(type, id, name) { return ` data-edit="${type}:${esc(id)}" data-name="${esc(name)}"`; }
+
+// A two-colour "print cover" stands in wherever there is no image yet.
+function cover(name, sys, img, opts) {
+  const o = opts || {};
+  if (img) return `<div class="cv${o.contain ? " contain" : ""}" style="width:100%;height:100%"><img src="${esc(img)}" alt="${esc(name)}" loading="lazy"></div>`;
+  const h = [...name].reduce((a, c) => a + c.charCodeAt(0), 0);
+  return `<div class="pc ${h % 4 === 0 ? "red" : ""} l${h % 3}"><div class="pc-dots"></div><div class="pc-title">${esc(name)}</div>${sys && !o.noSys ? `<div class="pc-sys">${esc(sys)}</div>` : ""}</div>`;
+}
+
 // ---------- layout ----------
-const FONT_LINK = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Uncial+Antiqua&display=swap" rel="stylesheet">`;
-const BASE_CSS = `html,body{margin:0;padding:0;background:#F6F1E4;-webkit-font-smoothing:antialiased}*{box-sizing:border-box}a{color:#A5231F;text-decoration:none}a:hover{color:#2F4633;text-decoration:underline}::selection{background:#2F4633;color:#F6F1E4}.chip{cursor:pointer}.chip.active{background:#2F4633!important;color:#F6F1E4!important;border-color:#2F4633!important}`;
+const FONT_LINK = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Courier+Prime&display=swap" rel="stylesheet">`;
+const assetVer = f => require("crypto").createHash("md5").update(fs.readFileSync(path.join(ROOT, "assets", f))).digest("hex").slice(0, 8);
+const CSS_VER = assetVer("site.css"), JS_VER = assetVer("edit.js");
+const latestSession = sessions.slice().sort((a, b) => b.d.localeCompare(a.d) || b.n - a.n)[0];
 
 function nav(active) {
-  const items = [["Home", "/"], ["Campaigns", "/campaigns/"], ["One-Shots", "/one-shots/"], ["Reviews", "/reviews/"], ["Games", "/games/"]];
-  return items.map(([label, href]) => {
-    const on = active === label;
-    return `<a href="${href}" style="padding:7px 12px;border:1px solid ${on ? "#2F4633" : "#c8bfa6"};background:${on ? "#2F4633" : "transparent"};color:${on ? "#F6F1E4" : "#5B5648"};font:400 18px/1 'EB Garamond',serif;display:inline-block">${label}</a>`;
-  }).join("");
+  const items = [["Front Page", "/", "Home"], ["Campaigns", "/campaigns/", "Campaigns"], ["One-Shots", "/one-shots/", "One-Shots"], ["The Shelf", "/reviews/", "Reviews"], ["Games", "/games/", "Games"]];
+  return items.map(([l, href, key]) => `<a href="${href}"${active === key ? ' class="on"' : ""}>${l}</a>`).join("");
 }
 
 function layout({ title, active, body, description }) {
@@ -133,22 +143,26 @@ function layout({ title, active, body, description }) {
 <title>${esc(title)}</title>
 ${description ? `<meta name="description" content="${esc(description)}">` : ""}
 ${FONT_LINK}
-<style>${BASE_CSS}</style>
+<link rel="stylesheet" href="/assets/site.css?v=${CSS_VER}">
+<script src="/assets/edit.js?v=${JS_VER}" defer></script>
 </head>
 <body>
-<div style="min-height:100vh;background:#F6F1E4;color:#24211B;font-family:'EB Garamond',Georgia,serif">
-  <header style="position:sticky;top:0;z-index:30;background:#F6F1E4;border-bottom:2px solid #24211B">
-    <div style="max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 22px">
-      <a href="/" style="display:flex;align-items:center;gap:11px;margin-right:auto">
-        <img src="/assets/wordmark.webp" alt="Prince Faline's RPG Diaries" style="display:block;height:38px;width:auto">
-      </a>
-      <nav style="display:flex;flex-wrap:wrap;gap:4px">${nav(active)}</nav>
-    </div>
+<div class="container">
+  <header class="mast">
+    <div class="issue"><span>No. ${sessions.length}</span><span>A tabletop journal · Est. 2024</span><span>${latestSession ? fmtDate(latestSession.d) : ""}</span></div>
+    <a href="/" class="mast-title" aria-label="Prince Faline's RPG Diaries"><small>Prince Faline's</small><b><img class="mast-r" src="/assets/logo-r.webp" alt="R" width="372" height="353">PG Diaries</b></a>
+    <p class="mast-sub">Sessions · Campaigns · Reviews · Games</p>
+    <nav>${nav(active)}</nav>
   </header>
-  <main style="max-width:1180px;margin:0 auto;padding:0 20px">
+  <main>
 ${body}
   </main>
 </div>
+<footer><div class="container">
+  <div class="fleurons">❦︎ ❦︎ ❦︎</div>
+  <p>Prince Faline's RPG Diaries · Kept since July 2024 · Every session, every book, every build.</p>
+  <div class="foot-links"><button type="button" id="pf-signin" class="signed-out">Sign in</button><span class="admin-only" style="gap:16px">Signed in <button type="button" id="pf-signout">Sign out</button></span></div>
+</div></footer>
 </body>
 </html>`;
 }
@@ -159,106 +173,137 @@ function write(relPath, html) {
   fs.writeFileSync(full, html);
 }
 
-// ---------- HOME ----------
+function pageHead(kicker, title, desc, add) {
+  return `<header class="ph-head"><p class="kicker">${kicker}</p><h1>${title}</h1><p class="ph-desc">${desc}</p>${add || ""}</header>`;
+}
+// Text-style filter bar (design) wired up with a few lines of script (feature).
+function filterBar(id, buttons, selectOpts, selectLabel) {
+  return `<div class="filters" id="${id}">${buttons.map(([v, l], i) => `<button type="button" data-v="${esc(v)}"${i === 0 ? ' class="on"' : ""}>${l}</button>`).join("<span>·</span>")}${selectOpts ? `<span>·</span><select aria-label="${selectLabel}"><option value="all">${selectLabel}</option>${selectOpts.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")}</select>` : ""}</div>`;
+}
+function filterScript(id, itemSel, total, noun, match) {
+  return `<script>
+(function(){
+  var bar=document.getElementById('${id}'),items=document.querySelectorAll('${itemSel}'),count=document.getElementById('${id}-count');
+  var btns=bar.querySelectorAll('button'),sel=bar.querySelector('select'),v='all',s='all';
+  function apply(){var n=0;items.forEach(function(el){var ok=(function(){${match}})();el.hidden=!ok;if(ok)n++;});count.textContent=n+' of ${total} ${noun}';}
+  btns.forEach(function(b){b.addEventListener('click',function(){btns.forEach(function(x){x.classList.remove('on')});b.classList.add('on');v=b.dataset.v;apply();});});
+  if(sel)sel.addEventListener('change',function(){s=sel.value;apply();});
+})();
+</script>`;
+}
+
+function campaignOf(s) { return s.campaignSlug ? campaignBySlug[s.campaignSlug] : null; }
+function sessionHref(s) {
+  const c = campaignOf(s);
+  return c ? `/campaigns/${c.slug}/` : (s.slug ? `/one-shots/${s.slug}/` : null);
+}
+function sessionCover(s) {
+  const c = campaignOf(s);
+  if (c) return cover(c.name, c.sys, c.banner);
+  const os = s.slug ? oneShots.find(o => o.slug === s.slug) : null;
+  return cover(s.t, s.s, os && os.cover);
+}
+
+// ---------- The Ledger: errata-sheet list of sessions ----------
+function ledger(rows, opts) {
+  const o = opts || {};
+  const limit = o.limit || Infinity;
+  let out = "", cur = "", shown = 0;
+  rows.forEach(s => {
+    const mo = monthLong(s.d);
+    const hidden = shown >= limit;
+    if (mo !== cur) { cur = mo; out += `<li class="lg-mo${hidden ? " x" : ""}">${mo}</li>`; }
+    shown++;
+    const c = campaignOf(s);
+    const href = sessionHref(s);
+    const where = c ? `<a href="/campaigns/${c.slug}/">${esc(c.name)}</a>` : `<span class="os">One-shot</span>`;
+    const sys = c ? "" : ` · ${sysLine(s.s, s.ed)}`;
+    const title = href && !c ? `<a href="${href}">${esc(s.t)}</a>` : esc(s.t);
+    out += `<li class="lg${hidden ? " x" : ""}"${editAttr("session", s.n, s.t)}><span class="lg-d">${s.d.slice(8)}</span><span class="lg-t">${title}<i class="lg-w"> — ${o.noWhere ? sysLine(s.s, s.ed) : where + sys}</i></span><span class="lg-dots"></span><span class="lg-n">#${s.n}</span><span class="lg-h">${fmtRt(s.rt)}</span></li>`;
+  });
+  return `<ul class="ledger${rows.length > limit ? " folded" : ""}" id="${o.id || "ledger"}">${out}</ul>`;
+}
+
+// ---------- FRONT PAGE ----------
 function renderHome() {
+  const ss = sessions.slice().sort((a, b) => b.d.localeCompare(a.d) || b.n - a.n);
+  const lead = ss[0], rest = ss.slice(1, 5);
   const running = campaigns.filter(c => c.status === "running");
+  const leadHref = sessionHref(lead), leadCamp = campaignOf(lead);
+  const recentReviews = reviews.slice().sort((a, b) => b.date.localeCompare(a.date) || a.t.localeCompare(b.t)).slice(0, 4);
+  const games = dashboards.slice().sort((a, b) => a.t.localeCompare(b.t));
+
   const statCells = [
-    { label: "Games Played", value: String(stats.games) },
-    { label: "Total Playtime", value: Math.round(stats.hours) + "h" },
-    { label: "Systems Played", value: String(stats.systems) },
-    { label: "Campaigns Run", value: String(stats.campaigns) },
-    { label: "Most Played", value: stats.topSystem[1] + "×", sub: stats.topSystem[0] },
-    { label: "Longest Campaign", value: stats.longest.n + " eps", sub: stats.longest.name },
-    { label: "One-shots", value: String(stats.oneShots) },
+    ["Games Played", stats.games, ""],
+    ["Total Playtime", Math.round(stats.hours) + "h", ""],
+    ["Systems Played", stats.systems, ""],
+    ["Campaigns Run", stats.campaigns, ""],
+    ["Most Played", stats.topSystem[1] + "×", stats.topSystem[0]],
+    ["Longest Campaign", stats.longest.n + " eps", stats.longest.name],
+    ["One-Shots", stats.oneShots, ""],
   ];
   const years = Object.keys(byYear).sort();
   const maxY = Math.max(...years.map(y => byYear[y]));
 
-  const rows = sessions.slice().reverse();
-  const ledgerRows = rows.map(r => {
-    const camp = r.campaignSlug ? campaignBySlug[r.campaignSlug] : null;
-    const campLabel = camp ? camp.name : "One-Shot";
-    const href = camp ? `/campaigns/${camp.slug}/` : (r.slug ? `/one-shots/${r.slug}/` : null);
-    const inner = `<span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${esc(r.d)}</span><span style="flex:0 0 30px;font:400 17.1px/1.4 'EB Garamond',serif;color:#8A836F">#${r.n}</span><span style="flex:2 1 160px;font:400 16px/1.35 'EB Garamond',serif">${esc(r.t)}</span><span style="flex:2 1 170px;font:400 17.1px/1.4 'EB Garamond',serif">${esc(campLabel)}</span><span style="flex:2 1 160px">${sysTag(r.s, r.ed, { nameStyle: "font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648" })}</span><span style="flex:0 0 46px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${r.rt}</span>`;
-    const style = "display:flex;flex-wrap:wrap;gap:4px 18px;padding:9px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline";
-    return href ? `<a href="${href}" style="${style};color:inherit" data-hover>${inner}</a>` : `<div style="${style}">${inner}</div>`;
-  }).join("");
-
-  const runningCards = running.map(c => campaignCard(c)).join("");
-
   const body = `
-    <section style="display:flex;flex-wrap:wrap;gap:36px;padding:46px 0 40px;align-items:flex-start">
-      <div style="flex:999 1 420px;max-width:640px">
-        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:20px">◆ ${stats.games} sessions logged since July 2024</div>
-        <h1 style="font:400 clamp(38px,5.4vw,58px)/1.02 'EB Garamond',serif;margin:0 0 22px;letter-spacing:-.01em">Prince Faline's<br>RPG Diaries</h1>
-        <p style="font:400 17.5px/1.68 'EB Garamond',serif;color:#3A362C;margin:0 0 16px;text-wrap:pretty">
-          <span style="float:left;font-family:'Uncial Antiqua',serif;font-size:44px;line-height:.84;color:#F6F1E4;background:#A5231F;border:1px solid #B8892E;padding:8px 10px 6px;margin:4px 12px 0 0">S</span>
-          ince 2024 I've been obsessed with tabletop RPGs. There's something addictive about running a story I don't know the ending of. The dice decide what happens and I figure out what it means, which makes me less the author of these stories than their oracle. Not being responsible for making the story compelling frees me up to become its audience.
-        </p>
-        <p style="font:400 17.5px/1.68 'EB Garamond',serif;color:#3A362C;margin:0 0 16px;text-wrap:pretty">The list of games I want to play would already take a few lifetimes to play through, and it only ever gets longer, so all I can do is play as much as I can and be grateful for the people who show up every week to see these stories through.</p>
-        <p style="font:400 17.5px/1.68 'EB Garamond',serif;color:#3A362C;margin:0 0 26px;text-wrap:pretty">This site is an archive of every session I've played, along with my thoughts on the books and modules I've read, and the dashboards, playsets and sheets I build for my games.</p>
-        <div style="display:flex;flex-wrap:wrap;gap:10px">
-          <a href="/campaigns/" style="padding:11px 18px;background:#2F4633;color:#F6F1E4;font:400 18.8px/1 'EB Garamond',serif;border:1px solid #24211B">▸ Browse Campaigns</a>
-          <a href="/reviews/" style="padding:11px 18px;border:1px solid #24211B;font:400 18.8px/1 'EB Garamond',serif;color:#24211B">▸ Review Library</a>
-        </div>
-      </div>
-      <div style="flex:1 1 300px;max-width:400px">
-        <img src="/assets/portrait.webp" alt="Prince Faline reading beneath a tree" style="display:block;width:100%;height:auto">
-      </div>
+  <section class="intro">
+    <div>
+      <p class="dropcap">Since 2024 I've been obsessed with tabletop RPGs. There's something addictive about running a story I don't know the ending of. The dice decide what happens and I figure out what it means, which makes me less the author of these stories than their oracle. Not being responsible for making the story compelling frees me up to become its audience.</p>
+      <p>The list of games I want to play would already take a few lifetimes to play through, and it only ever gets longer, so all I can do is play as much as I can and be grateful for the people who show up every week to see these stories through.</p>
+      <p>This site is an archive of every session I've played, along with my thoughts on the books and modules I've read, and the dashboards, playsets and sheets I build for my games.</p>
+    </div>
+    <figure class="plate"><img src="/assets/portrait.webp" alt="Prince Faline reading beneath a tree"><figcaption>Prince Faline, reading</figcaption></figure>
+  </section>
+
+  <div class="front">
+    <aside class="col-left">
+      ${label("At the Table", "", addBtn("campaign", "New"))}
+      <ul class="shelf-list">${running.map(c => `<li${editAttr("campaign", c.slug, c.name)}><a href="/campaigns/${c.slug}/" class="sl"><div class="sl-cover">${cover(c.name, c.sys, c.banner, { noSys: true })}</div><div><h3>${esc(c.name)}</h3><p class="meta">${sysLine(c.sys, c.ed)}</p><p class="meta">${plural(c.n, "session")} · since ${mon(c.first)}</p></div></a></li>`).join("")}</ul>
+      <a class="more" href="/campaigns/">All campaigns →</a>
+    </aside>
+
+    <section class="col-main">
+      ${label("Latest Session", "", addBtn("session", "Log session"))}
+      <article class="lead"${editAttr("session", lead.n, lead.t)}>
+        ${leadHref ? `<a class="lead-cover" href="${leadHref}">${sessionCover(lead)}</a>` : `<div class="lead-cover">${sessionCover(lead)}</div>`}
+        <p class="kicker">${esc(leadCamp ? leadCamp.name : "One-shot")}${same(leadCamp ? leadCamp.name : "One-shot", lead.s) ? "" : " · " + sysLine(lead.s, lead.ed)}</p>
+        <h1>${leadHref ? `<a href="${leadHref}">${esc(lead.t)}</a>` : esc(lead.t)}</h1>
+        <p class="byline">Session ${lead.n} · ${fmtDate(lead.d)} · ${fmtRt(lead.rt)} at the table</p>
+      </article>
+      <ul class="recent">${rest.map(s => {
+        const c = campaignOf(s), href = sessionHref(s);
+        return `<li${editAttr("session", s.n, s.t)}><p class="kicker">${esc(c ? c.name : "One-shot")}</p><h3>${href ? `<a href="${href}">${esc(s.t)}</a>` : esc(s.t)}</h3><p class="meta">${fmtDate(s.d)} · #${s.n}</p></li>`;
+      }).join("")}</ul>
     </section>
 
-    <section style="padding:14px 0 44px">
-      <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 18px">
-        <div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Now Running</div>
-        <div style="flex:1;height:1px;background:#C8BFA6"></div>
-        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648">${running.length} active tables</div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px">${runningCards}</div>
-    </section>
+    <aside class="col-right">
+      ${label("Recently Read", "", addBtn("review", "New"))}
+      <ul class="read">${recentReviews.map(r => `<li${editAttr("review", r.slug, r.t)}><a href="/reviews/${r.slug}/" class="rd"><div class="rd-cover">${cover(r.t, r.sys, bookCover(r), { noSys: true, contain: true })}</div><div><h3>${esc(r.t)}</h3><p class="meta">${esc(r.type)} · ${sysLine(r.sys, r.ed)}</p>${starsHtml(r.stars)}</div></a></li>`).join("")}</ul>
+      <a class="more" href="/reviews/">The full shelf →</a>
+      ${label("From the Workshop", "", addBtn("game", "New"))}
+      <ul class="ws">${games.map(g => `<li${editAttr("game", dashboards.indexOf(g), g.t)}><a href="${g.url}"><b>${esc(g.t)}</b><span>${esc(g.kind || "Game")}</span></a></li>`).join("")}</ul>
+    </aside>
+  </div>
 
-    <section style="padding:0 0 44px">
-      <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 18px">
-        <div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Lifetime Record</div>
-        <div style="flex:1;height:1px;background:#C8BFA6"></div>
-        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648">Since ${stats.since}</div>
-      </div>
-      <div style="border:2px solid #24211B;background:#24211B;display:flex;flex-wrap:wrap;gap:1px">
-        ${statCells.map(s => `<div style="flex:1 1 148px;background:#FBF8EF;padding:16px 15px 14px"><div style="font:400 15.4px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:11px">${esc(s.label)}</div><div style="font:400 clamp(26px,3vw,34px)/1 'EB Garamond',serif${s.sub ? ";margin-bottom:7px" : ""}">${esc(s.value)}</div>${s.sub ? `<div style="font:400 16.1px/1.35 'EB Garamond',serif;color:#8A836F">${esc(s.sub)}</div>` : ""}</div>`).join("")}
-        <div style="flex:1 1 260px;background:#FBF8EF;padding:16px 15px 14px">
-          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:14px">Sessions per Year</div>
-          <div style="display:flex;flex-direction:column;gap:9px">
-            ${years.map(y => `<div style="display:flex;align-items:center;gap:10px"><span style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648;width:30px">${y}</span><div style="flex:1;height:12px;background:#EDE7D6;border:1px solid #C8BFA6"><div style="height:100%;width:${Math.round(byYear[y]/maxY*100)}%;background:#2F4633"></div></div><span style="font:400 17.1px/1 'EB Garamond',serif;color:#24211B;width:22px;text-align:right">${byYear[y]}</span></div>`).join("")}
-          </div>
-        </div>
-      </div>
-    </section>
+  <section class="record-wrap">
+    ${label("Lifetime Record", `Since ${stats.since}`)}
+    <dl class="record">
+      ${statCells.map(([l, v, sub]) => `<div class="rec"><dt>${esc(l)}</dt><dd>${esc(v)}</dd>${sub ? `<dd>${esc(sub)}</dd>` : ""}</div>`).join("")}
+      <div class="rec years"><dt>Sessions per Year</dt>${years.map(y => `<div class="yr"><span>${y}</span><i><b style="width:${Math.round(byYear[y] / maxY * 100)}%"></b></i><em>${byYear[y]}</em></div>`).join("")}</div>
+    </dl>
+  </section>
 
-    <section style="padding:0 0 56px">
-      <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 16px">
-        <div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ The Ledger</div>
-        <div style="flex:1;height:1px;background:#C8BFA6"></div>
-        <div style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648">${sessions.length} logged</div>
-      </div>
-      <div style="border:2px solid #24211B;background:#FBF8EF">
-        <div style="display:flex;flex-wrap:wrap;gap:6px 18px;padding:9px 15px;border-bottom:1px solid #24211B;background:#EDE7D6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">
-          <span style="flex:0 0 86px">Date</span><span style="flex:0 0 30px">№</span><span style="flex:2 1 160px">Session</span><span style="flex:2 1 170px">Campaign</span><span style="flex:2 1 160px">System</span><span style="flex:0 0 46px;text-align:right">Time</span>
-        </div>
-        <div id="ledger-rows" style="max-height:900px;overflow:hidden">${ledgerRows}</div>
-        <div id="ledger-toggle" style="padding:11px 15px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;cursor:pointer;text-align:center">▾ Show all ${sessions.length} entries</div>
-      </div>
-    </section>
+  <section class="ledger-wrap">
+    ${label("The Ledger", `${sessions.length} sessions · ${Math.round(stats.hours)} hours · ${stats.systems} systems · since ${stats.since}`, addBtn("session", "Log session"))}
+    ${ledger(ss, { limit: 24 })}
+    ${ss.length > 24 ? `<button type="button" class="more" id="ledger-toggle">Every entry ↓</button>
     <script>
       (function(){
-        var rows = document.getElementById('ledger-rows');
-        var toggle = document.getElementById('ledger-toggle');
-        rows.style.maxHeight = '900px';
-        toggle.addEventListener('click', function(){
-          var open = rows.style.maxHeight === 'none';
-          rows.style.maxHeight = open ? '900px' : 'none';
-          toggle.textContent = open ? '▾ Show all ${sessions.length} entries' : '▴ Collapse';
-        });
+        var l=document.getElementById('ledger'),b=document.getElementById('ledger-toggle');
+        b.addEventListener('click',function(){var f=l.classList.toggle('folded');b.textContent=f?'Every entry ↓':'Fewer entries ↑';});
       })();
-    </script>`;
+    </script>` : ""}
+  </section>`;
   write("index.html", layout({ title: "Prince Faline's RPG Diaries", active: "Home", body, description: "A permanent home for ephemeral games — campaigns, sessions, reviews and dashboards since July 2024." }));
 }
 
@@ -267,99 +312,24 @@ function slugFor(name) {
   return c ? c.slug : "";
 }
 
-function campaignCard(c) {
-  const st = statusStyle(c.status);
-  const banner = c.banner ? `background:#EDE7D6 url(${c.banner}) center/cover no-repeat` : stripes("#e4dcc6", "#f1ecdb");
-  return `<a href="/campaigns/${c.slug}/" style="border:2px solid #24211B;background:#FBF8EF;display:flex;flex-direction:column;color:inherit">
-    <div style="height:118px;background:${banner};border-bottom:1px solid #24211B"></div>
-    <div style="padding:13px 14px 12px;flex:1">
-      <div style="font:400 20px/1.18 'EB Garamond',serif;margin-bottom:7px">${esc(c.name)}</div>
-      <div>${sysTag(c.sys, c.ed, { nameStyle: "font:400 16.1px/1.5 'EB Garamond',serif;color:#5B5648" })}</div>
-      <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#5B5648">${c.n} session${c.n===1?"":"s"} · ${Math.round(c.h)}h</div>
-    </div>
-    <div style="border-top:1px solid #C8BFA6;padding:8px 14px;font:400 16.1px/1 'EB Garamond',serif;color:#A5231F;display:flex;justify-content:space-between">
-      <span>▸ Enter</span><span style="color:#5B5648">${mon(c.first)} – ${c.status === "running" ? "present" : mon(c.last)}</span>
-    </div>
-  </a>`;
-}
-
 // ---------- CAMPAIGNS INDEX ----------
 function renderCampaignsIndex() {
-  const cards = campaigns.slice().sort((a, b) => (b.last || "").localeCompare(a.last || "")).map(c => {
-    const st = statusStyle(c.status);
-    const banner = c.banner ? `background:#EDE7D6 url(${c.banner}) center/cover no-repeat` : stripes("#e4dcc6", "#f3eedd");
-    return `<div class="camp-card" data-status="${esc(c.status)}" data-sys="${esc(c.sys)}" style="border:2px solid #24211B;background:#FBF8EF;display:flex;flex-wrap:wrap;align-items:stretch">
-      <div style="flex:0 0 132px;min-height:96px;background:${banner};border-right:1px solid #24211B"></div>
-      <div style="flex:999 1 260px;padding:13px 16px;display:flex;flex-direction:column;gap:6px">
-        <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:10px">
-          <a href="/campaigns/${c.slug}/" style="font:400 22px/1.15 'EB Garamond',serif;color:inherit">${esc(c.name)}</a>
-          <span style="padding:3px 7px;border:1px solid ${st.pillBd};background:${st.pillBg};color:${st.pillFg};font:400 14.6px/1 'EB Garamond',serif">${st.label}</span>
-        </div>
-        <div>${sysTag(c.sys, c.ed, { nameStyle: "font:400 17.1px/1.5 'EB Garamond',serif;color:#5B5648" })}</div>
-        <div style="font:400 18.8px/1.5 'EB Garamond',serif;color:#3A362C;max-width:60ch">${esc(blurb(c))}</div>
-      </div>
-      <div style="flex:0 0 128px;padding:13px 16px;border-left:1px solid #C8BFA6;display:flex;flex-direction:column;justify-content:space-between;gap:8px">
-        <div><div style="font:400 24px/1 'EB Garamond',serif">${c.n}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:4px">Sessions</div></div>
-        <div><div style="font:400 17.1px/1.5 'EB Garamond',serif;color:#5B5648">${c.rt}</div><div style="font:400 15.4px/1.5 'EB Garamond',serif;color:#8A836F">${mon(c.first)} – ${c.status === "running" ? "present" : mon(c.last)}</div></div>
-      </div>
-    </div>`;
-  }).join("");
-
+  const list = campaigns.slice().sort((a, b) => (b.last || "").localeCompare(a.last || ""));
+  const cards = list.map(c => `<a class="gi" href="/campaigns/${c.slug}/"${editAttr("campaign", c.slug, c.name)} data-status="${esc(c.status)}" data-sys="${esc(c.sys)}">
+      <div class="gi-cover">${cover(c.name, c.sys, c.banner)}</div>
+      <p class="kicker">${statusLabel(c.status)}</p>
+      <h3>${esc(c.name)}</h3>
+      <p class="meta"><b>${sysLine(c.sys, c.ed)}</b></p>
+      <p class="meta">${plural(c.n, "session")} · ${c.rt} · ${runSpan(c)}</p>
+      <p class="blurb">${esc(blurb(c))}</p>
+    </a>`).join("");
   const sysNames = Array.from(new Set(campaigns.map(c => c.sys))).sort();
-
   const body = `
-    <div style="margin:34px 0 26px">
-      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${campaigns.length} campaigns</div>
-      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">Campaigns</h1>
-      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">Every campaign I've run since 2024, with its system, its length, and its session diaries.</p>
-    </div>
-    <div style="display:flex;flex-wrap:wrap;gap:30px;padding-bottom:56px">
-      <aside style="flex:1 1 190px;max-width:230px">
-        <div style="border:2px solid #24211B;background:#FBF8EF;padding:15px">
-          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">Status</div>
-          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:20px" id="status-filters">
-            <div class="chip active" data-status="all" style="padding:6px 9px;border:1px solid #2F4633;background:#2F4633;color:#F6F1E4;font:400 16.1px/1 'EB Garamond',serif">All</div>
-            <div class="chip" data-status="running" style="padding:6px 9px;border:1px solid #c8bfa6;font:400 16.1px/1 'EB Garamond',serif">Running</div>
-            <div class="chip" data-status="concluded" style="padding:6px 9px;border:1px solid #c8bfa6;font:400 16.1px/1 'EB Garamond',serif">Concluded</div>
-          </div>
-          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">System</div>
-          <select id="sys-filter" style="padding:7px 9px;border:1px solid #C8BFA6;background:#F6F1E4;font:400 16.1px/1.2 'EB Garamond',serif;color:#24211B;width:100%">
-            <option value="all">All systems</option>
-            ${sysNames.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")}
-          </select>
-        </div>
-      </aside>
-      <div style="flex:999 1 460px">
-        <div id="camp-count" style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:12px">${campaigns.length} campaigns · ${stats.oneShots} one-shots logged separately</div>
-        <div id="camp-list" style="display:flex;flex-direction:column;gap:12px">${cards}</div>
-      </div>
-    </div>
-    <script>
-      (function(){
-        var status = 'all', sys = 'all';
-        var chips = document.querySelectorAll('#status-filters .chip');
-        var sysSel = document.getElementById('sys-filter');
-        var cards = document.querySelectorAll('.camp-card');
-        var count = document.getElementById('camp-count');
-        function apply(){
-          var shown = 0;
-          cards.forEach(function(c){
-            var ok = (status === 'all' || c.dataset.status === status) && (sys === 'all' || c.dataset.sys === sys);
-            c.style.display = ok ? '' : 'none';
-            if (ok) shown++;
-          });
-          count.textContent = shown + ' campaigns';
-        }
-        chips.forEach(function(ch){
-          ch.addEventListener('click', function(){
-            chips.forEach(function(c){ c.classList.remove('active'); c.style.background='transparent'; c.style.color='#5B5648'; c.style.borderColor='#c8bfa6'; });
-            ch.classList.add('active'); ch.style.background='#2F4633'; ch.style.color='#F6F1E4'; ch.style.borderColor='#2F4633';
-            status = ch.dataset.status; apply();
-          });
-        });
-        sysSel.addEventListener('change', function(){ sys = sysSel.value; apply(); });
-      })();
-    </script>`;
+    ${pageHead(`${campaigns.length} campaigns`, "Campaigns", "Every campaign I've run since 2024, with its system, its length and its session diaries.", addBtn("campaign", "New campaign"))}
+    ${filterBar("cf", [["all", "All"], ["running", "Running"], ["between arcs", "Between Arcs"], ["concluded", "Concluded"]], sysNames, "All systems")}
+    <p class="count" id="cf-count">${campaigns.length} of ${campaigns.length} campaigns · ${stats.oneShots} one-shots logged separately</p>
+    <div class="grid" id="cf-list">${cards}</div>
+    ${filterScript("cf", "#cf-list .gi", campaigns.length, "campaigns", "return (v==='all'||el.dataset.status===v)&&(s==='all'||el.dataset.sys===s);")}`;
   write("campaigns/index.html", layout({ title: "Campaign Library — Prince Faline's RPG Diaries", active: "Campaigns", body }));
 }
 
@@ -374,404 +344,206 @@ function castRows(n) {
   return rows;
 }
 function castCard(pc) {
-  const portrait = pc.portrait ? `background:url(${pc.portrait}) center/cover no-repeat` : `background:${stripes("#e4dcc6","#f3eedd")}`;
-  return `<div style="flex:1 1 300px;max-width:360px;border:1px solid #24211B;background:#FBF8EF;padding:14px;display:flex;gap:14px">
-    <div style="flex:0 0 66px;height:84px;${portrait};border:1px solid #C8BFA6;display:grid;place-items:center;font:400 14.5px/1.3 'EB Garamond',serif;color:#8A836F;text-align:center">${pc.portrait ? "" : "Portrait"}</div>
+  return `<div class="cc">
+    <div class="cc-p">${cover(pc.name, "", pc.portrait, { noSys: true })}</div>
     <div>
-      <div style="font:400 18px/1.25 'EB Garamond',serif">${esc(pc.name)}</div>
-      <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#A5231F;margin:4px 0 2px">${esc(pc.role || pc.kind)}</div>
-      <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#8A836F;margin-bottom:8px">PORTRAYED BY ${esc(pc.player)}</div>
-      <p style="font:400 18.1px/1.55 'EB Garamond',serif;color:#3A362C;margin:0;text-wrap:pretty">${esc(pc.bio)}</p>
+      <h3>${esc(pc.name)}</h3>
+      <p class="role">${esc(pc.role || pc.kind || "")}</p>
+      <p class="by">Portrayed by ${esc(pc.player)}</p>
+      <p>${esc(pc.bio)}</p>
     </div>
   </div>`;
 }
 function castLayout(cast) {
   if (!cast.length) return "";
-  const rows = castRows(cast.length);
   let i = 0;
-  return `<div style="display:flex;flex-direction:column;gap:14px">${rows.map(size => {
+  return `<div class="cast">${castRows(cast.length).map(size => {
     const chunk = cast.slice(i, i + size); i += size;
-    return `<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px">${chunk.map(castCard).join("")}</div>`;
+    return `<div class="cast-row">${chunk.map(castCard).join("")}</div>`;
   }).join("")}</div>`;
 }
 
 // ---------- CAMPAIGN DETAIL ----------
 function renderCampaignDetail(c) {
-  const st = statusStyle(c.status);
-  const banner = c.banner ? `background:#EDE7D6 url(${c.banner}) center/cover no-repeat` : stripes("#e4dcc6", "#f3eedd");
   const hasDetail = !!c.episodes && c.episodes.length > 0;
   const summary = c.summary || c.premise || [];
+  const paras = summary.length ? summary : [blurb(c)];
+  const rows = sessions.filter(s => s.campaignSlug === c.slug).slice().reverse();
 
-  let detailSection = "";
+  let extra = "";
   if (hasDetail) {
     const materials = (c.materials || []).map(t => {
       const r = reviews.find(x => x.t === t);
-      return `<div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline">${r ? `<a href="/reviews/${r.slug}/" style="font:400 16px/1.3 'EB Garamond',serif">${esc(t)}</a><span style="font:500 16.4px/1 'EB Garamond',serif;color:#A5231F">${stars(r.stars).full}</span>` : `<span style="font:400 16px/1.3 'EB Garamond',serif">${esc(t)}</span>`}</div>`;
+      return `<li>${r ? `<a href="/reviews/${r.slug}/">${esc(t)}</a>${starsHtml(r.stars)}` : `<span>${esc(t)}</span>`}</li>`;
     }).join("");
-    detailSection = `
-      <section style="display:flex;flex-wrap:wrap;gap:34px;padding:36px 0 12px">
-        <div style="flex:999 1 340px">
-          <div style="font:500 clamp(15px,2.2vw,19px)/1.4 'EB Garamond',serif;color:#A5231F;margin-bottom:18px">${esc(c.tagline)}</div>
-          ${summary.map(p => `<p style="font:400 16.5px/1.62 'EB Garamond',serif;color:#3A362C;margin:0 0 15px;text-wrap:pretty">${esc(p)}</p>`).join("")}
-        </div>
-        <div style="flex:1 1 240px;display:flex;flex-direction:column;gap:24px">
-          <div>
-            <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:9px">Influences</div>
-            <p style="font:italic 400 15px/1.6 'EB Garamond',serif;color:#3A362C;margin:0">${esc(c.influences)}</p>
-          </div>
-          <div>
-            <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:9px">Materials</div>
-            <div style="display:flex;flex-direction:column;gap:5px">${materials}</div>
-          </div>
-        </div>
-      </section>
-      <section style="padding:34px 0 0">
-        <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 18px"><div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Casting</div><div style="flex:1;height:1px;background:#C8BFA6"></div></div>
-        ${castLayout(c.cast || [])}
-      </section>
-      <section style="padding:34px 0 0">
-        <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 16px"><div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Episodes</div><div style="flex:1;height:1px;background:#C8BFA6"></div></div>
-        <div style="border:2px solid #24211B;background:#FBF8EF;margin-bottom:26px">
-          ${c.episodes.map(e => `<a href="#ep-${e.n}" style="display:flex;flex-wrap:wrap;gap:4px 16px;padding:10px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline;color:inherit">
-            <span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${esc(e.date)}</span>
-            <span style="flex:0 0 28px;font:400 18.8px/1.4 'EB Garamond',serif">${e.n}</span>
-            <span style="flex:999 1 240px;font:400 17px/1.35 'EB Garamond',serif">${esc(e.title)}</span>
-            <span style="flex:0 0 52px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${e.rt}</span>
-          </a>`).join("")}
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0">
-          ${c.episodes.map((e, i) => `<div id="ep-${e.n}" style="display:flex;flex-wrap:wrap;gap:18px;padding:22px 0;border-top:1px solid #C8BFA6;scroll-margin-top:80px">
-            <div style="flex:0 0 168px"><div style="width:168px;aspect-ratio:1;box-sizing:border-box;background:${e.img ? `url(${e.img}) center/cover no-repeat` : ((c.covers && c.covers[i]) ? `url(${c.covers[i]}) center/cover no-repeat` : stripes("#e4dcc6","#f1ecdb"))};border:1px solid #24211B"></div></div>
-            <div style="flex:999 1 300px">
-              <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:9px"><span style="font:500 20.5px/1 'EB Garamond',serif;color:#A5231F">${e.n}.</span><span style="font:400 26px/1.1 'EB Garamond',serif">${esc(e.title)}</span></div>
-              <p style="font:400 16px/1.62 'EB Garamond',serif;color:#3A362C;margin:0 0 4px;max-width:68ch;text-wrap:pretty">${esc(e.hook)}</p>
-              <div style="font:400 16.1px/1.5 'EB Garamond',serif;color:#8A836F">${esc(e.date)} · ${e.rt}</div>
-            </div>
-          </div>`).join("")}
-        </div>
+    extra = `
+      ${(c.influences || materials) ? `<section class="sec two">
+        ${c.influences ? `<div>${label("Influences")}<p class="infl">${esc(c.influences)}</p></div>` : "<div></div>"}
+        ${materials ? `<div>${label("Materials")}<ul class="mats">${materials}</ul></div>` : "<div></div>"}
+      </section>` : ""}
+      ${(c.cast || []).length ? `<section class="sec">${label("Casting")}${castLayout(c.cast)}</section>` : ""}
+      <section class="sec">
+        ${label("Episodes", plural(c.episodes.length, "episode"), addBtn("session", "Log session", c.slug))}
+        <ul class="eps">${c.episodes.map(e => `<li><a class="ep-row" href="#ep-${e.n}"><span class="d">${esc(e.date)}</span><span class="n">${e.n}</span><span class="t">${esc(e.title)}</span><span class="r">${fmtRt(e.rt)}</span></a></li>`).join("")}</ul>
+        <div style="margin-top:20px">${c.episodes.map((e, i) => `<article class="recap" id="ep-${e.n}">
+          <div class="cv">${cover(e.title, "", e.img || (c.covers && c.covers[i]) || "", { noSys: true })}</div>
+          <div><h3><span>${e.n}.</span>${esc(e.title)}</h3><p>${esc(e.hook)}</p><p class="meta" style="margin-top:6px">${esc(e.date)} · ${fmtRt(e.rt)}</p></div>
+        </article>`).join("")}</div>
       </section>`;
   } else {
-    const sessRows = sessions.filter(s => s.campaignSlug === c.slug).map((s, i) => `<div style="display:flex;flex-wrap:wrap;gap:4px 16px;padding:10px 15px;border-bottom:1px solid #E6DFCB;align-items:baseline">
-      <span style="flex:0 0 86px;font:400 18.8px/1.4 'EB Garamond',serif;color:#A5231F">${s.d}</span>
-      <span style="flex:0 0 28px;font:400 18.8px/1.4 'EB Garamond',serif">${String(i+1).padStart(2,"0")}</span>
-      <span style="flex:999 1 240px;font:400 17px/1.35 'EB Garamond',serif">${esc(s.t)}</span>
-      <span style="flex:0 0 52px;text-align:right;font:400 17.1px/1.4 'EB Garamond',serif;color:#5B5648">${s.rt}</span>
-    </div>`).join("");
-    detailSection = `
-      <section style="padding:30px 0 0">
-        <div style="border:1px dashed #C8BFA6;background:#FBF8EF;padding:16px;font:500 16.4px/1.6 'EB Garamond',serif;color:#5B5648;margin-bottom:26px">◆ Diary not yet transcribed — the session log below is drawn from the master ledger. Premise, casting and recaps get written up here.</div>
-        <div style="display:flex;align-items:baseline;gap:14px;margin:0 0 16px"><div style="font:400 18.8px/1 'EB Garamond',serif;color:#A5231F">◆ Session Log</div><div style="flex:1;height:1px;background:#C8BFA6"></div></div>
-        <div style="border:2px solid #24211B;background:#FBF8EF">${sessRows}</div>
+    extra = `<section class="sec">
+        <p class="note">Diary not yet transcribed — the session log below is drawn from the master ledger. Premise, casting and recaps get written up here.</p>
+        ${label("Session Log", plural(rows.length, "session"), addBtn("session", "Log session", c.slug))}
+        ${ledger(rows, { id: "sessions", noWhere: true })}
       </section>`;
   }
 
   const body = `
-    <a href="/campaigns/" style="display:block;padding:16px 0 14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F">◂ Campaigns</a>
-    <div style="border:2px solid #24211B;background:#FBF8EF">
-      <div style="height:clamp(150px,24vw,250px);background:${banner};border-bottom:2px solid #24211B"></div>
-      <div style="padding:20px 22px;display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end">
-        <div style="flex:999 1 300px">
-          <h1 style="font:400 clamp(32px,5vw,50px)/1 'EB Garamond',serif;margin:0 0 12px">${esc(c.name)}</h1>
-          <div style="display:flex;flex-wrap:wrap;gap:6px">
-            <span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">${sysTag(c.sys, c.ed, { nameStyle: "font:400 15.4px/1 'EB Garamond',serif;color:#5B5648", pillStyle: "font:400 12px/1 'EB Garamond',serif;color:#8A836F;border:1px solid #C8BFA6;padding:1px 4px" })}</span>
-            <span style="padding:4px 8px;border:1px solid ${st.pillBd};background:${st.pillBg};color:${st.pillFg};font:400 15.4px/1 'EB Garamond',serif">${st.label}</span>
-          </div>
-        </div>
-        <div style="flex:1 1 200px;display:flex;gap:22px;flex-wrap:wrap">
-          <div><div style="font:400 26px/1 'EB Garamond',serif">${c.n}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:5px">Sessions</div></div>
-          <div><div style="font:400 26px/1 'EB Garamond',serif">${c.rt}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:5px">At the Table</div></div>
-          <div><div style="font:400 26px/1 'EB Garamond',serif">${st.label}</div><div style="font:400 14.6px/1 'EB Garamond',serif;color:#8A836F;margin-top:5px">${mon(c.first)} – ${c.status === "running" ? "present" : mon(c.last)}</div></div>
-        </div>
+    <a class="back" href="/campaigns/">◂ Campaigns</a>
+    ${c.banner ? `<div class="banner cv"><img src="${esc(c.banner)}" alt=""></div>` : ""}
+    <article class="detail${c.banner ? " wide" : ""}"${editAttr("campaign", c.slug, c.name)}>
+      ${c.banner ? "" : `<div class="d-cover">${cover(c.name, c.sys)}</div>`}
+      <div class="d-body">
+        <p class="kicker">${sysLine(c.sys, c.ed)} · ${statusLabel(c.status)}</p>
+        <h1>${esc(c.name)}</h1>
+        ${c.tagline ? `<p class="tagline">${esc(c.tagline)}</p>` : ""}
+        ${paras.map((p, i) => `<p${i === 0 ? ' class="dropcap"' : ""}>${esc(p)}</p>`).join("")}
+        <dl class="facts"><div><dt>Sessions</dt><dd>${c.n}</dd></div><div><dt>At the table</dt><dd>${c.rt}</dd></div><div><dt>Run</dt><dd>${runSpan(c)}</dd></div></dl>
       </div>
-    </div>
-    ${detailSection}
-    <div style="padding-bottom:56px"></div>`;
+    </article>
+    ${extra}`;
   write(`campaigns/${c.slug}/index.html`, layout({ title: c.name + " — Prince Faline's RPG Diaries", active: "Campaigns", body, description: blurb(c) }));
 }
 
 // ---------- REVIEWS INDEX ----------
+const CORE_TYPES = ["System", "Module", "Supplement"];
+function reviewGroup(t) { return CORE_TYPES.includes(t) ? t : "Resource"; }
 function renderReviewsIndex() {
-  const cards = reviews.slice().sort((a, b) => b.stars - a.stars || a.t.localeCompare(b.t)).map(r => {
-    const cover = bookCover(r);
-    const st = stars(r.stars);
-    return `<div class="rev-card" data-type="${esc(r.type)}" data-stars="${r.stars}" data-sys="${esc(r.sys)}" style="position:relative">
-      <a href="/reviews/${r.slug}/" style="display:block;aspect-ratio:3/4;place-items:center;color:inherit;position:relative;overflow:hidden">
-        ${cover ? `<div style="width:100%;height:100%;background:url(${cover}) center/contain no-repeat"></div>` : `<div style="width:100%;height:100%;display:grid;place-items:center"><span style="font:400 19px/1.25 'EB Garamond',serif;color:#5B5648;text-align:center;padding:10px">${esc(r.t)}</span></div>`}
-        <div class="hover-overlay" style="position:absolute;inset:0;background:rgba(36,33,27,.92);color:#F6F1E4;padding:15px;display:flex;flex-direction:column;gap:7px;opacity:0;transition:opacity .15s">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:400 14.6px/1 'EB Garamond',serif;color:#E8C87A">${esc(r.type)}</span><span style="font:400 14.6px/1 'EB Garamond',serif;color:#9F9887">${mon(r.date + "-01")}</span></div>
-          <div style="font:400 19px/1.15 'EB Garamond',serif">${esc(r.t)}</div>
-          <div>${sysTag(r.sys, r.ed, { nameStyle: "font:400 16.1px/1.4 'EB Garamond',serif;color:#C3BCA6", pillStyle: "font:400 12px/1 'EB Garamond',serif;color:#C3BCA6;border:1px solid #6A6455;padding:2px 5px" })}</div>
-          <div style="font:500 17.7px/1 'EB Garamond',serif;color:#E8C87A">${st.full}<span style="color:#6A6455">${st.empty}</span></div>
-          <p style="font:italic 400 15px/1.5 'EB Garamond',serif;color:#EDE7D6;margin:0;flex:1">${esc(r.verdict)}</p>
-        </div>
-      </a>
-    </div>`;
-  }).join("");
+  const sorted = reviews.slice().sort((a, b) => b.stars - a.stars || a.t.localeCompare(b.t));
+  const cards = sorted.map(r => `<a class="gi" href="/reviews/${r.slug}/"${editAttr("review", r.slug, r.t)} data-type="${reviewGroup(r.type)}" data-sys="${esc(r.sys)}">
+      <div class="gi-cover">${cover(r.t, r.sys, bookCover(r), { contain: true })}
+        <div class="gi-over"><p class="kicker">${esc(r.type)} · ${mon(r.date + "-01")}</p><h4>${esc(r.t)}</h4>${starsHtml(r.stars)}<p>${esc(r.verdict)}</p></div></div>
+      <p class="kicker">${esc(r.type)}</p>
+      <h3>${esc(r.t)}</h3>
+      <p class="meta">${sysLine(r.sys, r.ed)}</p>
+      ${starsHtml(r.stars)}
+    </a>`).join("");
   const sysNames = Array.from(new Set(reviews.map(r => r.sys))).sort();
-  const types = ["System", "Module", "Supplement", "Resource"];
-
   const body = `
-    <div style="margin:34px 0 26px">
-      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${reviews.length} books</div>
-      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">Reviews</h1>
-      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">Short notes on every system, module and supplement I've read.</p>
-    </div>
-    <div style="display:flex;flex-wrap:wrap;gap:30px;padding-bottom:56px">
-      <aside style="flex:1 1 190px;max-width:230px">
-        <div style="border:2px solid #24211B;background:#FBF8EF;padding:15px">
-          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">Material</div>
-          <div id="type-filters" style="display:flex;flex-direction:column;gap:5px;margin-bottom:20px">
-            <div class="chip active" data-type="all" style="padding:6px 9px;border:1px solid #2F4633;background:#2F4633;color:#F6F1E4;font:400 16.1px/1 'EB Garamond',serif">Everything</div>
-            ${types.map(t => `<div class="chip" data-type="${t}" style="padding:6px 9px;border:1px solid #c8bfa6;font:400 16.1px/1 'EB Garamond',serif">${t === "Resource" ? "Resources" : t + "s"}</div>`).join("")}
-          </div>
-          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">System</div>
-          <select id="sys-filter" style="padding:7px 9px;border:1px solid #C8BFA6;background:#F6F1E4;font:400 16.1px/1.2 'EB Garamond',serif;color:#24211B;width:100%">
-            <option value="all">All systems</option>
-            ${sysNames.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")}
-          </select>
-        </div>
-      </aside>
-      <div style="flex:999 1 460px">
-        <div id="rev-count" style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:12px">${reviews.length} of ${reviews.length} Entries</div>
-        <div id="rev-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px">${cards}</div>
-      </div>
-    </div>
-    <style>.rev-card:hover .hover-overlay{opacity:1}</style>
-    <script>
-      (function(){
-        var type = 'all', sys = 'all';
-        var chips = document.querySelectorAll('#type-filters .chip');
-        var sysSel = document.getElementById('sys-filter');
-        var cards = document.querySelectorAll('.rev-card');
-        var count = document.getElementById('rev-count');
-        var coreTypes = ['System','Module','Supplement'];
-        function inGroup(c, g){ return g === 'Resource' ? coreTypes.indexOf(c.dataset.type) < 0 : c.dataset.type === g; }
-        function apply(){
-          var shown = 0;
-          cards.forEach(function(c){
-            var ok = (type === 'all' || inGroup(c, type)) && (sys === 'all' || c.dataset.sys === sys);
-            c.style.display = ok ? '' : 'none';
-            if (ok) shown++;
-          });
-          count.textContent = shown + ' of ${reviews.length} Entries';
-        }
-        chips.forEach(function(ch){
-          ch.addEventListener('click', function(){
-            chips.forEach(function(c){ c.classList.remove('active'); c.style.background='transparent'; c.style.color='#5B5648'; c.style.borderColor='#c8bfa6'; });
-            ch.classList.add('active'); ch.style.background='#2F4633'; ch.style.color='#F6F1E4'; ch.style.borderColor='#2F4633';
-            type = ch.dataset.type; apply();
-          });
-        });
-        sysSel.addEventListener('change', function(){ sys = sysSel.value; apply(); });
-      })();
-    </script>`;
-  write("reviews/index.html", layout({ title: "Review Library — Prince Faline's RPG Diaries", active: "Reviews", body }));
+    ${pageHead(`${reviews.length} books`, "The Shelf", "Short notes on every system, module and supplement I've read.", addBtn("review", "New review"))}
+    ${filterBar("rf", [["all", "Everything"], ["System", "Systems"], ["Module", "Modules"], ["Supplement", "Supplements"], ["Resource", "Resources"]], sysNames, "All systems")}
+    <p class="count" id="rf-count">${reviews.length} of ${reviews.length} entries</p>
+    <div class="grid books" id="rf-list">${cards}</div>
+    ${filterScript("rf", "#rf-list .gi", reviews.length, "entries", "return (v==='all'||el.dataset.type===v)&&(s==='all'||el.dataset.sys===s);")}`;
+  write("reviews/index.html", layout({ title: "The Shelf — Prince Faline's RPG Diaries", active: "Reviews", body }));
 }
 
 // ---------- REVIEW DETAIL ----------
 function renderReviewDetail(r) {
-  const cover = bookCover(r);
-  const st = stars(r.stars);
   const used = (r.used || []).map(u => {
-    const href = u === "One-Shots" ? "/" : `/campaigns/${slugFor(u)}/`;
-    return `<a href="${href}" style="padding:7px 11px;border:1px solid #24211B;font:400 18.8px/1 'EB Garamond',serif">${esc(u)}</a>`;
+    const href = u === "One-Shots" ? "/one-shots/" : `/campaigns/${slugFor(u)}/`;
+    return `<a href="${href}">${esc(u)}</a>`;
   }).join("");
   const body = `
-    <a href="/reviews/" style="display:block;padding:16px 0 14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F">◂ Reviews</a>
-    <div style="display:flex;flex-wrap:wrap;gap:30px;padding-bottom:56px">
-      <div style="flex:1 1 240px;max-width:290px">
-        <div style="aspect-ratio:3/4;display:grid;place-items:center">
-          ${cover ? `<div style="width:100%;height:100%;background:url(${cover}) center/contain no-repeat"></div>` : `<span style="font:400 19px/1.3 'EB Garamond',serif;color:#5B5648;text-align:center">${esc(r.t)}</span>`}
-        </div>
-        <div style="border:1px solid #C8BFA6;background:#FBF8EF;margin-top:12px">
-          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">System</span>${sysTag(r.sys, r.ed)}</div>
-          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Type</span><span>${esc(r.type)}</span></div>
-          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Reviewed</span><span>${mon(r.date + "-01")}</span></div>
-          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Rating</span><span style="color:#A5231F">${st.full}<span style="color:#C8BFA6">${st.empty}</span></span></div>
-        </div>
+    <a class="back" href="/reviews/">◂ The Shelf</a>
+    <article class="detail"${editAttr("review", r.slug, r.t)}>
+      <div class="d-cover">${cover(r.t, r.sys, bookCover(r), { contain: true })}</div>
+      <div class="d-body">
+        <p class="kicker">${esc(r.type)} · ${sysLine(r.sys, r.ed)}</p>
+        <h1>${esc(r.t)}</h1>
+        <p class="pq">${esc(r.verdict)}</p>
+        <p class="dropcap">${esc(r.body)}</p>
+        ${(r.tags || []).length ? `<div class="tags">${r.tags.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}
+        <dl class="facts"><div><dt>Rating</dt><dd>${starsHtml(r.stars)}</dd></div><div><dt>Reviewed</dt><dd>${mon(r.date + "-01")}</dd></div><div><dt>${r.ed ? "Edition" : "Edition"}</dt><dd>${r.ed ? esc(r.ed) : "Standalone"}</dd></div></dl>
+        ${used ? `<div style="margin-top:28px"><p class="kicker" style="margin-bottom:10px">Put to the table in</p><div class="tags" style="margin-top:0">${used}</div></div>` : ""}
       </div>
-      <div style="flex:999 1 380px;max-width:68ch">
-        <h1 style="font:400 clamp(32px,4.6vw,46px)/1.04 'EB Garamond',serif;margin:0 0 8px">${esc(r.t)}</h1>
-        <div style="font:400 18.8px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:22px">${r.ed ? "Edition " + esc(r.ed) : "Standalone"}</div>
-        <p style="font:italic 500 21px/1.5 'EB Garamond',serif;color:#A5231F;margin:0 0 22px;padding-left:16px;border-left:3px solid #A5231F;text-wrap:pretty">${esc(r.verdict)}</p>
-        <p style="font:400 18px/1.72 'EB Garamond',serif;color:#2E2A22;margin:0 0 26px;text-wrap:pretty">${esc(r.body)}</p>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:26px">${(r.tags || []).map(t => `<span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">${esc(t)}</span>`).join("")}</div>
-        <div style="border-top:1px solid #C8BFA6;padding-top:16px">
-          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">Put to the Table in</div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">${used}</div>
-        </div>
-      </div>
-    </div>`;
+    </article>`;
   write(`reviews/${r.slug}/index.html`, layout({ title: r.t + " — Prince Faline's RPG Diaries", active: "Reviews", body, description: r.verdict }));
 }
 
 // ---------- GAMES ----------
-const GAME_KINDS = ["Dashboard", "Playset", "Character Sheet"];
-const GAME_FILTERS = ["All", "Dashboards", "Playsets", "Character Sheets"];
-const GAME_FILTER_KIND = { Dashboards: "Dashboard", Playsets: "Playset", "Character Sheets": "Character Sheet" };
-
+const GAME_FILTERS = [["", "All"], ["Dashboard", "Dashboards"], ["Playset", "Playsets"], ["Character Sheet", "Character Sheets"]];
 function renderGames() {
   const sorted = dashboards.slice().sort((a, b) => a.t.localeCompare(b.t));
-  const tiles = sorted.map(d => `<a href="${d.url}" target="_blank" rel="noopener" class="gm-tile" data-kind="${esc(d.kind || "")}" style="display:block;position:relative;aspect-ratio:1;border:2px solid #24211B;background:repeating-linear-gradient(45deg,#E4DCC6 0 6px,#F6F1E4 6px 12px);overflow:hidden;text-decoration:none;color:inherit;box-shadow:4px 4px 0 #24211B">
-    <div class="gm-art" style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:url(${d.icon})"></div>
-    <div class="gm-panel" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2%;padding:6% 7%;background:radial-gradient(120% 90% at 50% 50%,rgba(22,18,13,.58) 0%,rgba(22,18,13,.9) 100%)">
-      ${d.logo ? `<img src="${d.logo}" alt="${esc(d.t)}" class="gm-logo" style="display:block;max-width:98%;max-height:52%;width:auto;height:auto;object-fit:contain;filter:${d.logoStyle === "white" ? "brightness(0) invert(1)" : "grayscale(1) invert(1)"};flex:0 1 auto">` : `<div style="font:400 22px/1.2 'EB Garamond',serif;color:#F6F1E4">${esc(d.t)}</div>`}
-      <div class="gm-line" style="width:15%;height:1px;background:#C4553F;flex:none"></div>
-      <div class="gm-desc" style="max-width:92%;font:400 13.5px/1.4 'EB Garamond',serif;color:#D9D1BE;text-wrap:pretty;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">${esc(d.note || "")}</div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:none">
-        ${d.players ? `<span style="font:500 9px 'EB Garamond',serif;letter-spacing:.14em;text-transform:uppercase;color:#A79E8B">${esc(d.players)} players</span>` : ""}
-        <span style="font:400 13.5px/1 'EB Garamond',serif;color:#E08A72;white-space:nowrap">▸ ${esc(d.kind || "Game")}</span>
-      </div>
-    </div>
-  </a>`).join("");
-
+  const tiles = sorted.map(d => `<a href="${d.url}" target="_blank" rel="noopener" class="gi"${editAttr("game", dashboards.indexOf(d), d.t)} data-kind="${esc(d.kind || "")}">
+      <div class="gi-cover"><div class="gm-tile">
+        <div class="gm-art" style="background-image:url(${d.icon})"></div>
+        <div class="gm-panel">
+          ${d.logo ? `<img src="${d.logo}" alt="${esc(d.t)}" class="gm-logo" style="filter:${d.logoStyle === "white" ? "brightness(0) invert(1)" : "grayscale(1) invert(1)"}">` : `<div class="gm-name">${esc(d.t)}</div>`}
+          <div class="gm-line"></div>
+          <div class="gm-desc">${esc(d.note || "")}</div>
+          <div class="gm-foot">${d.players ? `<span class="gm-pl">${esc(d.players)} players</span>` : ""}<span class="gm-kind">▸ ${esc(d.kind || "Game")}</span></div>
+        </div>
+      </div></div>
+      <p class="kicker">${esc(d.kind || "Game")}</p>
+      <h3>${esc(d.t)}</h3>
+      ${d.players ? `<p class="meta">${esc(d.players)} players</p>` : ""}
+    </a>`).join("");
   const distinctKinds = new Set(dashboards.map(d => d.kind)).size;
-  const filterBtns = GAME_FILTERS.map(label => {
-    const n = label === "All" ? dashboards.length : dashboards.filter(d => d.kind === GAME_FILTER_KIND[label]).length;
-    return `<button type="button" class="gm-filter" data-filter="${esc(GAME_FILTER_KIND[label] || "")}" data-active="${label === "All" ? "1" : "0"}" style="font:400 14px/1 'EB Garamond',serif;padding:5px 13px;cursor:pointer">${esc(label)} ${n}</button>`;
-  }).join("");
-
+  const btns = GAME_FILTERS.map(([k, l]) => {
+    const n = k ? dashboards.filter(d => d.kind === k).length : dashboards.length;
+    return [k, `${l} ${n}`];
+  });
   const body = `
-    <div style="margin:34px 0 26px">
-      <div id="gm-eyebrow" style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${dashboards.length} apps</div>
-      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">Games</h1>
-      ${distinctKinds > 1 ? `<div style="display:flex;flex-wrap:wrap;gap:7px">${filterBtns}</div>` : ""}
-    </div>
-    <div id="gm-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:26px 24px;padding-bottom:56px">${tiles}</div>
-    <style>
-      .gm-filter{border:1px solid rgba(36,33,27,.35);background:transparent;color:#3A362C;transition:background .15s,color .15s,border-color .15s}
-      .gm-filter[data-active="1"]{background:#2F4633;border-color:#2F4633;color:#F6F1E4}
-      .gm-panel{opacity:0;pointer-events:none;backdrop-filter:blur(0);transition:opacity .4s ease,backdrop-filter .4s ease}
-      .gm-tile:hover .gm-panel,.gm-tile:focus .gm-panel{opacity:1;pointer-events:auto;backdrop-filter:blur(3px)}
-      .gm-art{transition:transform .7s cubic-bezier(.22,1,.36,1),filter .5s ease}
-      .gm-tile:hover .gm-art,.gm-tile:focus .gm-art{transform:scale(1.08);filter:blur(4px) brightness(.42) saturate(.85)}
-      .gm-line{transform:scaleX(.12);transform-origin:center;transition:transform .55s cubic-bezier(.22,1,.36,1)}
-      .gm-tile:hover .gm-line,.gm-tile:focus .gm-line{transform:scaleX(1)}
-      .gm-tile[data-hidden="1"]{display:none!important}
-    </style>
-    <script>
-      (function(){
-        var filters = document.querySelectorAll('.gm-filter');
-        var tiles = document.querySelectorAll('.gm-tile');
-        var eyebrow = document.getElementById('gm-eyebrow');
-        var total = ${dashboards.length};
-        filters.forEach(function(btn){
-          btn.addEventListener('click', function(){
-            filters.forEach(function(b){ b.dataset.active = '0'; });
-            btn.dataset.active = '1';
-            var kind = btn.dataset.filter, shown = 0;
-            tiles.forEach(function(t){
-              var ok = !kind || t.dataset.kind === kind;
-              t.dataset.hidden = ok ? '0' : '1';
-              if (ok) shown++;
-            });
-            eyebrow.textContent = kind ? ('◆ ' + shown + ' of ' + total + ' apps · ' + btn.textContent.replace(/\\s\\d+$/, '')) : ('◆ ' + total + ' apps');
-          });
-        });
-      })();
-    </script>`;
+    ${pageHead(`${dashboards.length} apps`, "Games", "Dashboards, playsets and sheets I've built for my tables.", addBtn("game", "New game"))}
+    ${distinctKinds > 1 ? filterBar("gf", btns) : ""}
+    <p class="count" id="gf-count">${dashboards.length} of ${dashboards.length} apps</p>
+    <div class="grid games" id="gf-list">${tiles}</div>
+    ${distinctKinds > 1 ? filterScript("gf", "#gf-list .gi", dashboards.length, "apps", "return v===''||el.dataset.kind===v;") : ""}`;
   write("games/index.html", layout({ title: "Games — Prince Faline's RPG Diaries", active: "Games", body }));
 }
 
 function renderAppStub(d) {
   const slug = d.url.replace(/^\/games\//, "").replace(/\/$/, "");
   const body = `
-    <div style="margin:34px 0 26px">
-      <a href="/games/" style="display:block;margin-bottom:14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F">◂ Games</a>
-      <div style="display:flex;align-items:center;gap:18px;margin-bottom:16px">
-        <img src="${d.icon}" alt="" style="width:72px;height:72px;object-fit:cover;border:2px solid #24211B;border-radius:16px;box-shadow:4px 4px 0 #24211B">
-        <div>
-          <h1 style="font:400 clamp(28px,4vw,40px)/1.05 'EB Garamond',serif;margin:0 0 4px">${esc(d.t)}</h1>
-          <div style="font:400 16px/1 'EB Garamond',serif;color:#8A836F">${esc(d.sys)}</div>
-        </div>
+    <a class="back" href="/games/">◂ Games</a>
+    <article class="detail"${editAttr("game", dashboards.indexOf(d), d.t)}>
+      <div class="d-cover sq"><div class="cv" style="width:100%;height:100%"><img src="${d.icon}" alt=""></div></div>
+      <div class="d-body">
+        <p class="kicker">${esc(d.kind || "Game")}${d.players ? " · " + esc(d.players) + " players" : ""}</p>
+        <h1>${esc(d.t)}</h1>
+        <p class="dropcap">${esc(d.note)}</p>
+        <p class="note" style="margin-top:26px">This dashboard is in the works — check back soon.</p>
       </div>
-      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0 0 18px">${esc(d.note)}</p>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:26px">${[d.kind, d.players ? d.players + " players" : ""].filter(Boolean).map(t => `<span style="padding:4px 8px;border:1px solid #C8BFA6;font:400 15.4px/1 'EB Garamond',serif;color:#5B5648">${esc(t)}</span>`).join("")}</div>
-      <div style="border:2px dashed #C8BFA6;background:#FBF8EF;padding:26px;font:400 17px/1.4 'EB Garamond',serif;color:#8A836F">This dashboard is in the works — check back soon.</div>
-    </div>`;
+    </article>`;
   write(`games/${slug}/index.html`, layout({ title: d.t + " — Prince Faline's RPG Diaries", active: "Games", body, description: d.note }));
 }
 
 // ---------- ONE-SHOTS ----------
 function renderOneShotsIndex() {
-  const cards = oneShots.slice().sort((a, b) => b.d.localeCompare(a.d)).map(s => {
-    const cover = s.cover || "";
-    return `<div class="os-card" data-sys="${esc(s.s)}" style="position:relative">
-      <a href="/one-shots/${s.slug}/" style="display:block;aspect-ratio:1/1;color:inherit;position:relative;overflow:hidden">
-        ${cover ? `<div style="width:100%;height:100%;background:url(${cover}) center/cover no-repeat"></div>` : `<div style="width:100%;height:100%;background:${stripes("#e4dcc6", "#f3eedd")};display:grid;place-items:center"><span style="font:400 17px/1.25 'EB Garamond',serif;color:#5B5648;text-align:center;padding:10px">${esc(s.t)}</span></div>`}
-        <div class="hover-overlay" style="position:absolute;inset:0;background:rgba(36,33,27,.92);color:#F6F1E4;padding:15px;display:flex;flex-direction:column;gap:7px;opacity:0;transition:opacity .15s">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">${sysTag(s.s, s.ed, { nameStyle: "font:400 14.6px/1 'EB Garamond',serif;color:#E8C87A", pillStyle: "font:400 11.5px/1 'EB Garamond',serif;color:#E8C87A;border:1px solid #6A6455;padding:1px 4px" })}<span style="font:400 14.6px/1 'EB Garamond',serif;color:#9F9887">${mon(s.d)}</span></div>
-          <div style="font:400 19px/1.15 'EB Garamond',serif;flex:1">${esc(s.t)}</div>
-          <div style="font:400 15px/1 'EB Garamond',serif;color:#C3BCA6">${s.rt} at the table</div>
-        </div>
-      </a>
-    </div>`;
-  }).join("");
+  const list = oneShots.slice().sort((a, b) => b.d.localeCompare(a.d));
+  const cards = list.map(s => `<a class="gi" href="/one-shots/${s.slug}/"${editAttr("session", s.n, s.t)} data-sys="${esc(s.s)}">
+      <div class="gi-cover">${cover(s.t, s.s, s.cover, { noSys: true })}</div>
+      <p class="kicker">${sysLine(s.s, s.ed)}</p>
+      <h3>${esc(s.t)}</h3>
+      <p class="meta">${mon(s.d)} · ${fmtRt(s.rt)} at the table</p>
+    </a>`).join("");
   const sysNames = Array.from(new Set(oneShots.map(s => s.s))).sort();
-
   const body = `
-    <div style="margin:34px 0 26px">
-      <div style="font:400 17.1px/1 'EB Garamond',serif;color:#A5231F;margin-bottom:12px">◆ ${oneShots.length} one-shots</div>
-      <h1 style="font:400 clamp(30px,4vw,42px)/1.05 'EB Garamond',serif;margin:0 0 10px">One-Shots</h1>
-      <p style="font:400 16px/1.6 'EB Garamond',serif;color:#3A362C;max-width:56ch;margin:0">Every single-session game I've run since 2024 with a short entry.</p>
-    </div>
-    <div style="display:flex;flex-wrap:wrap;gap:30px;padding-bottom:56px">
-      <aside style="flex:1 1 190px;max-width:230px">
-        <div style="border:2px solid #24211B;background:#FBF8EF;padding:15px">
-          <div style="font:400 15.4px/1 'EB Garamond',serif;color:#8A836F;margin-bottom:10px">System</div>
-          <select id="sys-filter" style="padding:7px 9px;border:1px solid #C8BFA6;background:#F6F1E4;font:400 16.1px/1.2 'EB Garamond',serif;color:#24211B;width:100%">
-            <option value="all">All systems</option>
-            ${sysNames.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")}
-          </select>
-        </div>
-      </aside>
-      <div style="flex:999 1 460px">
-        <div id="os-count" style="font:400 17.1px/1 'EB Garamond',serif;color:#5B5648;margin-bottom:12px">${oneShots.length} of ${oneShots.length} Entries</div>
-        <div id="os-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px">${cards}</div>
-      </div>
-    </div>
-    <style>.os-card:hover .hover-overlay{opacity:1}</style>
-    <script>
-      (function(){
-        var sysSel = document.getElementById('sys-filter');
-        var cards = document.querySelectorAll('.os-card');
-        var count = document.getElementById('os-count');
-        sysSel.addEventListener('change', function(){
-          var sys = sysSel.value, shown = 0;
-          cards.forEach(function(c){
-            var ok = sys === 'all' || c.dataset.sys === sys;
-            c.style.display = ok ? '' : 'none';
-            if (ok) shown++;
-          });
-          count.textContent = shown + ' of ${oneShots.length} Entries';
-        });
-      })();
-    </script>`;
+    ${pageHead(`${oneShots.length} one-shots`, "One-Shots", "Every single-session game I've run since 2024 with a short entry.", addBtn("session", "New one-shot"))}
+    <div class="filters" id="of"><select aria-label="All systems"><option value="all">All systems</option>${sysNames.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")}</select></div>
+    <p class="count" id="of-count">${oneShots.length} of ${oneShots.length} entries</p>
+    <div class="grid dense" id="of-list">${cards}</div>
+    ${filterScript("of", "#of-list .gi", oneShots.length, "entries", "return s==='all'||el.dataset.sys===s;")}`;
   write("one-shots/index.html", layout({ title: "One-Shots — Prince Faline's RPG Diaries", active: "One-Shots", body }));
 }
 
 function renderOneShotDetail(s) {
-  const cover = s.cover || "";
+  const paras = s.writeup || [];
   const body = `
-    <a href="/one-shots/" style="display:block;padding:16px 0 14px;font:400 17.1px/1 'EB Garamond',serif;color:#A5231F">◂ One-Shots</a>
-    <div style="display:flex;flex-wrap:wrap;gap:30px;padding-bottom:56px">
-      <div style="flex:1 1 240px;max-width:290px">
-        <div style="aspect-ratio:1/1;display:grid;place-items:center;overflow:hidden">
-          ${cover ? `<div style="width:100%;height:100%;background:url(${cover}) center/cover no-repeat"></div>` : `<div style="width:100%;height:100%;background:${stripes("#e4dcc6", "#f3eedd")};display:grid;place-items:center"><span style="font:400 19px/1.3 'EB Garamond',serif;color:#5B5648;text-align:center">${esc(s.t)}</span></div>`}
-        </div>
-        <div style="border:1px solid #C8BFA6;background:#FBF8EF;margin-top:12px">
-          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">System</span>${sysTag(s.s, s.ed)}</div>
-          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #E6DFCB;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">Date</span><span>${mon(s.d)}</span></div>
-          <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;font:400 17.1px/1.4 'EB Garamond',serif"><span style="color:#8A836F">At the Table</span><span>${s.rt}</span></div>
-        </div>
+    <a class="back" href="/one-shots/">◂ One-Shots</a>
+    <article class="detail"${editAttr("session", s.n, s.t)}>
+      <div class="d-cover sq">${cover(s.t, s.s, s.cover, { noSys: true })}</div>
+      <div class="d-body">
+        <p class="kicker">${sysLine(s.s, s.ed)}</p>
+        <h1>${esc(s.t)}</h1>
+        ${paras.length ? paras.map((p, i) => `<p${i === 0 ? ' class="dropcap"' : ""}>${esc(p)}</p>`).join("") : `<p class="meta" style="font-size:18px">No write-up yet.</p>`}
+        <dl class="facts"><div><dt>Date</dt><dd>${mon(s.d)}</dd></div><div><dt>At the table</dt><dd>${fmtRt(s.rt)}</dd></div><div><dt>System</dt><dd>${sysLine(s.s, s.ed)}</dd></div></dl>
       </div>
-      <div style="flex:999 1 380px;max-width:68ch">
-        <h1 style="font:400 clamp(32px,4.6vw,46px)/1.04 'EB Garamond',serif;margin:0 0 22px">${esc(s.t)}</h1>
-        ${(s.writeup || []).map(p => `<p style="font:400 18px/1.72 'EB Garamond',serif;color:#2E2A22;margin:0 0 20px;text-wrap:pretty">${esc(p)}</p>`).join("") || `<p style="font:400 18px/1.72 'EB Garamond',serif;color:#8A836F">No write-up yet.</p>`}
-      </div>
-    </div>`;
+    </article>`;
   write(`one-shots/${s.slug}/index.html`, layout({ title: s.t + " — Prince Faline's RPG Diaries", active: "One-Shots", body }));
 }
+
 
 // ---------- run ----------
 fs.rmSync(DIST, { recursive: true, force: true });
