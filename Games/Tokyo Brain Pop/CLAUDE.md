@@ -38,7 +38,7 @@ Pop. Design them in from the start. Never leave them for later.
 | Goals cleared, Scenes led, Lead, Focus, place | Scene Control (Scene tab), applied with APPLY |
 | Running order | Scene Control → RUNNING ORDER ◀ ▶ |
 | Class Vote used | Scene Control → CLASS VOTE — SPENT toggles |
-| PSI cost | Scene Control → PSI COST — OVERRIDE |
+| PSI cost (shared by the whole table) | Scene Control → PSI COST — OVERRIDE. Any row's +/− sets everyone (`setPsiCostAll`) |
 | Demon present or absent | Scene Control → DEMON chips |
 | Who is playing, player names, Quirks, Goals; the Demon's name, goal and four traits | Scene Control → **TABLE ✎** (also opened by RENAME). A DOM panel, `mpShowTable()`, that calls `setSeatActive` (refuses to go below 3), `setSeatQuirks`/`setSeatGoals` (written as pool indices in `quirkPicks`/`goalPicks` so they sync), `setPlayerName`, `setDemonText` and `setDemonTrait` |
 | Skip setup at any time | **SKIP TO GAME** on Character Select *and* Today's Demon (Headmaster only). `skipToRoom()` keeps whoever is chosen, uses all four if fewer than 3 are, and gives random Quirks/Goals to anyone without them |
@@ -225,7 +225,7 @@ diff them:
 diff <(sed -n '/^export const RULES/,/^];/p' app/js/tbp-rules.js | sed 1d) <(sed -n '/^const RULES/,/^];/p' app/play.html | sed 1d)
 ```
 
-Current design, as of 2026-10-04. The user changes rules after every playtest,
+Current design, as of 2026-11-11. The user changes rules after every playtest,
 so the code wins over this summary:
 
 - **Seats:** 0 HIROMI (`momo`), 1 KOTORI (`midori`), 2 UME (`ao`), 3 YUMI
@@ -234,8 +234,10 @@ so the code wins over this summary:
   by the sorted active seats and taken from the user's spreadsheet. A pair can
   be both ("Frenemies"). The caller then picks which one she is Calling as.
 - **Challenges:** only the Scene's Lead can be Challenged, and only by a
-  Friend/Rival of hers. The narrator is named on screen (`narratorFor`): the only
-  Friend/Rival, or with two, the one who isn't a Frenemy.
+  Friend/Rival of hers. **While the Demon is in the Scene, nobody can Challenge
+  a girl** (`challengeableBy` returns `[]` when `demonPresent()`); only the Demon.
+  The narrator is named on screen (`narratorFor`): the only Friend/Rival. Frenemy +
+  Rival: the Frenemy narrates as Friend. Frenemy + Friend: the Frenemy narrates as Rival.
 - **Hail Mary:** a Demon-led Scene allows only Demon Challenges, and any Student
   may Call it (`challengeableBy` returns `[]` when `demonLead()`).
 - **Demon:** it appears at most once per Scene (`demonOut`, keyed by
@@ -244,7 +246,12 @@ so the code wins over this summary:
   tracks **do not** affect it any more. PSI on the Demon requires all of the
   Challenger's Goals to be done.
 - **Use PSI:** automatic success **plus** a serious consequence caused by the PSI.
-  On-screen prompts must say both.
+  On-screen prompts must say both. The cost is **shared**: every use raises it
+  by 1 for everyone (max 5), and any Break drops it to 2 for everyone. It is
+  still stored per girl (`chars[k].psiCost`) but only ever written through
+  `setPsiCostAll`, so the card UI didn't change.
+- **Break:** the worst happens and the Scene ends. The Headmaster ends the Scene
+  in Scene Control; it isn't automatic.
 - **Goals:** must always stay possible. The Headmaster reinterprets them when the
   story blocks them.
 - **Hand-off spreadsheets** the user fills in (bond assignments, goal and quirk

@@ -32,12 +32,13 @@ export const RULES = [
   {label:'Challenges', title:'Challenges', blocks:[
     {t:'p', text:'At any point in a Scene, a Student may Call a Challenge on a Friend or a Rival — but only on the Scene’s Lead, who is the only Student in the spotlight — explaining how it complicates that Student’s attempt at the Scene’s focus. The Headmaster may veto an unjustified Challenge; if allowed, the caller immediately gains 1 Drama. A Student at 5 Drama (the max) cannot Call.'},
     {t:'p', text:'Rival: explains how the situation complicates the action — never involving the Demon. Friend: explains how today’s Demon works against the action.'},
+    {t:'p', text:'While the Demon is in the Scene, the Students cannot Challenge each other. The Demon is the only one who can be Challenged until it leaves.'},
     {t:'h', text:'Resolving a Challenge'},
     {t:'p', text:'The Challenged Student rolls a die. The number she needs depends on Popularity: Most Popular 3–6, Average 4–6, Least Popular 5–6. If a Quirk applies, lower the target by 1.'},
     {t:'li', text:'Success: her Friend narrates how she accomplishes it. If her Friend Called it, she gains 1 Drama.'},
     {t:'li', text:'Failure: her Rival narrates what goes wrong. If her Rival Called it, she gains 1 Drama. The Student always gains 1 Drama on a failure.'},
     {t:'li', text:'Use PSI: the Challenge succeeds automatically, no one gains Drama. Her Rival narrates the success — she does get what she wanted — AND a serious consequence caused by the PSI itself. Both, every time: the win is real, and so is the damage.'},
-    {t:'p', text:'Who narrates: if she has only one Friend (or Rival), it is that Student. If she has two, the narrator is the one who is not also her Rival (or Friend) — a Frenemy is never picked over a plain Friend or Rival. The screen names her.'},
+    {t:'p', text:'Who narrates: if she has only one Friend (or Rival), it is that Student. A Frenemy is someone who is both her Friend and her Rival. If she has a Frenemy and a Rival, the Frenemy narrates as her Friend and the Rival narrates as her Rival. If she has a Frenemy and a Friend, the Frenemy narrates as her Rival and the Friend narrates as her Friend. The screen names her.'},
     {t:'h', text:'Death'},
     {t:'p', text:'Fighting monsters is dangerous, but your Students can’t die while the Demon is undefeated. If a Student must die, she will return as a Ghost or Ghoul to keep playing.'}
   ]},
@@ -49,19 +50,20 @@ export const RULES = [
   ]},
   {label:'Breaking', title:'Breaking', blocks:[
     {t:'p', text:'Breaking happens when a Student gains 1 Drama while already at Max — by failing a Challenge at max Drama, or gaining a second Drama after Calling.'},
-    {t:'p', text:'Nothing happens immediately. The next time she is Called to a Challenge, her only option is “Break!”: her PSI lashes out uncontrollably and catastrophically, and the Headmaster narrates the worst possible outcome.'},
-    {t:'p', text:'After Breaking, her Drama resets to 0 and her Use PSI cost resets to 2.'},
+    {t:'p', text:'Nothing happens immediately. The next time she is Called to a Challenge, her only option is “Break!”: her PSI lashes out uncontrollably and catastrophically. The worst happens — the Headmaster narrates the worst possible outcome — and the Scene ends.'},
+    {t:'p', text:'After Breaking, her Drama resets to 0, and the Use PSI cost drops back to 2 for everyone.'},
     {t:'p', text:'If every Student is Breaking at once, play stops. One of the girls will have to Break!, which she can do without a challenge. Play resumes once she has.'}
   ]},
   {label:'PSI', title:'PSI', blocks:[
     {t:'p', text:'Nothing good ever came of psionic powers. They will destroy your Student’s life.'},
     {t:'p', text:'Facing a Challenge, a Student may Use PSI: her action succeeds automatically, but the PSI always causes a serious consequence on top of the success. PSI may be used any time, including after a Challenge is Called on her.'},
-    {t:'p', text:'Using PSI costs 2 Drama. Each further use that episode costs 1 more, up to 5. The cost resets at the end of the episode. Every Student has one unique PSI ability of her own.'},
+    {t:'p', text:'Using PSI costs 2 Drama. The cost is shared by the whole table: each time anyone Uses PSI, it goes up by 1 for everyone, up to 5, so it is always the same for every Student. It drops back to 2 for everyone whenever a Student Breaks, and resets at the end of the episode. Every Student has one unique PSI ability of her own.'},
     {t:'p', text:'PSI can only be turned on the Demon by a Student who has completed all of her own Goals. Until then her own business is still in the way, and the Demon must be faced with the die.'}
   ]},
   {label:'The Demon', title:'The Demon', blocks:[
     {t:'p', text:'The Demon is the main event — the big, nasty threat the Students face before the session ends. It can be an actual demon, a monster, or a mundane threat: a disaster, a secret organization, an evil teacher, ninjas, even alien invaders. The group creates it together at the start.'},
     {t:'p', text:'The Demon enters when her Friend Calls a Challenge on her and narrates how the Demon complicates the action. From then on the Headmaster narrates what the Demon does.'},
+    {t:'p', text:'While the Demon is in the Scene, it is the only one who can be Challenged. The Students cannot Challenge each other until it leaves.'},
     {t:'h', text:'Challenging the Demon'},
     {t:'p', text:'Only the Scene’s Lead may Call the Demon. When the Demon is itself the Lead, any Student may Call it.'},
     {t:'p', text:'Calling a Challenge on the Demon is free — it costs no Drama, and grants none either. She narrates how the situation works against it, and gains nothing from the result. The Demon rolls and succeeds on 4–6, before modifiers.'},
