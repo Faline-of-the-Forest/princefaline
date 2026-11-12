@@ -1450,6 +1450,16 @@
       "s": "Don't Rest Your Head",
       "h": 2.87,
       "rt": "02:52"
+    },
+    {
+      "n": 148,
+      "d": "2026-11-11",
+      "t": "The Pale Horse",
+      "campaignSlug": "",
+      "s": "Tokyo Brain Pop",
+      "h": 3.87,
+      "rt": "03:52",
+      "slug": "the-pale-horse"
     }
   ]
 }
