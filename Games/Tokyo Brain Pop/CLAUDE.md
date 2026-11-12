@@ -39,7 +39,7 @@ Pop. Design them in from the start. Never leave them for later.
 | Running order | Scene Control → RUNNING ORDER ◀ ▶ |
 | Class Vote used | Scene Control → CLASS VOTE — SPENT toggles |
 | PSI cost (shared by the whole table) | Scene Control → PSI COST — OVERRIDE. Any row's +/− sets everyone (`setPsiCostAll`) |
-| Demon present or absent | Scene Control → DEMON chips |
+| Demon summoned / available / unavailable | Scene Control → DEMON chips: SUMMONED (`demonIn`), AVAILABLE (not in, but a Friend's Challenge summons it; `demonHeld` keeps a VS DEMON Focus from pulling it in), UNAVAILABLE (`demonOut`). Both marks expire with the Scene (`sceneSig`) |
 | Who is playing, player names, Quirks, Goals; the Demon's name, goal and four traits | Scene Control → **TABLE ✎** (also opened by RENAME). A DOM panel, `mpShowTable()`, that calls `setSeatActive` (refuses to go below 3), `setSeatQuirks`/`setSeatGoals` (written as pool indices in `quirkPicks`/`goalPicks` so they sync), `setPlayerName`, `setDemonText` and `setDemonTrait` |
 | Skip setup at any time | **SKIP TO GAME** on Character Select *and* Today's Demon (Headmaster only). `skipToRoom()` keeps whoever is chosen, uses all four if fewer than 3 are, and gives random Quirks/Goals to anyone without them |
 | Read every girl's sheet | The Journal button is shown for the Headmaster too, opening on the first girl in play |

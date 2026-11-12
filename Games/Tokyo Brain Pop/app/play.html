@@ -5293,7 +5293,7 @@
                 <div sc-camel-on-click="{{ f.gm.renameDemon }}" title="Change the Demon's name and goal" style="cursor:pointer; flex:none; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9.5px; letter-spacing:.1em; color:#EFE6C8; border:2px solid rgba(239,230,200,.3); border-radius:7px; padding:3px 8px">RENAME</div>
               </div>
               <div style="display:flex; gap:8px">
-                <sc-for list="{{ f.gm.demonAvail }}" as="da" hint-placeholder-count="2">
+                <sc-for list="{{ f.gm.demonAvail }}" as="da" hint-placeholder-count="3">
                   <div sc-camel-on-click="{{ da.click }}" style="cursor:pointer; flex:1 1 0; text-align:center; background:{{ da.bg }}; border:2px solid {{ da.border }}; border-radius:9px; padding:7px 8px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9.5px; letter-spacing:.1em; color:{{ da.ink }}; white-space:nowrap">{{ da.label }}</div>
                 </sc-for>
               </div>
@@ -5974,7 +5974,7 @@ function rankFromTotals(totals) {
 }
 
 class TBPBase extends DCLogic {
-  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, rollEnds: {}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[false,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonOut: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, locChosen: false, turnOrder: null, visitedLocs: [], achTab: false, achScenesOverride: null, achLocsOverride: null, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false, achMostPop:0, achDemon:0, achBreaks:0, achPsi:0, achChallenged:0, achFails:0, achVotes:0, achDrama:0}))};
+  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, rollEnds: {}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[false,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonOut: null, demonHeld: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, locChosen: false, turnOrder: null, visitedLocs: [], achTab: false, achScenesOverride: null, achLocsOverride: null, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false, achMostPop:0, achDemon:0, achBreaks:0, achPsi:0, achChallenged:0, achFails:0, achVotes:0, achDrama:0}))};
 
   measureAnchors = () => {
     const g = this._goodEl, c = this._sceneEl;
@@ -6312,15 +6312,21 @@ class TBPBase extends DCLogic {
         inc: () => this.setPsiCost(k, cost + 1)
       };
     });
-    // Debug switch for the Demon's presence. "Unavailable" is exactly the
-    // state it is in after it has retreated: nobody can Call it, and the
+    // The Demon's three states, set by hand. SUMMONED: it is in the Scene and
+    // can be Called. AVAILABLE: not in the Scene yet, but a Friend's
+    // Challenge will summon it (this also holds it back on a VS DEMON Scene,
+    // which would otherwise bring it in by itself). UNAVAILABLE: exactly the
+    // state after it has retreated: nobody can Call it, and the
     // Friend-Challenge that would summon it greys out with it.
-    const demonAvailable = this.demonPresent();
+    const demonSummoned = this.demonPresent();
+    const demonGone = !demonSummoned && this.demonOutThisScene();
     const demonAvail = [
-      {label: 'AVAILABLE', on: demonAvailable, tone: '#9CB39A',
-       click: () => this.setState({demonIn: true, demonOut: null})},
-      {label: 'UNAVAILABLE', on: !demonAvailable, tone: '#E23A3A',
-       click: () => this.setState({demonIn: false, demonOut: this.sceneSig()})}
+      {label: 'SUMMONED', on: demonSummoned, tone: '#EDE31B',
+       click: () => this.setState({demonIn: true, demonOut: null, demonHeld: null})},
+      {label: 'AVAILABLE', on: !demonSummoned && !demonGone, tone: '#9CB39A',
+       click: () => this.setState({demonIn: false, demonOut: null, demonHeld: this.sceneSig()})},
+      {label: 'UNAVAILABLE', on: demonGone, tone: '#E23A3A',
+       click: () => this.setState({demonIn: false, demonOut: this.sceneSig(), demonHeld: null})}
     ].map(o => Object.assign({}, o, {
       bg: o.on ? o.tone : 'transparent',
       ink: o.on ? '#231F20' : 'rgba(239,230,200,.7)',
@@ -7126,7 +7132,7 @@ class TBPBase extends DCLogic {
     // A Friend's Challenge is what walks the Demon into the Scene — but only
     // the first time. Once it has come and gone it stays gone until the Scene
     // changes (or the Headmaster puts it back by hand).
-    if (rel === 'friend' && !this.demonOutThisScene()) this.setState({demonIn: true, demonOut: null});
+    if (rel === 'friend' && !this.demonOutThisScene()) this.setState({demonIn: true, demonOut: null, demonHeld: null});
     this.addDrama(by, 1);
   }
 
@@ -7162,8 +7168,17 @@ class TBPBase extends DCLogic {
     return st.demonOut != null && st.demonOut === this.sceneSig(st);
   }
 
+  // Set by the Headmaster's AVAILABLE chip: the Demon is held back for THIS
+  // Scene even where it would come in by itself (a VS DEMON Focus), until a
+  // Friend's Challenge or the Headmaster summons it. Expires with the Scene.
+  demonHeldThisScene(s) {
+    const st = s || this.state;
+    return st.demonHeld != null && st.demonHeld === this.sceneSig(st);
+  }
+
   demonPresent() {
-    return !this.demonOutThisScene() && (this.state.demonIn || this.demonLead() || this.state.focusIdx === 1);
+    return !this.demonOutThisScene() && (this.state.demonIn ||
+      (!this.demonHeldThisScene() && (this.demonLead() || this.state.focusIdx === 1)));
   }
 
   // Which bond seat i may Call a Challenge along this Scene, or null. Only the
@@ -7376,14 +7391,14 @@ class TBPBase extends DCLogic {
   // would otherwise keep re-asserting her — the mark below wins over those.
   toggleDemon() {
     this.setState(s => {
-      const autoIn = s.demonIn || s.focusIdx === 2 || s.focusIdx === 1;
+      const autoIn = s.demonIn || (!this.demonHeldThisScene(s) && (s.focusIdx === 2 || s.focusIdx === 1));
       const currentlyIn = autoIn && !this.demonOutThisScene(s);
       // Popping it out by hand counts the same as retreating after a Challenge:
       // the Demon has been in this Scene and left, so her Friend can’t
       // quietly summon it back. Popping it back in clears that mark — the
       // Headmaster's override always wins.
       if (currentlyIn) return {demonIn: false, demonOut: this.sceneSig(s)};
-      return {demonIn: true, demonOut: null};
+      return {demonIn: true, demonOut: null, demonHeld: null};
     });
   }
 
