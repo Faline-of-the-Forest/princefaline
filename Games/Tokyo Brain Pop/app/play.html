@@ -4353,7 +4353,7 @@
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.85vw + 11px,26px); line-height:1; color:#EDE31B; letter-spacing:.08em; text-align:center">{{ f.rail.roomCode }}</div>
       </div>
       <div ref="{{ f.anchors.good }}" style="display:flex; flex-direction:column; align-items:center; gap:1px; flex:none">
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.82vw + 5px,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:#9CB39A">GOOD END</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.82vw + 5px,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:#9CB39A">{{ f.rail.goodLabel }}</div>
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.85vw + 11px,26px); line-height:1; color:#9CB39A; text-align:center">{{ f.rail.goodCount }}</div>
       </div>
       <div style="display:flex; align-items:center; gap:min(.43vw,7px); flex:none">
@@ -4369,16 +4369,21 @@
         </sc-for>
       </div>
       <div style="display:flex; flex-direction:column; align-items:center; gap:1px; flex:none">
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.82vw + 5px,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:#E23A3A">BAD END</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.82vw + 5px,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:#E23A3A">{{ f.rail.badLabel }}</div>
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.85vw + 11px,26px); line-height:1; color:#E23A3A; text-align:center">{{ f.rail.badCount }}</div>
       </div>
       <div ref="{{ f.anchors.scene }}" style="flex:none; display:flex; flex-direction:column; align-items:center; gap:1px; margin-left:min(.9vw,14px); padding-left:min(.9vw,16px); border-left:3px solid rgba(239,230,200,.18)">
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.82vw + 5px,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:rgba(239,230,200,.55)">SCENES LEFT</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(9px,.82vw + 5px,12px); letter-spacing:.12em; line-height:1; white-space:nowrap; color:rgba(239,230,200,.55)">{{ f.rail.sceneLabel }}</div>
         <div style="display:flex; align-items:center; gap:min(.5vw,8px)">
           <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(18px,1.85vw + 11px,26px); line-height:1; color:{{ f.rail.sceneInk }}">{{ f.rail.scenesLeft }}</div>
           <sc-if value="{{ f.rail.demonWarn }}" hint-placeholder-val="{{ false }}">
-            <img src="assets/icon-demon.png" alt="demon lead warning" title="Not enough Scenes left — the next Scene is Demon-led." style="width:min(1.9vw,27px); height:min(1.9vw,27px); object-fit:contain; animation:tbp-breakblink2 .85s ease-in-out infinite">
+            <img src="assets/icon-demon.png" alt="demon retreated" title="The Demon has retreated until the next act." style="width:min(1.9vw,27px); height:min(1.9vw,27px); object-fit:contain; filter:grayscale(1); opacity:.55">
           </sc-if>
+          <div title="Acts won — Girls green, Demon red" style="display:flex; gap:4px">
+            <sc-for list="{{ f.rail.acts }}" as="ac" hint-placeholder-count="3">
+              <div sc-camel-on-click="{{ ac.click }}" style="cursor:pointer; width:min(1.2vw,16px); height:min(1.2vw,16px); border-radius:4px; box-sizing:border-box; background:{{ ac.bg }}; border:3px solid {{ ac.border }}"></div>
+            </sc-for>
+          </div>
         </div>
       </div>
     </div>
@@ -4428,6 +4433,22 @@
       <div sc-camel-on-click="{{ f.firstVote.start }}" title="Call the first Class Vote — Headmaster only" style="cursor:pointer; box-sizing:border-box; border:5px solid #231F20; border-radius:16px; box-shadow:10px 10px 0 rgba(35,31,32,.28); background:#EDE31B; padding:34px 46px; display:flex; flex-direction:column; align-items:center; gap:10px">
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.16em; color:rgba(35,31,32,.6)">BEFORE THE FIRST SCENE</div>
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:26px; letter-spacing:.04em; color:#231F20">CLASS VOTE</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ f.flowCard.show }}" hint-placeholder-val="{{ false }}">
+      <div style="width:760px; flex:none; transform:scale({{ f.stage.locScale }}); box-sizing:border-box; border:5px solid #231F20; border-radius:16px; box-shadow:10px 10px 0 rgba(35,31,32,.28); background:#EDE31B; padding:30px 44px; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center">
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px; letter-spacing:.16em; color:rgba(35,31,32,.6)">{{ f.flowCard.kicker }}</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:30px; line-height:1.05; letter-spacing:.02em; color:#231F20">{{ f.flowCard.title }}</div>
+        <div style="font-family:'Lora',serif; font-style:italic; font-size:17px; line-height:1.35; color:rgba(35,31,32,.8); max-width:600px; text-wrap:pretty">{{ f.flowCard.text }}</div>
+        <div style="display:flex; gap:12px; padding-top:6px">
+          <sc-if value="{{ f.flowCard.btn1.show }}" hint-placeholder-val="{{ false }}">
+            <div sc-camel-on-click="{{ f.flowCard.btn1.click }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:17px; letter-spacing:.08em; line-height:1; color:{{ f.flowCard.btn1.ink }}; background:{{ f.flowCard.btn1.bg }}; border:4px solid #231F20; border-radius:11px; padding:12px 24px; box-shadow:0 5px 0 rgba(35,31,32,.35)">{{ f.flowCard.btn1.label }}</div>
+          </sc-if>
+          <sc-if value="{{ f.flowCard.btn2.show }}" hint-placeholder-val="{{ false }}">
+            <div sc-camel-on-click="{{ f.flowCard.btn2.click }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:17px; letter-spacing:.08em; line-height:1; color:{{ f.flowCard.btn2.ink }}; background:{{ f.flowCard.btn2.bg }}; border:4px solid #231F20; border-radius:11px; padding:12px 24px">{{ f.flowCard.btn2.label }}</div>
+          </sc-if>
+        </div>
       </div>
     </sc-if>
 
@@ -5087,6 +5108,15 @@
               </div>
 
               <div style="flex:none; display:flex; align-items:flex-end; gap:12px">
+                <sc-for list="{{ f.setup.extras }}" as="dx" hint-placeholder-count="3">
+                  <div style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:6px">
+                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">{{ dx.label }}</div>
+                    <input data-mp="demon-extra" value="{{ dx.value }}" sc-camel-on-change="{{ dx.set }}" placeholder="{{ dx.ph }}" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:16px; color:#EFE6C8; outline:none">
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="flex:none; display:flex; align-items:flex-end; gap:12px">
                 <div style="flex:none; width:250px; display:flex; flex-direction:column; gap:6px">
                   <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.5)">DEMON'S NAME</div>
                   <input data-mp="demon-name" value="{{ f.setup.name }}" sc-camel-on-change="{{ f.setup.setName }}" placeholder="" style="box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.25); border-radius:9px; padding:10px 12px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:17px; letter-spacing:.04em; color:#EFE6C8; outline:none">
@@ -5190,6 +5220,93 @@
       </div>
     </sc-if>
 
+  <!-- Sits in the card row's layer, under the header (see CLAUDE.md §4), so
+       it is kept clear of the header rather than centred over it. -->
+  <sc-if value="{{ f.ss.open }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; z-index:45; background:rgba(35,31,32,.66); display:flex; align-items:flex-end; justify-content:center; padding:26px">
+      <div sc-camel-on-click="{{ f.ss.stop }}" style="width:min(1150px,95vw); max-height:calc(100vh - 170px); box-sizing:border-box; background:#231F20; border:5px solid #231F20; border-radius:20px; box-shadow:14px 14px 0 rgba(35,31,32,.45); overflow:hidden; display:flex; flex-direction:column">
+
+        <div style="flex:none; display:flex; align-items:center; gap:14px; padding:14px 20px; background:#EDE31B; border-bottom:5px solid #231F20">
+          <div style="flex:1; display:flex; align-items:baseline; gap:12px; min-width:0">
+            <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; line-height:1; color:#231F20; white-space:nowrap">{{ f.ss.title }}</div>
+            <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; letter-spacing:.14em; color:rgba(35,31,32,.6); white-space:nowrap">{{ f.ss.kicker }}</div>
+          </div>
+          <div style="font-family:'Lora',serif; font-style:italic; font-size:15px; color:rgba(35,31,32,.65)">{{ f.ss.note }}</div>
+          <div sc-camel-on-click="{{ f.ss.hide }}" style="cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:14px; letter-spacing:.08em; color:#EDE31B; background:#231F20; border-radius:8px; padding:9px 13px; line-height:1">HIDE</div>
+        </div>
+
+        <div style="flex:1 1 auto; min-height:0; overflow-y:auto; padding:20px 22px; display:grid; grid-template-columns:1.02fr 1fr; gap:18px; align-items:start">
+          <div style="box-sizing:border-box; background:rgba(239,230,200,.05); border:3px solid rgba(239,230,200,.14); border-radius:16px; padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px">
+            <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:14px; letter-spacing:.2em; color:#9CB39A">1 — WHERE</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:11px">
+              <sc-for list="{{ f.ss.places }}" as="p" hint-placeholder-count="4">
+                <div sc-camel-on-click="{{ p.pick }}" style="cursor:pointer; position:relative; height:112px; border-radius:12px; overflow:hidden; box-sizing:border-box; border:4px solid {{ p.border }}">
+                  <img src="{{ p.img }}" alt="location photo" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:{{ p.imgOpacity }}">
+                  <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(35,31,32,.85) 0%, rgba(35,31,32,0) 62%)"></div>
+                  <div style="position:absolute; left:10px; bottom:8px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:16px; letter-spacing:.03em; line-height:1; color:{{ p.ink }}">{{ p.name }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px">
+              <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.18em; color:rgba(239,230,200,.6)">NAME THE PLACE — TYPE ANYTHING</div>
+              <input data-mp="ss-sub" value="{{ f.ss.sub }}" sc-camel-on-change="{{ f.ss.setSub }}" placeholder="e.g. Class 2-A, after the bell" style="width:100%; box-sizing:border-box; background:#2b2527; border:3px solid rgba(239,230,200,.22); border-radius:10px; padding:10px 12px; font-family:'Lora',serif; font-style:italic; font-size:16px; color:#EFE6C8; outline:none">
+              <div style="display:flex; flex-wrap:wrap; gap:6px">
+                <sc-for list="{{ f.ss.subChips }}" as="c" hint-placeholder-count="4">
+                  <div sc-camel-on-click="{{ c.pick }}" style="cursor:pointer; font-family:'Lora',serif; font-style:italic; font-size:13.5px; line-height:1; padding:7px 10px; border-radius:99px; color:{{ c.ink }}; background:{{ c.bg }}; border:2px solid {{ c.border }}">{{ c.text }}</div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="box-sizing:border-box; background:rgba(239,230,200,.05); border:3px solid rgba(239,230,200,.14); border-radius:16px; padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px">
+            <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:14px; letter-spacing:.2em; color:#9CB39A">2 — THE FOCUS</div>
+            <sc-for list="{{ f.ss.focusOptions }}" as="o" hint-placeholder-count="3">
+              <div sc-camel-on-click="{{ o.pick }}" style="cursor:{{ o.cursor }}; opacity:{{ o.opacity }}; display:flex; align-items:flex-start; gap:11px; padding:10px 12px; border-radius:11px; box-sizing:border-box; border:3px solid {{ o.border }}; background:{{ o.bg }}">
+                <div style="flex:none; margin-top:2px; width:16px; height:16px; border-radius:5px; box-sizing:border-box; border:3px solid {{ o.dotBorder }}; background:{{ o.dotBg }}"></div>
+                <div style="min-width:0; display:flex; flex-direction:column; gap:4px">
+                  <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9.5px; letter-spacing:.16em; line-height:1; color:{{ o.tagInk }}">{{ o.tag }}</div>
+                  <div style="font-family:'Lora',serif; font-size:16px; line-height:1.3; color:{{ o.textInk }}; text-decoration:{{ o.strike }}; text-wrap:pretty">{{ o.text }}</div>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ f.ss.showRule }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:'Lora',serif; font-style:italic; font-size:14px; line-height:1.35; color:rgba(239,230,200,.7); text-wrap:pretty">{{ f.ss.rule }}</div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="flex:none; border-top:5px solid rgba(239,230,200,.14); background:#2b2527; padding:14px 22px 16px; display:flex; align-items:center; gap:18px">
+          <div style="flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:7px">
+            <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10px; letter-spacing:.18em; color:rgba(239,230,200,.45)">WHAT THE TABLE WILL SEE</div>
+            <div style="width:452px; max-width:100%; height:154px; flex:none; box-sizing:border-box; border:4px solid #EFE6C8; border-radius:13px; background:#231F20; overflow:hidden; display:flex; align-items:stretch">
+              <div style="position:relative; height:100%; aspect-ratio:1/1; flex:none; overflow:hidden; background:#EFE6C8">
+                <img src="{{ f.ss.preview.img }}" alt="scene location" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 45%">
+              </div>
+              <div style="flex:1 1 auto; min-width:0; display:flex; flex-direction:column; justify-content:space-between; gap:8px; padding:11px 13px 10px">
+                <div style="display:flex; flex-direction:column; align-items:flex-start; gap:5px; min-width:0">
+                  <div style="transform:skewX(-7deg); background:#EDE31B; padding:1px 8px 3px; box-shadow:3px 3px 0 rgba(0,0,0,.4)">
+                    <div style="transform:skewX(7deg); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:18px; letter-spacing:.03em; line-height:1.05; color:#231F20; white-space:nowrap">{{ f.ss.preview.name }}</div>
+                  </div>
+                  <div style="font-family:'Lora',serif; font-style:italic; font-size:14px; line-height:1.2; color:#EFE6C8; text-wrap:pretty">{{ f.ss.preview.sub }}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:9px; border-top:2px solid rgba(239,230,200,.2); padding-top:8px; min-width:0">
+                  <div style="position:relative; flex:none; width:34px; height:34px; border-radius:8px; background:{{ f.ss.preview.chipBg }}; overflow:hidden">
+                    <img src="{{ f.ss.preview.head }}" alt="lead portrait" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:{{ f.ss.preview.headPad }}; box-sizing:border-box">
+                  </div>
+                  <div style="min-width:0; display:flex; flex-direction:column; gap:2px">
+                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9px; letter-spacing:.16em; line-height:1; color:{{ f.ss.preview.kindInk }}">{{ f.ss.preview.kind }}</div>
+                    <div style="font-family:'Lora',serif; font-size:13px; line-height:1.2; color:#EFE6C8; overflow:hidden; text-overflow:ellipsis; text-wrap:pretty">{{ f.ss.preview.goal }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div sc-camel-on-click="{{ f.ss.start }}" style="flex:none; cursor:pointer; text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:22px; letter-spacing:.05em; line-height:1; color:#231F20; background:#EDE31B; border:4px solid #EDE31B; border-radius:12px; padding:18px 28px; animation:tbp-ready 1.5s ease-in-out infinite">START THE SCENE</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <sc-if value="{{ f.gm.show }}" hint-placeholder-val="{{ false }}">
     <div sc-camel-on-click="{{ f.gm.close }}" style="position:fixed; inset:0; z-index:45; background:rgba(35,31,32,.66); display:flex; align-items:center; justify-content:center; padding:26px">
       <div sc-camel-on-click="{{ f.gm.stop }}" style="width:min(1150px,95vw); height:min(830px,94vh); box-sizing:border-box; background:#231F20; border:5px solid #231F20; border-radius:20px; box-shadow:14px 14px 0 rgba(35,31,32,.45); overflow:hidden; display:flex; flex-direction:column">
@@ -5265,17 +5382,39 @@
                 </sc-for>
               </div>
 
-              <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.16em; color:rgba(239,230,200,.6); padding-top:4px">CLASS VOTE — SPENT</div>
+              <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.16em; color:rgba(239,230,200,.6); padding-top:4px">{{ f.gm.actCtl.label }}</div>
               <div style="display:flex; gap:8px">
-                <sc-for list="{{ f.gm.voteSpent }}" as="vs" hint-placeholder-count="4">
-                  <sc-if value="{{ vs.show }}" hint-placeholder-val="{{ false }}">
-                    <div sc-camel-on-click="{{ vs.click }}" style="cursor:pointer; flex:1 1 0; min-width:0; display:flex; align-items:center; justify-content:space-between; gap:4px; background:{{ vs.bg }}; border:2px solid rgba(239,230,200,.12); border-radius:9px; padding:6px 8px">
-                      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9.5px; letter-spacing:.06em; color:{{ vs.tone }}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ vs.label }}</div>
-                      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9px; letter-spacing:.08em; color:{{ vs.ink }}; white-space:nowrap">{{ vs.value }}</div>
+                <sc-for list="{{ f.gm.actCtl.steppers }}" as="as" hint-placeholder-count="4">
+                  <div style="flex:1 1 0; min-width:0; display:flex; align-items:center; justify-content:space-between; gap:4px; background:rgba(239,230,200,.05); border:2px solid rgba(239,230,200,.12); border-radius:9px; padding:6px 8px">
+                    <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9.5px; letter-spacing:.06em; color:#EFE6C8; white-space:nowrap">{{ as.label }}</div>
+                    <div style="display:flex; align-items:center; gap:4px">
+                      <div sc-camel-on-click="{{ as.dec }}" style="cursor:pointer; width:18px; height:18px; display:grid; place-items:center; border-radius:5px; background:rgba(239,230,200,.12); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; line-height:1; color:#EFE6C8">−</div>
+                      <div style="min-width:14px; text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; color:#EFE6C8">{{ as.value }}</div>
+                      <div sc-camel-on-click="{{ as.inc }}" style="cursor:pointer; width:18px; height:18px; display:grid; place-items:center; border-radius:5px; background:rgba(239,230,200,.12); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px; line-height:1; color:#EFE6C8">+</div>
                     </div>
-                  </sc-if>
+                  </div>
                 </sc-for>
               </div>
+              <div style="display:flex; gap:8px">
+                <sc-for list="{{ f.gm.actCtl.results }}" as="ar" hint-placeholder-count="4">
+                  <div sc-camel-on-click="{{ ar.click }}" style="cursor:pointer; flex:1 1 0; min-width:0; text-align:center; background:{{ ar.bg }}; border:2px solid {{ ar.border }}; border-radius:9px; padding:7px 4px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9.5px; letter-spacing:.06em; color:{{ ar.ink }}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ ar.label }}</div>
+                </sc-for>
+              </div>
+              <div style="display:flex; gap:8px">
+                <sc-for list="{{ f.gm.actCtl.flows }}" as="af" hint-placeholder-count="4">
+                  <div sc-camel-on-click="{{ af.click }}" style="cursor:pointer; flex:1 1 0; min-width:0; text-align:center; background:{{ af.bg }}; border:2px solid {{ af.border }}; border-radius:9px; padding:7px 4px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9.5px; letter-spacing:.06em; color:{{ af.ink }}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ af.label }}</div>
+                </sc-for>
+              </div>
+              <div style="display:flex; gap:8px">
+                <sc-for list="{{ f.gm.actCtl.specials }}" as="ap" hint-placeholder-count="3">
+                  <div sc-camel-on-click="{{ ap.click }}" style="cursor:pointer; flex:1 1 0; min-width:0; text-align:center; background:{{ ap.bg }}; border:2px solid {{ ap.border }}; border-radius:9px; padding:7px 4px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9.5px; letter-spacing:.06em; color:{{ ap.ink }}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ ap.label }}</div>
+                </sc-for>
+              </div>
+              <div style="display:flex; gap:8px">
+                <div sc-camel-on-click="{{ f.gm.actCtl.vote }}" style="cursor:pointer; flex:1 1 0; text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:14px; letter-spacing:.06em; line-height:1; color:#EDE31B; border:3px solid #EDE31B; border-radius:10px; padding:10px 6px">{{ f.gm.actCtl.voteLabel }}</div>
+                <div sc-camel-on-click="{{ f.gm.actCtl.endScene }}" style="cursor:pointer; flex:1 1 0; text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:14px; letter-spacing:.06em; line-height:1; color:{{ f.gm.actCtl.endInk }}; background:{{ f.gm.actCtl.endBg }}; border:3px solid {{ f.gm.actCtl.endBg }}; border-radius:10px; padding:10px 6px">END SCENE</div>
+              </div>
+              <div style="font-family:'Lora',serif; font-style:italic; font-size:12.5px; line-height:1.3; color:rgba(239,230,200,.55)">{{ f.gm.actCtl.next }}</div>
 
               <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.16em; color:rgba(239,230,200,.6); padding-top:4px">RUNNING ORDER</div>
               <div style="display:flex; gap:8px">
@@ -5701,11 +5840,21 @@ const RULES = [
     {t:'li', text:'The school is full of secrets, and the longer you stay, the more of them surface.'},
     {t:'p', text:'At least 562,321 forces work against the common Japanese schoolgirl. At least half seek the destruction of the psychic ones — from demons and ghosts to administrators, the military, and unnamable secret organizations.'}
   ]},
-  {label:'Scenes', title:'Scenes', blocks:[
-    {t:'p', text:'Players take turns being the Lead. Each Student gets three Scenes as Lead per episode — though the episode can end sooner if the Demon is defeated early. If the Demon is undefeated at the last Scene, it succeeds at its goal.'},
-    {t:'p', text:'At the start of a Scene, the Lead chooses her focus from her remaining Goals. She and the Headmaster work out the Scene together; other players may suggest, but the Lead and Headmaster decide what makes it in.'},
+  {label:'Scenes', title:'Scenes & Acts', blocks:[
+    {t:'p', text:'A game is played in three Acts, best of three. In each Act every Student leads one Scene, so an Act is three or four Scenes.'},
+    {t:'p', text:'Every Act opens the same way. First the Headmaster narrates a scene featuring the Demon, away from the girls: what it is after this Act, and what will happen if it is not stopped. Then comes a Class Vote, which sets Popularity and the running order for the Act: Most Popular leads first, then the middle girls by votes received (a tie is settled by a die roll), then Least Popular.'},
+    {t:'p', text:'When a Scene begins, its Lead chooses where it happens (one of the four big locations, which she names), and her Focus: one of her remaining Goals, or the Demon itself. The Headmaster sees the same window and can fill it in for her. She and the Headmaster then work out the Scene together; other players may suggest, but the Lead and Headmaster decide what makes it in.'},
     {t:'p', text:'Any player may bring their Student into a Scene at any time, even mid-Scene.'},
-    {t:'p', text:'A Scene should last 5–15 minutes, but the Headmaster decides when it ends. At the end, the Headmaster decides whether the Lead completed her Goal. Only one Goal can be completed per Scene, and only by the Lead.'}
+    {t:'p', text:'A Scene should last 5–15 minutes, but the Headmaster decides when it ends. At the end, the Headmaster decides whether the Lead completed her Goal. Only one Goal can be completed per Scene, and only by the Lead.'},
+    {t:'h', text:'Winning an Act'},
+    {t:'p', text:'Every time the Demon is summoned and defeated, the girls mark 1. Every time it is summoned and wins, the Demon marks 1. When the Act’s last Scene ends, whoever has more marks wins the Act. The Demon wins ties, even at 0–0.'},
+    {t:'p', text:'If the Act can no longer change hands (one side is ahead by more than the Demon could still catch up or pull back in the Scenes left), the Demon Retreats: it cannot be summoned again until the next Act, and the remaining Scenes are played without it. This keeps Friends from Challenging each other into a fight that is already decided.'},
+    {t:'h', text:'Hail Mary & Last Chance'},
+    {t:'p', text:'If the same side has won Acts 1 and 2, the game is not over yet. One more Scene is played, led by the Demon, with a single Demon Challenge that any girl may Call.'},
+    {t:'li', text:'Hail Mary (the Demon is about to win): it is 1 stronger for every Goal still open at the table. Beat it and Act 2 turns to the girls, and the game goes on to Act 3. Lose and the Demon wins the game.'},
+    {t:'li', text:'Last Chance (the girls are about to win): it is 1 weaker for every Goal the table has accomplished. Beat it and the girls win the game. Lose and Act 2 turns to the Demon, and the game goes on to Act 3.'},
+    {t:'h', text:'The Finale'},
+    {t:'p', text:'When the game is won (Act 3 ends, or one side can no longer lose it), the finale begins. If the girls won, they each describe how they defeat the Demon. If the Demon won, it describes how it achieves its goal. Then comes the Good End or the Bad End.'}
   ]},
   {label:'Students', title:'Students', blocks:[
     {t:'h', text:'Quirks'},
@@ -5735,8 +5884,8 @@ const RULES = [
   {label:'Drama & the Vote', title:'Drama & the Class Vote', blocks:[
     {t:'p', text:'Each Student starts the game with 1 Drama. Drama is earned by Calling Challenges and never exceeds 5.'},
     {t:'h', text:'Class Vote'},
-    {t:'p', text:'Popularity decides how easily a Student succeeds, and Popularity is set by a Class Vote. Each player may call one Vote per session. The episode always opens with a Class Vote.'},
-    {t:'p', text:'During a Vote, every player secretly spends Drama on Students — split it, dump it on one, spend it on yourself, or spend none. The Student with the most spent on her becomes Most Popular; the least becomes Least Popular. Ties are settled randomly.'}
+    {t:'p', text:'Popularity decides how easily a Student succeeds, and Popularity is set by a Class Vote. There is one at the start of every Act, right after the Demon’s off-screen scene, and it also sets that Act’s running order. Players cannot call Class Votes; the Headmaster may call an extra one whenever the game needs it.'},
+    {t:'p', text:'During a Vote, every player secretly spends Drama on Students — split it, dump it on one, spend it on yourself, or spend none. The Student with the most spent on her becomes Most Popular; the least becomes Least Popular. Ties are settled by a die roll.'}
   ]},
   {label:'Breaking', title:'Breaking', blocks:[
     {t:'p', text:'Breaking happens when a Student gains 1 Drama while already at Max — by failing a Challenge at max Drama, or gaining a second Drama after Calling.'},
@@ -5748,26 +5897,23 @@ const RULES = [
     {t:'p', text:'Nothing good ever came of psionic powers. They will destroy your Student’s life.'},
     {t:'p', text:'Facing a Challenge, a Student may Use PSI: her action succeeds automatically, but the PSI always causes a serious consequence on top of the success. PSI may be used any time, including after a Challenge is Called on her.'},
     {t:'p', text:'Using PSI costs 2 Drama. The cost is shared by the whole table: each time anyone Uses PSI, it goes up by 1 for everyone, up to 5, so it is always the same for every Student. It drops back to 2 for everyone whenever a Student Breaks, and resets at the end of the episode. Every Student has one unique PSI ability of her own.'},
-    {t:'p', text:'PSI can only be turned on the Demon by a Student who has completed all of her own Goals. Until then her own business is still in the way, and the Demon must be faced with the die.'}
+    {t:'p', text:'PSI can always be turned on the Demon, but her own business can still get in the way. With all of her Goals completed, the Demon simply fails. With 1 Goal left, the Demon still rolls at −2; with 2 Goals left, at −1.'}
   ]},
   {label:'The Demon', title:'The Demon', blocks:[
-    {t:'p', text:'The Demon is the main event — the big, nasty threat the Students face before the session ends. It can be an actual demon, a monster, or a mundane threat: a disaster, a secret organization, an evil teacher, ninjas, even alien invaders. The group creates it together at the start.'},
-    {t:'p', text:'The Demon enters when her Friend Calls a Challenge on her and narrates how the Demon complicates the action. From then on the Headmaster narrates what the Demon does.'},
+    {t:'p', text:'The Demon is the main event — the big, nasty threat the Students face before the game ends. It can be an actual demon, a monster, or a mundane threat: a disaster, a secret organization, an evil teacher, ninjas, even alien invaders. At its creation it is given a Name, a Goal, an Origin, its Abilities and its Look.'},
+    {t:'p', text:'Each Act, the Demon’s off-screen scene sets out what it is after for that Act and what happens if it is not stopped.'},
+    {t:'p', text:'The Demon enters when her Friend Calls a Challenge on her and narrates how the Demon complicates the action, or when the Lead makes the Demon her Focus. From then on the Headmaster narrates what the Demon does.'},
     {t:'p', text:'While the Demon is in the Scene, it is the only one who can be Challenged. The Students cannot Challenge each other until it leaves.'},
     {t:'h', text:'Challenging the Demon'},
     {t:'p', text:'Only the Scene’s Lead may Call the Demon. When the Demon is itself the Lead, any Student may Call it.'},
-    {t:'p', text:'Calling a Challenge on the Demon is free — it costs no Drama, and grants none either. She narrates how the situation works against it, and gains nothing from the result. The Demon rolls and succeeds on 4–6, before modifiers.'},
+    {t:'p', text:'Calling a Challenge on the Demon is free — it costs no Drama, and grants none either. She narrates how the situation works against it. The Demon rolls and succeeds on 4–6, before modifiers. A defeat marks 1 for the girls this Act; a win marks 1 for the Demon.'},
     {t:'h', text:'The Demon’s Die'},
-    {t:'p', text:'The Demon needs 4 or better. Two things move that number — the Good End and Bad End tracks do not:'},
+    {t:'p', text:'The Demon needs 4 or better. It can never need less than 2 or more than 6, so a 1 always fails and a 6 always succeeds.'},
     {t:'li', text:'−1 for each of the Challenger’s unresolved Goals — a distracted Student is easier prey.'},
     {t:'li', text:'+1 if the Demon is the Scene’s Focus — squaring up to it deliberately puts it on the back foot.'},
-    {t:'p', text:'The Challenger may Use PSI instead of letting it roll, and the Demon simply fails — but only if she has completed all of her own Goals first.'},
-    {t:'li', text:'Its target lowers by 1 for every unresolved Student Goal, and raises by 1 for every Strike taken. It can never go below 2 or above 6 — the Demon always fails on a 1.'},
-    {t:'li', text:'Every success marks the Bad End track; every failure marks the Good End track. Marks needed equals the number of Students playing.'},
-    {t:'li', text:'Use PSI: instead of letting the Demon roll, the Student who Called it may burn PSI at her usual escalating price. The Demon fails outright — Good End marked, Demon gone. The Headmaster narrates the Demon’s defeat AND a serious consequence the PSI causes along the way.'},
-    {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one, and once it has left it cannot be summoned back that Scene, not even by a Challenge from her Friend. It returns once the Scene changes. If success becomes mathematically impossible, the Demon becomes the next Lead and does not retreat.'},
-    {t:'h', text:'Hail Mary'},
-    {t:'p', text:'When the Demon leads a Scene, the Students stop Challenging each other. No Friend or Rival Challenges at all — the only Challenge anyone may Call is on the Demon, and every Student may Call it.'}
+    {t:'li', text:'Hail Mary: −1 for every unresolved Goal at the whole table instead, and Focus does not count. Last Chance: +1 for every Goal the whole table has accomplished, and Focus does not count.'},
+    {t:'li', text:'Use PSI: with all her Goals done the Demon fails outright; with 1 left it rolls at −2, with 2 left at −1. The Headmaster narrates the result AND a serious consequence the PSI causes.'},
+    {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one, and once it has left it cannot be summoned back that Scene, not even by a Challenge from her Friend. It returns once the Scene changes, unless the Act is already decided, in which case it has Retreated until the next Act and only Rival Challenges are left.'}
   ]},
   {label:'Japanese Names', title:'Common Japanese Names', blocks:[
     {t:'p', text:'A quick reference if you need a name for a new Student, Demon, or NPC during play.'},
@@ -5820,6 +5966,12 @@ const BOND_TABLE = {
 // How many Scenes each Student gets as the Lead. The episode's length is this
 // times the number of girls actually playing.
 const SCENES_PER_GIRL = 3;
+// A fresh game's act state: three acts, best of three. Each act is one Scene
+// per girl. `flow` is where the table is inside the act: 'offscreen' (the
+// Headmaster narrates the Demon, then calls the Class Vote), 'setup' (the
+// Lead's Scene window), 'play' (the Scene runs), 'finale'.
+const ACT_RESET = {act: 1, actStep: 0, actMarks: [{g:0,d:0},{g:0,d:0},{g:0,d:0}], actResults: [null,null,null],
+  flow: 'offscreen', special: null, specialResult: null, demonRetreatAct: null, sceneSetup: null, finaleWinner: null};
 const REEL_ITEM = 32;
 const DIM = 'grayscale(.7) opacity(.85) drop-shadow(0 2px 1px rgba(35,31,32,.45))';
 const SEAT_TONE = {momo:'#F6A7CA', midori:'#9CB39A', ao:'#A9BEDC', murasaki:'#C8A8D8'};
@@ -5937,7 +6089,8 @@ function computeAchievements(gameState) {
   const scenesCompleted = gameState.achScenesOverride != null ? gameState.achScenesOverride : derivedScenes;
   const derivedLocs = (gameState.visitedLocs || []).length;
   const locsCount = gameState.achLocsOverride != null ? gameState.achLocsOverride : derivedLocs;
-  const s = { badEnd: gameState.badEnd, scenesCompleted, locsCount, activeSeats };
+  const demonMarks = (gameState.actMarks || []).reduce((a, m) => a + ((m && m.d) || 0), 0);
+  const s = { badEnd: demonMarks, scenesCompleted, locsCount, activeSeats };
   const rows = ACHIEVEMENT_SPEC.map((spec) => {
     if (spec.table) {
       const value = spec.value(s);
@@ -5974,7 +6127,7 @@ function rankFromTotals(totals) {
 }
 
 class TBPBase extends DCLogic {
-  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, rollEnds: {}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[false,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonOut: null, demonHeld: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, locChosen: false, turnOrder: null, visitedLocs: [], achTab: false, achScenesOverride: null, achLocsOverride: null, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false, achMostPop:0, achDemon:0, achBreaks:0, achPsi:0, achChallenged:0, achFails:0, achVotes:0, achDrama:0}))};
+  state = {endKind: null, firstSceneStarted: false, voteReady: {}, activeSeats: [0,1,2,3], demonName: DEMON.name, demonGoal: DEMON.goal, setupOpen: true, setupStep: 'select', locks: [false,false,false,false], focusSeat: null, picking: null, pickStep: 'quirks', goalPicks: {}, quirkPicks: {}, playerNames: {}, speeds: {}, rollEnds: {}, rolled: {type:[],power:[],complication:[],goal:[]}, demonNameDraft: '', demonGoalDraft: '', subText: null, leadOverride: null, led: null, goalsDone: [[false,false],[false,false],[false,false],[false,false]], gmDraft: null, gmOpen: false, demonRoll: null, demonOut: null, demonHeld: null, justCleared: null, rollMode: null, challenge: null, player: 0, vote: null, voteEnabled: true, debugVisible: true, goodEnd: 0, badEnd: 0, ...ACT_RESET, sceneNo: 0, demonOrigin: '', demonAbilities: '', demonLook: '', scenePos: 0, demonIn: false, locIdx: 0, subIdx: 0, focusIdx: 0, goalIdx: 0, locChosen: false, turnOrder: null, visitedLocs: [], achTab: false, achScenesOverride: null, achLocsOverride: null, ui: {rulebook:false, rbTab:0, diary:false, diaryPress:false, helpPress:false}, chars: SEATS.map(s => ({...s, detail:false, psychic:false, phase:'idle', face:'?', landing:false, reelY:0, reelSpeed:0, drama:1, psiCost:2, votedOnce:false, achMostPop:0, achDemon:0, achBreaks:0, achPsi:0, achChallenged:0, achFails:0, achVotes:0, achDrama:0}))};
 
   measureAnchors = () => {
     const g = this._goodEl, c = this._sceneEl;
@@ -6032,6 +6185,46 @@ class TBPBase extends DCLogic {
 
   componentWillUnmount() { window.removeEventListener('resize', this.fit); if (this.ro) this.ro.disconnect(); }
 
+  // Headmaster overrides for the act track: click a square to set this act's
+  // marks (clicking the last filled one takes it back), click an act pip to
+  // cycle its result Girls → Demon → undecided.
+  setMark(side, k) {
+    this.setState(s => {
+      const act = s.act || 1;
+      const marks = (s.actMarks || ACT_RESET.actMarks).map(m => Object.assign({}, m));
+      const cur = marks[act - 1][side] || 0;
+      marks[act - 1][side] = Math.max(0, cur === k ? k - 1 : k);
+      return {actMarks: marks};
+    });
+  }
+  bumpMark(side, d) {
+    this.setState(s => {
+      const act = s.act || 1;
+      const marks = (s.actMarks || ACT_RESET.actMarks).map(m => Object.assign({}, m));
+      marks[act - 1][side] = Math.max(0, (marks[act - 1][side] || 0) + d);
+      return {actMarks: marks};
+    });
+  }
+  cycleActResult(a) {
+    this.setState(s => {
+      const r = (s.actResults || [null, null, null]).slice();
+      r[a] = r[a] === 'g' ? 'd' : (r[a] === 'd' ? null : 'g');
+      return {actResults: r};
+    });
+  }
+  // Scene Control's FLOW chips: put the table on any step of the act by hand.
+  setFlow(flow) {
+    const st = this.state;
+    const patch = {flow};
+    if (flow === 'setup') {
+      const order = this.actOrder(st);
+      patch.sceneSetup = st.sceneSetup || this.setupFor(st.special ? 'demon' : order[(st.actStep || 0) % order.length], st);
+    } else patch.sceneSetup = null;
+    if (flow === 'finale' && !st.finaleWinner) patch.finaleWinner = this.gameWinner(st.actResults || []) || 'g';
+    if (flow === 'play') { patch.locChosen = true; patch.firstSceneStarted = true; }
+    this.setState(patch);
+  }
+
   setEnd(side, k, tierMax) {
     const max = tierMax || 3;
     this.setState(s => {
@@ -6064,6 +6257,142 @@ class TBPBase extends DCLogic {
       if (closerSide === 'good') return {goodEnd: goodMarked ? cappedGood : max + 1};
       return {badEnd: badMarked ? cappedBad : max + 1};
     });
+  }
+
+  // ---- Acts: best of three -------------------------------------------------
+  //
+  // Every Demon Challenge marks the act: the Girls when it is driven off, the
+  // Demon when it wins. Whoever has more marks when the act's last Scene ends
+  // takes the act, and the Demon takes ties (0-0 included). Two acts win the
+  // game. All of it is overridable from Scene Control → ACT.
+  actSeats(st) { return ((st || this.state).activeSeats || [0,1,2,3]).length; }
+  marksOf(st, a) {
+    const s = st || this.state;
+    const m = (s.actMarks || [])[(a || s.act || 1) - 1];
+    return {g: (m && m.g) || 0, d: (m && m.d) || 0};
+  }
+  // The side that can no longer lose the act, with `left` Scenes in which the
+  // Demon could still come in (at most one mark per Scene). Ties go to the
+  // Demon, so with nothing left this always names the winner.
+  actLock(g, d, left) { if (g > d + left) return 'g'; if (d >= g + left) return 'd'; return null; }
+  gameWinner(results) {
+    const g = results.filter(r => r === 'g').length, d = results.filter(r => r === 'd').length;
+    return g >= 2 ? 'g' : (d >= 2 ? 'd' : (results[2] || null));
+  }
+  // The act is settled already, so the Demon has retreated until the next
+  // act: nobody can summon it, and a Friend's Challenge (which would) is off.
+  demonRetreated(st) {
+    const s = st || this.state;
+    return !s.special && s.demonRetreatAct != null && s.demonRetreatAct === (s.act || 1);
+  }
+  // This act's running order: the order the act's Class Vote set.
+  actOrder(st) {
+    const s = st || this.state;
+    const active = s.activeSeats || [0,1,2,3];
+    const ranked = (s.turnOrder || active).filter(k => active.indexOf(k) >= 0);
+    active.forEach(k => { if (ranked.indexOf(k) < 0) ranked.push(k); });
+    return ranked;
+  }
+  // A blank Scene window for the next Lead — a seat, or 'demon'.
+  setupFor(seat, st) {
+    const s = st || this.state;
+    const done = (s.goalsDone || [])[seat] || [false, false];
+    return {seat, locIdx: (Number(s.locIdx) || 0) % LOCATIONS.length, sub: '',
+      focusIdx: seat === 'demon' ? 2 : (done[0] && done[1] ? 1 : 0), goalIdx: done[0] && !done[1] ? 1 : 0};
+  }
+  // The Lead fills in her own Scene window; the Headmaster sees the same one
+  // and can fill it in for her. A Demon-led window is the Headmaster's alone.
+  mayEditSetup() {
+    const Net = window.TBPNet, ss = this.state.sceneSetup;
+    if (!ss) return false;
+    if (!Net || !Net.role || Net.role === 'gm') return true;
+    return ss.seat !== 'demon' && Net.role === 'player' && Net.seat === ss.seat;
+  }
+  ssSet(patch) {
+    if (!this.mayEditSetup()) return;
+    this.setState(s => s.sceneSetup ? {sceneSetup: Object.assign({}, s.sceneSetup, patch)} : {});
+  }
+  startScene() {
+    const ss = this.state.sceneSetup;
+    if (!ss || this.state.flow !== 'setup' || this.state.vote || !this.mayEditSetup()) return;
+    const demon = ss.seat === 'demon';
+    const locIdx = (Number(ss.locIdx) || 0) % LOCATIONS.length;
+    const lc = LOCATIONS[locIdx];
+    const visited = this.state.visitedLocs || [];
+    const n = this.actSeats();
+    this.setState({
+      flow: 'play', sceneSetup: null, locIdx, subIdx: 0,
+      subText: String(ss.sub || '').trim() || lc.subs[0],
+      leadOverride: demon ? this.state.leadOverride : ss.seat,
+      focusIdx: demon ? 2 : (ss.focusIdx === 1 && this.demonRetreated() ? 0 : ss.focusIdx),
+      goalIdx: ss.goalIdx || 0,
+      scenePos: ((this.state.act || 1) - 1) * n + (this.state.actStep || 0),
+      locChosen: true, firstSceneStarted: true,
+      visitedLocs: visited.indexOf(locIdx) >= 0 ? visited : visited.concat([locIdx]),
+      demonIn: false, demonHeld: null, demonOut: null, demonRoll: null, challenge: null, rollMode: null, justCleared: null
+    });
+  }
+  // The Headmaster closes the Scene. This is what moves the game on: the
+  // next Lead's window, the next act, a Hail Mary / Last Chance, or the
+  // finale.
+  endScene() {
+    if (window.TBPNet && window.TBPNet.role && window.TBPNet.role !== 'gm') return false;
+    const st = this.state;
+    if (st.flow !== 'play') return false;
+    if (st.special && !st.specialResult) return false;
+    const n = this.actSeats();
+    const act = st.act || 1;
+    const results = (st.actResults || [null,null,null]).slice();
+    const out = {sceneNo: (st.sceneNo || 0) + 1, demonIn: false, demonOut: null, demonHeld: null, demonRoll: null,
+      challenge: null, rollMode: null, justCleared: null, gmDraft: null, gmOpen: false};
+    const toAct = (a) => Object.assign(out, {act: a, actStep: 0, flow: 'offscreen', special: null, specialResult: null,
+      demonRetreatAct: null, sceneSetup: null});
+    const toFinale = (w) => Object.assign(out, {flow: 'finale', finaleWinner: w, special: null, specialResult: null, sceneSetup: null});
+    if (st.special) {
+      const won = st.specialResult === 'g';
+      if (st.special === 'hailMary') { if (won) { results[1] = 'g'; toAct(3); } else toFinale('d'); }
+      else { if (won) toFinale('g'); else { results[1] = 'd'; toAct(3); } }
+      out.actResults = results;
+      this.setState(out);
+      return true;
+    }
+    const lead = this.curLead();
+    if (st.focusIdx !== 2 && lead != null) {
+      const led = (st.led || SEATS.map(() => 0)).slice();
+      led[lead] = (led[lead] || 0) + 1;
+      out.led = led;
+    }
+    const step = (st.actStep || 0) + 1;
+    out.actStep = step;
+    const m = this.marksOf(st);
+    const left = Math.max(0, n - step);
+    const lock = this.actLock(m.g, m.d, left);
+    if (left === 0 || (lock && act === 3)) {
+      results[act - 1] = lock;
+      out.actResults = results;
+      if (act === 1) toAct(2);
+      else if (act === 2) {
+        if (results[0] && results[0] === results[1]) {
+          Object.assign(out, {flow: 'setup', special: results[0] === 'd' ? 'hailMary' : 'lastChance', specialResult: null,
+            demonRetreatAct: null, sceneSetup: this.setupFor('demon', st)});
+        } else toAct(3);
+      } else toFinale(this.gameWinner(results));
+    } else {
+      if (lock) out.demonRetreatAct = act;
+      const order = this.actOrder(st);
+      out.flow = 'setup';
+      out.sceneSetup = this.setupFor(order[step % order.length], st);
+    }
+    this.setState(out);
+    return true;
+  }
+  // Running order from an act's Class Vote: Most Popular, then the middle
+  // girls by votes received (a tie settled by a die roll), then Least Popular.
+  orderFromVote(totals, most, least, active) {
+    const mids = active.filter(k => k !== most && k !== least)
+      .map(k => ({k, v: totals[k] || 0, r: Math.random()}))
+      .sort((a, b) => (b.v - a.v) || (a.r - b.r)).map(x => x.k);
+    return [most].concat(mids, [least]).filter(k => k != null && active.indexOf(k) >= 0);
   }
 
   // The table's turn order: Most Popular first, Least Popular last, decided
@@ -6257,8 +6586,8 @@ class TBPBase extends DCLogic {
       const tierMax = activeSeats.length === 3 ? 2 : 3;
       const tableEdit = {
         perfect: {
-          dec: () => this.setState(s => ({badEnd: Math.max(0, s.badEnd - 1)})),
-          inc: () => this.setState(s => ({badEnd: Math.min(tierMax + 1, s.badEnd + 1)}))
+          dec: () => this.bumpMark('d', -1),
+          inc: () => this.bumpMark('d', 1)
         },
         honor: {
           dec: () => this.setState({achScenesOverride: Math.max(0, row.value - 1)}),
@@ -6322,9 +6651,9 @@ class TBPBase extends DCLogic {
     const demonGone = !demonSummoned && this.demonOutThisScene();
     const demonAvail = [
       {label: 'SUMMONED', on: demonSummoned, tone: '#EDE31B',
-       click: () => this.setState({demonIn: true, demonOut: null, demonHeld: null})},
+       click: () => this.setState({demonIn: true, demonOut: null, demonHeld: null, demonRetreatAct: null})},
       {label: 'AVAILABLE', on: !demonSummoned && !demonGone, tone: '#9CB39A',
-       click: () => this.setState({demonIn: false, demonOut: null, demonHeld: this.sceneSig()})},
+       click: () => this.setState({demonIn: false, demonOut: null, demonHeld: this.sceneSig(), demonRetreatAct: null})},
       {label: 'UNAVAILABLE', on: demonGone, tone: '#E23A3A',
        click: () => this.setState({demonIn: false, demonOut: this.sceneSig(), demonHeld: null})}
     ].map(o => Object.assign({}, o, {
@@ -6332,6 +6661,56 @@ class TBPBase extends DCLogic {
       ink: o.on ? '#231F20' : 'rgba(239,230,200,.7)',
       border: o.on ? o.tone : 'rgba(239,230,200,.2)'
     }));
+
+    // ---- ACT: every automatic piece of the act flow, by hand -------------
+    const aSt = this.state;
+    const aAct = aSt.act || 1, aN = activeSeats.length;
+    const aM = this.marksOf();
+    const chipOf = (label, on, tone, click) => ({label, click,
+      bg: on ? tone : 'transparent', ink: on ? '#231F20' : 'rgba(239,230,200,.7)', border: on ? tone : 'rgba(239,230,200,.2)'});
+    const aRes = aSt.actResults || [null, null, null];
+    const aOrder = this.actOrder();
+    const aNext = (() => {
+      if (aSt.flow === 'offscreen') return 'Narrate the Demon off-screen, then START CLASS VOTE.';
+      if (aSt.flow === 'setup') return 'Waiting on the Scene window.';
+      if (aSt.flow === 'finale') return 'Finale. Launch Good End or Bad End from the stage or above.';
+      if (aSt.special) return aSt.specialResult ? 'END SCENE applies the ' + (aSt.special === 'hailMary' ? 'Hail Mary' : 'Last Chance') + ' result.' : 'One Demon Challenge decides this Scene. Set the result below if it happened off the dice.';
+      const step = (aSt.actStep || 0) + 1, left = Math.max(0, aN - step);
+      const lock = this.actLock(aM.g, aM.d, left);
+      if (left === 0 || (lock && aAct === 3)) return 'END SCENE closes Act ' + aAct + ' for the ' + (lock === 'g' ? 'girls' : 'Demon') + '.';
+      return 'END SCENE opens ' + SEATS[aOrder[step % aOrder.length]].label + '’s Scene window' + (lock ? ' (the Demon retreats).' : '.');
+    })();
+    const actCtl = {
+      label: aSt.flow === 'finale' ? 'FINALE' : 'ACT ' + aAct + ' OF 3 · SCENE ' + Math.min(aN, (aSt.actStep || 0) + 1) + ' OF ' + aN,
+      steppers: [
+        {label: 'ACT', value: aAct, dec: () => this.setState({act: Math.max(1, aAct - 1)}), inc: () => this.setState({act: Math.min(3, aAct + 1)})},
+        {label: 'SCENE', value: Math.min(aN, (aSt.actStep || 0) + 1), dec: () => this.setState({actStep: Math.max(0, (aSt.actStep || 0) - 1)}), inc: () => this.setState({actStep: Math.min(aN - 1, (aSt.actStep || 0) + 1)})},
+        {label: 'GIRLS', value: aM.g, dec: () => this.bumpMark('g', -1), inc: () => this.bumpMark('g', 1)},
+        {label: 'DEMON', value: aM.d, dec: () => this.bumpMark('d', -1), inc: () => this.bumpMark('d', 1)}
+      ],
+      results: [0, 1, 2].map(a => chipOf('ACT ' + (a + 1) + (aRes[a] === 'g' ? ' · GIRLS' : (aRes[a] === 'd' ? ' · DEMON' : ' · —')),
+        !!aRes[a], aRes[a] === 'g' ? '#9CB39A' : '#E23A3A', () => this.cycleActResult(a))).concat([
+        chipOf(this.demonRetreated() ? 'RETREATED' : 'NOT RETREATED', this.demonRetreated(), '#E23A3A',
+          () => this.setState({demonRetreatAct: this.demonRetreated() ? null : aAct}))]),
+      flows: [['offscreen', 'OFF-SCREEN'], ['setup', 'SCENE WINDOW'], ['play', 'IN SCENE'], ['finale', 'FINALE']]
+        .map(([k, l]) => chipOf(l, aSt.flow === k, '#EDE31B', () => this.setFlow(k))),
+      specials: aSt.flow === 'finale'
+        ? [chipOf('GIRLS WIN', aSt.finaleWinner !== 'd', '#9CB39A', () => this.setState({finaleWinner: 'g'})),
+           chipOf('DEMON WINS', aSt.finaleWinner === 'd', '#E23A3A', () => this.setState({finaleWinner: 'd'}))]
+        : [chipOf('NO SPECIAL', !aSt.special, '#EDE31B', () => this.setState({special: null, specialResult: null})),
+           chipOf('HAIL MARY', aSt.special === 'hailMary', '#E23A3A', () => this.setState({special: 'hailMary', focusIdx: 2})),
+           chipOf('LAST CHANCE', aSt.special === 'lastChance', '#E23A3A', () => this.setState({special: 'lastChance', focusIdx: 2}))]
+          .concat(aSt.special ? [
+            chipOf('GIRLS WON IT', aSt.specialResult === 'g', '#9CB39A', () => this.setState({specialResult: aSt.specialResult === 'g' ? null : 'g'})),
+            chipOf('DEMON WON IT', aSt.specialResult === 'd', '#E23A3A', () => this.setState({specialResult: aSt.specialResult === 'd' ? null : 'd'}))] : []),
+      next: aNext,
+      vote: () => { if (!aSt.vote) { this.setState({gmOpen: false, gmDraft: null}); this.startVote(null); } },
+      voteLabel: aSt.flow === 'offscreen' ? 'START CLASS VOTE' : 'EXTRA CLASS VOTE',
+      endOk: aSt.flow === 'play' && (!aSt.special || !!aSt.specialResult),
+      endScene: () => { if (this.state.gmDraft) this.gmApply(); this.endScene(); }
+    };
+    actCtl.endBg = actCtl.endOk ? '#EDE31B' : 'rgba(239,230,200,.12)';
+    actCtl.endInk = actCtl.endOk ? '#231F20' : 'rgba(239,230,200,.35)';
 
     // A Class Vote that had to be revoked still burned the caller's one Vote.
     // This hands it back (or takes one away) without touching anything else.
@@ -6367,7 +6746,7 @@ class TBPBase extends DCLogic {
 
     return {
       show: this.state.gmOpen, stop,
-      demonAvail, voteSpent, orderEdit,
+      demonAvail, voteSpent, orderEdit, actCtl,
       demonName: this.state.demonName,
       renameDemon: () => { if (this.mpShowTable) this.mpShowTable(); else this.renameDemon(); },
       open: () => this.setState({gmOpen: true}),
@@ -6531,8 +6910,14 @@ class TBPBase extends DCLogic {
     this.commitChallenge(i, target, rel);
   }
 
+  // Class Votes are the Headmaster's now: one opens each act (after the
+  // off-screen Demon scene), and she can call an extra one at any time. A
+  // Student can no longer call one.
   startVote(caller) {
-    if (this.state.vote || !this.state.voteEnabled) return;
+    if (typeof caller === 'number') return;
+    if (window.TBPNet && window.TBPNet.role && window.TBPNet.role !== 'gm') return;
+    if (this.state.vote) return;
+    const actStart = this.state.flow === 'offscreen';
     const ch = this.state.challenge;
     if (ch && !ch.resolved) return;
     if (this.state.chars[caller] && this.state.chars[caller].votedOnce) return;
@@ -6543,7 +6928,7 @@ class TBPBase extends DCLogic {
     // own Drama (switching the Player picker to her seat in local/hotseat
     // play); nobody's vote is randomly guessed for her.
     const alloc = this.state.chars.map(() => ({}));
-    this.setState({rollMode: null, challenge: null, firstSceneStarted: true, voteReady: {}, vote: {phase: 'assign', caller, alloc, tick: [0,0,0,0], totals: null, most: null, least: null, tieMost: false, tieLeast: false, clock: 60}});
+    this.setState({rollMode: null, challenge: null, firstSceneStarted: true, voteReady: {}, vote: {phase: 'assign', caller, actStart, alloc, tick: [0,0,0,0], totals: null, most: null, least: null, tieMost: false, tieLeast: false, clock: 60}});
     this.startVoteClock();
   }
 
@@ -6724,7 +7109,15 @@ class TBPBase extends DCLogic {
       // opening vote and never move again, so a later shake-up in Popularity
       // never reached the Scene order. The Headmaster can still overrule it by
       // hand from Scene Control.
-      if (v.totals) out.turnOrder = rankFromTotals(v.totals);
+      // An act-opening vote sets that act's running order and hands the
+      // first Scene window to Most Popular. An extra vote the Headmaster
+      // calls mid-act only changes Popularity.
+      if (v.totals && v.actStart) {
+        out.turnOrder = this.orderFromVote(v.totals, most, least, active);
+        out.flow = 'setup';
+        out.actStep = 0;
+        out.sceneSetup = this.setupFor(out.turnOrder[0], s);
+      }
       return out;
     });
     active.forEach(k => {
@@ -6904,7 +7297,7 @@ class TBPBase extends DCLogic {
       demonName: this.state.demonNameDraft.trim().toUpperCase(),
       demonGoal: '\u201c' + this.state.demonGoalDraft.trim() + '\u201d',
       activeSeats: activeSeats.length === 3 ? activeSeats : [0,1,2,3],
-      chars,
+      chars, ...ACT_RESET,
       setupOpen: false
     });
   }
@@ -6974,7 +7367,7 @@ class TBPBase extends DCLogic {
       activeSeats: activeSeats.length === 3 ? activeSeats : [0,1,2,3],
       locks, quirkPicks: picks.quirkPicks, goalPicks: picks.goalPicks, chars: picks.chars,
       picking: null, pickingBy: {}, mpReady: true,
-      rolled, rollEnds: {},
+      rolled, rollEnds: {}, ...(this.state.firstSceneStarted ? {} : ACT_RESET),
       setupOpen: false
     });
   }
@@ -7155,7 +7548,9 @@ class TBPBase extends DCLogic {
     // the Scene changing — the per-Student Scene tally is the only thing that
     // ticks exactly once per Scene, so it is what the Demon’s retreat expires
     // against.
-    return String((st.led || []).reduce(function (a, b) { return a + b; }, 0));
+    // sceneNo ticks on every END SCENE, Demon-led ones included (they add
+    // nothing to `led`), so a retreat can't leak into a Hail Mary.
+    return (st.sceneNo || 0) + ':' + (st.led || []).reduce(function (a, b) { return a + b; }, 0);
   }
 
   // True once the Demon has come and gone in THIS Scene — whether it retreated
@@ -7165,7 +7560,7 @@ class TBPBase extends DCLogic {
   // Demon-led Scene, where the Demon does not retreat at all.
   demonOutThisScene(s) {
     const st = s || this.state;
-    return st.demonOut != null && st.demonOut === this.sceneSig(st);
+    return this.demonRetreated(st) || (st.demonOut != null && st.demonOut === this.sceneSig(st));
   }
 
   // Set by the Headmaster's AVAILABLE chip: the Demon is held back for THIS
@@ -7177,6 +7572,9 @@ class TBPBase extends DCLogic {
   }
 
   demonPresent() {
+    // Only inside a running Scene: not over the off-screen prompt, a Scene
+    // window or the finale, whatever the last Scene's Focus was.
+    if (this.state.flow && this.state.flow !== 'play') return false;
     return !this.demonOutThisScene() && (this.state.demonIn ||
       (!this.demonHeldThisScene() && (this.demonLead() || this.state.focusIdx === 1)));
   }
@@ -7270,30 +7668,43 @@ class TBPBase extends DCLogic {
     return !!g && g.length > 0 && g.every(Boolean);
   }
 
-  demonTarget() {
+  // Hail Mary (a Demon-led Scene): −1 per unresolved Goal at the whole table.
+  // Last Chance: +1 per Goal the whole table has accomplished. Neither counts
+  // the Focus. PSI on the Demon with Goals still open: it still rolls, at +1
+  // (two Goals left) or +2 (one left); with none left it simply fails.
+  demonTarget(boost) {
     const dr = this.state.demonRoll;
-    const done = this.state.goalsDone;
+    const done = this.state.goalsDone || [];
+    const active = this.state.activeSeats || [0,1,2,3];
     const who = dr ? dr.by : this.curLead();
-    const unresolved = this.demonLead()
-      ? done.reduce((a, g) => a + g.filter(v => !v).length, 0)
-      : (done[who] ? done[who].filter(v => !v).length : 0);
-    // The Good End and Bad End tracks no longer touch this die — the Demon was
-    // hard enough to beat without the tracks snowballing it.
-    const focus = this.demonIsFocus() ? 1 : 0;
-    const raw = 4 - unresolved + focus;
-    return {unresolved, focus, target: Math.max(2, Math.min(6, raw))};
+    const table = active.reduce((a, k) => a + (done[k] || []).filter(v => !v).length, 0);
+    const accomplished = active.reduce((a, k) => a + (done[k] || []).filter(Boolean).length, 0);
+    const last = this.state.special === 'lastChance';
+    const unresolved = last ? 0 : (this.demonLead() ? table : (done[who] ? done[who].filter(v => !v).length : 0));
+    const focus = !this.demonLead() && this.demonIsFocus() ? 1 : 0;
+    const psiBoost = boost != null ? boost : ((dr && dr.psiBoost) || 0);
+    const raw = 4 - unresolved + focus + (last ? accomplished : 0) + psiBoost;
+    return {unresolved, focus, accomplished: last ? accomplished : 0, psiBoost, target: Math.max(2, Math.min(6, raw))};
+  }
+  // What PSI does to the Demon for seat i: 0 = it fails outright, otherwise
+  // how much harder its roll gets.
+  psiBoostFor(i) {
+    const g = (this.state.goalsDone || [])[i] || [false, false];
+    const left = g.filter(v => !v).length;
+    return left === 0 ? 0 : (left >= 2 ? 1 : 2);
   }
 
-  rollDemon() {
+  rollDemon(psiBoost) {
     const dr = this.state.demonRoll;
     if (!dr || dr.phase !== 'ready') return;
-    const target = this.demonTarget().target;
+    const target = this.demonTarget(psiBoost).target;
     const landed = 1 + Math.floor(Math.random() * 6);
     // Matches the digit height in the Demon's roll panel, which is now the same
     // size as a Student's rather than the old full-screen pop-out's.
     const ITEM = 48;
     const dist = (30 + landed - 1) * ITEM;
-    this.setState({demonRoll: Object.assign({}, dr, {phase: 'rolling', reelY: 0, reelSpeed: 1})});
+    this.setState({demonRoll: Object.assign({}, dr, {phase: 'rolling', reelY: 0, reelSpeed: 1},
+      psiBoost ? {psiBoost, psiRoll: true} : {})});
     const t0 = performance.now();
     const step = (now) => {
       const p = Math.min(1, (now - t0) / 1500);
@@ -7321,10 +7732,19 @@ class TBPBase extends DCLogic {
         challenge: st.challenge ? Object.assign({}, st.challenge, {resolved: true}) : null,
         rollMode: null
       };
-      const tierMax = (st.activeSeats || [0,1,2,3]).length === 3 ? 2 : 3;
-      if (success) out.badEnd = Math.min(tierMax + 1, st.badEnd + 1); else out.goodEnd = Math.min(tierMax + 1, st.goodEnd + 1);
-      if (out.badEnd > tierMax && st.goodEnd > tierMax) out.goodEnd = tierMax;
-      if (out.goodEnd > tierMax && st.badEnd > tierMax) out.badEnd = tierMax;
+      // A Hail Mary / Last Chance is decided by its one Demon Challenge; the
+      // Headmaster's END SCENE then applies it. Anywhere else the result
+      // marks the act, and if that settles the act the Demon retreats.
+      if (st.special) out.specialResult = success ? 'd' : 'g';
+      else {
+        const act = st.act || 1;
+        const marks = (st.actMarks || ACT_RESET.actMarks).map(m => Object.assign({}, m));
+        const m = marks[act - 1];
+        if (success) m.d = (m.d || 0) + 1; else m.g = (m.g || 0) + 1;
+        out.actMarks = marks;
+        const left = Math.max(0, this.actSeats(st) - (st.actStep || 0) - 1);
+        if (this.actLock(m.g, m.d, left)) out.demonRetreatAct = act;
+      }
       if (!lead) {
         out.demonIn = false;
         // Retreat for real, and remember it did: the mark both overrides a
@@ -7369,7 +7789,7 @@ class TBPBase extends DCLogic {
     const dr = this.state.demonRoll;
     if (!dr || dr.phase !== 'ready') return;
     const i = dr.by;
-    if (!this.goalsAllDone(i)) return;
+    const boost = this.psiBoostFor(i);
     const c = this.state.chars[i];
     const cost = Number(c.psiCost) || 2;
     if ((Number(c.drama) || 0) < cost) return;
@@ -7383,6 +7803,7 @@ class TBPBase extends DCLogic {
     this.timers[i + 'l'] = setTimeout(() => this.patch(i, {landing: false}), 460);
     clearTimeout(this.timers[i + 'd']);
     this.timers[i + 'd'] = setTimeout(() => this.patch(i, {dramaPop: false}), 800);
+    if (boost) { this.rollDemon(boost); return; }
     this.settleDemon({phase: 'done', face: null, psi: true, success: false, reelY: 0, reelSpeed: 0}, false);
   }
 
@@ -7398,7 +7819,7 @@ class TBPBase extends DCLogic {
       // quietly summon it back. Popping it back in clears that mark — the
       // Headmaster's override always wins.
       if (currentlyIn) return {demonIn: false, demonOut: this.sceneSig(s)};
-      return {demonIn: true, demonOut: null, demonHeld: null};
+      return {demonIn: true, demonOut: null, demonHeld: null, demonRetreatAct: null};
     });
   }
 
@@ -7515,9 +7936,10 @@ class TBPBase extends DCLogic {
       const orphanDemonCall = !!ch && ch.rel === 'demon' && !ch.resolved && !this.state.demonRoll;
       const isChallenger = !!ch && ch.rel === 'demon' && !ch.resolved && i === ch.by;
       const demonWaiting = isChallenger && !!this.state.demonRoll && this.state.demonRoll.phase === 'ready';
-      // She may only burn PSI on the Demon once every one of her Goals is
-      // cleared — so the control is present but shut while any remain.
-      const demonPsiOpen = demonWaiting && this.goalsAllDone(i);
+      // PSI on the Demon is always allowed now. With Goals still open the
+      // Demon rolls anyway, just at +1 / +2 (see psiBoostFor()).
+      const demonPsiOpen = demonWaiting;
+      const demonPsiBoost = demonWaiting ? this.psiBoostFor(i) : 0;
       const demonPsiLocked = demonWaiting && !demonPsiOpen;
       // Only the Scene's Lead lights up as a target, and only when the caller
       // actually holds her as a Friend or Rival.
@@ -7534,7 +7956,8 @@ class TBPBase extends DCLogic {
       const bondRels = this.challengeableBy(i);
       const hasTarget = bondRels.length > 0 || (this.canCallDemon(i) && this.demonPresent());
       const canCall = (!ch || ch.resolved) && !voteActive && !rollerBusy && dvNow < 5 && hasTarget;
-      const canVote = (!ch || ch.resolved) && !voteActive && !rollerBusy && this.state.voteEnabled && !c.votedOnce;
+      // Only the Headmaster calls Class Votes now (Scene Control → ACT).
+      const canVote = false;
       const counting = voteActive && (vote.phase === 'count' || vote.phase === 'tiebreak' || vote.phase === 'done');
       const quirkSel = rollMode ? (c.quirk === 0 || c.quirk === 1 ? c.quirk : null) : null;
       const t = Math.max(2, BASE[c.pop] - (quirkSel === 0 || quirkSel === 1 ? 1 : 0));
@@ -7745,8 +8168,8 @@ class TBPBase extends DCLogic {
         narratorPsi: c.psiUsed,
         tools: [
           {icon: 'assets/act-psi.png',
-           label: demonPsiOpen ? 'Use PSI — the Demon fails outright'
-                : (demonPsiLocked ? 'Use PSI — Clear all Goals first' : 'Use PSI'),
+           label: demonPsiOpen ? (demonPsiBoost ? 'Use PSI — the Demon still rolls, at −' + demonPsiBoost : 'Use PSI — the Demon fails outright')
+                : 'Use PSI',
            open: c.iconHover === 0,
            cursor: (rollMode || demonPsiOpen) ? 'pointer' : 'help',
            press: 'translateY(0) scale(1)',
@@ -7767,7 +8190,7 @@ class TBPBase extends DCLogic {
            anim: 'none',
            filter: canCall ? 'none' : DIM,
            click: () => this.callChallenge(i), enter: () => this.patch(i, {iconHover: 1}), leave: () => this.patch(i, {iconHover: null})},
-          {icon: 'assets/act-vote.png', label: !this.state.voteEnabled ? 'Class Vote — disabled' : 'Class Vote', open: c.iconHover === 2, cursor: canVote ? 'pointer' : 'help', press: 'translateY(0) scale(1)',
+          {icon: 'assets/act-vote.png', label: 'Class Vote — the Headmaster calls it', open: c.iconHover === 2, cursor: canVote ? 'pointer' : 'help', press: 'translateY(0) scale(1)',
            anim: 'none',
            filter: canVote ? 'none' : DIM,
            click: () => this.startVote(i), enter: () => this.patch(i, {iconHover: 2}), leave: () => this.patch(i, {iconHover: null})}
@@ -8028,23 +8451,29 @@ class TBPBase extends DCLogic {
       bubbleResult: drDone,
       modTarget: [
         {text: '4 BASE', bg: '#EFE6C8', ink: '#231F20', opacity: 1},
-        {text: '−' + dt.unresolved + ' GOALS', bg: '#9CB39A', ink: '#231F20', opacity: dt.unresolved ? 1 : 0.32}
+        this.state.special === 'lastChance'
+          ? {text: '+' + dt.accomplished + ' GOALS DONE', bg: '#9CB39A', ink: '#231F20', opacity: dt.accomplished ? 1 : 0.32}
+          : {text: '−' + dt.unresolved + ' GOALS', bg: '#9CB39A', ink: '#231F20', opacity: dt.unresolved ? 1 : 0.32}
       ],
-      modCost: [
-        {text: '+' + dt.focus + ' FOCUS', bg: '#A9BEDC', ink: '#231F20', opacity: dt.focus ? 1 : 0.32}
-      ],
-      modSummary: 'It marks a Bad End on ' + dt.target + '+ · Calling it is free.',
+      modCost: dt.psiBoost
+        ? [{text: '+' + dt.psiBoost + ' PSI', bg: '#F6A7CA', ink: '#231F20', opacity: 1}]
+        : [{text: '+' + dt.focus + ' FOCUS', bg: '#A9BEDC', ink: '#231F20', opacity: dt.focus ? 1 : 0.32}],
+      modSummary: 'It wins on ' + dt.target + '+ · Calling it is free.',
       resultWord: drDone ? (dr.psi ? 'PSI!' : (dr.success ? 'The Demon succeeds…' : 'The Demon fails…')) : '',
       resultInk: drDone && dr.success && !dr.psi ? '#FDFCFC' : '#231F20',
       // Finally rendered somewhere: the line that explains the retreat rule the
       // table keeps forgetting.
       resultLine: !drDone ? '' : (
         (dr.psi
-          ? 'The Headmaster narrates how the PSI beats it — and the serious consequence the PSI causes doing it. +1 Good End. '
-          : (dr.success
-            ? 'The Headmaster narrates how it succeeds. +1 Bad End. '
-            : 'The Headmaster narrates how it fails. +1 Good End. ')) +
-        (dLead ? 'It leads this Scene, so it does not retreat.' : 'The Demon retreats.')),
+          ? 'The Headmaster narrates how the PSI beats it — and the serious consequence the PSI causes doing it. '
+          : (dr.psiRoll
+            ? (dr.success ? 'Even through the PSI, it wins — and the PSI still causes a serious consequence. '
+                          : 'The PSI drives it off — and causes a serious consequence doing it. ')
+            : (dr.success ? 'The Headmaster narrates how it succeeds. ' : 'The Headmaster narrates how it fails. '))) +
+        (this.state.special
+          ? (dr.success ? 'The Demon wins the ' : 'The girls win the ') + (this.state.special === 'hailMary' ? 'Hail Mary.' : 'Last Chance.')
+          : (dr.success ? '+1 to the Demon this act. ' : '+1 to the girls this act. ') +
+            (dLead ? 'It leads this Scene, so it does not retreat.' : 'The Demon retreats.'))),
       closeResult: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.clearDemonResult(); }
     };
 
@@ -8063,24 +8492,39 @@ class TBPBase extends DCLogic {
     // 3-player games run a shorter track — 2 small squares a side plus the
     // shared center square, instead of 4's 3 a side.
     const tierMax = (this.state.activeSeats || [0,1,2,3]).length === 3 ? 2 : 3;
-    const goodNeeded = Math.max(0, (tierMax + 1) - good);
-    const demonWarn = scenesLeft < goodNeeded;
+    // The track is this act's marks now: Girls on the left, the Demon on the
+    // right, the middle square showing who holds the act (ties: the Demon).
+    // The SCENES LEFT box carries the act and its three results.
+    const curAct = this.state.act || 1;
+    const am = this.marksOf();
+    const actLeft = Math.max(0, (this.state.activeSeats || [0,1,2,3]).length - (this.state.actStep || 0));
+    const flowNow = this.state.flow;
     const goodTiers = Array.from({length: tierMax}, (_, i) => i + 1);
     const badTiers = goodTiers.slice().reverse();
+    const actHolder = am.g > am.d ? 'g' : (am.d > 0 ? 'd' : null);
+    const actResults = this.state.actResults || [null, null, null];
     const rail = {
-      scenesLeft: scenesLeft,
-      sceneInk: demonWarn ? '#E23A3A' : '#EFE6C8',
-      demonWarn: demonWarn,
+      scenesLeft: flowNow === 'finale' ? 0 : (this.state.special ? 1 : actLeft),
+      sceneLabel: flowNow === 'finale' ? 'FINALE'
+        : (this.state.special ? (this.state.special === 'hailMary' ? 'HAIL MARY' : 'LAST CHANCE') : 'ACT ' + curAct + ' · SCENES LEFT'),
+      sceneInk: '#EFE6C8',
+      demonWarn: this.demonRetreated(),
+      goodLabel: 'GIRLS', badLabel: 'DEMON',
+      acts: [0, 1, 2].map(a => ({
+        bg: actResults[a] === 'g' ? '#9CB39A' : (actResults[a] === 'd' ? '#B4322C' : 'rgba(239,230,200,.14)'),
+        border: a === curAct - 1 && flowNow !== 'finale' ? '#EDE31B' : 'transparent',
+        click: isHeadmaster ? (() => this.cycleActResult(a)) : (() => {})
+      })),
       demonName: this.state.demonName, demonGoal: this.state.demonGoal,
       roomCode: (window.TBPNet && window.TBPNet.roomId) || '',
-      goodCount: good, badCount: bad,
-      goodSquares: goodTiers.map(k => ({bg: good >= k ? '#9CB39A' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setEnd('good', k, tierMax)) : (() => {})})),
-      badSquares: badTiers.map(k => ({bg: bad >= k ? '#B4322C' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setEnd('bad', k, tierMax)) : (() => {})})),
-      bigBg: good > tierMax ? '#9CB39A' : (bad > tierMax ? '#B4322C' : 'rgba(239,230,200,.14)'),
-      bigBorder: good > tierMax ? '#9CB39A' : (bad > tierMax ? '#E23A3A' : '#EFE6C8'),
-      bigGoodOpacity: good > tierMax ? 1 : 0,
-      bigBadOpacity: bad > tierMax ? 1 : 0,
-      bigClick: isHeadmaster ? (() => this.cycleClosestEnd(tierMax)) : (() => {}),
+      goodCount: am.g, badCount: am.d,
+      goodSquares: goodTiers.map(k => ({bg: am.g >= k ? '#9CB39A' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setMark('g', k)) : (() => {})})),
+      badSquares: badTiers.map(k => ({bg: am.d >= k ? '#B4322C' : 'rgba(239,230,200,.14)', click: isHeadmaster ? (() => this.setMark('d', k)) : (() => {})})),
+      bigBg: actHolder === 'g' ? '#9CB39A' : (actHolder === 'd' ? '#B4322C' : 'rgba(239,230,200,.14)'),
+      bigBorder: actHolder === 'g' ? '#9CB39A' : (actHolder === 'd' ? '#E23A3A' : '#EFE6C8'),
+      bigGoodOpacity: actHolder === 'g' ? 1 : 0,
+      bigBadOpacity: actHolder === 'd' ? 1 : 0,
+      bigClick: () => {},
       // Displayed in turn order (Most Popular left, Least Popular right) once
       // the first Class Vote has settled it — falls back to seat order before
       // that.
@@ -8189,13 +8633,15 @@ class TBPBase extends DCLogic {
     const vsDemon = fi === 1, demonLead = fi === 2;
     const demonFocus = demonLead;
     const loc = Object.assign(faceOf(demonLead ? '' : leadSeat.who), {
-      show: !voteBar.show && !voteHeadmaster.show && !voteResult.show && this.state.firstSceneStarted && this.state.locChosen,
+      show: !voteBar.show && !voteHeadmaster.show && !voteResult.show && this.state.firstSceneStarted && this.state.locChosen
+        && (this.state.flow === 'play' || this.state.flow == null),
       img: lc.img, name: lc.name,
       sub: this.state.subText == null ? subs[this.state.subIdx % subs.length] : this.state.subText,
       cyclePlace: () => {},
       cycleSub: () => this.setState(s => ({subIdx: (s.subIdx + 1) % LOCATIONS[s.locIdx % LOCATIONS.length].subs.length, subText: null})),
       cycleFocus: () => {},
-      focusKind: demonLead ? 'LEAD · THE DEMON' : 'LEAD',
+      focusKind: demonLead ? (this.state.special === 'hailMary' ? 'HAIL MARY · THE DEMON LEADS'
+        : (this.state.special === 'lastChance' ? 'LAST CHANCE · THE DEMON LEADS' : 'LEAD · THE DEMON')) : 'LEAD',
       focusName: demonLead ? this.state.demonName : leadSeat.label,
       focusInk: demonLead ? '#E23A3A' : '#EDE31B',
       focusChipBg: demonLead ? '#B4322C' : SEAT_TONE[leadSeat.who],
@@ -8372,6 +8818,8 @@ class TBPBase extends DCLogic {
       setName: e => this.setState({demonNameDraft: e.target.value}),
       skip: () => this.skipToRoom(),
       setGoal: e => this.setState({demonGoalDraft: e.target.value}),
+      extras: [['demonOrigin', 'ORIGIN', 'Where it came from'], ['demonAbilities', 'ABILITIES', 'What it can do'], ['demonLook', 'LOOK', 'What it looks like']]
+        .map(([key, label, ph]) => ({label, ph, value: this.state[key] || '', set: e => this.setState({[key]: e.target.value})})),
       startOpacity: (this.state.demonNameDraft.trim() && this.state.demonGoalDraft.trim() && !this.anySpinning()) ? 1 : 0.4,
       roster: (this.state.locks || []).map((locked, k) => Object.assign(faceOf(SEATS[k].who), {
         show: !!locked,
@@ -8389,11 +8837,110 @@ class TBPBase extends DCLogic {
       goodX: (this.state.goodX || 0) + 'px',
       sceneX: (this.state.sceneX || 0) + 'px'
     };
-    const firstVote = {
-      show: !this.state.firstSceneStarted && !voteBar.show && !voteResult.show,
-      start: () => this.startVote(null)
+    // The opening Class Vote card is replaced by the act flow card below.
+    const firstVote = {show: false, start: () => {}};
+
+    // ---- the act flow: off-screen Demon prompt, waiting on a Scene window,
+    // the finale -------------------------------------------------------------
+    const flow = this.state.flow;
+    const fAct = this.state.act || 1;
+    const fN = (this.state.activeSeats || [0,1,2,3]).length;
+    const ssNow = this.state.sceneSetup;
+    const ssDemon = !!ssNow && ssNow.seat === 'demon';
+    const ssSeat = ssNow && !ssDemon ? SEATS[ssNow.seat] : null;
+    const ssCanEdit = this.mayEditSetup();
+    const ssKey = (this.state.sceneNo || 0) + ':' + fAct + ':' + (ssNow ? ssNow.seat : '-');
+    const ssOpen = flow === 'setup' && !voteActive && !!ssNow && ssCanEdit && this.state.ssHidden !== ssKey && !this.state.gmOpen;
+    const dName = this.state.demonName;
+    const specialText = this.state.special === 'hailMary'
+      ? 'Hail Mary. The Demon leads. One Demon Challenge decides it, and any girl may Call it. It is stronger for every Goal still open at the table. Beat it and Act 2 turns to the girls; lose and the Demon wins the game.'
+      : 'Last Chance. The Demon leads. One Demon Challenge decides it, and any girl may Call it. It is weaker for every Goal the table has accomplished. Beat it and the girls win the game; lose and Act 2 turns to the Demon.';
+    const fbtn = (label, click, primary) => ({show: true, label, click,
+      bg: primary ? '#231F20' : 'transparent', ink: primary ? '#EDE31B' : '#231F20'});
+    const noBtn = {show: false, label: '', click: () => {}, bg: 'transparent', ink: '#231F20'};
+    let flowCard = {show: false, kicker: '', title: '', text: '', btn1: noBtn, btn2: noBtn};
+    if (!voteActive && flow === 'offscreen') {
+      flowCard = isHeadmaster
+        ? {show: true, kicker: 'ACT ' + fAct + ' · OFF-SCREEN · HEADMASTER ONLY', title: 'Narrate the ' + dName,
+           text: 'A scene away from the girls. Establish what it is after this act, and what will happen if it isn’t stopped. Then call the Class Vote.',
+           btn1: fbtn('START CLASS VOTE', () => this.startVote(null), true), btn2: noBtn}
+        : {show: true, kicker: 'ACT ' + fAct, title: 'Class Vote coming up',
+           text: 'The Headmaster has the floor.', btn1: noBtn, btn2: noBtn};
+    } else if (!voteActive && flow === 'setup' && ssNow && !ssOpen) {
+      const who = ssDemon ? 'The Demon' : ssSeat.label;
+      flowCard = {show: true,
+        kicker: ssDemon ? (this.state.special === 'hailMary' ? 'HAIL MARY' : 'LAST CHANCE') : 'ACT ' + fAct + ' · SCENE ' + ((this.state.actStep || 0) + 1) + ' OF ' + fN,
+        title: who + ' is setting the Scene',
+        text: ssDemon ? specialText : 'Where it happens, and what she is going for.',
+        btn1: ssCanEdit ? fbtn('OPEN THE SCENE WINDOW', () => this.setState({ssHidden: null}), true) : noBtn, btn2: noBtn};
+    } else if (flow === 'finale') {
+      const gw = this.state.finaleWinner === 'd' ? 'd' : 'g';
+      flowCard = {show: true, kicker: 'FINALE',
+        title: gw === 'g' ? 'The girls win' : 'The ' + dName + ' wins',
+        text: gw === 'g' ? 'Each girl describes how she helps defeat the ' + dName + '.' : 'The ' + dName + ' describes how it achieves its goal.',
+        btn1: isHeadmaster ? fbtn(gw === 'g' ? 'GOOD END' : 'BAD END', () => this.setState({endKind: gw === 'g' ? 'good' : 'bad'}), true) : noBtn,
+        btn2: isHeadmaster ? fbtn(gw === 'g' ? 'BAD END' : 'GOOD END', () => this.setState({endKind: gw === 'g' ? 'bad' : 'good'}), false) : noBtn};
+    }
+
+    const SS_ACC = '#EDE31B';
+    const ssLc = ssNow ? LOCATIONS[(Number(ssNow.locIdx) || 0) % LOCATIONS.length] : LOCATIONS[0];
+    const ssDone = ssNow && !ssDemon ? ((this.state.goalsDone || [])[ssNow.seat] || [false, false]) : [false, false];
+    const ssRetreat = this.demonRetreated();
+    let ssRaw;
+    if (!ssNow) ssRaw = [];
+    else if (ssDemon) ssRaw = [{tag: (this.state.special === 'hailMary' ? 'HAIL MARY' : 'LAST CHANCE') + ' · THE DEMON LEADS', text: this.state.demonGoal, on: true, red: true, pick: () => {}}];
+    else {
+      ssRaw = BIOS[ssSeat.who].goals.map((g, k) => ({
+        tag: ssDone[k] ? 'GOAL ' + (k + 1) + ' · COMPLETED' : 'GOAL ' + (k + 1), text: g, done: ssDone[k],
+        on: ssNow.focusIdx === 0 && ssNow.goalIdx === k, pick: () => this.ssSet({focusIdx: 0, goalIdx: k})}));
+      ssRaw.push({tag: ssRetreat ? 'AGAINST THE DEMON · IT HAS RETREATED' : 'AGAINST THE DEMON', text: '“Defeat the ' + dName + '.”',
+        red: true, done: ssRetreat, on: ssNow.focusIdx === 1, pick: () => this.ssSet({focusIdx: 1})});
+    }
+    const ss = {
+      open: ssOpen, stop,
+      kicker: ssDemon ? (this.state.special === 'hailMary' ? 'HAIL MARY' : 'LAST CHANCE') : 'ACT ' + fAct + ' · SCENE ' + ((this.state.actStep || 0) + 1) + ' OF ' + fN,
+      title: ssDemon ? 'The Demon’s Scene' : (ssSeat ? ssSeat.label + '’s Scene' : ''),
+      note: isHeadmaster
+        ? (ssDemon ? 'Only you see this window.' : 'She sees this same window. Fill it in for her if she asks.')
+        : 'The Headmaster sees this window too.',
+      hide: () => this.setState({ssHidden: ssKey}),
+      places: LOCATIONS.map((p, i) => {
+        const on = !!ssNow && i === (Number(ssNow.locIdx) || 0) % LOCATIONS.length;
+        return {name: p.name, img: p.img, imgOpacity: on ? 1 : .45, border: on ? SS_ACC : 'rgba(239,230,200,.16)', ink: on ? SS_ACC : '#EFE6C8',
+          pick: () => this.ssSet({locIdx: i, sub: ''})};
+      }),
+      sub: ssNow ? ssNow.sub || '' : '',
+      setSub: (e) => this.ssSet({sub: e.target.value}),
+      subChips: ssLc.subs.map(t => {
+        const on = !!ssNow && t === ssNow.sub;
+        return {text: t, ink: on ? '#231F20' : 'rgba(239,230,200,.7)', bg: on ? SS_ACC : 'transparent', border: on ? SS_ACC : 'rgba(239,230,200,.25)',
+          pick: () => this.ssSet({sub: t})};
+      }),
+      showRule: ssDemon, rule: specialText,
+      focusOptions: ssRaw.map(o => {
+        const hue = o.red ? '#E23A3A' : SS_ACC;
+        return {tag: o.tag, text: o.text, cursor: o.done ? 'not-allowed' : 'pointer', opacity: o.done ? .45 : 1,
+          strike: o.done ? 'line-through' : 'none',
+          border: o.on ? hue : 'rgba(239,230,200,.14)',
+          bg: o.on ? (o.red ? 'rgba(226,58,58,.14)' : 'rgba(237,227,27,.1)') : 'rgba(239,230,200,.03)',
+          dotBorder: o.on ? hue : 'rgba(239,230,200,.4)', dotBg: o.on ? hue : 'transparent',
+          tagInk: o.red ? '#E23A3A' : (o.on || o.done ? SS_ACC : 'rgba(239,230,200,.5)'),
+          textInk: o.on ? '#EFE6C8' : 'rgba(239,230,200,.8)',
+          pick: o.done ? () => {} : o.pick};
+      }),
+      preview: {
+        img: ssLc.img, name: ssLc.name,
+        sub: (ssNow && String(ssNow.sub || '').trim()) || ssLc.subs[0],
+        head: ssDemon ? 'assets/icon-demon.png' : (ssSeat ? 'assets/head-' + ssSeat.who + '.png' : ''),
+        headPad: ssDemon ? '5px' : '0px',
+        chipBg: ssDemon ? '#B4322C' : (ssSeat ? SEAT_TONE[ssSeat.who] : '#231F20'),
+        kind: ssDemon ? 'LEAD · THE DEMON' : (ssSeat ? (ssNow.focusIdx === 1 ? 'LEAD · ' + ssSeat.label + ' · VS THE DEMON' : 'LEAD · ' + ssSeat.label) : ''),
+        kindInk: ssDemon || (ssNow && ssNow.focusIdx === 1) ? '#E23A3A' : SS_ACC,
+        goal: ssDemon ? this.state.demonGoal : (ssSeat ? (ssNow.focusIdx === 1 ? '“Defeat the ' + dName + '.”' : '“' + BIOS[ssSeat.who].goals[(ssNow.goalIdx || 0) % 2] + '”') : '')
+      },
+      start: () => this.startScene()
     };
-    return {f: {anchors, gm, end, setup, newGame, cards: cardsActive, rollPicker, playerPicker, psiCostPicker, voteBar, voteHeadmaster, voteResult, voteToggle, rail, demon, me, rulebook, diary, loc, firstVote, stage, focusPicker, stageBg: dLead ? '#4A1418' : '#EDE31B', rowScale, rowPull: Math.round(-519 * (1 - rowScale)) + 'px', debugVisible: this.state.debugVisible, gearToggle, watermarkShow: false,
+    return {f: {flowCard, ss, anchors, gm, end, setup, newGame, cards: cardsActive, rollPicker, playerPicker, psiCostPicker, voteBar, voteHeadmaster, voteResult, voteToggle, rail, demon, me, rulebook, diary, loc, firstVote, stage, focusPicker, stageBg: dLead ? '#4A1418' : '#EDE31B', rowScale, rowPull: Math.round(-519 * (1 - rowScale)) + 'px', debugVisible: this.state.debugVisible, gearToggle, watermarkShow: false,
       // The setup screen sits inside a layer that ranks below the header, so
       // the header (and the NEW GAME / SCENE tabs) would show over it.
       chromeVis: this.state.setupOpen ? 'hidden' : 'visible'}};
@@ -8439,7 +8986,9 @@ var MP_LOCAL = {
   // Measured from THIS browser window by fit(). They were being broadcast
   // like game state, so one player resizing — or the Headmaster on a laptop —
   // squashed the location card on every other screen at the table.
-  rowScale: 1, locScale: 1, voteScale: 1, resScale: 1, hmVoteScale: 1
+  rowScale: 1, locScale: 1, voteScale: 1, resScale: 1, hmVoteScale: 1,
+  // Whether THIS screen has tucked the Scene window away.
+  ssHidden: 1
 };
 // The durable, shared per-Student fields.
 //
@@ -8806,7 +9355,7 @@ class Component extends TBPBase {
       css += '[data-mp="reroll-all"],[title="Reroll this whole line"],[title="Click to reroll just this one"],' +
         '[data-mp="play-btn"]{pointer-events:none !important; opacity:.35 !important}';
       css += '[data-mp="skip-btn"]{display:none !important}';
-      css += '[data-mp="demon-name"],[data-mp="demon-goal"]{pointer-events:none !important}';
+      css += '[data-mp="demon-name"],[data-mp="demon-goal"],[data-mp="demon-extra"]{pointer-events:none !important}';
     }
     if (role === 'spectator') {
       css += '#dc-root{pointer-events:none}';
@@ -8956,7 +9505,7 @@ class Component extends TBPBase {
     var r = sh.rolled || {};
     return [sh.setupOpen, !!sh.mpReady, (sh.locks || []).join(''),
       ['type', 'power', 'complication', 'goal'].map(function (c) { return (r[c] || []).join('/'); }).join('|'),
-      sh.demonName, sh.demonGoal, sh.firstSceneStarted, sh.scenePos, sh.locIdx, sh.goodEnd, sh.badEnd,
+      sh.demonName, sh.demonGoal, sh.firstSceneStarted, sh.scenePos, sh.locIdx, JSON.stringify(sh.actMarks || []), JSON.stringify(sh.actResults || []), sh.act, sh.flow, sh.actStep,
       JSON.stringify(sh.goalsDone || []), sh.vote ? sh.vote.phase : '-', sh.endKind].join('#');
   }
 
@@ -9039,7 +9588,7 @@ class Component extends TBPBase {
     if (sh.endKind) where = (sh.endKind === 'good' ? 'Good' : 'Bad') + ' End reached';
     else if (sh.setupOpen !== false) where = sh.mpReady ? 'Today\u2019s Demon' + (sh.demonNameDraft ? ' \u00b7 ' + sh.demonNameDraft : '') : 'Character Select';
     else where = (sh.firstSceneStarted ? 'Scene ' + ((Number(sh.scenePos) || 0) + 1) : 'Before the first Scene') +
-      ' \u00b7 ' + (sh.demonName || '') + ' \u00b7 Good ' + (sh.goodEnd || 0) + ' / Bad ' + (sh.badEnd || 0);
+      ' \u00b7 ' + (sh.demonName || '') + ' \u00b7 Act ' + (sh.act || 1) + ' (' + (sh.actResults || []).map(function (r) { return r === 'g' ? 'G' : (r === 'd' ? 'D' : '-'); }).join('') + ')';
     return where + (seats ? ' \u2014 ' + seats : '');
   }
 
@@ -9101,18 +9650,10 @@ class Component extends TBPBase {
           '<select data-g="' + k + '" data-slot="1" style="' + selStyle + '; margin-top:4px">' + opt(GOAL_POOL[who], gp[1]) + '</select>' +
         '</div>';
       }).join('');
-      var cats = ['type', 'power', 'complication', 'goal'];
-      var catName = {type: 'TYPE', power: 'POWER', complication: 'COMPLICATION', goal: 'GOAL'};
-      var demonTraits = cats.map(function (c) {
-        var list = DEMON_TABLES[c].slice(0, -1);       // the last row is "roll twice", an instruction
-        var cur = ((st.rolled || {})[c] || []).filter(function (v) { return list.indexOf(v) >= 0; });
-        var sel = cur.length === 1 ? list.indexOf(cur[0]) : -1;
-        var shown = ((st.rolled || {})[c] || []).join(' + ');
-        return '<div style="flex:1 1 0; min-width:150px">' + lab(catName[c]) +
-          '<select data-trait="' + c + '" style="' + selStyle + '">' +
-            (sel < 0 ? '<option value="" selected>' + mpEsc(shown || '—') + '</option>' : '') + opt(list, sel) + '</select>' +
-          '<span data-reroll="' + c + '" style="cursor:pointer; display:inline-block; margin-top:4px; font-size:10px; font-weight:800; letter-spacing:.1em; color:#EFE6C8; border:1px solid rgba(239,230,200,.35); border-radius:5px; padding:2px 7px">REROLL</span>' +
-        '</div>';
+      // Origin / Abilities / Look, typed at Demon Creation. The rolled
+      // prompts were only there to inspire them.
+      var demonTraits = [['demonOrigin', 'ORIGIN'], ['demonAbilities', 'ABILITIES'], ['demonLook', 'LOOK']].map(function (x) {
+        return '<div style="flex:1 1 220px">' + lab(x[1]) + '<input data-dx="' + x[0] + '" value="' + mpEsc(st[x[0]] || '') + '" style="' + inStyle + '; font-family:Lora,serif; font-style:italic; font-weight:400"></div>';
       }).join('');
       var dGoal = String(st.demonGoal || '').replace(/^\u201c|\u201d$/g, '');
       el.innerHTML = '<div style="width:min(1100px,96vw); max-height:90vh; overflow:auto; background:#2b2527; border:3px solid #EDE31B; border-radius:14px; padding:16px 18px">' +
@@ -9164,15 +9705,8 @@ class Component extends TBPBase {
       });
       el.querySelector('[data-dname]').onchange = function () { self.setDemonText(this.value, null); after(); };
       el.querySelector('[data-dgoal]').onchange = function () { self.setDemonText(null, this.value); after(); };
-      Array.prototype.forEach.call(el.querySelectorAll('[data-trait]'), function (sel) {
-        sel.onchange = function () {
-          if (sel.value === '') return;
-          var c = sel.getAttribute('data-trait');
-          self.setDemonTrait(c, DEMON_TABLES[c][+sel.value]); after();
-        };
-      });
-      Array.prototype.forEach.call(el.querySelectorAll('[data-reroll]'), function (b) {
-        b.onclick = function () { self.setDemonTrait(b.getAttribute('data-reroll'), null); after(); };
+      Array.prototype.forEach.call(el.querySelectorAll('[data-dx]'), function (inp) {
+        inp.onchange = function () { var o = {}; o[inp.getAttribute('data-dx')] = inp.value; self.setState(o); after(); };
       });
     };
     render();
@@ -9424,7 +9958,7 @@ class Component extends TBPBase {
       rollEnds: {},
       demonNameDraft: this.state.demonName,
       demonGoalDraft: String(this.state.demonGoal).replace(/^“|”$/g, ''),
-      setupOpen: false,
+      setupOpen: false, ...ACT_RESET,
       firstSceneStarted: false
     });
   }
@@ -9591,6 +10125,7 @@ class Component extends TBPBase {
         // only the Headmaster can type into them, reroll, or hit PLAY.
         setName: isGm ? f.setup.setName : function () {},
         setGoal: isGm ? f.setup.setGoal : function () {},
+        extras: (f.setup.extras || []).map(function (x) { return Object.assign({}, x, { set: isGm ? x.set : function () {} }); }),
         start: isGm ? f.setup.start : function () {},
         skip: isGm ? f.setup.skip : function () {},
         rerollAll: isGm ? f.setup.rerollAll : function () {},

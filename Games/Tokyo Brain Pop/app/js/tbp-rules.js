@@ -11,11 +11,21 @@ export const RULES = [
     {t:'li', text:'The school is full of secrets, and the longer you stay, the more of them surface.'},
     {t:'p', text:'At least 562,321 forces work against the common Japanese schoolgirl. At least half seek the destruction of the psychic ones — from demons and ghosts to administrators, the military, and unnamable secret organizations.'}
   ]},
-  {label:'Scenes', title:'Scenes', blocks:[
-    {t:'p', text:'Players take turns being the Lead. Each Student gets three Scenes as Lead per episode — though the episode can end sooner if the Demon is defeated early. If the Demon is undefeated at the last Scene, it succeeds at its goal.'},
-    {t:'p', text:'At the start of a Scene, the Lead chooses her focus from her remaining Goals. She and the Headmaster work out the Scene together; other players may suggest, but the Lead and Headmaster decide what makes it in.'},
+  {label:'Scenes', title:'Scenes & Acts', blocks:[
+    {t:'p', text:'A game is played in three Acts, best of three. In each Act every Student leads one Scene, so an Act is three or four Scenes.'},
+    {t:'p', text:'Every Act opens the same way. First the Headmaster narrates a scene featuring the Demon, away from the girls: what it is after this Act, and what will happen if it is not stopped. Then comes a Class Vote, which sets Popularity and the running order for the Act: Most Popular leads first, then the middle girls by votes received (a tie is settled by a die roll), then Least Popular.'},
+    {t:'p', text:'When a Scene begins, its Lead chooses where it happens (one of the four big locations, which she names), and her Focus: one of her remaining Goals, or the Demon itself. The Headmaster sees the same window and can fill it in for her. She and the Headmaster then work out the Scene together; other players may suggest, but the Lead and Headmaster decide what makes it in.'},
     {t:'p', text:'Any player may bring their Student into a Scene at any time, even mid-Scene.'},
-    {t:'p', text:'A Scene should last 5–15 minutes, but the Headmaster decides when it ends. At the end, the Headmaster decides whether the Lead completed her Goal. Only one Goal can be completed per Scene, and only by the Lead.'}
+    {t:'p', text:'A Scene should last 5–15 minutes, but the Headmaster decides when it ends. At the end, the Headmaster decides whether the Lead completed her Goal. Only one Goal can be completed per Scene, and only by the Lead.'},
+    {t:'h', text:'Winning an Act'},
+    {t:'p', text:'Every time the Demon is summoned and defeated, the girls mark 1. Every time it is summoned and wins, the Demon marks 1. When the Act’s last Scene ends, whoever has more marks wins the Act. The Demon wins ties, even at 0–0.'},
+    {t:'p', text:'If the Act can no longer change hands (one side is ahead by more than the Demon could still catch up or pull back in the Scenes left), the Demon Retreats: it cannot be summoned again until the next Act, and the remaining Scenes are played without it. This keeps Friends from Challenging each other into a fight that is already decided.'},
+    {t:'h', text:'Hail Mary & Last Chance'},
+    {t:'p', text:'If the same side has won Acts 1 and 2, the game is not over yet. One more Scene is played, led by the Demon, with a single Demon Challenge that any girl may Call.'},
+    {t:'li', text:'Hail Mary (the Demon is about to win): it is 1 stronger for every Goal still open at the table. Beat it and Act 2 turns to the girls, and the game goes on to Act 3. Lose and the Demon wins the game.'},
+    {t:'li', text:'Last Chance (the girls are about to win): it is 1 weaker for every Goal the table has accomplished. Beat it and the girls win the game. Lose and Act 2 turns to the Demon, and the game goes on to Act 3.'},
+    {t:'h', text:'The Finale'},
+    {t:'p', text:'When the game is won (Act 3 ends, or one side can no longer lose it), the finale begins. If the girls won, they each describe how they defeat the Demon. If the Demon won, it describes how it achieves its goal. Then comes the Good End or the Bad End.'}
   ]},
   {label:'Students', title:'Students', blocks:[
     {t:'h', text:'Quirks'},
@@ -45,8 +55,8 @@ export const RULES = [
   {label:'Drama & the Vote', title:'Drama & the Class Vote', blocks:[
     {t:'p', text:'Each Student starts the game with 1 Drama. Drama is earned by Calling Challenges and never exceeds 5.'},
     {t:'h', text:'Class Vote'},
-    {t:'p', text:'Popularity decides how easily a Student succeeds, and Popularity is set by a Class Vote. Each player may call one Vote per session. The episode always opens with a Class Vote.'},
-    {t:'p', text:'During a Vote, every player secretly spends Drama on Students — split it, dump it on one, spend it on yourself, or spend none. The Student with the most spent on her becomes Most Popular; the least becomes Least Popular. Ties are settled randomly.'}
+    {t:'p', text:'Popularity decides how easily a Student succeeds, and Popularity is set by a Class Vote. There is one at the start of every Act, right after the Demon’s off-screen scene, and it also sets that Act’s running order. Players cannot call Class Votes; the Headmaster may call an extra one whenever the game needs it.'},
+    {t:'p', text:'During a Vote, every player secretly spends Drama on Students — split it, dump it on one, spend it on yourself, or spend none. The Student with the most spent on her becomes Most Popular; the least becomes Least Popular. Ties are settled by a die roll.'}
   ]},
   {label:'Breaking', title:'Breaking', blocks:[
     {t:'p', text:'Breaking happens when a Student gains 1 Drama while already at Max — by failing a Challenge at max Drama, or gaining a second Drama after Calling.'},
@@ -58,26 +68,23 @@ export const RULES = [
     {t:'p', text:'Nothing good ever came of psionic powers. They will destroy your Student’s life.'},
     {t:'p', text:'Facing a Challenge, a Student may Use PSI: her action succeeds automatically, but the PSI always causes a serious consequence on top of the success. PSI may be used any time, including after a Challenge is Called on her.'},
     {t:'p', text:'Using PSI costs 2 Drama. The cost is shared by the whole table: each time anyone Uses PSI, it goes up by 1 for everyone, up to 5, so it is always the same for every Student. It drops back to 2 for everyone whenever a Student Breaks, and resets at the end of the episode. Every Student has one unique PSI ability of her own.'},
-    {t:'p', text:'PSI can only be turned on the Demon by a Student who has completed all of her own Goals. Until then her own business is still in the way, and the Demon must be faced with the die.'}
+    {t:'p', text:'PSI can always be turned on the Demon, but her own business can still get in the way. With all of her Goals completed, the Demon simply fails. With 1 Goal left, the Demon still rolls at −2; with 2 Goals left, at −1.'}
   ]},
   {label:'The Demon', title:'The Demon', blocks:[
-    {t:'p', text:'The Demon is the main event — the big, nasty threat the Students face before the session ends. It can be an actual demon, a monster, or a mundane threat: a disaster, a secret organization, an evil teacher, ninjas, even alien invaders. The group creates it together at the start.'},
-    {t:'p', text:'The Demon enters when her Friend Calls a Challenge on her and narrates how the Demon complicates the action. From then on the Headmaster narrates what the Demon does.'},
+    {t:'p', text:'The Demon is the main event — the big, nasty threat the Students face before the game ends. It can be an actual demon, a monster, or a mundane threat: a disaster, a secret organization, an evil teacher, ninjas, even alien invaders. At its creation it is given a Name, a Goal, an Origin, its Abilities and its Look.'},
+    {t:'p', text:'Each Act, the Demon’s off-screen scene sets out what it is after for that Act and what happens if it is not stopped.'},
+    {t:'p', text:'The Demon enters when her Friend Calls a Challenge on her and narrates how the Demon complicates the action, or when the Lead makes the Demon her Focus. From then on the Headmaster narrates what the Demon does.'},
     {t:'p', text:'While the Demon is in the Scene, it is the only one who can be Challenged. The Students cannot Challenge each other until it leaves.'},
     {t:'h', text:'Challenging the Demon'},
     {t:'p', text:'Only the Scene’s Lead may Call the Demon. When the Demon is itself the Lead, any Student may Call it.'},
-    {t:'p', text:'Calling a Challenge on the Demon is free — it costs no Drama, and grants none either. She narrates how the situation works against it, and gains nothing from the result. The Demon rolls and succeeds on 4–6, before modifiers.'},
+    {t:'p', text:'Calling a Challenge on the Demon is free — it costs no Drama, and grants none either. She narrates how the situation works against it. The Demon rolls and succeeds on 4–6, before modifiers. A defeat marks 1 for the girls this Act; a win marks 1 for the Demon.'},
     {t:'h', text:'The Demon’s Die'},
-    {t:'p', text:'The Demon needs 4 or better. Two things move that number — the Good End and Bad End tracks do not:'},
+    {t:'p', text:'The Demon needs 4 or better. It can never need less than 2 or more than 6, so a 1 always fails and a 6 always succeeds.'},
     {t:'li', text:'−1 for each of the Challenger’s unresolved Goals — a distracted Student is easier prey.'},
     {t:'li', text:'+1 if the Demon is the Scene’s Focus — squaring up to it deliberately puts it on the back foot.'},
-    {t:'p', text:'The Challenger may Use PSI instead of letting it roll, and the Demon simply fails — but only if she has completed all of her own Goals first.'},
-    {t:'li', text:'Its target lowers by 1 for every unresolved Student Goal, and raises by 1 for every Strike taken. It can never go below 2 or above 6 — the Demon always fails on a 1.'},
-    {t:'li', text:'Every success marks the Bad End track; every failure marks the Good End track. Marks needed equals the number of Students playing.'},
-    {t:'li', text:'Use PSI: instead of letting the Demon roll, the Student who Called it may burn PSI at her usual escalating price. The Demon fails outright — Good End marked, Demon gone. The Headmaster narrates the Demon’s defeat AND a serious consequence the PSI causes along the way.'},
-    {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one, and once it has left it cannot be summoned back that Scene, not even by a Challenge from her Friend. It returns once the Scene changes. If success becomes mathematically impossible, the Demon becomes the next Lead and does not retreat.'},
-    {t:'h', text:'Hail Mary'},
-    {t:'p', text:'When the Demon leads a Scene, the Students stop Challenging each other. No Friend or Rival Challenges at all — the only Challenge anyone may Call is on the Demon, and every Student may Call it.'}
+    {t:'li', text:'Hail Mary: −1 for every unresolved Goal at the whole table instead, and Focus does not count. Last Chance: +1 for every Goal the whole table has accomplished, and Focus does not count.'},
+    {t:'li', text:'Use PSI: with all her Goals done the Demon fails outright; with 1 left it rolls at −2, with 2 left at −1. The Headmaster narrates the result AND a serious consequence the PSI causes.'},
+    {t:'p', text:'There is only one Demon Challenge per Scene — it retreats after each one, and once it has left it cannot be summoned back that Scene, not even by a Challenge from her Friend. It returns once the Scene changes, unless the Act is already decided, in which case it has Retreated until the next Act and only Rival Challenges are left.'}
   ]},
   {label:'Japanese Names', title:'Common Japanese Names', blocks:[
     {t:'p', text:'A quick reference if you need a name for a new Student, Demon, or NPC during play.'},

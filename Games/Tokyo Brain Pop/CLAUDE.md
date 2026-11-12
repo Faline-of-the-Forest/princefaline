@@ -33,14 +33,17 @@ Pop. Design them in from the start. Never leave them for later.
 | Need | Where |
 |---|---|
 | Drama | Click / right-click a Drama gauge (GM: any card). Right-click also un-Breaks |
-| Good / Bad End | Click any square on the track; the middle one cycles |
+| This act's marks (Girls / Demon) | Click a square on the header track (it used to be the Good/Bad End track), or Scene Control → ACT steppers (`setMark`, `bumpMark`) |
+| Act results, current act, scene in act | Click an act pip in the header's SCENES LEFT box (`cycleActResult`), or Scene Control → ACT chips and steppers |
+| Act flow (off-screen / Scene window / in Scene / finale), Hail Mary / Last Chance and their result, finale winner, Demon Retreat | Scene Control → ACT chips (`setFlow`, `special`, `specialResult`, `finaleWinner`, `demonRetreatAct`) |
+| Moving the game on | Scene Control → ACT → **END SCENE** (`endScene()`), which applies any pending Scene Control draft first. **EXTRA CLASS VOTE / START CLASS VOTE** there too (only the Headmaster calls votes) |
+| The Lead's Scene window | `sceneSetup` (shared). The Lead and the Headmaster can both edit it (`mayEditSetup`); HIDE / OPEN THE SCENE WINDOW is per screen (`ssHidden`, `MP_LOCAL`) |
 | Popularity | Click the Popularity label on a card (`cyclePop`) |
 | Goals cleared, Scenes led, Lead, Focus, place | Scene Control (Scene tab), applied with APPLY |
 | Running order | Scene Control → RUNNING ORDER ◀ ▶ |
-| Class Vote used | Scene Control → CLASS VOTE — SPENT toggles |
 | PSI cost (shared by the whole table) | Scene Control → PSI COST — OVERRIDE. Any row's +/− sets everyone (`setPsiCostAll`) |
 | Demon summoned / available / unavailable | Scene Control → DEMON chips: SUMMONED (`demonIn`), AVAILABLE (not in, but a Friend's Challenge summons it; `demonHeld` keeps a VS DEMON Focus from pulling it in), UNAVAILABLE (`demonOut`). Both marks expire with the Scene (`sceneSig`) |
-| Who is playing, player names, Quirks, Goals; the Demon's name, goal and four traits | Scene Control → **TABLE ✎** (also opened by RENAME). A DOM panel, `mpShowTable()`, that calls `setSeatActive` (refuses to go below 3), `setSeatQuirks`/`setSeatGoals` (written as pool indices in `quirkPicks`/`goalPicks` so they sync), `setPlayerName`, `setDemonText` and `setDemonTrait` |
+| Who is playing, player names, Quirks, Goals; the Demon's name, goal, origin, abilities and look | Scene Control → **TABLE ✎** (also opened by RENAME). A DOM panel, `mpShowTable()`, that calls `setSeatActive` (refuses to go below 3), `setSeatQuirks`/`setSeatGoals` (written as pool indices in `quirkPicks`/`goalPicks` so they sync), `setPlayerName`, `setDemonText`, and `demonOrigin` / `demonAbilities` / `demonLook` |
 | Skip setup at any time | **SKIP TO GAME** on Character Select *and* Today's Demon (Headmaster only). `skipToRoom()` keeps whoever is chosen, uses all four if fewer than 3 are, and gives random Quirks/Goals to anyone without them |
 | Read every girl's sheet | The Journal button is shown for the Headmaster too, opening on the first girl in play |
 | Achievements | Scene Control → Achievements tab, +/− on every cell |
@@ -225,8 +228,36 @@ diff them:
 diff <(sed -n '/^export const RULES/,/^];/p' app/js/tbp-rules.js | sed 1d) <(sed -n '/^const RULES/,/^];/p' app/play.html | sed 1d)
 ```
 
-Current design, as of 2026-11-11. The user changes rules after every playtest,
+Current design, as of 2026-11-12. The user changes rules after every playtest,
 so the code wins over this summary:
+
+- **Acts (best of 3):** state `act`, `actStep` (Scenes done this act),
+  `actMarks[{g,d}]`, `actResults`, `flow`, `special`, `specialResult`,
+  `demonRetreatAct`, `sceneSetup`, `finaleWinner` (fresh values in
+  `ACT_RESET`). Each act: `flow:'offscreen'` (GM-only prompt to narrate the
+  Demon off-screen, then START CLASS VOTE) → the vote (`vote.actStart`) sets
+  `turnOrder` (Most, middles by votes with a random tiebreak, Least;
+  `orderFromVote`) and opens `flow:'setup'` for the first Lead → the Lead's
+  Scene window (location, name, Focus) → START THE SCENE (`startScene`) →
+  `flow:'play'` → GM's END SCENE → next Lead's window, or the act ends.
+- **Marks:** every Demon Challenge marks the act (`settleDemon`): Girls on a
+  defeat, Demon on a win. The act goes to the side with more marks; **the Demon
+  wins ties, 0–0 included**. When the act can no longer change hands
+  (`actLock(g, d, scenesLeft)`), the Demon **Retreats** until the next act:
+  `demonOutThisScene` is true, so only Rival Challenges remain and VS DEMON is
+  struck out. Remaining Scenes are still played.
+- **Hail Mary / Last Chance:** if Acts 1 and 2 go to the same side, END SCENE
+  opens a Demon-led Scene (`special`), whose window only the GM sees. One Demon
+  Challenge, anyone may Call it. Hail Mary: −1 per unresolved Goal at the whole
+  table; a win for the girls flips Act 2 and goes to Act 3, a loss is a Demon
+  game win. Last Chance: +1 per Goal the table accomplished; a girls' win wins
+  the game, a loss flips Act 2 to the Demon and goes to Act 3. No Focus bonus
+  in either.
+- **Finale:** Act 3 over, or locked mid-act → `flow:'finale'` at END SCENE. The
+  stage card says who describes the ending; the GM launches Good / Bad End from it.
+- **The Demon only exists inside a running Scene**: `demonPresent()` is false
+  unless `flow === 'play'`. `sceneSig` includes `sceneNo`, which ticks on every
+  END SCENE, so a retreat can't leak into a Demon-led Scene.
 
 - **Seats:** 0 HIROMI (`momo`), 1 KOTORI (`midori`), 2 UME (`ao`), 3 YUMI
   (`murasaki`). There are 3 or 4 players, and 3 Scenes per girl (9 or 12 Scenes).
@@ -238,20 +269,23 @@ so the code wins over this summary:
   a girl** (`challengeableBy` returns `[]` when `demonPresent()`); only the Demon.
   The narrator is named on screen (`narratorFor`): the only Friend/Rival. Frenemy +
   Rival: the Frenemy narrates as Friend. Frenemy + Friend: the Frenemy narrates as Rival.
-- **Hail Mary:** a Demon-led Scene allows only Demon Challenges, and any Student
-  may Call it (`challengeableBy` returns `[]` when `demonLead()`).
+- **Demon-led Scenes** (Hail Mary / Last Chance) allow only Demon Challenges, and
+  any Student may Call it (`challengeableBy` returns `[]` when `demonLead()`).
 - **Demon:** it appears at most once per Scene (`demonOut`, keyed by
   `sceneSig`). Calling it is free. Its die is **4+, −1 per unresolved Goal of the
-  Challenger, +1 if it is the Scene's Focus**, clamped to 2–6. The Good/Bad End
-  tracks **do not** affect it any more. PSI on the Demon requires all of the
-  Challenger's Goals to be done.
+  Challenger, +1 if it is the Scene's Focus**, clamped to 2–6. **PSI on the
+  Demon is always allowed**: Challenger with 0 Goals left, it fails outright;
+  1 left, it still rolls at +2 to its target; 2 left, at +1 (`psiBoostFor`,
+  `rollDemon(psiBoost)`).
+- **Class Votes:** players can't call them any more (the card icon is dimmed).
+  One opens each act; the GM can call extra ones, which only change Popularity.
 - **Use PSI:** automatic success **plus** a serious consequence caused by the PSI.
   On-screen prompts must say both. The cost is **shared**: every use raises it
   by 1 for everyone (max 5), and any Break drops it to 2 for everyone. It is
   still stored per girl (`chars[k].psiCost`) but only ever written through
   `setPsiCostAll`, so the card UI didn't change.
 - **Break:** the worst happens and the Scene ends. The Headmaster ends the Scene
-  in Scene Control; it isn't automatic.
+  with END SCENE; it isn't automatic.
 - **Goals:** must always stay possible. The Headmaster reinterprets them when the
   story blocks them.
 - **Hand-off spreadsheets** the user fills in (bond assignments, goal and quirk
