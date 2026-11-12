@@ -284,6 +284,7 @@ async function handleApi(request, env, url) {
         }
         if (body.writeup) rec.writeup = body.writeup.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
         if (body.cover) rec.cover = body.cover;
+        if (body.cast) { try { const c = JSON.parse(body.cast); if (Array.isArray(c) && c.length) rec.cast = c.map(x => ({ name: String(x.name || ""), player: String(x.player || "") })).filter(x => x.name); } catch {} }
       }
       if (body.n) {
         const idx = sessions.findIndex(s => String(s.n) === String(body.n));
@@ -546,7 +547,7 @@ function adminPage() {
       <select name="sysReview" id="sysReviewSelect"><option value="">— choose a system —</option></select>
       <input type="hidden" name="sys"><input type="hidden" name="ed">
       <label>Status</label>
-      <select name="status"><option value="running">Running</option><option value="between arcs">Between Arcs</option><option value="concluded">Concluded</option></select>
+      <select name="status"><option value="running">Running</option><option value="concluded">Concluded</option></select>
       <label>Tagline</label><input name="tagline">
       <label>Summary (separate paragraphs with a blank line)</label><textarea name="summary"></textarea>
       <label>Influences</label><input name="influences">

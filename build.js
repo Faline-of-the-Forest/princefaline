@@ -98,40 +98,87 @@ function bookCover(review) {
 }
 
 // ---------- formatting ----------
-const MONTHS_LONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-function monthLong(d) { return MONTHS_LONG[+d.slice(5, 7) - 1] + " " + d.slice(0, 4); }
-function fmtDate(d) { return +d.slice(8, 10) + " " + MONTHS_LONG[+d.slice(5, 7) - 1] + " " + d.slice(0, 4); }
-function fmtRt(rt) { return String(rt || "").replace(/^0/, ""); }
-function same(a, b) { return String(a).trim().toLowerCase() === String(b).trim().toLowerCase(); }
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const WEEKDAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+function dt(d) { return new Date(d + "T12:00:00Z"); }
+function fDate(d) { return +d.slice(8, 10) + " " + MONTHS[+d.slice(5, 7) - 1] + " " + d.slice(0, 4); }
+function fShort(d) { return +d.slice(8, 10) + " " + MONTHS[+d.slice(5, 7) - 1].slice(0, 3); }
+function fMY(d) { return d ? MONTHS[+d.slice(5, 7) - 1].slice(0, 3) + " " + d.slice(0, 4) : ""; }
+function fMonth(d) { return MONTHS[+d.slice(5, 7) - 1] + " " + d.slice(0, 4); }
+function fDay(d) { return WEEKDAYS[dt(d).getUTCDay()] + " " + +d.slice(8, 10); }
+function rtMin(rt, h) { const m = /^(\d+):(\d+)$/.exec(String(rt || "")); return m ? +m[1] * 60 + +m[2] : Math.round((h || 0) * 60); }
+function dur(min) { return Math.floor(min / 60) + ":" + String(min % 60).padStart(2, "0"); }
 function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
-function statusLabel(s) { return s === "running" ? "Running" : s === "between arcs" ? "Between arcs" : "Concluded"; }
-function runSpan(c) { return mon(c.first) + " – " + (c.status === "running" ? "present" : mon(c.last)); }
-function sysLine(base, ed) { return esc(base) + (ed ? `<span class="ed">${esc(ed)}</span>` : ""); }
-function starsHtml(n) { return `<span class="stars" aria-label="${n} out of 5">${"★".repeat(n)}<i>${"☆".repeat(5 - n)}</i></span>`; }
-function label(title, aside, add) { return `<div class="label"><h2>${title}</h2><span class="rule"></span>${aside ? `<span class="aside">${aside}</span>` : ""}${add || ""}</div>`; }
+function slug(s) { return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+function same(a, b) { return String(a).trim().toLowerCase() === String(b).trim().toLowerCase(); }
+function edTag(e) { return e ? ` <span class="ed">${esc(e)}</span>` : ""; }
+function chip(t, c) { return `<span class="chip ${c || ""}">${t}</span>`; }
+function starsHtml(n) { return n ? `<span class="stars" aria-label="${n} out of 5">${"★".repeat(n)}<i>${"★".repeat(5 - n)}</i></span>` : `<span class="unrated">Not rated yet</span>`; }
+const STATUS = { running: "Running", concluded: "Concluded" };
+const TYPE_LABEL = t => t === "System" ? "Core Rulebook" : t;
+const json = o => JSON.stringify(o).replace(/</g, "\\u003c");
+
+// Image box with a typographic fallback that shows until (or unless) the image loads.
+const TONES = [["#5f391d","#fdefc8"],["#b3101c","#fdefc8"],["#7c8a5b","#24160a"],["#d9b25a","#3a2413"],["#3f4f2c","#f2e7b4"],["#a79362","#24160a"],["#ead9a8","#5f391d"]];
+function tone(n) { return TONES[[...String(n)].reduce((a, c) => a + c.charCodeAt(0), 0) % TONES.length]; }
+function pic(url, label, cls) {
+  const [bg, fg] = tone(label);
+  return `<div class="pic ${cls || ""}" style="--bg:${bg};--fg:${fg}"><span class="pic-t">${esc(label)}</span>${url ? `<img src="${esc(url)}" alt="" loading="lazy" onload="this.parentNode.classList.add('has')" onerror="this.remove()">` : ""}</div>`;
+}
+
 // Signed-in editing hooks (assets/edit.js): "+ New" buttons and per-item edit tools.
 function addBtn(type, text, campaign) { return `<button type="button" class="add admin-only" data-add="${type}"${campaign ? ` data-campaign="${esc(campaign)}"` : ""}>+ ${text}</button>`; }
 function editAttr(type, id, name) { return ` data-edit="${type}:${esc(id)}" data-name="${esc(name)}"`; }
 
-// A two-colour "print cover" stands in wherever there is no image yet.
-function cover(name, sys, img, opts) {
-  const o = opts || {};
-  if (img) return `<div class="cv${o.contain ? " contain" : ""}" style="width:100%;height:100%"><img src="${esc(img)}" alt="${esc(name)}" loading="lazy"></div>`;
-  const h = [...name].reduce((a, c) => a + c.charCodeAt(0), 0);
-  return `<div class="pc ${h % 4 === 0 ? "red" : ""} l${h % 3}"><div class="pc-dots"></div><div class="pc-title">${esc(name)}</div>${sys && !o.noSys ? `<div class="pc-sys">${esc(sys)}</div>` : ""}</div>`;
-}
+// ---------- derived model ----------
+const reviewBySys = sys => reviews.find(r => r.type === "System" && same(r.t, sys)) || reviews.find(r => r.type === "System" && same(r.sys, sys));
+// Every session, newest first, with its image and write-up resolved.
+const S = sessions.map(s => {
+  const camp = s.campaignSlug ? campaignBySlug[s.campaignSlug] : null;
+  const o = { n: s.n, date: s.d, title: s.t, camp, sys: camp ? camp.sys : s.s, ed: camp ? camp.ed || "" : s.ed || "", min: rtMin(s.rt, s.h), img: "", recap: "", raw: s };
+  if (camp) {
+    const i = sessions.filter(x => x.campaignSlug === camp.slug).indexOf(s);
+    const ep = (camp.episodes || [])[i] || {};
+    o.ep = i + 1;
+    o.img = ep.img || (camp.covers || [])[i] || "";
+    o.recap = ep.hook || "";
+    o.epTitle = ep.title || s.t;
+    o.href = `/campaigns/${camp.slug}/#ep-${i + 1}`;
+  } else {
+    o.img = s.cover || "";
+    o.recap = (s.writeup || []).join(" ");
+    o.writeup = s.writeup || [];
+    o.cast = (s.cast || []).filter(c => c && c.name);
+    o.slug = s.slug;
+    o.href = s.slug ? `/one-shots/${s.slug}/` : "/one-shots/";
+  }
+  return o;
+}).sort((a, b) => b.date.localeCompare(a.date) || b.n - a.n);
+campaigns.forEach(c => { c.S = S.filter(s => s.camp === c).reverse(); c.min = c.S.reduce((a, s) => a + s.min, 0); });
+const OS = S.filter(s => !s.camp);
+const SYS = {};
+OS.forEach(s => (SYS[s.sys] = SYS[s.sys] || []).push(s));
+const sysList = Object.entries(SYS).map(([name, games]) => ({ name, slug: slug(name), games, min: games.reduce((a, s) => a + s.min, 0) }))
+  .sort((a, b) => b.games.length - a.games.length || a.name.localeCompare(b.name));
+const allSys = {};
+S.forEach(s => { allSys[s.sys] = (allSys[s.sys] || 0) + 1; });
+const PLAYERS = {};
+campaigns.forEach(c => (c.cast || []).forEach(pc => { if (pc.player) (PLAYERS[pc.player] = PLAYERS[pc.player] || []).push({ ...pc, camp: c }); }));
+const playerHref = p => `/players/${slug(p)}/`;
+const sysHref = sys => SYS[sys] ? `/one-shots/system/${slug(sys)}/` : "/one-shots/";
+const totalMin = S.reduce((a, s) => a + s.min, 0);
+const years = [...new Set(S.map(s => s.date.slice(0, 4)))].sort().reverse();
+const shelfSorted = reviews.slice().sort((a, b) => b.stars - a.stars || a.t.localeCompare(b.t));
+function gameRange(p) { const m = String(p || "").match(/(\d+)\D+(\d+)/); const one = String(p || "").match(/\d+/); return m ? [+m[1], +m[2]] : one ? [+one[0], +one[0]] : [0, 0]; }
 
 // ---------- layout ----------
-const FONT_LINK = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Courier+Prime&display=swap" rel="stylesheet">`;
+const FONT_LINK = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;0,800;1,500&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">`;
 const assetVer = f => require("crypto").createHash("md5").update(fs.readFileSync(path.join(ROOT, "assets", f))).digest("hex").slice(0, 8);
-const CSS_VER = assetVer("site.css"), JS_VER = assetVer("edit.js");
-const latestSession = sessions.slice().sort((a, b) => b.d.localeCompare(a.d) || b.n - a.n)[0];
-
+let CSS_VER, JS_VER, SITE_VER;
 function nav(active) {
-  const items = [["Front Page", "/", "Home"], ["Campaigns", "/campaigns/", "Campaigns"], ["One-Shots", "/one-shots/", "One-Shots"], ["The Shelf", "/reviews/", "Reviews"], ["Games", "/games/", "Games"]];
-  return items.map(([l, href, key]) => `<a href="${href}"${active === key ? ' class="on"' : ""}>${l}</a>`).join("");
+  return [["Home", "/"], ["Campaigns", "/campaigns/"], ["One-shots", "/one-shots/"], ["Shelf", "/reviews/"], ["Games", "/games/"]]
+    .map(([l, href]) => `<a href="${href}"${active === l ? ' class="on"' : ""}>${l}</a>`).join("");
 }
-
 function layout({ title, active, body, description }) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -144,419 +191,330 @@ function layout({ title, active, body, description }) {
 ${description ? `<meta name="description" content="${esc(description)}">` : ""}
 ${FONT_LINK}
 <link rel="stylesheet" href="/assets/site.css?v=${CSS_VER}">
+<script src="/assets/site.js?v=${SITE_VER}" defer></script>
 <script src="/assets/edit.js?v=${JS_VER}" defer></script>
 </head>
 <body>
-<div class="container">
-  <header class="mast">
-    <div class="issue"><span>No. ${sessions.length}</span><span>A tabletop journal · Est. 2024</span><span>${latestSession ? fmtDate(latestSession.d) : ""}</span></div>
-    <a href="/" class="mast-title" aria-label="Prince Faline's RPG Diaries"><small>Prince Faline's</small><b><img class="mast-r" src="/assets/logo-r.webp" alt="R" width="372" height="353">PG Diaries</b></a>
-    <p class="mast-sub">Sessions · Campaigns · Reviews · Games</p>
-    <nav>${nav(active)}</nav>
-  </header>
-  <main>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/" aria-label="RPG Diaries, home"><img class="logo-img" src="/assets/logo.webp" alt="Prince Faline's RPG Diaries" width="427" height="122"></a>
+  <nav class="nav" aria-label="Sections">${nav(active)}</nav>
+  <div class="gsearch"><label class="vh" for="q">Search the diaries</label><input id="q" type="search" placeholder="Search, or a player codename" autocomplete="off"><div id="results" hidden></div></div>
+</div></header>
+<main id="app">
 ${body}
-  </main>
-</div>
-<footer><div class="container">
-  <div class="fleurons">❦︎ ❦︎ ❦︎</div>
-  <p>Prince Faline's RPG Diaries · Kept since July 2024 · Every session, every book, every build.</p>
-  <div class="foot-links"><button type="button" id="pf-signin" class="signed-out">Sign in</button><span class="admin-only" style="gap:16px">Signed in <button type="button" id="pf-signout">Sign out</button></span></div>
-</div></footer>
+</main>
+<footer><div class="wrap"><b>Prince Faline's RPG Diaries</b><span>Kept since July 2024</span><span class="grow"></span><button type="button" id="pf-signin" class="signed-out">Sign in</button><span class="admin-only" style="gap:16px">Signed in <button type="button" id="pf-signout">Sign out</button></span></div></footer>
+<div id="tip" hidden></div>
 </body>
 </html>`;
 }
-
 function write(relPath, html) {
   const full = path.join(DIST, relPath);
   fs.mkdirSync(path.dirname(full), { recursive: true });
   fs.writeFileSync(full, html);
 }
+// Toolbar controls (the mock's segmented buttons and labelled selects); site.js wires them up.
+function seg(key, opts, cur) { return `<div class="seg" role="group" data-key="${key}">${opts.map(([v, l]) => `<button type="button" data-v="${esc(v)}"${(cur || opts[0][0]) === v ? ' class="on"' : ""}>${l}</button>`).join("")}</div>`; }
+function sel(key, opts, label) { return `<label class="sel"><span>${label}</span><select data-key="${key}">${opts.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select></label>`; }
+const yearOpts = [["", "All years"], ...years.map(y => [y, y])];
 
-function pageHead(kicker, title, desc, add) {
-  return `<header class="ph-head"><p class="kicker">${kicker}</p><h1>${title}</h1><p class="ph-desc">${desc}</p>${add || ""}</header>`;
-}
-// Text-style filter bar (design) wired up with a few lines of script (feature).
-function filterBar(id, buttons, selectOpts, selectLabel) {
-  return `<div class="filters" id="${id}">${buttons.map(([v, l], i) => `<button type="button" data-v="${esc(v)}"${i === 0 ? ' class="on"' : ""}>${l}</button>`).join("<span>·</span>")}${selectOpts ? `<span>·</span><select aria-label="${selectLabel}"><option value="all">${selectLabel}</option>${selectOpts.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")}</select>` : ""}</div>`;
-}
-function filterScript(id, itemSel, total, noun, match) {
-  return `<script>
-(function(){
-  var bar=document.getElementById('${id}'),items=document.querySelectorAll('${itemSel}'),count=document.getElementById('${id}-count');
-  var btns=bar.querySelectorAll('button'),sel=bar.querySelector('select'),v='all',s='all';
-  function apply(){var n=0;items.forEach(function(el){var ok=(function(){${match}})();el.hidden=!ok;if(ok)n++;});count.textContent=n+' of ${total} ${noun}';}
-  btns.forEach(function(b){b.addEventListener('click',function(){btns.forEach(function(x){x.classList.remove('on')});b.classList.add('on');v=b.dataset.v;apply();});});
-  if(sel)sel.addEventListener('change',function(){s=sel.value;apply();});
-})();
-</script>`;
-}
+// ---------- shared pieces ----------
+const where = s => s.camp ? esc(s.camp.name) : "One-shot, " + esc(s.sys);
+const poster = c => `<a class="poster" href="/campaigns/${c.slug}/"${editAttr("campaign", c.slug, c.name)} data-status="${esc(c.status)}" data-sys="${esc(c.sys)}" data-first="${c.first || ""}" data-last="${c.last || ""}" data-count="${c.S.length}">${pic(c.banner, c.name, "p45")}
+  <h3>${esc(c.name)}</h3><p class="sub">${esc(c.sys)}${edTag(c.ed)}</p><p class="sub">${plural(c.S.length, "session")}, ${c.status === "running" ? "since " + fMY(c.first) : fMY(c.first) + " to " + fMY(c.last)}</p></a>`;
+const book = r => `<a class="book" href="/reviews/${r.slug}/"${editAttr("review", r.slug, r.t)} data-type="${esc(TYPE_LABEL(r.type))}" data-stars="${r.stars}">${pic(bookCover(r), r.t, "p34 contain")}<h3>${esc(r.t)}</h3><p class="sub">${esc(TYPE_LABEL(r.type))}</p>${starsHtml(r.stars)}</a>`;
+const shotCard = (s, showSys) => `<a class="shot" href="${s.href}" data-shot="${s.n}"${editAttr("session", s.n, s.title)} data-year="${s.date.slice(0, 4)}" data-sys="${esc(s.sys)}" data-date="${s.date}" data-min="${s.min}">${pic(s.img, s.title, "sq")}<h3>${esc(s.title)}</h3><p class="chips">${chip(fMY(s.date))}${chip(dur(s.min))}${showSys ? chip(esc(s.sys), "g") : ""}</p></a>`;
+const shotData = list => `<script type="application/json" id="shot-data">${json(list.map(s => ({ n: s.n, t: s.title, sys: s.sys, ed: s.ed, d: fDate(s.date), m: dur(s.min), img: s.img, w: s.writeup || [], cast: s.cast.map(c => ({ name: c.name, player: c.player || "", href: PLAYERS[c.player] ? playerHref(c.player) : "" })), href: s.href, sysHref: sysHref(s.sys), book: (r => r ? { t: r.t, href: `/reviews/${r.slug}/` } : null)(reviewBySys(s.sys)) })))}</script>`;
 
-function campaignOf(s) { return s.campaignSlug ? campaignBySlug[s.campaignSlug] : null; }
-function sessionHref(s) {
-  const c = campaignOf(s);
-  return c ? `/campaigns/${c.slug}/` : (s.slug ? `/one-shots/${s.slug}/` : null);
-}
-function sessionCover(s) {
-  const c = campaignOf(s);
-  if (c) return cover(c.name, c.sys, c.banner);
-  const os = s.slug ? oneShots.find(o => o.slug === s.slug) : null;
-  return cover(s.t, s.s, os && os.cover);
-}
-
-// ---------- The Ledger: errata-sheet list of sessions ----------
-function ledger(rows, opts) {
-  const o = opts || {};
-  const limit = o.limit || Infinity;
-  let out = "", cur = "", shown = 0;
-  rows.forEach(s => {
-    const mo = monthLong(s.d);
-    const hidden = shown >= limit;
-    if (mo !== cur) { cur = mo; out += `<li class="lg-mo${hidden ? " x" : ""}">${mo}</li>`; }
-    shown++;
-    const c = campaignOf(s);
-    const href = sessionHref(s);
-    const where = c ? `<a href="/campaigns/${c.slug}/">${esc(c.name)}</a>` : `<span class="os">One-shot</span>`;
-    const sys = c ? "" : ` · ${sysLine(s.s, s.ed)}`;
-    const title = href && !c ? `<a href="${href}">${esc(s.t)}</a>` : esc(s.t);
-    out += `<li class="lg${hidden ? " x" : ""}"${editAttr("session", s.n, s.t)}><span class="lg-d">${s.d.slice(8)}</span><span class="lg-t">${title}<i class="lg-w"> — ${o.noWhere ? sysLine(s.s, s.ed) : where + sys}</i></span><span class="lg-dots"></span><span class="lg-n">#${s.n}</span><span class="lg-h">${fmtRt(s.rt)}</span></li>`;
-  });
-  return `<ul class="ledger${rows.length > limit ? " folded" : ""}" id="${o.id || "ledger"}">${out}</ul>`;
-}
-
-// ---------- FRONT PAGE ----------
-function renderHome() {
-  const ss = sessions.slice().sort((a, b) => b.d.localeCompare(a.d) || b.n - a.n);
-  const lead = ss[0], rest = ss.slice(1, 5);
-  const running = campaigns.filter(c => c.status === "running");
-  const leadHref = sessionHref(lead), leadCamp = campaignOf(lead);
-  const recentReviews = reviews.slice().sort((a, b) => b.date.localeCompare(a.date) || a.t.localeCompare(b.t)).slice(0, 4);
-  const games = dashboards.slice().sort((a, b) => a.t.localeCompare(b.t));
-
-  const statCells = [
-    ["Games Played", stats.games, ""],
-    ["Total Playtime", Math.round(stats.hours) + "h", ""],
-    ["Systems Played", stats.systems, ""],
-    ["Campaigns Run", stats.campaigns, ""],
-    ["Most Played", stats.topSystem[1] + "×", stats.topSystem[0]],
-    ["Longest Campaign", stats.longest.n + " eps", stats.longest.name],
-    ["One-Shots", stats.oneShots, ""],
-  ];
-  const years = Object.keys(byYear).sort();
-  const maxY = Math.max(...years.map(y => byYear[y]));
-
-  const body = `
-  <section class="intro">
-    <div>
-      <p class="dropcap">Since 2024 I've been obsessed with tabletop RPGs. There's something addictive about running a story I don't know the ending of. The dice decide what happens and I figure out what it means, which makes me less the author of these stories than their oracle. Not being responsible for making the story compelling frees me up to become its audience.</p>
-      <p>The list of games I want to play would already take a few lifetimes to play through, and it only ever gets longer, so all I can do is play as much as I can and be grateful for the people who show up every week to see these stories through.</p>
-      <p>This site is an archive of every session I've played, along with my thoughts on the books and modules I've read, and the dashboards, playsets and sheets I build for my games.</p>
-    </div>
-    <figure class="plate"><img src="/assets/portrait.webp" alt="Prince Faline reading beneath a tree"><figcaption>Prince Faline, reading</figcaption></figure>
-  </section>
-
-  <div class="front">
-    <aside class="col-left">
-      ${label("At the Table", "", addBtn("campaign", "New"))}
-      <ul class="shelf-list">${running.map(c => `<li${editAttr("campaign", c.slug, c.name)}><a href="/campaigns/${c.slug}/" class="sl"><div class="sl-cover">${cover(c.name, c.sys, c.banner, { noSys: true })}</div><div><h3>${esc(c.name)}</h3><p class="meta">${sysLine(c.sys, c.ed)}</p><p class="meta">${plural(c.n, "session")} · since ${mon(c.first)}</p></div></a></li>`).join("")}</ul>
-      <a class="more" href="/campaigns/">All campaigns →</a>
-    </aside>
-
-    <section class="col-main">
-      ${label("Latest Session", "", addBtn("session", "Log session"))}
-      <article class="lead"${editAttr("session", lead.n, lead.t)}>
-        ${leadHref ? `<a class="lead-cover" href="${leadHref}">${sessionCover(lead)}</a>` : `<div class="lead-cover">${sessionCover(lead)}</div>`}
-        <p class="kicker">${esc(leadCamp ? leadCamp.name : "One-shot")}${same(leadCamp ? leadCamp.name : "One-shot", lead.s) ? "" : " · " + sysLine(lead.s, lead.ed)}</p>
-        <h1>${leadHref ? `<a href="${leadHref}">${esc(lead.t)}</a>` : esc(lead.t)}</h1>
-        <p class="byline">Session ${lead.n} · ${fmtDate(lead.d)} · ${fmtRt(lead.rt)} at the table</p>
-      </article>
-      <ul class="recent">${rest.map(s => {
-        const c = campaignOf(s), href = sessionHref(s);
-        return `<li${editAttr("session", s.n, s.t)}><p class="kicker">${esc(c ? c.name : "One-shot")}</p><h3>${href ? `<a href="${href}">${esc(s.t)}</a>` : esc(s.t)}</h3><p class="meta">${fmtDate(s.d)} · #${s.n}</p></li>`;
-      }).join("")}</ul>
-    </section>
-
-    <aside class="col-right">
-      ${label("Recently Read", "", addBtn("review", "New"))}
-      <ul class="read">${recentReviews.map(r => `<li${editAttr("review", r.slug, r.t)}><a href="/reviews/${r.slug}/" class="rd"><div class="rd-cover">${cover(r.t, r.sys, bookCover(r), { noSys: true, contain: true })}</div><div><h3>${esc(r.t)}</h3><p class="meta">${esc(r.type)} · ${sysLine(r.sys, r.ed)}</p>${starsHtml(r.stars)}</div></a></li>`).join("")}</ul>
-      <a class="more" href="/reviews/">The full shelf →</a>
-      ${label("From the Workshop", "", addBtn("game", "New"))}
-      <ul class="ws">${games.map(g => `<li${editAttr("game", dashboards.indexOf(g), g.t)}><a href="${g.url}"><b>${esc(g.t)}</b><span>${esc(g.kind || "Game")}</span></a></li>`).join("")}</ul>
-    </aside>
+// ---------- the ledger ----------
+function ledger() {
+  const rows = S.map(s => `<tr data-n="${s.n}" data-year="${s.date.slice(0, 4)}" data-type="${s.camp ? "c" : "o"}" data-sys="${esc(s.sys)}" data-month="${esc(fMonth(s.date))}" data-camp="${esc(s.camp ? s.camp.name : "One-shots")}" data-dshort="${fDay(s.date)}" data-dfull="${fDate(s.date)}" data-text="${esc((s.title + " " + (s.camp ? s.camp.name : "") + " " + s.sys).toLowerCase())}"><td class="n">${s.n}</td><td class="d">${fDay(s.date)}</td><td class="t"${editAttr("session", s.n, s.title)}><a href="${s.href}">${esc(s.title)}</a></td><td class="w">${s.camp ? `<a href="/campaigns/${s.camp.slug}/">${esc(s.camp.name)}</a>` : `<span class="tag">One-shot</span> <a href="${sysHref(s.sys)}">${esc(s.sys)}</a>`}</td><td class="h">${dur(s.min)}</td></tr>`).join("");
+  return `<div class="tools" id="lg-tools">
+    <label class="search"><span class="vh">Search the ledger</span><input type="search" data-key="q" placeholder="Search sessions, campaigns, systems"></label>
+    ${seg("type", [["all", "Everything"], ["c", "Campaigns"], ["o", "One-shots"]])}
+    ${sel("year", yearOpts, "Year")}
+    ${sel("sys", [["", "All systems"], ...Object.keys(allSys).sort().map(s => [s, s])], "System")}
+    ${sel("group", [["month", "Month"], ["campaign", "Campaign"], ["system", "System"]], "Group by")}
   </div>
+  <table class="ledger" id="ledger"><tbody>${rows}</tbody></table>
+  <button class="btn line" type="button" id="lg-more">Show all ${S.length} sessions</button>`;
+}
 
-  <section class="record-wrap">
-    ${label("Lifetime Record", `Since ${stats.since}`)}
-    <dl class="record">
-      ${statCells.map(([l, v, sub]) => `<div class="rec"><dt>${esc(l)}</dt><dd>${esc(v)}</dd>${sub ? `<dd>${esc(sub)}</dd>` : ""}</div>`).join("")}
-      <div class="rec years"><dt>Sessions per Year</dt>${years.map(y => `<div class="yr"><span>${y}</span><i><b style="width:${Math.round(byYear[y] / maxY * 100)}%"></b></i><em>${byYear[y]}</em></div>`).join("")}</div>
+// ---------- HOME ----------
+function calendar() {
+  const by = {};
+  S.forEach(s => { by[s.date] = (by[s.date] || 0) + s.min; });
+  return years.map(y => {
+    let cells = "";
+    const start = new Date(Date.UTC(+y, 0, 1));
+    for (let i = 0; i < (start.getUTCDay() + 6) % 7; i++) cells += '<i class="x"></i>';
+    for (let d = new Date(start); d.getUTCFullYear() === +y; d.setUTCDate(d.getUTCDate() + 1)) {
+      const k = d.toISOString().slice(0, 10), m = by[k];
+      cells += m ? `<i class="p${m > 300 ? 3 : m > 220 ? 2 : 1}" data-d="${k}" tabindex="0"></i>` : "<i></i>";
+    }
+    return `<div class="cal-row"><span class="cal-y">${y}</span><div class="cal">${cells}</div><span class="cal-n">${S.filter(s => s.date.startsWith(y)).length}</span></div>`;
+  }).join("");
+}
+function topLists() {
+  const tops = {
+    sys: ["Most sessions by system", Object.entries(allSys).sort((a, b) => b[1] - a[1]).map(([n, v]) => [n, v, v, sysHref(n)])],
+    camps: ["Longest campaigns", campaigns.slice().sort((a, b) => b.S.length - a.S.length).map(c => [c.name, c.S.length, c.S.length, `/campaigns/${c.slug}/`])],
+    long: ["Longest sessions", S.slice().sort((a, b) => b.min - a.min).map(s => [s.title, s.min, dur(s.min), s.href])],
+    shots: ["Most one-shots by system", sysList.map(s => [s.name, s.games.length, s.games.length, `/one-shots/system/${s.slug}/`])],
+  };
+  return `<label class="top-pick"><span class="vh">Choose a top list</span><select id="top-pick">${Object.entries(tops).map(([k, [l]]) => `<option value="${k}">${l}</option>`).join("")}</select></label>
+  ${Object.entries(tops).map(([k, [, rows]], i) => {
+    const top = rows.slice(0, 5), max = top[0] ? top[0][1] : 1;
+    return `<div class="top-list" data-top="${k}"${i ? " hidden" : ""}>${top.map(([n, v, l, href]) => `<div class="bar"><span>${href ? `<a href="${href}">${esc(n)}</a>` : esc(n)}</span><i><b style="width:${v / max * 100}%"></b></i><em>${l}</em></div>`).join("")}</div>`;
+  }).join("")}`;
+}
+function renderHome() {
+  const L = S[0], prev = S.slice(1, 5), running = campaigns.filter(c => c.status === "running");
+  const tipData = {};
+  S.forEach(s => (tipData[s.date] = tipData[s.date] || []).push([s.title, s.camp ? s.camp.name : "One-shot, " + s.sys, dur(s.min)]));
+  const body = `
+<section class="hero band"><div class="wrap hero-grid">
+  <a class="hero-art" href="${L.href}"${editAttr("session", L.n, L.title)}>${pic(L.img, L.title, "sq")}</a>
+  <div class="hero-main">
+    <p class="over">Latest session, #${L.n}</p>
+    <h1>${esc(L.title)}</h1>
+    <p class="hero-meta">${L.camp ? `<a href="/campaigns/${L.camp.slug}/">${esc(L.camp.name)}</a>${same(L.camp.name, L.sys) ? "" : ", " + esc(L.sys)}` : `A one-shot in <a href="${sysHref(L.sys)}">${esc(L.sys)}</a>`}<br>${fDate(L.date)}, ${dur(L.min)}</p>
+    ${L.recap ? `<p class="hero-recap">${esc(L.recap)}</p>` : ""}
+    <a class="btn gold" href="${L.href}">Read more</a>
+    ${addBtn("session", "Log session")}
+  </div>
+  <div class="hero-prev"><h2>Recent sessions</h2>
+    ${prev.map(s => `<a href="${s.href}" class="mini"${editAttr("session", s.n, s.title)}>${pic(s.img, s.camp ? s.camp.name : s.sys, "sq tiny")}<span><b>${esc(s.title)}</b><small>${where(s)}, ${fShort(s.date)}</small></span></a>`).join("")}
+    <a class="more" href="#ledger-sec">The whole ledger</a></div>
+</div></section>
+<section class="wrap sec"><header class="sec-h"><h2>At the table now</h2>${addBtn("campaign", "New campaign")}<a class="more" href="/campaigns/">All ${campaigns.length} campaigns</a></header>
+  <div class="posters">${running.map(poster).join("")}</div></section>
+
+<section class="record band"><div class="wrap">
+  <header class="sec-h"><h2>Lifetime record</h2></header>
+  <div class="rec-grid">
+    <dl class="rec-nums">
+      <div><dd>${S.length}</dd><dt>sessions</dt></div><div><dd>${Math.round(totalMin / 60)}</dd><dt>hours</dt></div>
+      <div><dd>${Object.keys(allSys).length}</dd><dt>systems</dt></div><div><dd>${campaigns.length}</dd><dt>campaigns</dt></div><div><dd>${OS.length}</dd><dt>one-shots</dt></div>
     </dl>
-  </section>
+    <div class="rec-cal">${calendar()}</div>
+    <div class="rec-sys">${topLists()}</div>
+  </div></div></section>
+<script type="application/json" id="tip-data">${json(tipData)}</script>
 
-  <section class="ledger-wrap">
-    ${label("The Ledger", `${sessions.length} sessions · ${Math.round(stats.hours)} hours · ${stats.systems} systems · since ${stats.since}`, addBtn("session", "Log session"))}
-    ${ledger(ss, { limit: 24 })}
-    ${ss.length > 24 ? `<button type="button" class="more" id="ledger-toggle">Every entry ↓</button>
-    <script>
-      (function(){
-        var l=document.getElementById('ledger'),b=document.getElementById('ledger-toggle');
-        b.addEventListener('click',function(){var f=l.classList.toggle('folded');b.textContent=f?'Every entry ↓':'Fewer entries ↑';});
-      })();
-    </script>` : ""}
-  </section>`;
-  write("index.html", layout({ title: "Prince Faline's RPG Diaries", active: "Home", body, description: "A permanent home for ephemeral games — campaigns, sessions, reviews and dashboards since July 2024." }));
+<section class="wrap sec"><header class="sec-h"><h2>From the shelf</h2>${addBtn("review", "New review")}<a class="more" href="/reviews/">All ${reviews.length} books</a></header>
+  <div class="strip">${shelfSorted.slice(0, 7).map(book).join("")}</div></section>
+
+<section class="wrap sec" id="ledger-sec"><header class="sec-h"><h2>The ledger</h2>${addBtn("session", "Log session")}<span class="note">${S.length} sessions</span></header>${ledger()}</section>
+
+<section class="wrap about"><img src="/assets/portrait.webp" alt="Prince Faline reading beneath a tree" width="530" height="650">
+  <div><h2>About these diaries</h2><p>Since 2024 I've been obsessed with tabletop RPGs. There's something addictive about running a story I don't know the ending of. The dice decide what happens and I figure out what it means, which makes me less the author of these stories than their oracle. Not being responsible for making the story compelling frees me up to become its audience.</p>
+  <p>The list of games I want to play would already take a few lifetimes to play through, and it only ever gets longer, so all I can do is play as much as I can and be grateful for the people who show up every week to see these stories through.</p>
+  <p>This site is an archive of every session I've played, along with my thoughts on the books and modules I've read, and the dashboards, playsets and sheets I build for my games.</p></div></section>`;
+  write("index.html", layout({ title: "Prince Faline's RPG Diaries", active: "Home", body, description: "A permanent home for ephemeral games: campaigns, sessions, reviews and dashboards since July 2024." }));
 }
 
-function slugFor(name) {
-  const c = campaigns.find(c => c.name === name);
-  return c ? c.slug : "";
-}
-
-// ---------- CAMPAIGNS INDEX ----------
+// ---------- CAMPAIGNS ----------
 function renderCampaignsIndex() {
   const list = campaigns.slice().sort((a, b) => (b.last || "").localeCompare(a.last || ""));
-  const cards = list.map(c => `<a class="gi" href="/campaigns/${c.slug}/"${editAttr("campaign", c.slug, c.name)} data-status="${esc(c.status)}" data-sys="${esc(c.sys)}">
-      <div class="gi-cover">${cover(c.name, c.sys, c.banner)}</div>
-      <p class="kicker">${statusLabel(c.status)}</p>
-      <h3>${esc(c.name)}</h3>
-      <p class="meta"><b>${sysLine(c.sys, c.ed)}</b></p>
-      <p class="meta">${plural(c.n, "session")} · ${c.rt} · ${runSpan(c)}</p>
-      <p class="blurb">${esc(blurb(c))}</p>
-    </a>`).join("");
-  const sysNames = Array.from(new Set(campaigns.map(c => c.sys))).sort();
-  const body = `
-    ${pageHead(`${campaigns.length} campaigns`, "Campaigns", "Every campaign I've run since 2024, with its system, its length and its session diaries.", addBtn("campaign", "New campaign"))}
-    ${filterBar("cf", [["all", "All"], ["running", "Running"], ["between arcs", "Between Arcs"], ["concluded", "Concluded"]], sysNames, "All systems")}
-    <p class="count" id="cf-count">${campaigns.length} of ${campaigns.length} campaigns · ${stats.oneShots} one-shots logged separately</p>
-    <div class="grid" id="cf-list">${cards}</div>
-    ${filterScript("cf", "#cf-list .gi", campaigns.length, "campaigns", "return (v==='all'||el.dataset.status===v)&&(s==='all'||el.dataset.sys===s);")}`;
-  write("campaigns/index.html", layout({ title: "Campaign Library — Prince Faline's RPG Diaries", active: "Campaigns", body }));
-}
-
-// ---------- cast grid ----------
-// Groups cast cards into centered rows so the grid never leaves an
-// awkward lone card dangling on the last line.
-const CAST_ROW_PLANS = { 1: [1], 2: [2], 3: [3], 4: [2, 2], 5: [3, 2], 6: [3, 3], 7: [3, 2, 2], 8: [3, 3, 2], 9: [3, 3, 3], 10: [3, 3, 2, 2] };
-function castRows(n) {
-  if (CAST_ROW_PLANS[n]) return CAST_ROW_PLANS[n];
-  const rows = []; let left = n;
-  while (left > 0) { const take = Math.min(3, left); rows.push(take); left -= take; }
-  return rows;
-}
-function castCard(pc) {
-  return `<div class="cc">
-    <div class="cc-p">${cover(pc.name, "", pc.portrait, { noSys: true })}</div>
-    <div>
-      <h3>${esc(pc.name)}</h3>
-      <p class="role">${esc(pc.role || pc.kind || "")}</p>
-      <p class="by">Portrayed by ${esc(pc.player)}</p>
-      <p>${esc(pc.bio)}</p>
-    </div>
+  const n = s => campaigns.filter(c => c.status === s).length;
+  const statusSeg = [["all", `All ${campaigns.length}`], ["running", `Running ${n("running")}`], ["concluded", `Concluded ${n("concluded")}`]];
+  const body = `<div class="wrap page"><header class="page-h"><h1>Campaigns</h1>${addBtn("campaign", "New campaign")}</header>
+  <div class="tools" id="c-tools">${seg("status", statusSeg)}
+    ${sel("sys", [["", "All systems"], ...[...new Set(campaigns.map(c => c.sys))].sort().map(s => [s, s])], "System")}
+    ${sel("sort", [["recent", "Last played"], ["long", "Most sessions"], ["old", "Oldest first"], ["az", "A to Z"]], "Sort")}
+    <span class="grow"></span>${seg("view", [["posters", "Posters"], ["list", "List"]])}</div>
+  <div class="posters" id="c-posters">${list.map(poster).join("")}</div>
+  <table class="ledger clist" id="c-list" hidden><thead><tr><th>Campaign</th><th>System</th><th>Sessions</th><th>Played</th><th>Ran</th><th>Status</th></tr></thead><tbody>${list.map(c => `<tr data-status="${esc(c.status)}" data-sys="${esc(c.sys)}" data-name="${esc(c.name)}" data-first="${c.first || ""}" data-last="${c.last || ""}" data-count="${c.S.length}"><td class="t"${editAttr("campaign", c.slug, c.name)}><a href="/campaigns/${c.slug}/">${esc(c.name)}</a></td><td>${esc(c.sys)}${edTag(c.ed)}</td><td>${c.S.length}</td><td>${dur(c.min)}</td><td>${fMY(c.first)} to ${c.status === "running" ? "now" : fMY(c.last)}</td><td><span class="status ${c.status === "concluded" ? "concluded" : "running"}">${STATUS[c.status] || "Concluded"}</span></td></tr>`).join("")}</tbody></table>
   </div>`;
+  write("campaigns/index.html", layout({ title: "Campaigns — Prince Faline's RPG Diaries", active: "Campaigns", body }));
 }
-function castLayout(cast) {
-  if (!cast.length) return "";
-  let i = 0;
-  return `<div class="cast">${castRows(cast.length).map(size => {
-    const chunk = cast.slice(i, i + size); i += size;
-    return `<div class="cast-row">${chunk.map(castCard).join("")}</div>`;
-  }).join("")}</div>`;
-}
-
-// ---------- CAMPAIGN DETAIL ----------
+function influenceList(s) { return String(s || "").split(/(?<=\)),\s*/).map(x => x.trim()).filter(Boolean); }
 function renderCampaignDetail(c) {
-  const hasDetail = !!c.episodes && c.episodes.length > 0;
-  const summary = c.summary || c.premise || [];
-  const paras = summary.length ? summary : [blurb(c)];
-  const rows = sessions.filter(s => s.campaignSlug === c.slug).slice().reverse();
-
-  let extra = "";
-  if (hasDetail) {
-    const materials = (c.materials || []).map(t => {
-      const r = reviews.find(x => x.t === t);
-      return `<li>${r ? `<a href="/reviews/${r.slug}/">${esc(t)}</a>${starsHtml(r.stars)}` : `<span>${esc(t)}</span>`}</li>`;
-    }).join("");
-    extra = `
-      ${(c.influences || materials) ? `<section class="sec two">
-        ${c.influences ? `<div>${label("Influences")}<p class="infl">${esc(c.influences)}</p></div>` : "<div></div>"}
-        ${materials ? `<div>${label("Materials")}<ul class="mats">${materials}</ul></div>` : "<div></div>"}
-      </section>` : ""}
-      ${(c.cast || []).length ? `<section class="sec">${label("Casting")}${castLayout(c.cast)}</section>` : ""}
-      <section class="sec">
-        ${label("Episodes", plural(c.episodes.length, "episode"), addBtn("session", "Log session", c.slug))}
-        <ul class="eps">${c.episodes.map(e => `<li><a class="ep-row" href="#ep-${e.n}"><span class="d">${esc(e.date)}</span><span class="n">${e.n}</span><span class="t">${esc(e.title)}</span><span class="r">${fmtRt(e.rt)}</span></a></li>`).join("")}</ul>
-        <div style="margin-top:20px">${c.episodes.map((e, i) => `<article class="recap" id="ep-${e.n}">
-          <div class="cv">${cover(e.title, "", e.img || (c.covers && c.covers[i]) || "", { noSys: true })}</div>
-          <div><h3><span>${e.n}.</span>${esc(e.title)}</h3><p>${esc(e.hook)}</p><p class="meta" style="margin-top:6px">${esc(e.date)} · ${fmtRt(e.rt)}</p></div>
-        </article>`).join("")}</div>
-      </section>`;
-  } else {
-    extra = `<section class="sec">
-        <p class="note">Diary not yet transcribed — the session log below is drawn from the master ledger. Premise, casting and recaps get written up here.</p>
-        ${label("Session Log", plural(rows.length, "session"), addBtn("session", "Log session", c.slug))}
-        ${ledger(rows, { id: "sessions", noWhere: true })}
-      </section>`;
-  }
-
-  const body = `
-    <a class="back" href="/campaigns/">◂ Campaigns</a>
-    ${c.banner ? `<div class="banner cv"><img src="${esc(c.banner)}" alt=""></div>` : ""}
-    <article class="detail${c.banner ? " wide" : ""}"${editAttr("campaign", c.slug, c.name)}>
-      ${c.banner ? "" : `<div class="d-cover">${cover(c.name, c.sys)}</div>`}
-      <div class="d-body">
-        <p class="kicker">${sysLine(c.sys, c.ed)} · ${statusLabel(c.status)}</p>
-        <h1>${esc(c.name)}</h1>
-        ${c.tagline ? `<p class="tagline">${esc(c.tagline)}</p>` : ""}
-        ${paras.map((p, i) => `<p${i === 0 ? ' class="dropcap"' : ""}>${esc(p)}</p>`).join("")}
-        <dl class="facts"><div><dt>Sessions</dt><dd>${c.n}</dd></div><div><dt>At the table</dt><dd>${c.rt}</dd></div><div><dt>Run</dt><dd>${runSpan(c)}</dd></div></dl>
-      </div>
-    </article>
-    ${extra}`;
+  const rev = reviewBySys(c.sys);
+  const paras = (c.summary && c.summary.length ? c.summary : c.premise && c.premise.length ? c.premise : [blurb(c)]);
+  const cast = c.cast || [];
+  const others = campaigns.filter(o => o.sys === c.sys && o !== c);
+  const body = `<section class="c-hero band"${editAttr("campaign", c.slug, c.name)}>${c.banner ? `<img class="c-banner" src="${esc(c.banner)}" alt="" onerror="this.remove()">` : ""}<div class="c-shade"></div>
+   <div class="wrap c-hero-in"><a class="back" href="/campaigns/">Campaigns</a>
+    <h1>${esc(c.name)}</h1><p class="c-tag">${esc(c.tagline || blurb(c))}</p></div></section>
+  <div class="facts"><div class="wrap facts-in">
+    <div><dt>System</dt><dd>${rev ? `<a href="/reviews/${rev.slug}/">${esc(c.sys)}</a>` : esc(c.sys)}${edTag(c.ed)}</dd></div>
+    <div><dt>Sessions</dt><dd>${c.S.length}</dd></div><div><dt>Played</dt><dd>${dur(c.min)}</dd></div>
+    <div><dt>Ran</dt><dd>${fMY(c.first)} to ${c.status === "running" ? "now" : fMY(c.last)} <span class="status ${c.status === "concluded" ? "concluded" : "running"}">${STATUS[c.status] || "Concluded"}</span></dd></div>
+    <nav class="jump">${cast.length ? `<a href="#cast">Cast</a>` : ""}<a href="#episodes">Episodes</a></nav></div></div>
+  <div class="wrap c-body">
+   <div class="c-main">
+    <section class="prose">${paras.map(p => `<p>${esc(p)}</p>`).join("")}</section>
+    ${cast.length ? `<section id="cast"><header class="sec-h"><h2>Cast</h2></header>
+      <div class="cast">${cast.map(p => `<article>${pic(p.portrait, String(p.name).replace(/"[^"]+" /, ""), "sq")}<h3>${esc(p.name)}</h3>${p.role ? `<p class="sub">${esc(p.role)}</p>` : ""}<p class="by">Played by <a href="${playerHref(p.player)}">${esc(p.player)}</a></p><p>${esc(p.bio)}</p></article>`).join("")}</div></section>` : ""}
+    <section id="episodes"><header class="sec-h"><h2>Episodes</h2><span class="note">${plural(c.S.length, "session")}</span>${addBtn("session", "Log session", c.slug)}</header>
+      <ol class="eps">${c.S.map(s => { const full = s.recap || s.img; return `<li id="ep-${s.ep}" class="${full ? "full" : "bare"}"${editAttr("session", s.n, s.title)}>${full ? pic(s.img, s.epTitle, "sq") : ""}
+        <div><p class="ep-n">Episode ${s.ep}</p><h3>${esc(s.epTitle)}</h3><p class="sub">${fDate(s.date)}, ${dur(s.min)}</p>${s.recap ? `<p class="ep-recap">${esc(s.recap)}</p>` : ""}</div></li>`; }).join("")}</ol></section>
+   </div>
+   <aside class="c-side">
+    ${c.influences ? `<h3>Influences</h3><ul>${influenceList(c.influences).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+    ${(c.materials || []).length ? `<h3>Materials</h3><ul>${c.materials.map(x => { const r = reviews.find(r => r.t === x); return `<li>${r ? `<a href="/reviews/${r.slug}/">${esc(x)}</a> ${starsHtml(r.stars)}` : esc(x)}</li>`; }).join("")}</ul>` : ""}
+    <h3>More in ${esc(c.sys)}</h3><ul>${others.map(o => `<li><a href="/campaigns/${o.slug}/">${esc(o.name)}</a></li>`).join("")}${SYS[c.sys] ? `<li><a href="${sysHref(c.sys)}">${plural(SYS[c.sys].length, "one-shot")}</a></li>` : ""}${!others.length && !SYS[c.sys] ? '<li class="quiet">Nothing else yet</li>' : ""}</ul>
+   </aside></div>`;
   write(`campaigns/${c.slug}/index.html`, layout({ title: c.name + " — Prince Faline's RPG Diaries", active: "Campaigns", body, description: blurb(c) }));
 }
 
-// ---------- REVIEWS INDEX ----------
-const CORE_TYPES = ["System", "Module", "Supplement"];
-function reviewGroup(t) { return CORE_TYPES.includes(t) ? t : "Resource"; }
-function renderReviewsIndex() {
-  const sorted = reviews.slice().sort((a, b) => b.stars - a.stars || a.t.localeCompare(b.t));
-  const cards = sorted.map(r => `<a class="gi" href="/reviews/${r.slug}/"${editAttr("review", r.slug, r.t)} data-type="${reviewGroup(r.type)}" data-sys="${esc(r.sys)}">
-      <div class="gi-cover">${cover(r.t, r.sys, bookCover(r), { contain: true })}
-        <div class="gi-over"><p class="kicker">${esc(r.type)} · ${mon(r.date + "-01")}</p><h4>${esc(r.t)}</h4>${starsHtml(r.stars)}<p>${esc(r.verdict)}</p></div></div>
-      <p class="kicker">${esc(r.type)}</p>
-      <h3>${esc(r.t)}</h3>
-      <p class="meta">${sysLine(r.sys, r.ed)}</p>
-      ${starsHtml(r.stars)}
-    </a>`).join("");
-  const sysNames = Array.from(new Set(reviews.map(r => r.sys))).sort();
-  const body = `
-    ${pageHead(`${reviews.length} books`, "The Shelf", "Short notes on every system, module and supplement I've read.", addBtn("review", "New review"))}
-    ${filterBar("rf", [["all", "Everything"], ["System", "Systems"], ["Module", "Modules"], ["Supplement", "Supplements"], ["Resource", "Resources"]], sysNames, "All systems")}
-    <p class="count" id="rf-count">${reviews.length} of ${reviews.length} entries</p>
-    <div class="grid books" id="rf-list">${cards}</div>
-    ${filterScript("rf", "#rf-list .gi", reviews.length, "entries", "return (v==='all'||el.dataset.type===v)&&(s==='all'||el.dataset.sys===s);")}`;
-  write("reviews/index.html", layout({ title: "The Shelf — Prince Faline's RPG Diaries", active: "Reviews", body }));
+// ---------- ONE-SHOTS ----------
+function mosaic(sy) {
+  const g = sy.games.slice(0, 4), n = g.length >= 4 ? 4 : g.length >= 2 ? 2 : 1;
+  return `<div class="mosaic m${n}">${g.slice(0, n).map(s => pic(s.img, s.title, "sq")).join("")}</div>`;
+}
+function renderOneShotsIndex() {
+  const hrs = Math.round(OS.reduce((a, s) => a + s.min, 0) / 60);
+  const systems = sysList.map(sy => `<a class="system" href="/one-shots/system/${sy.slug}/" data-name="${esc(sy.name)}" data-games="${esc(json(sy.games.map(s => [s.date.slice(0, 4), s.min, s.date])))}">${mosaic(sy)}<h3>${esc(sy.name)}</h3><p class="chips">${chip(plural(sy.games.length, "one-shot"), "g")}${chip(dur(sy.min))}</p></a>`).join("");
+  const body = `<div class="wrap page"><header class="page-h"><h1>One-shots</h1><p class="chips big">${chip(OS.length + " one-shots", "g")}${chip(sysList.length + " systems")}${chip(hrs + " hours")}</p>${addBtn("session", "New one-shot")}</header>
+  <div class="tools" id="os-tools">${seg("view", [["systems", "By system"], ["games", "Every game"]])}
+   ${sel("year", yearOpts, "Year")}
+   <span data-only="games" hidden>${sel("sys", [["", "All systems"], ...sysList.map(s => s.name).sort().map(s => [s, s])], "System")}</span>
+   <span data-only="systems">${sel("sortS", [["count", "Most one-shots"], ["time", "Most time played"], ["recent", "Last played"], ["az", "A to Z"]], "Sort")}</span>
+   <span data-only="games" hidden>${sel("sortG", [["recent", "Newest first"], ["time", "Longest first"], ["az", "A to Z"]], "Sort")}</span></div>
+  <div class="systems" id="os-systems">${systems}</div>
+  <div class="games-grid g5" id="os-games" hidden>${OS.map(s => shotCard(s, true)).join("")}</div>
+  <p class="quiet" id="os-none" hidden>No one-shots match these filters.</p>
+  ${shotData(OS)}</div>`;
+  write("one-shots/index.html", layout({ title: "One-shots — Prince Faline's RPG Diaries", active: "One-shots", body }));
+}
+function renderSystemPage(sy) {
+  const rev = reviewBySys(sy.name), camps = campaigns.filter(c => c.sys === sy.name);
+  const body = `<div class="wrap page"><a class="back dark" href="/one-shots/">One-shots</a><header class="page-h"><h1>${esc(sy.name)}</h1>
+   <p class="chips big">${chip(plural(sy.games.length, "one-shot"), "g")}${chip(dur(sy.min) + " played")}</p>
+   ${rev || camps.length ? `<p class="also">${rev ? `On the shelf: <a href="/reviews/${rev.slug}/">${esc(rev.t)}</a>` : ""}${rev && camps.length ? ". " : ""}${camps.length ? `Campaigns: ${camps.map(c => `<a href="/campaigns/${c.slug}/">${esc(c.name)}</a>`).join(", ")}` : ""}</p>` : ""}
+  </header>
+   <div class="games-grid">${sy.games.map(s => shotCard(s, false)).join("")}</div>${shotData(sy.games)}</div>`;
+  write(`one-shots/system/${sy.slug}/index.html`, layout({ title: sy.name + " one-shots — Prince Faline's RPG Diaries", active: "One-shots", body }));
+}
+function renderOneShotDetail(s) {
+  const rev = reviewBySys(s.sys);
+  const body = `<div class="wrap page"><a class="back dark" href="${sysHref(s.sys)}">${esc(s.sys)}</a>
+  <article class="review"${editAttr("session", s.n, s.title)}><div class="rv-cover">${pic(s.img, s.title, "sq")}</div>
+   <div class="rv-main">
+    <p class="chips"><a href="${sysHref(s.sys)}">${chip(esc(s.sys) + (s.ed ? " " + esc(s.ed) : ""), "g")}</a>${chip(fDate(s.date))}${chip(dur(s.min))}${chip("#" + s.n)}</p>
+    <h1>${esc(s.title)}</h1>
+    ${s.writeup.length ? s.writeup.map(p => `<p class="rv-thoughts">${esc(p)}</p>`).join("") : `<p class="rv-thoughts ph">No write-up yet.</p>`}
+    ${s.cast.length ? `<h2>Cast</h2><ul class="shot-cast">${s.cast.map(c => `<li><b>${esc(c.name)}</b>${c.player ? `<span>Played by ${PLAYERS[c.player] ? `<a href="${playerHref(c.player)}"><i>${esc(c.player)}</i></a>` : `<i>${esc(c.player)}</i>`}</span>` : ""}</li>`).join("")}</ul>` : ""}
+    ${rev ? `<h2>Materials</h2><div class="rv-feat"><a href="/reviews/${rev.slug}/">${pic(bookCover(rev), rev.t, "sq tiny contain")}<span><b>${esc(rev.t)}</b><small>${esc(TYPE_LABEL(rev.type))}</small></span></a></div>` : ""}
+   </div></article></div>`;
+  write(`one-shots/${s.slug}/index.html`, layout({ title: s.title + " — Prince Faline's RPG Diaries", active: "One-shots", body }));
 }
 
-// ---------- REVIEW DETAIL ----------
+// ---------- SHELF ----------
+function renderReviewsIndex() {
+  const groups = {};
+  shelfSorted.forEach(r => (groups[r.sys] = groups[r.sys] || []).push(r));
+  const types = [...new Set(reviews.map(r => TYPE_LABEL(r.type)))];
+  const order = ["Core Rulebook", "Module", "Supplement"];
+  types.sort((a, b) => (order.indexOf(a) + 1 || 9) - (order.indexOf(b) + 1 || 9));
+  const body = `<div class="wrap page"><header class="page-h"><h1>Shelf</h1>${addBtn("review", "New review")}</header>
+  <div class="tools" id="sh-tools">${seg("type", [["all", "Everything"], ...types.map(t => [t, t === "Core Rulebook" ? "Core rulebooks" : t + "s"])])}
+   ${sel("sort", [["rating", "Highest rated"], ["az", "A to Z"]], "Sort")}<span class="grow"></span>${seg("view", [["covers", "Covers"], ["system", "By system"]])}</div>
+  <div class="books" id="sh-covers">${shelfSorted.map(book).join("")}</div>
+  <div id="sh-system" hidden>${Object.entries(groups).map(([s, bs]) => `<section class="sys-row"><header><h2>${esc(s)}</h2><ul class="sys-books">${bs.map(b => `<li><a href="/reviews/${b.slug}/">${esc(b.t)}</a><span>${esc(TYPE_LABEL(b.type))}</span></li>`).join("")}</ul></header><div class="books">${bs.map(book).join("")}</div></section>`).join("")}</div></div>`;
+  write("reviews/index.html", layout({ title: "Shelf — Prince Faline's RPG Diaries", active: "Shelf", body }));
+}
 function renderReviewDetail(r) {
-  const used = (r.used || []).map(u => {
-    const href = u === "One-Shots" ? "/one-shots/" : `/campaigns/${slugFor(u)}/`;
-    return `<a href="${href}">${esc(u)}</a>`;
-  }).join("");
-  const body = `
-    <a class="back" href="/reviews/">◂ The Shelf</a>
-    <article class="detail"${editAttr("review", r.slug, r.t)}>
-      <div class="d-cover">${cover(r.t, r.sys, bookCover(r), { contain: true })}</div>
-      <div class="d-body">
-        <p class="kicker">${esc(r.type)} · ${sysLine(r.sys, r.ed)}</p>
-        <h1>${esc(r.t)}</h1>
-        <p class="pq">${esc(r.verdict)}</p>
-        <p class="dropcap">${esc(r.body)}</p>
-        ${(r.tags || []).length ? `<div class="tags">${r.tags.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}
-        <dl class="facts"><div><dt>Rating</dt><dd>${starsHtml(r.stars)}</dd></div><div><dt>Reviewed</dt><dd>${mon(r.date + "-01")}</dd></div><div><dt>${r.ed ? "Edition" : "Edition"}</dt><dd>${r.ed ? esc(r.ed) : "Standalone"}</dd></div></dl>
-        ${used ? `<div style="margin-top:28px"><p class="kicker" style="margin-bottom:10px">Put to the table in</p><div class="tags" style="margin-top:0">${used}</div></div>` : ""}
-      </div>
-    </article>`;
-  write(`reviews/${r.slug}/index.html`, layout({ title: r.t + " — Prince Faline's RPG Diaries", active: "Reviews", body, description: r.verdict }));
+  const used = r.used || [];
+  const camps = used.map(u => campaigns.find(c => same(c.name, u))).filter(Boolean);
+  const shots = used.some(u => same(u, "One-Shots")) && SYS[r.t] ? SYS[r.t] : (used.some(u => same(u, "One-Shots")) ? OS.filter(s => same(s.sys, r.sys)) : []);
+  const body = `<div class="wrap page"><a class="back dark" href="/reviews/">Shelf</a>
+  <article class="review"${editAttr("review", r.slug, r.t)}><div class="rv-cover">${pic(bookCover(r), r.t, "p34 contain")}</div>
+   <div class="rv-main">
+    <p class="chips">${chip(esc(TYPE_LABEL(r.type)), "g")}${chip(esc(r.sys) + (r.ed ? " " + esc(r.ed) : ""))}</p>
+    <h1>${esc(r.t)}</h1>
+    <p class="rv-rate">${starsHtml(r.stars)}<span>${r.date ? "Reviewed " + fMonth(r.date + "-01") : ""}</span></p>
+    ${r.verdict ? `<p class="rv-blurb">${esc(r.verdict)}</p>` : ""}
+    <h2>My thoughts</h2>
+    ${String(r.body || "").split(/\n\s*\n/).filter(Boolean).map(p => `<p class="rv-thoughts">${esc(p)}</p>`).join("") || `<p class="rv-thoughts ph">No review written yet.</p>`}
+    ${(r.tags || []).length ? `<p class="chips" style="margin-top:18px">${r.tags.map(t => chip(esc(t))).join("")}</p>` : ""}
+    ${camps.length || shots.length ? `<h2>Featured in</h2><div class="rv-feat">${camps.map(c => `<a href="/campaigns/${c.slug}/">${pic(c.banner, c.name, "sq tiny")}<span><b>${esc(c.name)}</b><small>Campaign, ${plural(c.S.length, "session")}</small></span></a>`).join("")}${shots.length ? `<a href="${sysHref(shots[0].sys)}">${pic(shots[0].img, shots[0].sys, "sq tiny")}<span><b>${plural(shots.length, "one-shot")}</b><small>${esc(shots[0].sys)}</small></span></a>` : ""}</div>` : ""}
+   </div></article></div>`;
+  write(`reviews/${r.slug}/index.html`, layout({ title: r.t + " — Prince Faline's RPG Diaries", active: "Shelf", body, description: r.verdict }));
 }
 
 // ---------- GAMES ----------
-const GAME_FILTERS = [["", "All"], ["Dashboard", "Dashboards"], ["Playset", "Playsets"], ["Character Sheet", "Character Sheets"]];
 function renderGames() {
-  const sorted = dashboards.slice().sort((a, b) => a.t.localeCompare(b.t));
-  const tiles = sorted.map(d => `<a href="${d.url}" target="_blank" rel="noopener" class="gi"${editAttr("game", dashboards.indexOf(d), d.t)} data-kind="${esc(d.kind || "")}">
-      <div class="gi-cover"><div class="gm-tile">
-        <div class="gm-art" style="background-image:url(${d.icon})"></div>
-        <div class="gm-panel">
-          ${d.logo ? `<img src="${d.logo}" alt="${esc(d.t)}" class="gm-logo" style="filter:${d.logoStyle === "white" ? "brightness(0) invert(1)" : "grayscale(1) invert(1)"}">` : `<div class="gm-name">${esc(d.t)}</div>`}
-          <div class="gm-line"></div>
-          <div class="gm-desc">${esc(d.note || "")}</div>
-          <div class="gm-foot">${d.players ? `<span class="gm-pl">${esc(d.players)} players</span>` : ""}<span class="gm-kind">▸ ${esc(d.kind || "Game")}</span></div>
-        </div>
-      </div></div>
-      <p class="kicker">${esc(d.kind || "Game")}</p>
-      <h3>${esc(d.t)}</h3>
-      ${d.players ? `<p class="meta">${esc(d.players)} players</p>` : ""}
-    </a>`).join("");
-  const distinctKinds = new Set(dashboards.map(d => d.kind)).size;
-  const btns = GAME_FILTERS.map(([k, l]) => {
-    const n = k ? dashboards.filter(d => d.kind === k).length : dashboards.length;
-    return [k, `${l} ${n}`];
-  });
-  const body = `
-    ${pageHead(`${dashboards.length} apps`, "Games", "Dashboards, playsets and sheets I've built for my tables.", addBtn("game", "New game"))}
-    ${distinctKinds > 1 ? filterBar("gf", btns) : ""}
-    <p class="count" id="gf-count">${dashboards.length} of ${dashboards.length} apps</p>
-    <div class="grid games" id="gf-list">${tiles}</div>
-    ${distinctKinds > 1 ? filterScript("gf", "#gf-list .gi", dashboards.length, "apps", "return v===''||el.dataset.kind===v;") : ""}`;
+  const list = dashboards.map((d, i) => ({ d, i, range: gameRange(d.players) }));
+  const filter = d => d.logoStyle === "white" ? "brightness(0) invert(1)" : "grayscale(1) invert(1)";
+  const kinds = [...new Set(dashboards.map(d => d.kind).filter(Boolean))];
+  const tiles = list.slice().reverse().map(({ d, i, range }) => `<a class="tile" href="${esc(d.url)}"${editAttr("game", i, d.t)} data-kind="${esc(d.kind || "")}" data-min="${range[0]}" data-max="${range[1]}" data-i="${i}" data-text="${esc((d.t + " " + (d.note || "") + " " + (d.sys || "")).toLowerCase())}" aria-label="${esc(d.t)}, ${esc(d.kind || "Game")}${d.players ? ", " + esc(d.players) + " players" : ""}">
+    <div class="tile-art">${pic(d.icon, d.t, "sq")}<div class="tile-over"><div class="tile-logo">${d.logo ? `<img src="${esc(d.logo)}" alt="" style="filter:${filter(d)}" onload="this.parentNode.classList.add('has')" onerror="this.remove()">` : ""}<span>${esc(d.t)}</span></div>
+      <i class="tile-rule"></i><p class="tile-desc">${esc(d.note || "")}</p>${d.players ? `<p class="tile-pl">${esc(d.players)} PLAYERS</p>` : ""}<p class="tile-kind">${esc(d.kind || "Game")}</p></div></div>
+    <p class="tile-name">${esc(d.t)}</p><p class="tile-desc touch">${esc(d.note || "")}</p></a>`).join("");
+  const rows = list.slice().reverse().map(({ d, i, range }) => `<tr data-kind="${esc(d.kind || "")}" data-min="${range[0]}" data-max="${range[1]}" data-i="${i}" data-name="${esc(d.t)}" data-text="${esc((d.t + " " + (d.note || "") + " " + (d.sys || "")).toLowerCase())}"><td class="gthumb">${pic(d.icon, d.t, "sq tiny")}</td><td class="t"${editAttr("game", i, d.t)}><a href="${esc(d.url)}">${esc(d.t)}</a></td><td>${esc(d.kind || "")}</td><td>${range[0] ? range[0] + " to " + range[1] : ""}</td><td>${esc(d.sys || "")}</td><td class="w">${esc(d.note || "")}</td></tr>`).join("");
+  const maxPl = Math.max(8, ...list.map(x => x.range[1]));
+  const body = `<div class="wrap page"><header class="page-h"><h1>Games</h1>${addBtn("game", "New game")}</header>
+  <div class="tools" id="g-tools"><label class="search"><span class="vh">Search games</span><input type="search" data-key="q" placeholder="Search games"></label>
+   ${seg("kind", [["all", "All"], ...["Dashboard", "Playset", "Character Sheet"].map(k => [k, k === "Character Sheet" ? "Character sheets" : k + "s"])])}
+   <div class="slider"><label for="pl">Players</label><input id="pl" type="range" min="1" max="${maxPl}" step="1" value="2" class="unset"><output id="plVal">Any</output><button type="button" id="plClear" hidden>Clear</button></div>
+   ${sel("sort", [["new", "Newest"], ["az", "A to Z"], ["big", "Largest table"]], "Sort")}
+   <span class="grow"></span>${seg("view", [["grid", "Grid"], ["list", "List"]])}</div>
+  <div id="gres"><p class="count" id="g-count">${dashboards.length} of ${dashboards.length} games</p>
+   <div class="tiles" id="g-grid">${tiles}</div>
+   <table class="ledger glist" id="g-list" hidden><thead><tr><th></th><th>Game</th><th>Type</th><th>Players</th><th>System</th><th>About</th></tr></thead><tbody>${rows}</tbody></table>
+   <p class="quiet" id="g-none" hidden>No games match. Clear a filter to see more.</p></div></div>`;
   write("games/index.html", layout({ title: "Games — Prince Faline's RPG Diaries", active: "Games", body }));
 }
-
 function renderAppStub(d) {
-  const slug = d.url.replace(/^\/games\//, "").replace(/\/$/, "");
-  const body = `
-    <a class="back" href="/games/">◂ Games</a>
-    <article class="detail"${editAttr("game", dashboards.indexOf(d), d.t)}>
-      <div class="d-cover sq"><div class="cv" style="width:100%;height:100%"><img src="${d.icon}" alt=""></div></div>
-      <div class="d-body">
-        <p class="kicker">${esc(d.kind || "Game")}${d.players ? " · " + esc(d.players) + " players" : ""}</p>
-        <h1>${esc(d.t)}</h1>
-        <p class="dropcap">${esc(d.note)}</p>
-        <p class="note" style="margin-top:26px">This dashboard is in the works — check back soon.</p>
-      </div>
-    </article>`;
-  write(`games/${slug}/index.html`, layout({ title: d.t + " — Prince Faline's RPG Diaries", active: "Games", body, description: d.note }));
+  const slugPart = d.url.replace(/^\/games\//, "").replace(/\/$/, "");
+  const i = dashboards.indexOf(d);
+  const body = `<div class="wrap page"><a class="back dark" href="/games/">Games</a>
+  <article class="review"${editAttr("game", i, d.t)}><div class="rv-cover">${pic(d.icon, d.t, "sq")}</div>
+   <div class="rv-main"><p class="chips">${chip(esc(d.kind || "Game"), "g")}${d.players ? chip(esc(d.players) + " players") : ""}</p>
+    <h1>${esc(d.t)}</h1><p class="rv-blurb">${esc(d.note || "")}</p>
+    <p class="rv-thoughts ph" style="margin-top:24px">This one is still in the works. Check back soon.</p></div></article></div>`;
+  write(`games/${slugPart}/index.html`, layout({ title: d.t + " — Prince Faline's RPG Diaries", active: "Games", body, description: d.note }));
 }
 
-// ---------- ONE-SHOTS ----------
-function renderOneShotsIndex() {
-  const list = oneShots.slice().sort((a, b) => b.d.localeCompare(a.d));
-  const cards = list.map(s => `<a class="gi" href="/one-shots/${s.slug}/"${editAttr("session", s.n, s.t)} data-sys="${esc(s.s)}">
-      <div class="gi-cover">${cover(s.t, s.s, s.cover, { noSys: true })}</div>
-      <p class="kicker">${sysLine(s.s, s.ed)}</p>
-      <h3>${esc(s.t)}</h3>
-      <p class="meta">${mon(s.d)} · ${fmtRt(s.rt)} at the table</p>
-    </a>`).join("");
-  const sysNames = Array.from(new Set(oneShots.map(s => s.s))).sort();
-  const body = `
-    ${pageHead(`${oneShots.length} one-shots`, "One-Shots", "Every single-session game I've run since 2024 with a short entry.", addBtn("session", "New one-shot"))}
-    <div class="filters" id="of"><select aria-label="All systems"><option value="all">All systems</option>${sysNames.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")}</select></div>
-    <p class="count" id="of-count">${oneShots.length} of ${oneShots.length} entries</p>
-    <div class="grid dense" id="of-list">${cards}</div>
-    ${filterScript("of", "#of-list .gi", oneShots.length, "entries", "return s==='all'||el.dataset.sys===s;")}`;
-  write("one-shots/index.html", layout({ title: "One-Shots — Prince Faline's RPG Diaries", active: "One-Shots", body }));
+// ---------- PLAYERS ----------
+function renderPlayer(name) {
+  const list = PLAYERS[name];
+  const body = `<div class="wrap page"><header class="page-h"><p class="over dark">Player</p><h1>${esc(name)}</h1><p>${plural(new Set(list.map(p => p.camp)).size, "campaign")} at this table.</p></header>
+  <div class="cast wide">${list.map(p => `<article>${pic(p.portrait || p.camp.banner, p.camp.name, "p169")}<h3>${esc(p.name)}</h3><p class="by">in <a href="/campaigns/${p.camp.slug}/">${esc(p.camp.name)}</a>, ${esc(p.camp.sys)}, ${plural(p.camp.S.length, "session")}</p><p>${esc(p.bio)}</p></article>`).join("")}</div></div>`;
+  write(`players/${slug(name)}/index.html`, layout({ title: name + " — Prince Faline's RPG Diaries", active: "", body }));
 }
 
-function renderOneShotDetail(s) {
-  const paras = s.writeup || [];
-  const body = `
-    <a class="back" href="/one-shots/">◂ One-Shots</a>
-    <article class="detail"${editAttr("session", s.n, s.t)}>
-      <div class="d-cover sq">${cover(s.t, s.s, s.cover, { noSys: true })}</div>
-      <div class="d-body">
-        <p class="kicker">${sysLine(s.s, s.ed)}</p>
-        <h1>${esc(s.t)}</h1>
-        ${paras.length ? paras.map((p, i) => `<p${i === 0 ? ' class="dropcap"' : ""}>${esc(p)}</p>`).join("") : `<p class="meta" style="font-size:18px">No write-up yet.</p>`}
-        <dl class="facts"><div><dt>Date</dt><dd>${mon(s.d)}</dd></div><div><dt>At the table</dt><dd>${fmtRt(s.rt)}</dd></div><div><dt>System</dt><dd>${sysLine(s.s, s.ed)}</dd></div></dl>
-      </div>
-    </article>`;
-  write(`one-shots/${s.slug}/index.html`, layout({ title: s.t + " — Prince Faline's RPG Diaries", active: "One-Shots", body }));
+// ---------- 404 ----------
+function renderNotFound() {
+  const body = `<div class="wrap nf"><svg viewBox="0 0 200 200" aria-hidden="true"><polygon points="100,8 180,54 180,146 100,192 20,146 20,54"/><polygon points="100,52 146,132 54,132"/><path d="M100 8v44M20 54l80-2 80 2M20 146l34-14M180 146l-34-14M100 192l-46-60M100 192l46-60M20 54l34 78M180 54l-34 78"/><text x="100" y="118" text-anchor="middle">1</text></svg>
+  <div><h1>You rolled a one</h1><p>This page doesn't exist. The link is broken or the entry has moved.</p>
+  <p><a class="btn dark" href="/">Back to the front page</a> <a class="btn line" href="/campaigns/">Browse campaigns</a></p></div></div>`;
+  write("404.html", layout({ title: "Page not found — Prince Faline's RPG Diaries", active: "", body }));
 }
 
+// ---------- search index (fetched by site.js the first time someone types) ----------
+function writeSearchIndex() {
+  const out = [];
+  Object.keys(PLAYERS).forEach(p => out.push(["Player", p, playerHref(p)]));
+  campaigns.forEach(c => out.push(["Campaign", c.name, `/campaigns/${c.slug}/`]));
+  sysList.forEach(s => out.push(["One-shot system", s.name, `/one-shots/system/${s.slug}/`]));
+  reviews.forEach(r => out.push(["Book", r.t, `/reviews/${r.slug}/`]));
+  dashboards.forEach(d => out.push(["Game", d.t, d.url]));
+  S.forEach(s => out.push(["Session " + s.n, s.title, s.href]));
+  write("search.json", JSON.stringify(out));
+}
 
 // ---------- run ----------
 fs.rmSync(DIST, { recursive: true, force: true });
 fs.mkdirSync(DIST, { recursive: true });
+CSS_VER = assetVer("site.css"); JS_VER = assetVer("edit.js"); SITE_VER = assetVer("site.js");
 renderHome();
 renderCampaignsIndex();
 campaigns.forEach(renderCampaignDetail);
+renderOneShotsIndex();
+sysList.forEach(renderSystemPage);
+OS.filter(s => s.slug).forEach(renderOneShotDetail);
 renderReviewsIndex();
 reviews.forEach(renderReviewDetail);
-renderOneShotsIndex();
-oneShots.forEach(renderOneShotDetail);
 renderGames();
-dashboards.filter(d => d.t !== "Tokyo Brain Pop!?" && d.t !== "Don't Rest Your Head").forEach(renderAppStub);
+dashboards.filter(d => d.t !== "Tokyo Brain Pop!?" && d.t !== "Don't Rest Your Head" && /^\/games\//.test(d.url)).forEach(renderAppStub);
+Object.keys(PLAYERS).forEach(renderPlayer);
+renderNotFound();
+writeSearchIndex();
 
 // copy static assets
 function copyDir(src, dest) {

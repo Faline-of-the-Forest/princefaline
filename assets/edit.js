@@ -139,6 +139,7 @@
       '<div id="pf-os">' +
         fld("System", '<select name="sysPick">' + (await systemSelect(item.campaignSlug ? "" : item.s, item.campaignSlug ? "" : item.ed)) + "</select>", "from the Shelf") +
         fld("Write-up", area("writeup", 6), "blank line between paragraphs") +
+        '<div class="pf-sub"><p class="kicker">Cast</p><div id="pf-oscast"></div><button type="button" id="pf-add-oscast">+ Add character</button></div>' +
         imgField("Cover image", "coverFile", item.cover, "square works best") +
       "</div>" +
       inp("s", 'type="hidden"') + inp("ed", 'type="hidden"') + inp("slug", 'type="hidden"');
@@ -151,6 +152,9 @@
       if (oneShot) {
         data.slug = val("slug");
         data.writeup = val("writeup");
+        data.cast = JSON.stringify(Array.prototype.map.call(form.querySelectorAll("#pf-oscast .pf-row"), function (row) {
+          return { name: row.querySelector("[data-k=name]").value.trim(), player: row.querySelector("[data-k=player]").value.trim() };
+        }).filter(function (c) { return c.name; }));
         data.cover = (await upload(form.elements.coverFile)) || item.cover || "";
       }
       await api("POST", "/api/session", data);
@@ -158,6 +162,15 @@
     }, n ? "Save" : "Log session");
     ["d", "rt", "t", "s", "ed", "slug"].forEach(function (k) { setVal(k, item[k]); });
     setVal("writeup", (item.writeup || []).join("\n\n"));
+    function osCastRow(c) {
+      var row = document.createElement("div"); row.className = "pf-row";
+      row.innerHTML = '<input data-k="name" placeholder="Character"><input data-k="player" placeholder="Played by"><button type="button" aria-label="Remove">×</button>';
+      row.querySelector("[data-k=name]").value = c.name || ""; row.querySelector("[data-k=player]").value = c.player || "";
+      row.querySelector("button").onclick = function () { row.parentNode.removeChild(row); };
+      return row;
+    }
+    (item.cast || []).forEach(function (c) { $("#pf-oscast", form).appendChild(osCastRow(c)); });
+    $("#pf-add-oscast", form).onclick = function () { $("#pf-oscast", form).appendChild(osCastRow({})); };
     bindSystem("sysPick", "s", "ed");
     function sync() {
       var slug = val("campaignSlug");
@@ -211,7 +224,7 @@
     var html =
       fld("Name", inp("name", "required")) +
       '<div class="two-up">' + fld("System", '<select name="sysPick">' + (await systemSelect(item.sys, item.ed)) + "</select>", "from the Shelf") +
-      fld("Status", '<select name="status"><option value="running">Running</option><option value="between arcs">Between arcs</option><option value="concluded">Concluded</option></select>') + "</div>" +
+      fld("Status", '<select name="status"><option value="running">Running</option><option value="concluded">Concluded</option></select>') + "</div>" +
       fld("Tagline", inp("tagline")) +
       fld("Summary", area("summary", 6), "blank line between paragraphs") +
       fld("Influences", inp("influences")) +
@@ -336,10 +349,10 @@
   }
   function decorate() {
     $$("[data-edit]").forEach(function (el) {
-      if (el.querySelector(":scope > .tools")) return;
+      if (el.querySelector(":scope > .pf-tools")) return;
       var parts = el.dataset.edit.split(":"), type = parts[0], id = parts.slice(1).join(":");
       var t = document.createElement("span");
-      t.className = "tools admin-only";
+      t.className = "pf-tools admin-only";
       t.innerHTML = '<button type="button" title="Edit">' + I.edit + '</button><button type="button" class="del" title="Delete">' + I.del + "</button>";
       var b = t.querySelectorAll("button");
       b[0].onclick = function (e) { e.preventDefault(); e.stopPropagation(); run(function () { return FORMS[type](id); }); };
@@ -359,9 +372,14 @@
   }
 
   // ---------- sign in / out ----------
+  var observer;
   function setAdmin(on) {
     document.body.classList.toggle("admin", on);
-    if (on) decorate();
+    if (on) {
+      decorate();
+      // filters and the ledger re-insert items; give those tools too
+      if (!observer) { observer = new MutationObserver(decorate); observer.observe(document.body, { childList: true, subtree: true }); }
+    }
   }
   function signOut() { setToken(""); setAdmin(false); }
   function loginForm() {

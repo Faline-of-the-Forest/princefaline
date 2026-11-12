@@ -10,6 +10,16 @@
         "8123"
       ],
       "port": 8123
+    },
+    {
+      "name": "dist-preview",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        ".claude/static-server.js",
+        "dist",
+        "8124"
+      ],
+      "port": 8124
     }
   ]
 }
