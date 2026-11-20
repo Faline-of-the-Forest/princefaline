@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rooms · Don't Rest Your Head</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700&family=Crimson+Text:wght@400;600&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;min-height:100vh;background:#050506;color:oklch(0.95 0.012 85);font-family:'Barlow',sans-serif}
+  main{width:min(560px,calc(100vw - 32px));margin:0 auto;padding:48px 0}
+  h1{margin:0 0 4px;font:600 13px 'Barlow',sans-serif;letter-spacing:.3em;color:oklch(0.68 0.19 30)}
+  .sub{margin:0 0 24px;font:400 16px/1.4 'Crimson Text',Georgia,serif;color:oklch(0.8 0.01 80)}
+  .box{border:1px solid oklch(0.93 0.012 85 / 0.3);background:oklch(0.1 0.008 50);padding:18px}
+  input{width:100%;box-sizing:border-box;height:46px;background:transparent;border:1px solid oklch(0.93 0.012 85 / 0.4);color:oklch(0.97 0.01 85);font:400 22px 'Special Elite',monospace;letter-spacing:.4em;text-align:center}
+  button,a.btn{cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;text-decoration:none;font:700 11px 'Barlow',sans-serif;letter-spacing:.18em;border:1px solid oklch(0.55 0.21 27);background:oklch(0.55 0.21 27);color:oklch(0.97 0.01 85);height:32px;padding:0 12px}
+  button.ghost,a.btn.ghost{background:transparent;border-color:oklch(0.93 0.012 85 / 0.35);color:oklch(0.85 0.01 80)}
+  .err{min-height:18px;margin-top:10px;font:500 12px 'Barlow',sans-serif;color:oklch(0.68 0.19 30)}
+  .row{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid oklch(0.93 0.012 85 / 0.12)}
+  .row:first-child{border-top:none}
+  .code{font:400 22px 'Special Elite',monospace;letter-spacing:.2em}
+  .meta{flex:1;min-width:0;font:600 11px 'Barlow',sans-serif;letter-spacing:.14em;color:oklch(0.6 0.01 70);text-transform:uppercase}
+  .none{padding:8px 0;color:oklch(0.7 0.01 80);font:500 13px 'Barlow',sans-serif}
+</style></head><body>
+<main>
+  <h1>ROOMS</h1>
+  <p class="sub">Every Don't Rest Your Head table. Open one as the GM, or delete it when it's done.</p>
+  <div class="box" id="box"><div class="none">Loading…</div></div>
+</main>
+<script>window.__dryhNoBoot = true;</script>
+<script type="module">
+import "./js/dryh-net.js";
+const Net = window.DRYHNet, box = document.getElementById("box");
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let rows = null, unlocked = false, msg = "", armed = null, armT = null;
+
+const ago = (t) => { if (!t) return "never used"; const m = Math.max(0, Math.round((Date.now() - t) / 60000));
+  return m < 1 ? "just now" : m < 60 ? m + " min ago" : m < 1440 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " d ago"; };
+
+function paintLock() {
+  box.innerHTML = `<p class="sub" style="margin-bottom:12px">Enter the GM PIN of any room to open the list.</p>
+    <input type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="••••">
+    <div style="margin-top:12px"><button class="go" style="width:100%">UNLOCK</button></div><div class="err">${esc(msg)}</div>`;
+  const inp = box.querySelector("input"), go = async () => {
+    const pin = inp.value.replace(/\D/g, ""); if (pin.length < 4) { msg = "Use 4 to 8 digits."; paint(); return; }
+    for (const r of rows) { if (r.pin && (await Net.hashPin(r.code, pin)) === r.pin) { unlocked = true; msg = ""; paint(); return; } }
+    msg = "That PIN doesn't match any room."; paint();
+  };
+  box.querySelector(".go").onclick = go; inp.onkeydown = (e) => { if (e.key === "Enter") go(); }; inp.focus();
+}
+
+function paint() {
+  if (rows === null) return;
+  // Rooms made before PINs existed have nothing to check against, so they never lock the list.
+  if (!unlocked && rows.every((r) => !r.pin)) unlocked = true;
+  if (!unlocked) { paintLock(); return; }
+  if (!rows.length) { box.innerHTML = '<div class="none">No rooms right now.</div>'; return; }
+  box.innerHTML = rows.map((r) => `<div class="row" data-c="${r.code}"><span class="code">${r.code}</span>
+      <span class="meta">${ago(r.at || r.createdAt)}${r.pin ? "" : " · no PIN"}</span>
+      <a class="btn ghost" href="DRYH%20Dashboard.dc.html?room=${r.code}&gm=1">OPEN AS GM</a>
+      <button class="del">${armed === r.code ? "SURE?" : "DELETE"}</button></div>`).join("") + `<div class="err">${esc(msg)}</div>`;
+  box.querySelectorAll(".del").forEach((b) => { b.onclick = async () => {
+    const code = b.closest(".row").dataset.c;
+    if (armed !== code) { armed = code; clearTimeout(armT); armT = setTimeout(() => { armed = null; paint(); }, 3000); paint(); return; }
+    armed = null; clearTimeout(armT);
+    try { await Net.deleteRoom(code); msg = ""; } catch (e) { msg = "Could not delete room " + code + ": " + (e.code || e.message); paint(); }
+  }; });
+}
+
+Net.listRooms((r) => { rows = r; paint(); });
+</script>
+</body></html>

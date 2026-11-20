@@ -12,7 +12,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, getDocFromServer, setDoc, updateDoc, deleteField, onSnapshot, runTransaction, serverTimestamp,
+  getFirestore, doc, getDoc, getDocFromServer, setDoc, updateDoc, deleteDoc, deleteField, onSnapshot, runTransaction, serverTimestamp,
   collection, getDocs, query, where, limit
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
@@ -35,6 +35,9 @@ let sid = sessionStorage.getItem("dryh-session");
 if (!sid) { sid = "s-" + Math.random().toString(36).slice(2, 10); sessionStorage.setItem("dryh-session", sid); }
 
 const ref = (code) => doc(db, "rooms", "dryh-" + code);
+const eref = (code) => doc(db, "rooms", "dryh-" + code + "-events");
+// Bump when a release changes behaviour: the GM's health check flags screens on an older build.
+const BUILD = "2026-11-20a";
 const B_KEY = "dryh-backups";
 
 const Net = {
@@ -74,7 +77,7 @@ const Net = {
     const take = (snap) => {
       if (snap.metadata.hasPendingWrites) return;
       if (!snap.exists()) { if (!snap.metadata.fromCache) cb(null); return; }
-      const d = snap.data(); if (!snap.metadata.fromCache) lastAt = Math.max(lastAt, d.at || 0);
+      const d = snap.data(); if (!snap.metadata.fromCache) { lastAt = Math.max(lastAt, d.at || 0); this.roomAt = lastAt; }
       cb(d, snap.metadata.fromCache);
     };
     const listen = () => {
@@ -99,6 +102,55 @@ const Net = {
     const wake = () => { check(); };
     document.addEventListener("visibilitychange", wake); window.addEventListener("online", wake); window.addEventListener("focus", wake);
     return () => { dead = true; clearInterval(iv); if (un) un(); document.removeEventListener("visibilitychange", wake); window.removeEventListener("online", wake); window.removeEventListener("focus", wake); };
+  },
+  roomAt: 0, build: BUILD,
+  async roomDoc(code) { await authReady; const s = await getDoc(ref(code)); return s.exists() ? s.data() : null; },
+  async setPin(code, hash) { await authReady; await updateDoc(ref(code), { gmPin: hash }); },
+  // The rooms back office: every DRYH room (the `-online` / `-events` helper docs are skipped).
+  listRooms(cb) {
+    return onSnapshot(query(collection(db, "rooms"), where("game", "==", "dryh")), (qs) => {
+      const rows = [];
+      qs.forEach((d) => {
+        if (!/^dryh-\d+$/.test(d.id)) return;
+        const v = d.data() || {};
+        rows.push({ code: d.id.slice(5), at: v.at || 0, createdAt: v.createdAt && v.createdAt.toMillis ? v.createdAt.toMillis() : 0, pin: v.gmPin || null });
+      });
+      rows.sort((a, b) => (b.at || b.createdAt) - (a.at || a.createdAt));
+      cb(rows);
+    }, (e) => console.error("[dryh] rooms list failed", e));
+  },
+  async deleteRoom(code) {
+    await authReady;
+    await deleteDoc(ref(code));
+    for (const sfx of ["-online", "-events"]) { try { await deleteDoc(doc(db, "rooms", "dryh-" + code + sfx)); } catch (e) {} }
+  },
+  // ---- one-shot events: the room doc only carries ongoing state, so things that
+  // must happen ONCE on other screens (a highlight, a health ping, a kick) go through
+  // their own doc. `to` is "all", "players", "gm" or one session id.
+  emit(type, data, to) {
+    if (!this.room) return Promise.resolve();
+    const room = this.room, now = Date.now(), id = "e" + now.toString(36) + Math.random().toString(36).slice(2, 5);
+    const mine = this._evMine = this._evMine || new Map(), patch = { [id]: { t: type, d: data == null ? null : data, to: to || "all", by: sid, at: now } }, old = [];
+    mine.set(id, now);
+    mine.forEach((at, k) => { if (now - at > 120000) { patch[k] = deleteField(); old.push(k); } });
+    return setDoc(eref(room), { game: "dryh", ev: patch }, { merge: true })
+      .then(() => old.forEach((k) => mine.delete(k)))
+      .catch((e) => console.error("[dryh] emit failed", e));
+  },
+  onEvent(handler) {
+    const room = this.room, startedAt = Date.now(), seen = new Set();
+    return onSnapshot(eref(room), (snap) => {
+      if (snap.metadata.hasPendingWrites) return;
+      const evs = (snap.exists() && snap.data().ev) || {};
+      Object.keys(evs).forEach((k) => {
+        if (seen.has(k)) return; seen.add(k);
+        const e = evs[k]; if (!e || e.by === sid) return;
+        if ((e.at || 0) < startedAt - 5000) return;   // history from before we joined
+        const mine = e.to === "all" || e.to === sid || (e.to === "players" && this.role !== "gm") || (e.to === "gm" && this.role === "gm");
+        if (!mine) return;
+        try { handler(e); } catch (err) { console.error("[dryh] event handler failed", err); }
+      });
+    }, (e) => console.error("[dryh] events watch failed", e));
   },
   // ---- backups: browser (last 40) + cloud (never overwritten) ----
   localBackups() { try { return JSON.parse(localStorage.getItem(B_KEY) || "[]"); } catch (e) { return []; } },
@@ -127,6 +179,7 @@ const css = `
 #dryh-gate .row{display:flex;gap:8px;margin-top:12px}
 #dryh-gate button,#dryh-pill button,#dryh-bk button{cursor:pointer;font:700 11px 'Barlow',sans-serif;letter-spacing:.18em;border:1px solid oklch(0.55 0.21 27);background:oklch(0.55 0.21 27);color:oklch(0.97 0.01 85);height:34px;padding:0 12px}
 #dryh-gate button.ghost,#dryh-pill button.ghost,#dryh-bk button.ghost{background:transparent;border-color:oklch(0.93 0.012 85 / 0.35);color:oklch(0.85 0.01 80)}
+#dryh-gate input[type=password]{font-size:22px}
 #dryh-gate .err{min-height:18px;margin-top:10px;font:500 12px 'Barlow',sans-serif;color:oklch(0.68 0.19 30)}
 #dryh-pill{position:fixed;left:8px;bottom:8px;z-index:9000;display:flex;align-items:center;pointer-events:none;font:600 11px 'Barlow',sans-serif;letter-spacing:.2em;color:oklch(0.8 0.01 80)}
 #dryh-pill b{font:400 14px 'Special Elite',monospace;letter-spacing:.2em;color:oklch(0.97 0.01 85)}
@@ -163,19 +216,79 @@ function gate(asGm, msg) {
   });
 }
 
+// ---------------------------------------------------------------- the GM PIN
+// Replaces the bare `?gm=1`. The PIN is stored hashed in the room doc and this browser
+// remembers it, so the GM isn't asked again. It stops casual guessing only; real lockdown
+// would need Firestore rules.
+const PIN_KEY = (code) => "dryh-gmpin-" + code;
+async function hashPin(code, pin) {
+  const t = "dryh:" + code + ":" + pin;
+  try { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join(""); }
+  catch (e) { let h = 5381; for (const c of t) h = ((h << 5) + h + c.charCodeAt(0)) | 0; return "x" + (h >>> 0).toString(16); }
+}
+Net.hashPin = hashPin;
+function pinGate(o) {
+  return new Promise((resolve) => {
+    const g = document.createElement("div"); g.id = "dryh-gate";
+    g.innerHTML = `<div class="bx"><h2>GM PIN</h2><p>${o.text}</p>
+      <input type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="••••"><div class="row"><button class="go" style="flex:1">${o.go || "ENTER"}</button>${o.alt ? `<button class="ghost alt">${o.alt}</button>` : ""}</div><div class="err">${o.msg || ""}</div></div>`;
+    document.body.appendChild(g);
+    const inp = g.querySelector("input"), err = g.querySelector(".err");
+    const go = () => { const pin = inp.value.replace(/\D/g, ""); if (pin.length < 4) { err.textContent = "Use 4 to 8 digits."; return; } g.remove(); resolve(pin); };
+    g.querySelector(".go").onclick = go;
+    inp.onkeydown = (e) => { if (e.key === "Enter") go(); };
+    const alt = g.querySelector(".alt"); if (alt) alt.onclick = () => { g.remove(); resolve(null); };
+    setTimeout(() => inp.focus(), 50);
+  });
+}
+async function savePin(code, pin) {
+  const h = await hashPin(code, pin);
+  try { localStorage.setItem(PIN_KEY(code), h); } catch (e) {}
+  await Net.setPin(code, h).catch((e) => console.error("[dryh] could not save the PIN", e));
+}
+// Is this browser allowed to be the GM of `code`?
+async function gmCheck(code) {
+  let rd = null, failed = false, mine = null;
+  try { rd = await Net.roomDoc(code); } catch (e) { failed = true; }
+  try { mine = localStorage.getItem(PIN_KEY(code)); } catch (e) {}
+  if (failed) return !!mine;   // can't read the room: only a browser that already holds the PIN
+  const h = rd && rd.gmPin;
+  if (!h) {   // a room made before PINs existed: offer one, never block
+    const pin = await pinGate({ text: "This room has no GM PIN yet. Set one so only you can enter as the GM.", go: "SET PIN", alt: "SKIP" });
+    if (pin) await savePin(code, pin);
+    return true;
+  }
+  if (mine === h) return true;
+  let msg = "";
+  for (;;) {
+    const pin = await pinGate({ text: "Enter the GM PIN for room " + code + ".", alt: "JOIN AS PLAYER", msg });
+    if (pin === null) return false;
+    if ((await hashPin(code, pin)) === h) { try { localStorage.setItem(PIN_KEY(code), h); } catch (e) {} return true; }
+    msg = "Wrong PIN.";
+  }
+}
+
 async function boot() {
   let code = P.get("room"), gm = P.get("gm") === "1";
-  if (P.get("new")) { gm = true; code = await Net.create(); Net.fresh = true; }
+  if (P.get("new")) {
+    gm = true; code = await Net.create(); Net.fresh = true;
+    const pin = await pinGate({ text: "Choose a PIN (4 to 8 digits). You'll need it to enter this room as the GM again.", go: "SET PIN" });
+    await savePin(code, pin);
+  }
   else if (!code) code = await gate(gm);
   else if (!(await Net.exists(code).catch(() => false))) code = await gate(gm, "Room " + code + " has closed.");
-  if (gm) sessionStorage.setItem("dryh-gm-" + code, "1");
-  if (sessionStorage.getItem("dryh-gm-" + code)) gm = true;
+  if (!Net.fresh) {
+    const wantGm = gm || !!sessionStorage.getItem("dryh-gm-" + code);
+    gm = wantGm ? await gmCheck(code) : false;
+  }
+  if (gm) sessionStorage.setItem("dryh-gm-" + code, "1"); else sessionStorage.removeItem("dryh-gm-" + code);
   Net.room = code; Net.role = gm ? "gm" : "player";
   const u = new URL(location.href); u.search = "?room=" + code + (gm ? "&gm=1" : "");
   history.replaceState(null, "", u.toString());
   return Net;
 }
-window.__dryhNet = boot().catch((e) => { console.error("[dryh] offline", e); Net.offline = true; return Net; });
+// The rooms back office (Rooms.html) sets __dryhNoBoot: it needs the transport but no join gate.
+window.__dryhNet = (window.__dryhNoBoot ? Promise.resolve(Net) : boot()).catch((e) => { console.error("[dryh] offline", e); Net.offline = true; return Net; });
 
 // ---------------------------------------------------------------- who's online
 // A draggable, foldable window listing everyone in the room. Each screen writes
@@ -199,7 +312,17 @@ const onCss = `
 #dryh-on .ls{padding:6px 10px 8px;display:flex;flex-direction:column;gap:4px;max-height:240px;overflow:auto}
 #dryh-on .ls div{display:flex;align-items:center;gap:8px;font:700 15px 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em}
 #dryh-on .ls i{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-#dryh-on .ls em{margin-left:auto;font:600 9px 'Barlow',sans-serif;font-style:normal;letter-spacing:.2em;color:oklch(0.6 0.01 70)}
+#dryh-on .ls div{flex-wrap:wrap}
+#dryh-on .rt{margin-left:auto;display:flex;align-items:center;gap:8px}
+#dryh-on .ls em{font:600 9px 'Barlow',sans-serif;font-style:normal;letter-spacing:.2em;color:oklch(0.6 0.01 70)}
+#dryh-on .hs{width:8px;height:8px;border-radius:2px;background:oklch(0.35 0.01 60)}
+#dryh-on .hs.green{background:oklch(0.7 0.15 150)}#dryh-on .hs.amber{background:oklch(0.8 0.15 80)}#dryh-on .hs.red{background:oklch(0.6 0.22 27)}
+#dryh-on .why{display:none;flex-basis:100%;padding-left:16px;font:500 11px 'Barlow',sans-serif;letter-spacing:.03em;text-transform:none;color:oklch(0.72 0.01 80)}
+#dryh-on .ls div:hover .why{display:block}
+#dryh-km{position:fixed;z-index:9003;background:oklch(0.1 0.008 50);border:1px solid oklch(0.93 0.012 85 / 0.3);box-shadow:0 14px 40px rgba(0,0,0,.7);padding:8px;display:flex;gap:6px;font-family:'Barlow',sans-serif}
+#dryh-km button{cursor:pointer;font:700 11px 'Barlow',sans-serif;letter-spacing:.18em;height:28px;padding:0 10px;border:1px solid oklch(0.55 0.21 27);background:oklch(0.55 0.21 27);color:oklch(0.97 0.01 85)}
+#dryh-km button.ghost{background:transparent;border-color:oklch(0.93 0.012 85 / 0.35);color:oklch(0.85 0.01 80)}
+#dryh-kicked{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(5,5,6,.94);font-family:'Barlow',sans-serif;color:oklch(0.95 0.012 85);text-align:center}
 #dryh-on.min .pal,#dryh-on.min .ls{display:none}
 `;
 function onUi() { try { return JSON.parse(localStorage.getItem(ON_KEY) || "{}"); } catch (e) { return {}; } }
@@ -212,17 +335,65 @@ async function online(net) {
   const oref = doc(db, "rooms", "dryh-" + net.room + "-online");
   const ui = onUi(), gm = net.role === "gm";
   let me = { name: (ui.name || (gm ? "GM" : "Player")).slice(0, 20), color: ON_PAL.includes(ui.color) ? ui.color : ON_PAL[gm ? 0 : 3] };
-  let people = {}, palOpen = false, editing = false;
+  let people = {}, palOpen = false, editing = false, health = null, lastPing = null, kicked = false;
   const s2 = document.createElement("style"); s2.textContent = onCss; document.head.appendChild(s2);
   const w = document.createElement("div"); w.id = "dryh-on"; if (ui.min) w.classList.add("min");
   const place = (x, y) => { x = Math.max(0, Math.min(window.innerWidth - 220, x)); y = Math.max(0, Math.min(window.innerHeight - 36, y)); w.style.left = x + "px"; w.style.top = y + "px"; return { x, y }; };
   document.body.appendChild(w);
   place(ui.x ?? window.innerWidth - 236, ui.y ?? 70);
 
-  const beat = () => setDoc(oref, { game: "dryh", people: { [sid]: { name: me.name, color: me.color, role: net.role, ts: Date.now() } } }, { merge: true })
-    .catch((e) => console.error("[dryh] online beat failed", e));
+  const beat = () => {
+    if (kicked) return;
+    const ent = { name: me.name, color: me.color, role: net.role, ts: Date.now() }; if (health) ent.h = health;
+    return setDoc(oref, { game: "dryh", people: { [sid]: ent } }, { merge: true }).catch((e) => console.error("[dryh] online beat failed", e));
+  };
+  // Health check: the GM pings, each screen answers by writing what it knows into its own
+  // presence entry. Invisible to players.
+  const answer = async (pid, t) => {
+    let raf = false;
+    await Promise.race([new Promise((r) => requestAnimationFrame(() => { raf = true; r(); })), new Promise((r) => setTimeout(r, 1500))]);
+    health = { pid, t, rcvd: Date.now(), docAt: net.roomAt || 0, build: BUILD, vis: document.visibilityState === "visible", raf };
+    beat();
+  };
+  const check = (p) => {
+    if (!lastPing) return { c: "", why: "not checked yet" };
+    const h = p.h;
+    if (!h || h.pid !== lastPing.id) return Date.now() - lastPing.t < 8000 ? { c: "", why: "checking…" } : { c: "red", why: "no reply to the last check" };
+    if (h.build !== BUILD) return { c: "amber", why: "older version of the page: ask them to refresh" };
+    if ((net.roomAt || 0) && (h.docAt || 0) < net.roomAt - 20000) return { c: "amber", why: "not up to date with the room" };
+    if (!h.vis) return { c: "amber", why: "tab is in the background" };
+    if (!h.raf) return { c: "amber", why: "page is frozen" };
+    return { c: "green", why: "up to date · " + Math.max(0, h.rcvd - lastPing.t) + " ms" };
+  };
+  const showKicked = () => {
+    kicked = true; sessionStorage.removeItem("dryh-gm-" + net.room);
+    const k = document.createElement("div"); k.id = "dryh-kicked";
+    k.innerHTML = `<div><h2 style="margin:0 0 8px;font:600 13px 'Barlow',sans-serif;letter-spacing:.3em;color:oklch(0.68 0.19 30)">REMOVED BY THE GM</h2><p style="margin:0 0 16px;font:400 16px 'Crimson Text',serif;color:oklch(0.8 0.01 80)">You can rejoin with the room code.</p><button style="cursor:pointer;font:700 11px 'Barlow',sans-serif;letter-spacing:.18em;height:34px;padding:0 16px;border:1px solid oklch(0.55 0.21 27);background:oklch(0.55 0.21 27);color:oklch(0.97 0.01 85)">OK</button></div>`;
+    document.body.appendChild(k);
+    k.querySelector("button").onclick = () => location.replace(location.pathname);
+  };
+  net.onEvent((e) => {
+    if (e.t === "ping" && e.d) answer(e.d.id, e.d.t);
+    else if (e.t === "kick") showKicked();
+  });
+  if (gm) {
+    const ping = () => { lastPing = { id: "p" + Date.now().toString(36), t: Date.now() }; net.emit("ping", lastPing, "players"); setTimeout(render, 8500); };
+    setTimeout(ping, 4000); setInterval(ping, 30000);
+  }
+  const kickMenu = (sidK, name, x, y) => {
+    document.getElementById("dryh-km")?.remove();
+    const m = document.createElement("div"); m.id = "dryh-km";
+    m.innerHTML = `<button class="k">KICK ${esc(name)}</button><button class="ghost c">CANCEL</button>`;
+    document.body.appendChild(m);
+    m.style.left = Math.max(4, Math.min(window.innerWidth - m.offsetWidth - 4, x)) + "px"; m.style.top = Math.max(4, Math.min(window.innerHeight - 44, y)) + "px";
+    const close = () => { m.remove(); document.removeEventListener("pointerdown", away, true); };
+    const away = (ev) => { if (!m.contains(ev.target)) close(); };
+    setTimeout(() => document.addEventListener("pointerdown", away, true), 0);
+    m.querySelector(".c").onclick = close;
+    m.querySelector(".k").onclick = () => { net.emit("kick", {}, sidK); updateDoc(oref, { ["people." + sidK]: deleteField() }).catch(() => {}); close(); };
+  };
   const live = () => { const now = Date.now();
-    const L = Object.entries(people).filter(([k, p]) => p && k !== sid && now - (p.ts || 0) < 60000).map(([, p]) => p);
+    const L = Object.entries(people).filter(([k, p]) => p && k !== sid && now - (p.ts || 0) < 60000).map(([k, p]) => Object.assign({ sid: k }, p));
     L.push({ name: me.name, color: me.color, role: net.role });
     return L.sort((x, y) => ((y.role === "gm") - (x.role === "gm")) || String(x.name).localeCompare(String(y.name))); };
 
@@ -231,7 +402,8 @@ async function online(net) {
     const L = live();
     w.innerHTML = `<div class="hd"><span class="sw" style="background:${me.color}"></span><span class="me" style="color:${me.color}">${esc(me.name)}</span><span class="n">${L.length}</span><button class="fold">${w.classList.contains("min") ? "▢" : "–"}</button></div>`
       + (palOpen ? `<div class="pal">${ON_PAL.map((c) => `<span data-c="${c}" class="${c === me.color ? "on" : ""}" style="background:${c}"></span>`).join("")}</div>` : "")
-      + `<div class="ls">${L.map((p) => `<div style="color:${p.color}"><i style="background:${p.color}"></i>${esc(p.name)}${p.role === "gm" ? "<em>GM</em>" : ""}</div>`).join("")}</div>`;
+      + `<div class="ls">${L.map((p) => { const hc = gm && p.sid && p.role !== "gm" ? check(p) : null;
+        return `<div data-sid="${p.sid || ""}" data-nm="${esc(p.name)}" style="color:${p.color}"><i style="background:${p.color}"></i>${esc(p.name)}<span class="rt">${p.role === "gm" ? "<em>GM</em>" : ""}${hc ? `<span class="hs ${hc.c}"></span>` : ""}</span>${hc ? `<small class="why">${esc(hc.why)}</small>` : ""}</div>`; }).join("")}</div>`;
     w.querySelector(".sw").onclick = (e) => { e.stopPropagation(); palOpen = !palOpen; if (palOpen) { w.classList.remove("min"); onSave({ min: false }); } render(); };
     w.querySelector(".fold").onclick = (e) => { e.stopPropagation(); w.classList.toggle("min"); onSave({ min: w.classList.contains("min") }); render(); };
     w.querySelectorAll(".pal span").forEach((el) => { el.onclick = () => { me.color = el.dataset.c; onSave({ color: me.color }); palOpen = false; render(); beat(); }; });
@@ -256,6 +428,7 @@ async function online(net) {
   window.addEventListener("resize", () => { const r = w.getBoundingClientRect(); place(r.left, r.top); });
 
   onSnapshot(oref, (snap) => { people = (snap.exists() && snap.data().people) || {}; render(); }, (e) => console.error("[dryh] online watch failed", e));
+  if (gm) w.addEventListener("contextmenu", (e) => { const row = e.target.closest(".ls div[data-sid]"); if (!row || !row.dataset.sid) return; e.preventDefault(); kickMenu(row.dataset.sid, row.dataset.nm, e.clientX, e.clientY); });
   render(); beat();
   setInterval(beat, 20000);
   setInterval(render, 15000);

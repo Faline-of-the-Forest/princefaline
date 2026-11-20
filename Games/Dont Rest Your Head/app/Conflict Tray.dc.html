@@ -417,11 +417,18 @@ class Component extends DCLogic {
     else { const idx=t3.dice.findIndex(d=>d.k===req.k&&d.v===6); if(idx<0) return this.settle(); dice=t3.dice.filter((_,j)=>j!==idx); }
     this.dtApply(dice);
   }
+  // Fate: a player sets one die (pool k, position j in that pool) to the face they chose.
+  fateSet(req){
+    const t3=this.state.t3; if(!t3.dice||t3.phase!=='sorted'||t3.spin) return this.settle();
+    const tgt=t3.dice.filter(d=>d.k===req.k)[req.j]; if(!tgt) return this.settle();
+    this.dtApply(t3.dice.map(d=>d===tgt?Object.assign({},d,{v:req.v,fresh:1}):d));
+  }
   componentDidMount(){ if(this.props.shown) this.adopt(this.props.shown); }
   componentDidUpdate(prev){
     if(this._own){ const r=this.props.rerollReq, p=prev.rerollReq; if(r&&(!p||p.n!==r.n)) this.rerollPool(r.k);
       const g=this.props.gmReq, gp=prev.gmReq; if(g&&(!gp||gp.n!==g.n)) this.gmDie(g);
-      const q=this.props.stackReq, qp=prev.stackReq; if(q&&(!qp||qp.n!==q.n)) this.stackDeck(); }
+      const q=this.props.stackReq, qp=prev.stackReq; if(q&&(!qp||qp.n!==q.n)) this.stackDeck();
+      const f=this.props.fateReq, fp=prev.fateReq; if(f&&(!fp||fp.n!==f.n)) this.fateSet(f); }
     else if(this.props.shown&&this.props.shown!==prev.shown) this.adopt(this.props.shown); }
   // Multiplayer: show the dice another screen rolled (its reported result), animating a first throw.
   adopt(rep){
