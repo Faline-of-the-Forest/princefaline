@@ -3452,8 +3452,12 @@ class Component extends DRYHBase {
       this._mpNet = net;
       this._mpEv = net.onEvent((e)=>{ if (e.t === 'hl') this.hlRecv(e.d); });
       this.hlInstall();
-      if (net.fresh) {   // the GM seeds a brand-new room; Mad City starts from the New Game notes
+      if (net.fresh) {   // a New Game is a NEW CAMPAIGN: every shared stat starts fresh (never this browser's old copy) and Mad City starts from the New Game notes
         try { const old = localStorage.getItem(this.CITY_KEY); if (old) localStorage.setItem(this.CITY_KEY + '_backup', old);
+          const df = this.defaultState(), fresh = {}; this.mpKeys().forEach(k=>{ fresh[k] = df[k]; });   // keys the defaults don't define start unset, as on a clean browser
+          Object.assign(fresh, { screen:'select', pendingConflict:null, hereRef:{ blank:true }, timerRunning:false, timerStart:null, timerElapsed:0 });
+          this._mpApplying = true; try { super.setState(fresh); } finally { this._mpApplying = false; }
+          try { localStorage.setItem('dryh_dashboard_v9', JSON.stringify(this.state)); } catch(e) {}
           if (window.DRYH_MADCITY_SEED) { localStorage.setItem(this.CITY_KEY, JSON.stringify(window.DRYH_MADCITY_SEED)); this._cityApplying = true; window.dispatchEvent(new Event('dryh-city-edit')); this._cityApplying = false; super.setState({ cityV: Date.now() }); } } catch(e) {}
         this.mpSynced = true; this.mpDiff(); this.mpPushCity();
       }
