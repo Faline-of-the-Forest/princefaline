@@ -338,6 +338,7 @@ class Component extends DCLogic {
     this.setState(s=>({t3:Object.assign({},s.t3,{dice:dice,meta:this._meta,bonus:0,bonusOn:false,c:Object.assign({},s.t3.c,{d:n})})}),()=>this.settle());
   }
   dtInfo(){
+    if(this.props.fateMode) return {key:'fate',name:'Fate',act:'Change',max:1,c:true,desc:'Set any one die to the face of your choice.',hint:'FATE: CLICK ANY DIE, THEN PICK ITS NEW FACE',elig:()=>true};
     const P=this.props, key=P.dtalent, lv=P.dlevel; if(!key||!lv) return null;
     const c=lv==='composed';
     const D={
@@ -387,6 +388,10 @@ class Component extends DCLogic {
   dtFace(v,label){
     const def=this.dtInfo(), dt=this.state.dt, t3=this.state.t3; if(!def||dt.sel.length!==1||t3.spin||t3.phase!=='sorted') return;
     const id=dt.sel[0];
+    if(def.key==='fate'){   // Fate is a request to whoever owns the roll: hand it up with the die's pool and position
+      const d=t3.dice.find(x=>(x.k+x.i)===id); if(!d) return;
+      const j=t3.dice.filter(x=>x.k===d.k).indexOf(d);
+      this.setState({dt:{open:false,sel:[],used:dt.used}}); this.props.onFate&&this.props.onFate({k:d.k,j:j,v:v,label:label}); return; }
     this.dtFinish(def.name+': changed a die to '+label+'.');
     this.dtApply(t3.dice.map(d=>(d.k+d.i)===id?Object.assign({},d,{v:v,fresh:1}):d));
   }
@@ -425,6 +430,8 @@ class Component extends DCLogic {
   }
   componentDidMount(){ if(this.props.shown) this.adopt(this.props.shown); }
   componentDidUpdate(prev){
+    if(this.props.fateMode&&!prev.fateMode) this.setState({dt:{open:true,sel:[],used:this.state.dt.used}});
+    if(!this.props.fateMode&&prev.fateMode) this.setState({dt:{open:false,sel:[],used:this.state.dt.used}});
     if(this._own){ const r=this.props.rerollReq, p=prev.rerollReq; if(r&&(!p||p.n!==r.n)) this.rerollPool(r.k);
       const g=this.props.gmReq, gp=prev.gmReq; if(g&&(!gp||gp.n!==g.n)) this.gmDie(g);
       const q=this.props.stackReq, qp=prev.stackReq; if(q&&(!qp||qp.n!==q.n)) this.stackDeck();
@@ -559,7 +566,7 @@ class Component extends DCLogic {
     out.recallMode=!!this.props.recallMode&&sorted&&!t3.spin; out.recallCancel=()=>this.props.onRecallCancel&&this.props.onRecallCancel();
     out['dismiss']=()=>{ if(this.state.t3.spin) return; this.props.onDismiss&&this.props.onDismiss(); };
     const dtd=this.dtInfo(), dt=this.state.dt, dtDice=t3.dice||[], dtEl=dtd?this.eligFn(dtd,dtDice):null;
-    const dtCanUse=!!dtd&&sorted&&!!this.props.interactive&&!this.props.recallMode;
+    const dtCanUse=!!dtd&&sorted&&(!!this.props.fateMode||!!this.props.interactive)&&!this.props.recallMode;
     const dtHas=!!dtd&&dtDice.some(dtEl), dtBtnOn=dtCanUse&&!t3.spin&&!dt.used&&dtHas;
     const dtLive=dtCanUse&&dt.open;
     out.dtShow=dtCanUse; out.dtIdle=dtCanUse&&!dt.open; out.dtOpen=dtLive;
@@ -568,14 +575,14 @@ class Component extends DCLogic {
     out.dtBtnStyle={display:'flex',flexDirection:'column',alignItems:'center',gap:2,padding:'6px 18px',cursor:dtBtnOn?'pointer':'not-allowed',opacity:dtBtnOn?1:0.45,textAlign:'center',
       background:dtBtnOn?'oklch(0.95 0.012 85)':'transparent',color:dtBtnOn?'oklch(0.12 0.01 50)':'oklch(0.8 0.01 80)',border:'1px solid '+(dtBtnOn?'oklch(0.95 0.012 85)':'oklch(0.95 0.012 85 / 0.3)'),boxShadow:dtBtnOn?'0 0 0 3px rgba(255,214,92,.25)':'none'};
     out.dtOnOpen=()=>{ if(dtBtnOn) this.setState({dt:{open:true,sel:[],used:false}}); };
-    out.dtCancel=()=>this.setState({dt:{open:false,sel:[],used:dt.used}});
+    out.dtCancel=()=>{ this.setState({dt:{open:false,sel:[],used:dt.used}}); if(this.props.fateMode&&this.props.onFateCancel) this.props.onFateCancel(); };
     const dtElN=dtd?dtDice.filter(dtEl).length:0;
     out.dtCount=dt.sel.length+' / '+(dtd?(dtd.max>=99?dtElN:dtd.max):0)+' SELECTED';
     out.dtAll=!!dtd&&dtd.max>=99&&dtElN>1; out.dtOnAll=()=>{ if(dtd) this.setState({dt:Object.assign({},dt,{sel:dtDice.filter(dtEl).map(d=>d.k+d.i)})}); };
-    out.dtShowAct=!!dtd&&dtd.key!=='making'; out.dtActLabel=dtd?dtd.act:'';
+    out.dtShowAct=!!dtd&&dtd.key!=='making'&&dtd.key!=='fate'; out.dtActLabel=dtd?dtd.act:'';
     const dtNeed=dtd&&dtd.key==='wheel'?dtd.n:1; out.dtActDis=dt.sel.length<dtNeed; out.dtActOp=out.dtActDis?0.4:1;
     out.dtOnAct=()=>this.dtAct();
-    out.dtFaces=dtd&&dtd.key==='making'&&dt.sel.length===1?[['Ace',1],['Jack',4],['Queen',5],['King',6]].map(f=>({label:f[0],onClick:()=>this.dtFace(f[1],f[0])})):[];
+    out.dtFaces=dtd&&(dtd.key==='making'||dtd.key==='fate')&&dt.sel.length===1?[['Ace',1],['Jack',4],['Queen',5],['King',6]].map(f=>({label:f[0],onClick:()=>this.dtFace(f[1],f[0])})):[];
     const t3d=t3.dice||[], meta=t3.meta||null;
     let s3succ=0;
     t3d.forEach(d=>{ if(d.v<=3)s3succ++; });

@@ -72,6 +72,11 @@
 
       <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
       <div style="{{ hopeGroupStyle }}">
+      <div style="display:flex; align-items:center; gap:28px; flex-shrink:0;">
+      <button style="{{ fateStyle }}" onClick="{{ onFate }}" onMouseEnter="{{ onFateEnter }}" onMouseLeave="{{ onFateLeave }}">
+        <span style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:26px; line-height:1; color:oklch(0.82 0.13 85);">{{ fateN }}</span><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.24em; color:oklch(0.82 0.13 85);">FATE</span></span>
+        <span style="display:flex; align-items:stretch; height:9px; gap:2px;"><sc-for list="{{ fateSegs }}" as="g" hint-placeholder-count="2"><span style="{{ g.style }}"></span></sc-for></span>
+      </button>
       <div style="width:200px; flex-shrink:0; display:flex; flex-direction:column; gap:6px;">
         <div style="display:flex; justify-content:space-between; align-items:baseline;">
           <span style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:26px; line-height:1; color:oklch(0.62 0.21 27);">{{ despair }}</span><span style="font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.24em; color:oklch(0.68 0.19 30);">DESPAIR</span></span>
@@ -82,6 +87,7 @@
           <span style="width:2px; flex-shrink:0; background:oklch(0.97 0.01 85); box-shadow:0 0 6px oklch(0.97 0.01 85 / 0.6); margin:-3px 2px;"></span>
           <sc-for list="{{ hopeSegs }}" as="g" hint-placeholder-count="2"><span style="{{ g.style }}"></span></sc-for>
         </div>
+      </div>
       </div>
       <div style="{{ hopeRowStyle }}">
         <sc-for list="{{ hopeActions }}" as="a" hint-placeholder-count="4">
@@ -821,7 +827,7 @@
       <sc-if value="{{ hasPendingConflict }}" hint-placeholder-val="{{ false }}">
         <div ref="{{ trayFitRef }}" style="position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(2,2,3,0.55);">
           <div style="flex-shrink:0; width:640px; transform:{{ trayTransform }}; transform-origin:center center;">
-          <sc-if value="{{ trayOn }}" hint-placeholder-val="{{ true }}"><dc-import name="Conflict Tray" key="{{ pendingConflict.id }}" discipline="{{ pendingConflict.discipline }}" exhaustion="{{ pendingConflict.exhaustion }}" pain="{{ pendingConflict.pain }}" mods="{{ pendingConflict.mods }}" permanent-madness="{{ pendingConflict.perm }}" talent="{{ pendingConflict.talent }}" talent-icon="{{ pendingConflict.talentIcon }}" talent-text="{{ pendingConflict.talentText }}" reroll-req="{{ pendingConflict.rerollReq }}" stack-req="{{ pendingConflict.stackReq }}" fate-req="{{ pendingConflict.fateReq }}" gm-req="{{ pendingConflict.gmReq }}" dtalent="{{ pendingConflict.dtalent }}" dlevel="{{ pendingConflict.dlevel }}" on-dt-use="{{ onDtUse }}" on-pools-change="{{ onTrayPools }}" recall-mode="{{ pendingConflict.recallMode }}" on-reroll-pick="{{ onRerollPick }}" on-recall-cancel="{{ onRecallCancel }}" variant="A" control-style="Tile" interactive="{{ pendingConflict.interactive }}" badge="{{ pendingConflict.badge }}" title="{{ pendingConflict.title }}" on-result="{{ onTrayResult }}" shown="{{ trayShown }}" on-dismiss="{{ onTrayDismiss }}" hint-size="640px,480px" style="width:640px;"></dc-import></sc-if>
+          <sc-if value="{{ trayOn }}" hint-placeholder-val="{{ true }}"><dc-import name="Conflict Tray" key="{{ pendingConflict.id }}" discipline="{{ pendingConflict.discipline }}" exhaustion="{{ pendingConflict.exhaustion }}" pain="{{ pendingConflict.pain }}" mods="{{ pendingConflict.mods }}" permanent-madness="{{ pendingConflict.perm }}" talent="{{ pendingConflict.talent }}" talent-icon="{{ pendingConflict.talentIcon }}" talent-text="{{ pendingConflict.talentText }}" reroll-req="{{ pendingConflict.rerollReq }}" stack-req="{{ pendingConflict.stackReq }}" fate-req="{{ pendingConflict.fateReq }}" fate-mode="{{ pendingConflict.fateMode }}" on-fate="{{ onTrayFate }}" on-fate-cancel="{{ onTrayFateCancel }}" gm-req="{{ pendingConflict.gmReq }}" dtalent="{{ pendingConflict.dtalent }}" dlevel="{{ pendingConflict.dlevel }}" on-dt-use="{{ onDtUse }}" on-pools-change="{{ onTrayPools }}" recall-mode="{{ pendingConflict.recallMode }}" on-reroll-pick="{{ onRerollPick }}" on-recall-cancel="{{ onRecallCancel }}" variant="A" control-style="Tile" interactive="{{ pendingConflict.interactive }}" badge="{{ pendingConflict.badge }}" title="{{ pendingConflict.title }}" on-result="{{ onTrayResult }}" shown="{{ trayShown }}" on-dismiss="{{ onTrayDismiss }}" hint-size="640px,480px" style="width:640px;"></dc-import></sc-if>
           <sc-if value="{{ domOn }}" hint-placeholder-val="{{ false }}">
           <div style="width:640px;max-width:100%;background:oklch(0.1 0.008 50);border:1px solid oklch(0.93 0.012 85 / 0.25);box-shadow:0 26px 60px rgba(0,0,0,.75);padding:20px 26px 22px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box;">
             <div style="display:flex;align-items:baseline;gap:12px;">
@@ -2711,7 +2717,7 @@ class DRYHBase extends DCLogic {
             set(o=>{ if (k[0]==='s') { const x = (tc.statuses||[]).find(y=>'s:'+y.id===k); return x ? { ...o, sts:[...o.sts, { id:x.id, name:x.name||'Status', sign:x.sign==='pos'?'pos':'neg' }] } : o; }
               const it = (tc.items||[]).find(y=>'i:'+y.id===k); return it ? { ...o, item:{ id:it.id, name:it.name||'Item' } } : o; }); } }; })();
       if (tc) pendingView = { id:pc.id, mods, discipline:tc.discipline, exhaustion:tc.exhaustion, pain:pc.pain, perm:tc.permanentMadness||0, talent:pc.talent||null,
-        talentIcon: pc.talent==='raise'?'uploads/ChatGPT Image Sep 26, 2026, 11_37_35 PM-44c4c912.png':'uploads/ChatGPT Image Sep 26, 2026, 11_35_11 PM-2420647d.png', talentText: pc.talent==='raise'?'Push Yourself, increasing your Exhaustion by 1, and roll as normal, then add a number of successes to your roll equal to your new Exhaustion level.':'Roll as normal and count your successes. If the total is lower than your current Exhaustion level, raise it to equal your Exhaustion.', rerollReq:pc.rerollReq||null, stackReq:pc.stackReq||null, fateReq:pc.fateReq||null, gmReq:pc.gmReq||null, domOn:pc.phase==='dominant',
+        talentIcon: pc.talent==='raise'?'uploads/ChatGPT Image Sep 26, 2026, 11_37_35 PM-44c4c912.png':'uploads/ChatGPT Image Sep 26, 2026, 11_35_11 PM-2420647d.png', talentText: pc.talent==='raise'?'Push Yourself, increasing your Exhaustion by 1, and roll as normal, then add a number of successes to your roll equal to your new Exhaustion level.':'Roll as normal and count your successes. If the total is lower than your current Exhaustion level, raise it to equal your Exhaustion.', rerollReq:pc.rerollReq||null, stackReq:pc.stackReq||null, fateReq:pc.fateReq||null, fateMode:!!this.state.fatePick, gmReq:pc.gmReq||null, domOn:pc.phase==='dominant',
         dtalent: ({'Relapse':'relapse','Greedy Guts':'greedy','Wheel and Deal':'wheel','Tough Crowd':'tough','Cut Your Losses':'cut','Making It Right':'making'})[String(tc.disciplineTalent||'').split('\n')[0].trim()]||null,
         dlevel: tc.discipline===3?'composed':tc.discipline===2?'frayed':null, recallMode: !!(s.recallPick && pc.result), title:pc.title||'An unnamed conflict',
         badge:(tc.shortName||tc.name).toUpperCase(), interactive: s.actingCharId===pc.targetId };
@@ -3074,10 +3080,10 @@ class DRYHBase extends DCLogic {
           { k:'stack', label:'Stack', full:'Stack the Deck', cost:1, desc:'Only during a Conflict, after the roll. Add an Ace to your Discipline pool. Use again for more.',
             block: !inC ? 'ONLY DURING A CONFLICT' : (canStack ? '' : 'WAIT FOR THE ROLL TO FINISH'),
             run:()=>({ patch:{}, text:' stacked the deck. +1 Ace to Discipline.', extra:{ pendingConflict:{ ...this.state.pendingConflict, result:null, stackReq:{ n:Date.now() } } } }) },
-          ...((pc.fate||0)>0 ? [{ k:'fate', label:'Fate', full:'Spend Fate', cost:'FATE ×'+pc.fate, fate:true,
-            desc:'Only during your own Conflict, after the roll. Set any one die to any face you choose. The GM can no longer spend Despair on this roll.',
-            block: !inC ? 'ONLY DURING A CONFLICT' : (canStack ? '' : 'WAIT FOR THE ROLL TO FINISH'),
-            run:()=>({ patch:{}, text:'' }) }] : []),
+          { k:'fate', label:'Fate', full:'Spend Fate', cost:'FATE ×'+(pc.fate||0), fate:true,
+            desc:'Only during your own Conflict, after the roll. Click a die, then choose its new face. The GM can no longer spend Despair on this roll.',
+            block: (pc.fate||0)<1 ? 'NO FATE' : !inC ? 'ONLY DURING A CONFLICT' : (canStack ? '' : 'WAIT FOR THE ROLL TO FINISH'),
+            run:()=>({ patch:{}, text:'' }) },
         ].map(d=>({ ...d, ok: !d.block })) : [];
         const gmOn = !!s.gmOpen, PN = { d:'Discipline', e:'Exhaustion', m:'Madness', p:'Pain' };
         const resNow = s.pendingConflict && s.pendingConflict.result && s.pendingConflict.phase!=='dominant' ? s.pendingConflict.result : null;
@@ -3088,13 +3094,21 @@ class DRYHBase extends DCLogic {
           { k:'addk', gm:true, full:'Add a King', cost:1, desc:'Add a King to any pool in play. The pool must already have at least one die. The spent Despair becomes Hope.', pools:addable, block: fated ? 'FATE SPENT ON THIS ROLL' : !resNow ? 'NO ROLL TO CHANGE' : (addable.length ? '' : 'NO POOL IN PLAY') },
           { k:'remk', gm:true, full:'Remove a King', cost:1, desc:'Remove a King from any pool. The spent Despair becomes Hope.', pools:removable, block: fated ? 'FATE SPENT ON THIS ROLL' : !resNow ? 'NO ROLL TO CHANGE' : (removable.length ? '' : 'NO KINGS TO REMOVE') },
         ].map(d=>({ ...d, ok: !d.block })) : defs;
-        const resource = gmOn ? s.despair : s.hope, kp = gmOn ? s.kingPick : null, fp = !gmOn ? s.fatePick : null;
+        const resource = gmOn ? s.despair : s.hope, kp = gmOn ? s.kingPick : null;
         return {
-          hopeHoverOn: !!(hv && adefs.find(d=>d.k===hv)) && !kp && !fp, hopeHover: (()=>{ const d=adefs.find(d=>d.k===hv); if (!d) return { title:'', cost:'', desc:'', blocked:'' };
+          ...(()=>{ const fn = pc ? (pc.fate||0) : 0, fdef = defs.find(d=>d.fate), fcan = !gmOn && !!fdef && fdef.ok, on = !!s.fatePick;
+            const fseg = (c)=>({ style:{ flex:1, minWidth:0, background:c, transition:'flex 200ms ease' } });
+            return { fateN: fn,
+              fateSegs: fn ? Array.from({ length:fn }, ()=>fseg('oklch(0.82 0.13 85)')) : [fseg('oklch(0.82 0.13 85 / 0.2)')],
+              fateStyle:{ width:110, flexShrink:0, display:'flex', flexDirection:'column', gap:6, alignItems:'stretch', padding:'4px 6px', margin:'-4px -6px', background:'transparent', border:'none', textAlign:'left',
+                cursor: fcan||on ? 'pointer' : 'default', opacity: fn ? 1 : 0.6, boxShadow: on ? '0 0 0 2px oklch(0.82 0.13 85 / 0.7)' : 'none', transition:'box-shadow 160ms ease' },
+              onFate: ()=>{ if (this.state.fatePick) { this.setState({ fatePick:null }); return; } if (!fcan) return; this.setState({ fatePick:{ on:true }, hopeHover:null }); },
+              onFateEnter: ()=>{ if (!gmOn) this.setState({ hopeHover:'fate' }); }, onFateLeave: ()=>this.setState({ hopeHover:null }) }; })(),
+          hopeHoverOn: !!(hv && adefs.find(d=>d.k===hv)) && !kp, hopeHover: (()=>{ const d=adefs.find(d=>d.k===hv); if (!d) return { title:'', cost:'', desc:'', blocked:'' };
             return { title:d.full, cost:gmOn ? d.cost+' DESPAIR' : d.cost, desc:d.desc, blocked: d.block || (resource<d.cost ? (gmOn?'NOT ENOUGH DESPAIR':'NOT ENOUGH HOPE') : '') }; })(),
-          kingPickOn: !!kp || !!fp,
+          kingPickOn: !!kp,
           kingPickBoxStyle:{ position:'absolute', top:'100%', right:0, marginTop:10, zIndex:200, width:290, background:'#000', border:'1px solid oklch(0.93 0.012 85 / 0.4)', borderTop:'3px solid oklch(0.55 0.21 27)', padding:'12px 14px', boxShadow:'0 14px 34px rgba(0,0,0,0.85)' },
-          kingPick: fp ? this.fateBox(fp, pc, resNow, PN) : kp ? { title:(kp.op==='addk'?'ADD A KING TO':'REMOVE A KING FROM'), onCancel:()=>this.setState({ kingPick:null }),
+          kingPick: kp ? { title:(kp.op==='addk'?'ADD A KING TO':'REMOVE A KING FROM'), onCancel:()=>this.setState({ kingPick:null }),
             options: kp.pools.map(k=>({ label:PN[k].toUpperCase(), style:{ padding:'6px 10px', background:'oklch(0.95 0.012 85)', color:'oklch(0.12 0.01 50)', border:'none', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:14, letterSpacing:'0.08em', cursor:'pointer' },
               onClick:()=>{ const pcf=this.state.pendingConflict; if (!pcf || !pcf.result || this.state.despair<1) return;
                 this.setState({ kingPick:null });
@@ -3106,11 +3120,10 @@ class DRYHBase extends DCLogic {
           hopeHoverBoxStyle:{ position:'absolute', top:'100%', right:0, marginTop:10, zIndex:200, width:290, pointerEvents:'none', background:'#000',
             borderTop:'3px solid oklch(0.92 0.012 85)', borderLeft:'1px solid oklch(0.93 0.012 85 / 0.3)', borderRight:'1px solid oklch(0.93 0.012 85 / 0.3)', borderBottom:'1px solid oklch(0.93 0.012 85 / 0.3)',
             padding:'12px 14px 13px', boxShadow:'0 14px 34px rgba(0,0,0,0.85)', transform:'rotate(-0.4deg)' },
-          hopeActions: adefs.map(d=>{ const can = d.ok && (d.fate || resource>=d.cost);
+          hopeActions: adefs.filter(d=>!d.fate).map(d=>{ const can = d.ok && (d.fate || resource>=d.cost);
             return { label:d.full, cost:d.cost,
               onEnter:()=>this.setState({ hopeHover:d.k }), onLeave:()=>this.setState({ hopeHover:null }),
               onClick:()=>{ if (!can) return;
-                if (d.fate){ this.setState({ fatePick:{ step:1 }, hopeHover:null }); return; }
                 if (d.gm){ this.setState({ kingPick:{ op:d.k, pools:d.pools }, hopeHover:null }); return; }
                 if (d.k==='breath'){ this.setState({ sbSection:'mad', breathPick:null }); if (needsPick){ this.setState({ breathPick:pc.id }); return; } }
                 const r=d.run();
@@ -3603,24 +3616,11 @@ class Component extends DRYHBase {
   // ---- Fate: a player sets any one die of their OWN roll to any face. The request goes to the
   // owning tray through the shared conflict (like Stack the Deck), and spending it locks the GM's
   // Despair for the rest of that roll; Despair already spent stays spent. ----
-  fateBox(fp, pc, res, PN){
-    const nm = v => v >= 6 ? 'KING' : v === 5 ? 'QUEEN' : v === 4 ? 'JACK' : 'ACE';
-    const st = { padding:'6px 10px', background:'oklch(0.95 0.012 85)', color:'oklch(0.12 0.01 50)', border:'none', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:14, letterSpacing:'0.08em', cursor:'pointer' };
-    const cancel = ()=>this.setState({ fatePick:null });
-    if (!pc || !res || !res.dice) return { title:'NO ROLL TO CHANGE', onCancel:cancel, options:[] };
-    if (fp.step === 1) {
-      const options = [];
-      ['d','e','m','p'].forEach(k=>(res.dice[k] || []).forEach((v, j)=>options.push({ label: PN[k].toUpperCase() + ' · ' + nm(v), style:st, onClick:()=>this.setState({ fatePick:{ step:2, k, j } }) })));
-      return { title:'SPEND FATE: CHOOSE A DIE', onCancel:cancel, options };
-    }
-    return { title:'SET THE ' + PN[fp.k].toUpperCase() + ' DIE TO', onCancel:cancel,
-      options:[[1,'ACE'],[4,'JACK'],[5,'QUEEN'],[6,'KING']].map(([v, l])=>({ label:l, style:st, onClick:()=>this.fateSpend(pc, fp.k, fp.j, v, l, PN) })) };
-  }
   fateSpend(pc, k, j, v, label, PN){
     const pcf = this.state.pendingConflict; this.setState({ fatePick:null });
     if (!pcf || !pcf.result || (pc.fate || 0) < 1) return;
     const characters = this.state.characters.map(c=>c.id === pc.id ? { ...c, fate:(c.fate || 0) - 1 } : c);
-    this.withLog(this.nm(pc) + ' spends Fate: a ' + PN[k] + ' die becomes a ' + label + '. The GM can no longer spend Despair on this roll.', null,
+    this.withLog(this.nm(pc) + ' spends Fate: a ' + PN[k] + ' die becomes ' + (/^[aeiou]/i.test(label) ? 'an ' : 'a ') + label + '. The GM can no longer spend Despair on this roll.', null,
       { characters, pendingConflict:{ ...pcf, fated:true, result:null, fateReq:{ n:Date.now(), k, j, v } } });
   }
   mpRoomGone(){ const p = document.getElementById('dryh-pill'); if (p) p.querySelector('.dot').className = 'dot off'; }
@@ -3677,6 +3677,8 @@ class Component extends DRYHBase {
       apply: (d) => { try { localStorage.setItem(this.CITY_KEY, JSON.stringify(d)); } catch(e) {} window.dispatchEvent(new Event('dryh-city-edit')); this.setState({ cityV: Date.now() }); } });
     v.onMpBackups = () => { if (this._mpNet) this.mpBackups(); };
     v.onInvite = () => this.inviteCopy();
+    v.onTrayFate = r => { const st = this.state, c = st.characters.find(x=>x.id === st.actingCharId); if (c) this.fateSpend(c, r.k, r.j, r.v, r.label, { d:'Discipline', e:'Exhaustion', m:'Madness', p:'Pain' }); };
+    v.onTrayFateCancel = () => this.setState({ fatePick:null });
     const s = this.state, PL = window.DRYH_PROLOGUES || [], onPl = s.screen === 'prologue' && s.prologue;
     const btnStyle = on => ({ height:40, background:on?'oklch(0.55 0.21 27)':'transparent', border:'1px solid '+(on?'oklch(0.55 0.21 27)':'oklch(0.93 0.012 85 / 0.4)'), color:'oklch(0.95 0.012 85)', fontFamily:"'Barlow',sans-serif", fontWeight:700, fontSize:12, letterSpacing:'0.18em', cursor:'pointer' });
     v.isPrologue = !!onPl; if (onPl) { v.isDash = false; v.isSelect = false; v.mapBtnOn = false; }
