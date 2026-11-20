@@ -3627,6 +3627,7 @@ class Component extends DRYHBase {
   // ---- the room pill: code for everyone; UNSTICK and BACKUPS for the GM ----
   mpPill(){
     const n = this._mpNet; if (!n) return;
+    if (this.mpSynced && window.__dryhCoverOff) window.__dryhCoverOff();   // the room is loaded: lift the cover from the join prompt
     let p = document.getElementById('dryh-pill');
     if (!p) {
       p = document.createElement('div'); p.id = 'dryh-pill';

@@ -288,7 +288,15 @@ async function boot() {
   return Net;
 }
 // The rooms back office (Rooms.html) sets __dryhNoBoot: it needs the transport but no join gate.
+// Until a room has been entered AND loaded, a solid cover hides the dashboard, so no stale saved game (or old
+// room code) shows behind the join prompt. The dashboard lifts it once the room's state has arrived.
+let coverOff = () => {};
+if (!window.__dryhNoBoot) {
+  const cv = document.createElement("div"); cv.id = "dryh-cover"; cv.style.cssText = "position:fixed;inset:0;z-index:9990;background:#050506";
+  document.body.appendChild(cv); coverOff = () => cv.remove(); window.__dryhCoverOff = coverOff;
+}
 window.__dryhNet = (window.__dryhNoBoot ? Promise.resolve(Net) : boot()).catch((e) => { console.error("[dryh] offline", e); Net.offline = true; return Net; });
+window.__dryhNet.then((n) => { if (!n || n.offline || !n.room) coverOff(); else setTimeout(coverOff, 8000); });   // the dashboard lifts it sooner, once synced
 
 // ---------------------------------------------------------------- who's online
 // A draggable, foldable window listing everyone in the room. Each screen writes
