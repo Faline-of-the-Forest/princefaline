@@ -3,7 +3,74 @@
   "name": "When Night Falls on Sunnydale",
   "sys": "Kids on Bikes",
   "status": "concluded",
-  "banner": "",
+  "banner": "/uploads/1795266110661-Untitled-Design.png",
   "covers": [],
-  "ed": "1e"
+  "ed": "1e",
+  "tagline": "In Sunnydale, you can live in the past. Forever.",
+  "summary": [
+    "In the summer of 1984, Pat Woods is taking his three children on a road trip to Disneyland, his latest attempt to connect with his kids, as the generation gap has proven itself to be difficult to bridge. He doesn't understand their music or their attitudes, while his teens find just about everything he likes hopelessly lame. Still, he's determined to make this a family vacation they'll never forget.",
+    "When a pair of flat tires forces them to make an emergency stop in Sunnydale, a town they didn't even know existed, Pat couldn't be more delighted: with its pastel-colored houses, white picket fences, friendly neighbors, and old-fashioned soda shops, the town seems like a picture-perfect throwback to simpler times. For Pat, it's a nostalgic paradise; for his children, it's the lamest place on Earth.",
+    "But behind Sunnydale's cheerful smiles and idyllic streets, something isn't quite right. And as the Woods family settles in for an unexpected overnight stay, one question remains:",
+    "What happens when night falls on Sunnydale?"
+  ],
+  "influences": "The Lost Boys (1987, Joel Schumacher, Film), From Dusk Till Dawn (1996, Robert Rodriguez, Film), Buffy the Vampire Slayer (1997, Joss Whedon, TV Series), Harvester (1996, Gilbert P. Austin, Video Game), Pleasantville (1998, Gary Ross, Film), Grease (1978, Randal Kleiser, Film), Steven Spielberg (Filmmaker).",
+  "materials": [
+    "Kids on Bikes"
+  ],
+  "cast": [
+    {
+      "name": "Pat Woods",
+      "role": "The Eccentric Grown-Up",
+      "player": "Edmond Dantès",
+      "bio": "A talented inventor and loving father, Pat hopes to give his children the same wonderful memories he made with his papa, he just can’t understand kids these days.",
+      "portrait": "/uploads/1795266100133-Pat-Woods.jfif"
+    },
+    {
+      "name": "Sycamore Woods",
+      "role": "The Young Rebel",
+      "player": "Geralt of Rivia",
+      "bio": "Like other teenage rebels, he drinks, breaks rules, and carves his name into school desks, but beneath his rebellious attitude, he's a good kid who just wants to belong.",
+      "portrait": "/uploads/1795266101405-Sycamore-Woods.jfif"
+    },
+    {
+      "name": "Alex Woods",
+      "role": "The Weirdo Loner",
+      "player": "Puss in Boots",
+      "bio": "A proud outcast who collects animal bones and smokes pot, Alex likes to think they don't care what others think but beneath their strange exterior, they desperately want to fit in.",
+      "portrait": "/uploads/1795266102774-Alex-Woods.jfif"
+    },
+    {
+      "name": "George Woods",
+      "role": "The Kid With a Dog",
+      "player": "Tom Bombadil",
+      "bio": "Georgie dreams of the perfect American life: a farmer dad, a mom baking apple pie, and a white picket fence. But deep down, he's still a kid who loves comics, soda, and his dog.",
+      "portrait": "/uploads/1795266104041-George-Woods.jfif"
+    }
+  ],
+  "episodes": [
+    {
+      "n": "01",
+      "date": "2024-08-01",
+      "rt": "04:30",
+      "title": "When Night Falls on Sunnydale, Part I",
+      "hook": "On their way to Disneyland, two flat tires force the Woods family to stop in Sunnydale, a strangely old-fashioned town they've never heard of. While Pat arranges repairs, Georgie bonds with local boy Tommy Malone over comic books, Sycamore meets the mysterious Emily Whitaker at the bowling alley, and Alex follows Johnny Malone and his gang of greasers to a nearby quarry.\n\nEmily warns Sycamore that his family will die if they stay the night, but refuses to explain why. At the quarry, Alex watches in horror as Vince, one of the greasers, dives into the water and cracks his skull open on a rock. To Alex's disbelief, Johnny revives him with a drink of Ruby Cola.",
+      "img": "/uploads/1795266105383-cover_sunnydale01.png"
+    },
+    {
+      "n": "02",
+      "date": "2024-08-15",
+      "rt": "04:00",
+      "title": "When Night Falls on Sunnydale, Part II",
+      "hook": "As night falls, Sunnydale reveals its horrifying secret. At Mrs. Whitaker's dinner party, Pat watches the guests transform into monsters and realizes he's the main course. Alex rejects Johnny Malone's offer to live in Sunnydale forever, escaping as the townspeople begin their nightly feeding. Meanwhile, Georgie's innocent playdate turns into a nightmare when he's locked in a room with his new friend Tommy, who transforms into a monster and bites him.\n\nHaving learned from Emily Whitaker how the townspeople became immortal thralls, Sycamore helps his father rescue Georgie, while Alex discovers that their family car has been sabotaged. The family reunites at the garage, but Georgie's infected wound is spreading, and only the blood of the Ancient can save him. Alex takes Georgie to the catacombs beneath the auto plant, while Sycamore convinces the guilt-ridden Reverend Whitaker, Mrs. Whitaker’s husband, to give them his car keys, offering the family a chance to escape.",
+      "img": "/uploads/1795266106788-cover_sunnydale02.png"
+    },
+    {
+      "n": "03",
+      "date": "2024-08-27",
+      "rt": "02:30",
+      "title": "When Night Falls on Sunnydale, Part IIII",
+      "hook": "Pursued by monstrous thralls, Alex and Georgie descend into the catacombs beneath Sunnydale, where they hope the blood of the Ancient will save Georgie's life. Pat and Sycamore arrive just in time to help them fight off their pursuers.\n\nThe children discover that the Ancient's blood can grant them immortality, and after confirming they won't become mindless thralls, all three decide to become vampires. Georgie then kills the Ancient with an obsidian dagger, destroying its remaining thralls.\n\nArmed with their newfound powers, the family confronts Mrs. Whitaker. Alex stabs her with the dagger, and Georgie uses his telekinesis to blow her head up. The Woods celebrate their victory with a game of bowling, and while Pat is at first upset that his children have chosen to become creatures of the night, he soon finds comfort in one thought: that their family road trip might never have to end.",
+      "img": "/uploads/1795266108378-cover_sunnydale03.png"
+    }
+  ]
 }
