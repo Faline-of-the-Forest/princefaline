@@ -243,13 +243,13 @@
       dlg.innerHTML = '<form method="dialog"><button class="x" aria-label="Close">Close</button></form>' +
         '<button type="button" class="arrow prev" aria-label="Previous one-shot"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>' +
         '<button type="button" class="arrow next" aria-label="Next one-shot"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>' +
-        '<div class="shot-in"><div class="shot-side">' + pic(s.img, s.t, "sq") +
+        '<div class="shot-in"><div class="shot-side">' + pic(s.img, s.t, "p45") +
           (s.cast && s.cast.length ? '<h3>Cast</h3><ul class="shot-cast">' + s.cast.map(function (c) { var who = '<i>' + esc(c.player) + '</i>'; return '<li><b>' + esc(c.name) + '</b>' + (c.player ? '<span>Played by ' + (c.href ? '<a href="' + esc(c.href) + '">' + who + '</a>' : who) + '</span>' : '') + '</li>'; }).join("") + '</ul>' : "") +
           (s.book ? '<h3>Materials</h3><ul class="shot-cast"><li><a href="' + esc(s.book.href) + '"><b>' + esc(s.book.t) + "</b></a></li></ul>" : "") +
           '<h3>Entry</h3><ul class="shot-cast"><li><a href="' + esc(s.href) + '"><b>Open its own page</b></a></li></ul></div>' +
         '<div class="shot-txt"><p class="chips"><a href="' + esc(s.sysHref) + '">' + chip(esc(s.sys) + (s.ed ? " " + esc(s.ed) : ""), "g") + "</a>" + chip(esc(s.d)) + chip(esc(s.m)) + chip("#" + s.n) + "</p>" +
           "<h2>" + esc(s.t) + "</h2>" + (s.w.length ? s.w.map(function (p) { return '<p class="ph" style="font-style:normal;color:var(--ink)">' + esc(p) + "</p>"; }).join("") : '<p class="ph">No write-up yet.</p>') + "</div></div>" +
-        '<div class="strip-nav">' + list.map(function (x, i) { return '<button type="button" data-i="' + i + '" class="' + (i === idx ? "on" : "") + '" title="' + esc(x.t) + '" aria-label="' + esc(x.t) + '">' + pic(x.img, x.t, "sq tiny") + "</button>"; }).join("") + "</div>";
+        '<div class="strip-nav">' + list.map(function (x, i) { return '<button type="button" data-i="' + i + '" class="' + (i === idx ? "on" : "") + '" title="' + esc(x.t) + '" aria-label="' + esc(x.t) + '">' + pic(x.img, x.t, "p45 tiny") + "</button>"; }).join("") + "</div>";
       $(".prev", dlg).onclick = function () { step(-1); };
       $(".next", dlg).onclick = function () { step(1); };
       $$(".strip-nav button", dlg).forEach(function (b) { b.onclick = function () { idx = +b.dataset.i; draw(); }; });

@@ -241,7 +241,7 @@ const paraHtml = (text, cls) => String(text).split(/\n\s*\n/).map(p => p.trim())
 const poster = c => `<a class="poster" href="/campaigns/${c.slug}/"${editAttr("campaign", c.slug, c.name)} data-status="${esc(c.status)}" data-sys="${esc(c.sys)}" data-first="${c.first || ""}" data-last="${c.last || ""}" data-count="${c.S.length}">${pic(cover(c), c.name, "p45")}
   <h3>${esc(c.name)}</h3><p class="sub">${esc(c.sys)}${edTag(c.ed)}</p><p class="sub">${plural(c.S.length, "session")}, ${c.status === "running" ? "since " + fMY(c.first) : fMY(c.first) + " to " + fMY(c.last)}</p></a>`;
 const book = r => `<a class="book" href="/reviews/${r.slug}/"${editAttr("review", r.slug, r.t)} data-type="${esc(TYPE_LABEL(r.type))}" data-stars="${r.stars}">${pic(bookCover(r), r.t, "p34 contain")}<h3>${esc(r.t)}</h3><p class="sub">${esc(TYPE_LABEL(r.type))}</p>${starsHtml(r.stars)}</a>`;
-const shotCard = (s, showSys) => `<a class="shot" href="${s.href}" data-shot="${s.n}"${editAttr("session", s.n, s.title)} data-year="${s.date.slice(0, 4)}" data-sys="${esc(s.sys)}" data-date="${s.date}" data-min="${s.min}">${pic(s.img, s.title, "sq")}<h3>${esc(s.title)}</h3><p class="chips">${chip(fMY(s.date))}${chip(dur(s.min))}${showSys ? chip(esc(s.sys), "g") : ""}</p></a>`;
+const shotCard = (s, showSys) => `<a class="shot" href="${s.href}" data-shot="${s.n}"${editAttr("session", s.n, s.title)} data-year="${s.date.slice(0, 4)}" data-sys="${esc(s.sys)}" data-date="${s.date}" data-min="${s.min}">${pic(s.img, s.title, "p45")}<h3>${esc(s.title)}</h3><p class="chips">${chip(fMY(s.date))}${chip(dur(s.min))}${showSys ? chip(esc(s.sys), "g") : ""}</p></a>`;
 const shotData = list => `<script type="application/json" id="shot-data">${json(list.map(s => ({ n: s.n, t: s.title, sys: s.sys, ed: s.ed, d: fDate(s.date), m: dur(s.min), img: s.img, w: s.writeup || [], cast: s.cast.map(c => ({ name: c.name, player: c.player || "", href: PLAYERS[c.player] ? playerHref(c.player) : "" })), href: s.href, sysHref: sysHref(s.sys), book: (r => r ? { t: r.t, href: `/reviews/${r.slug}/` } : null)(reviewBySys(s.sys)) })))}</script>`;
 
 // ---------- the ledger ----------
@@ -292,7 +292,7 @@ function renderHome() {
   S.forEach(s => (tipData[s.date] = tipData[s.date] || []).push([s.title, s.camp ? s.camp.name : "One-shot, " + s.sys, dur(s.min)]));
   const body = `
 <section class="hero band"><div class="wrap hero-grid">
-  <a class="hero-art" href="${L.href}"${editAttr("session", L.n, L.title)}>${L.camp ? pic(cover(L.camp), L.camp.name, "p45") : pic(L.img, L.title, "sq")}</a>
+  <a class="hero-art" href="${L.href}"${editAttr("session", L.n, L.title)}>${L.camp ? pic(cover(L.camp), L.camp.name, "p45") : pic(L.img, L.title, "p45")}</a>
   <div class="hero-main">
     <p class="over">Latest session, #${L.n}</p>
     <h1>${esc(L.title)}</h1>
@@ -302,7 +302,7 @@ function renderHome() {
     ${addBtn("session", "Log session")}
   </div>
   <div class="hero-prev"><h2>Recent sessions</h2>
-    ${prev.map(s => `<a href="${s.href}" class="mini"${editAttr("session", s.n, s.title)}>${s.camp ? pic(cover(s.camp), s.camp.name, "p45 tiny") : pic(s.img, s.sys, "sq tiny")}<span><b>${esc(s.title)}</b><small>${where(s)}, ${fShort(s.date)}</small></span></a>`).join("")}
+    ${prev.map(s => `<a href="${s.href}" class="mini"${editAttr("session", s.n, s.title)}>${s.camp ? pic(cover(s.camp), s.camp.name, "p45 tiny") : pic(s.img, s.sys, "p45 tiny")}<span><b>${esc(s.title)}</b><small>${where(s)}, ${fShort(s.date)}</small></span></a>`).join("")}
     <a class="more" href="#ledger-sec">The whole ledger</a></div>
 </div></section>
 <section class="wrap sec"><header class="sec-h"><h2>At the table now</h2>${addBtn("campaign", "New campaign")}<a class="more" href="/campaigns/">All ${campaigns.length} campaigns</a></header>
@@ -381,7 +381,7 @@ function renderCampaignDetail(c) {
 // ---------- ONE-SHOTS ----------
 function mosaic(sy) {
   const g = sy.games.slice(0, 4), n = g.length >= 4 ? 4 : g.length >= 2 ? 2 : 1;
-  return `<div class="mosaic m${n}">${g.slice(0, n).map(s => pic(s.img, s.title, "sq")).join("")}</div>`;
+  return `<div class="mosaic m${n}">${g.slice(0, n).map(s => pic(s.img, s.title, "p45")).join("")}</div>`;
 }
 function renderOneShotsIndex() {
   const hrs = Math.round(OS.reduce((a, s) => a + s.min, 0) / 60);
@@ -410,7 +410,7 @@ function renderSystemPage(sy) {
 function renderOneShotDetail(s) {
   const rev = reviewBySys(s.sys);
   const body = `<div class="wrap page"><a class="back dark" href="${sysHref(s.sys)}">${esc(s.sys)}</a>
-  <article class="review"${editAttr("session", s.n, s.title)}><div class="rv-cover">${pic(s.img, s.title, "sq")}</div>
+  <article class="review"${editAttr("session", s.n, s.title)}><div class="rv-cover">${pic(s.img, s.title, "p45")}</div>
    <div class="rv-main">
     <p class="chips"><a href="${sysHref(s.sys)}">${chip(esc(s.sys) + (s.ed ? " " + esc(s.ed) : ""), "g")}</a>${chip(fDate(s.date))}${chip(dur(s.min))}${chip("#" + s.n)}</p>
     <h1>${esc(s.title)}</h1>
@@ -454,7 +454,7 @@ function renderReviewDetail(r) {
     <h2>My thoughts</h2>
     ${paraHtml(r.body || "", "rv-thoughts") || `<p class="rv-thoughts ph">No review written yet.</p>`}
     ${(r.tags || []).length ? `<p class="chips" style="margin-top:18px">${r.tags.map(t => chip(esc(t))).join("")}</p>` : ""}
-    ${camps.length || shots.length ? `<h2>Featured in</h2><div class="rv-feat">${camps.map(c => `<a href="/campaigns/${c.slug}/">${pic(cover(c), c.name, "p45 tiny")}<span><b>${esc(c.name)}</b><small>Campaign, ${plural(c.S.length, "session")}</small></span></a>`).join("")}${shots.map(s => `<a href="${s.href}">${pic(s.img, s.title, "sq tiny")}<span><b>${esc(s.title)}</b><small>One-shot, ${fShort(s.date)}</small></span></a>`).join("")}</div>` : ""}
+    ${camps.length || shots.length ? `<h2>Featured in</h2><div class="rv-feat">${camps.map(c => `<a href="/campaigns/${c.slug}/">${pic(cover(c), c.name, "p45 tiny")}<span><b>${esc(c.name)}</b><small>Campaign, ${plural(c.S.length, "session")}</small></span></a>`).join("")}${shots.map(s => `<a href="${s.href}">${pic(s.img, s.title, "p45 tiny")}<span><b>${esc(s.title)}</b><small>One-shot, ${fShort(s.date)}</small></span></a>`).join("")}</div>` : ""}
    </div></article></div>`;
   write(`reviews/${r.slug}/index.html`, layout({ title: r.t + " — Prince Faline's RPG Diaries", active: "Shelf", body, description: String(r.verdict || "").replace(/\s+/g, " ").trim() }));
 }

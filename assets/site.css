@@ -200,7 +200,7 @@ h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.08;letter-spac
 
 /* one-shot systems */
 .systems{display:grid;grid-template-columns:repeat(5,1fr);gap:32px 24px}
-.mosaic{display:grid;gap:3px;border-radius:8px;overflow:hidden;aspect-ratio:1}
+.mosaic{display:grid;gap:3px;border-radius:8px;overflow:hidden;aspect-ratio:4/5}
 .mosaic .pic{border-radius:0;aspect-ratio:auto;height:100%}
 .mosaic.m4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
 .mosaic.m2{grid-template-columns:1fr 1fr}
