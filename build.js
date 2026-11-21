@@ -234,7 +234,11 @@ const yearOpts = [["", "All years"], ...years.map(y => [y, y])];
 
 // ---------- shared pieces ----------
 const where = s => s.camp ? esc(s.camp.name) : "One-shot, " + esc(s.sys);
-const poster = c => `<a class="poster" href="/campaigns/${c.slug}/"${editAttr("campaign", c.slug, c.name)} data-status="${esc(c.status)}" data-sys="${esc(c.sys)}" data-first="${c.first || ""}" data-last="${c.last || ""}" data-count="${c.S.length}">${pic(c.banner, c.name, "p45")}
+// A campaign's portrait cover: the uploaded poster, else the banner cropped.
+const cover = c => c.poster || c.banner;
+// Multi-paragraph text: blank lines split paragraphs, single newlines break lines.
+const paraHtml = (text, cls) => String(text).split(/\n\s*\n/).map(p => p.trim()).filter(Boolean).map(p => `<p${cls ? ` class="${cls}"` : ""}>${esc(p).replace(/\n/g, "<br>")}</p>`).join("");
+const poster = c => `<a class="poster" href="/campaigns/${c.slug}/"${editAttr("campaign", c.slug, c.name)} data-status="${esc(c.status)}" data-sys="${esc(c.sys)}" data-first="${c.first || ""}" data-last="${c.last || ""}" data-count="${c.S.length}">${pic(cover(c), c.name, "p45")}
   <h3>${esc(c.name)}</h3><p class="sub">${esc(c.sys)}${edTag(c.ed)}</p><p class="sub">${plural(c.S.length, "session")}, ${c.status === "running" ? "since " + fMY(c.first) : fMY(c.first) + " to " + fMY(c.last)}</p></a>`;
 const book = r => `<a class="book" href="/reviews/${r.slug}/"${editAttr("review", r.slug, r.t)} data-type="${esc(TYPE_LABEL(r.type))}" data-stars="${r.stars}">${pic(bookCover(r), r.t, "p34 contain")}<h3>${esc(r.t)}</h3><p class="sub">${esc(TYPE_LABEL(r.type))}</p>${starsHtml(r.stars)}</a>`;
 const shotCard = (s, showSys) => `<a class="shot" href="${s.href}" data-shot="${s.n}"${editAttr("session", s.n, s.title)} data-year="${s.date.slice(0, 4)}" data-sys="${esc(s.sys)}" data-date="${s.date}" data-min="${s.min}">${pic(s.img, s.title, "sq")}<h3>${esc(s.title)}</h3><p class="chips">${chip(fMY(s.date))}${chip(dur(s.min))}${showSys ? chip(esc(s.sys), "g") : ""}</p></a>`;
@@ -288,7 +292,7 @@ function renderHome() {
   S.forEach(s => (tipData[s.date] = tipData[s.date] || []).push([s.title, s.camp ? s.camp.name : "One-shot, " + s.sys, dur(s.min)]));
   const body = `
 <section class="hero band"><div class="wrap hero-grid">
-  <a class="hero-art" href="${L.href}"${editAttr("session", L.n, L.title)}>${L.camp ? pic(L.camp.banner, L.camp.name, "p45") : pic(L.img, L.title, "sq")}</a>
+  <a class="hero-art" href="${L.href}"${editAttr("session", L.n, L.title)}>${L.camp ? pic(cover(L.camp), L.camp.name, "p45") : pic(L.img, L.title, "sq")}</a>
   <div class="hero-main">
     <p class="over">Latest session, #${L.n}</p>
     <h1>${esc(L.title)}</h1>
@@ -298,7 +302,7 @@ function renderHome() {
     ${addBtn("session", "Log session")}
   </div>
   <div class="hero-prev"><h2>Recent sessions</h2>
-    ${prev.map(s => `<a href="${s.href}" class="mini"${editAttr("session", s.n, s.title)}>${s.camp ? pic(s.camp.banner, s.camp.name, "p45 tiny") : pic(s.img, s.sys, "sq tiny")}<span><b>${esc(s.title)}</b><small>${where(s)}, ${fShort(s.date)}</small></span></a>`).join("")}
+    ${prev.map(s => `<a href="${s.href}" class="mini"${editAttr("session", s.n, s.title)}>${s.camp ? pic(cover(s.camp), s.camp.name, "p45 tiny") : pic(s.img, s.sys, "sq tiny")}<span><b>${esc(s.title)}</b><small>${where(s)}, ${fShort(s.date)}</small></span></a>`).join("")}
     <a class="more" href="#ledger-sec">The whole ledger</a></div>
 </div></section>
 <section class="wrap sec"><header class="sec-h"><h2>At the table now</h2>${addBtn("campaign", "New campaign")}<a class="more" href="/campaigns/">All ${campaigns.length} campaigns</a></header>
@@ -351,7 +355,7 @@ function renderCampaignDetail(c) {
   const others = campaigns.filter(o => o.sys === c.sys && o !== c);
   const body = `<section class="c-hero band"${editAttr("campaign", c.slug, c.name)}>${c.banner ? `<img class="c-banner" src="${esc(c.banner)}" alt="" onerror="this.remove()">` : ""}<div class="c-shade"></div>
    <div class="wrap c-hero-in"><a class="back" href="/campaigns/">Campaigns</a>
-    <h1>${esc(c.name)}</h1><p class="c-tag">${esc(c.tagline || blurb(c))}</p></div></section>
+    <h1${c.logo ? ' class="has-logo"' : ""}>${c.logo ? `<img class="c-logo" src="${esc(c.logo)}" alt="${esc(c.name)}">` : esc(c.name)}</h1><p class="c-tag">${esc(c.tagline || blurb(c))}</p></div></section>
   <div class="facts"><div class="wrap facts-in">
     <div><dt>System</dt><dd>${rev ? `<a href="/reviews/${rev.slug}/">${esc(c.sys)}</a>` : esc(c.sys)}${edTag(c.ed)}</dd></div>
     <div><dt>Sessions</dt><dd>${c.S.length}</dd></div><div><dt>Played</dt><dd>${dur(c.min)}</dd></div>
@@ -364,12 +368,12 @@ function renderCampaignDetail(c) {
       <div class="cast">${cast.map(p => `<article>${pic(p.portrait, String(p.name).replace(/"[^"]+" /, ""), "sq")}<h3>${esc(p.name)}</h3>${p.role ? `<p class="sub">${esc(p.role)}</p>` : ""}<p class="by">Played by <a href="${playerHref(p.player)}">${esc(p.player)}</a></p><p>${esc(p.bio)}</p></article>`).join("")}</div></section>` : ""}
     <section id="episodes"><header class="sec-h"><h2>Episodes</h2><span class="note">${plural(c.S.length, "session")}</span>${addBtn("session", "Log session", c.slug)}</header>
       <ol class="eps">${c.S.map(s => { const full = s.recap || s.img; return `<li id="ep-${s.ep}" class="${full ? "full" : "bare"}"${editAttr("session", s.n, s.title)}>${full ? pic(s.img, s.epTitle, "sq") : ""}
-        <div><p class="ep-n">Episode ${s.ep}</p><h3>${esc(s.epTitle)}</h3><p class="sub ep-when">${fDate(s.date)}, ${dur(s.min)}${songBtn(s.song)}</p>${s.recap ? `<p class="ep-recap">${esc(s.recap)}</p>` : ""}</div></li>`; }).join("")}</ol></section>
+        <div><p class="ep-n">Episode ${s.ep}</p><h3>${esc(s.epTitle)}</h3><p class="sub ep-when">${fDate(s.date)}, ${dur(s.min)}${songBtn(s.song)}</p>${s.recap ? paraHtml(s.recap, "ep-recap") : ""}</div></li>`; }).join("")}</ol></section>
    </div>
    <aside class="c-side">
     ${c.influences ? `<h3>Influences</h3><ul>${influenceList(c.influences).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
     ${(c.materials || []).length ? `<h3>Materials</h3><ul>${c.materials.map(x => { const r = reviews.find(r => r.t === x); return `<li>${r ? `<a href="/reviews/${r.slug}/">${esc(x)}</a> ${starsHtml(r.stars)}` : esc(x)}</li>`; }).join("")}</ul>` : ""}
-    <h3>More in ${esc(c.sys)}</h3><ul>${others.map(o => `<li><a href="/campaigns/${o.slug}/">${esc(o.name)}</a></li>`).join("")}${SYS[c.sys] ? `<li><a href="${sysHref(c.sys)}">${plural(SYS[c.sys].length, "one-shot")}</a></li>` : ""}${!others.length && !SYS[c.sys] ? '<li class="quiet">Nothing else yet</li>' : ""}</ul>
+    <h3>More in ${esc(c.sys)}</h3><ul>${others.map(o => `<li><a href="/campaigns/${o.slug}/">${esc(o.name)}</a></li>`).join("")}${(SYS[c.sys] || []).map(s => `<li><a href="${s.href}">${esc(s.title)}</a></li>`).join("")}${!others.length && !SYS[c.sys] ? '<li class="quiet">Nothing else yet</li>' : ""}</ul>
    </aside></div>`;
   write(`campaigns/${c.slug}/index.html`, layout({ title: c.name + " — Prince Faline's RPG Diaries", active: "Campaigns", body, description: blurb(c) }));
 }
@@ -445,7 +449,7 @@ function renderReviewDetail(r) {
     <h2>My thoughts</h2>
     ${String(r.body || "").split(/\n\s*\n/).filter(Boolean).map(p => `<p class="rv-thoughts">${esc(p)}</p>`).join("") || `<p class="rv-thoughts ph">No review written yet.</p>`}
     ${(r.tags || []).length ? `<p class="chips" style="margin-top:18px">${r.tags.map(t => chip(esc(t))).join("")}</p>` : ""}
-    ${camps.length || shots.length ? `<h2>Featured in</h2><div class="rv-feat">${camps.map(c => `<a href="/campaigns/${c.slug}/">${pic(c.banner, c.name, "sq tiny")}<span><b>${esc(c.name)}</b><small>Campaign, ${plural(c.S.length, "session")}</small></span></a>`).join("")}${shots.length ? `<a href="${sysHref(shots[0].sys)}">${pic(shots[0].img, shots[0].sys, "sq tiny")}<span><b>${plural(shots.length, "one-shot")}</b><small>${esc(shots[0].sys)}</small></span></a>` : ""}</div>` : ""}
+    ${camps.length || shots.length ? `<h2>Featured in</h2><div class="rv-feat">${camps.map(c => `<a href="/campaigns/${c.slug}/">${pic(cover(c), c.name, "sq tiny")}<span><b>${esc(c.name)}</b><small>Campaign, ${plural(c.S.length, "session")}</small></span></a>`).join("")}${shots.length ? `<a href="${sysHref(shots[0].sys)}">${pic(shots[0].img, shots[0].sys, "sq tiny")}<span><b>${plural(shots.length, "one-shot")}</b><small>${esc(shots[0].sys)}</small></span></a>` : ""}</div>` : ""}
    </div></article></div>`;
   write(`reviews/${r.slug}/index.html`, layout({ title: r.t + " — Prince Faline's RPG Diaries", active: "Shelf", body, description: r.verdict }));
 }
@@ -537,8 +541,15 @@ function copyDir(src, dest) {
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
     const s = path.join(src, entry.name), d = path.join(dest, entry.name);
     if (entry.isDirectory()) copyDir(s, d);
-    else if (entry.name.endsWith(".webp") || !entry.name.match(/\.(png|jpe?g|xlsx)$/i)) fs.copyFileSync(s, d);
+    else if (keepUpload(src, entry.name)) fs.copyFileSync(s, d);
   }
+}
+// Skip spreadsheets, and PNG/JPG originals only when a .webp of the same name
+// replaces them. Images uploaded from Admin mode (often PNG/JPG) must ship.
+function keepUpload(dir, name) {
+  if (/\.xlsx$/i.test(name)) return false;
+  if (!/\.(png|jpe?g)$/i.test(name)) return true;
+  return !fs.existsSync(path.join(dir, name.replace(/\.(png|jpe?g)$/i, ".webp")));
 }
 copyDir(path.join(ROOT, "uploads"), path.join(DIST, "uploads"));
 copyDir(path.join(ROOT, "assets"), path.join(DIST, "assets"));

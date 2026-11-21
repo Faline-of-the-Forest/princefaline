@@ -342,6 +342,12 @@ async function handleApi(request, env, url) {
         banner: body.banner || (existing ? existing.content.banner : "") || "",
         covers: existing ? existing.content.covers || [] : [],
       };
+      // Title logo and portrait cover: kept from the saved file when a form
+      // (e.g. the back office) doesn't send them.
+      for (const k of ["logo", "poster"]) {
+        const v = body[k] !== undefined ? body[k] : (existing ? existing.content[k] : "");
+        if (v) out[k] = v;
+      }
       if (body.ed) out.ed = body.ed;
       if (body.tagline) out.tagline = body.tagline;
       if (body.summary) out.summary = body.summary.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);

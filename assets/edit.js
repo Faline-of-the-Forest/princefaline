@@ -236,6 +236,8 @@
       fld("Influences", inp("influences")) +
       fld("Materials", '<input id="pf-mat-q" placeholder="Search the Shelf…" autocomplete="off"><span class="pf-chips" id="pf-mat"></span><span class="pf-results" id="pf-mat-r"></span>') +
       imgField("Banner", "bannerFile", item.banner, "wide image") +
+      '<div class="two-up">' + imgField("Title logo", "logoFile", item.logo, "replaces the title on the banner; transparent PNG") +
+      imgField("Cover", "posterFile", item.poster, "portrait, used on cards across the site") + "</div>" +
       '<div class="pf-sub"><p class="kicker">Cast</p><div id="pf-cast"></div><button type="button" id="pf-add-cast">+ Add character</button></div>' +
       '<div class="pf-sub"><p class="kicker">Episodes</p><p class="meta">Date, number and runtime come from the logged sessions. Add a title, summary and image for each.</p><div id="pf-eps"></div></div>' +
       inp("sys", 'type="hidden"') + inp("ed", 'type="hidden"') + inp("slug", 'type="hidden"') +
@@ -262,7 +264,9 @@
         name: val("name"), slug: val("slug"), sys: val("sys"), ed: val("ed"), status: val("status"),
         tagline: val("tagline"), summary: val("summary"), influences: val("influences"),
         materials: JSON.stringify(materials), cast: JSON.stringify(cast), episodes: JSON.stringify(eps),
-        banner: (await upload(form.elements.bannerFile)) || item.banner || ""
+        banner: (await upload(form.elements.bannerFile)) || item.banner || "",
+        logo: (await upload(form.elements.logoFile)) || item.logo || "",
+        poster: (await upload(form.elements.posterFile)) || item.poster || ""
       };
       await api("POST", "/api/campaign", data);
       saved("Campaign");
