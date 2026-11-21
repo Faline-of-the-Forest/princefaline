@@ -454,7 +454,7 @@ function renderReviewDetail(r) {
     <h2>My thoughts</h2>
     ${paraHtml(r.body || "", "rv-thoughts") || `<p class="rv-thoughts ph">No review written yet.</p>`}
     ${(r.tags || []).length ? `<p class="chips" style="margin-top:18px">${r.tags.map(t => chip(esc(t))).join("")}</p>` : ""}
-    ${camps.length || shots.length ? `<h2>Featured in</h2><div class="rv-feat">${camps.map(c => `<a href="/campaigns/${c.slug}/">${pic(cover(c), c.name, "sq tiny")}<span><b>${esc(c.name)}</b><small>Campaign, ${plural(c.S.length, "session")}</small></span></a>`).join("")}${shots.map(s => `<a href="${s.href}">${pic(s.img, s.title, "sq tiny")}<span><b>${esc(s.title)}</b><small>One-shot, ${fShort(s.date)}</small></span></a>`).join("")}</div>` : ""}
+    ${camps.length || shots.length ? `<h2>Featured in</h2><div class="rv-feat">${camps.map(c => `<a href="/campaigns/${c.slug}/">${pic(cover(c), c.name, "p45 tiny")}<span><b>${esc(c.name)}</b><small>Campaign, ${plural(c.S.length, "session")}</small></span></a>`).join("")}${shots.map(s => `<a href="${s.href}">${pic(s.img, s.title, "sq tiny")}<span><b>${esc(s.title)}</b><small>One-shot, ${fShort(s.date)}</small></span></a>`).join("")}</div>` : ""}
    </div></article></div>`;
   write(`reviews/${r.slug}/index.html`, layout({ title: r.t + " — Prince Faline's RPG Diaries", active: "Shelf", body, description: String(r.verdict || "").replace(/\s+/g, " ").trim() }));
 }
