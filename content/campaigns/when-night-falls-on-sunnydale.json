@@ -3,7 +3,7 @@
   "name": "When Night Falls on Sunnydale",
   "sys": "Kids on Bikes",
   "status": "concluded",
-  "banner": "/uploads/1795266110661-Untitled-Design.png",
+  "banner": "/uploads/1795266476617-Untitled-Design.png",
   "covers": [],
   "ed": "1e",
   "tagline": "In Sunnydale, you can live in the past. Forever.",
@@ -54,7 +54,12 @@
       "rt": "04:30",
       "title": "When Night Falls on Sunnydale, Part I",
       "hook": "On their way to Disneyland, two flat tires force the Woods family to stop in Sunnydale, a strangely old-fashioned town they've never heard of. While Pat arranges repairs, Georgie bonds with local boy Tommy Malone over comic books, Sycamore meets the mysterious Emily Whitaker at the bowling alley, and Alex follows Johnny Malone and his gang of greasers to a nearby quarry.\n\nEmily warns Sycamore that his family will die if they stay the night, but refuses to explain why. At the quarry, Alex watches in horror as Vince, one of the greasers, dives into the water and cracks his skull open on a rock. To Alex's disbelief, Johnny revives him with a drink of Ruby Cola.",
-      "img": "/uploads/1795266105383-cover_sunnydale01.png"
+      "img": "/uploads/1795266470911-cover_sunnydale01.png",
+      "song": {
+        "title": "Sh-Boom",
+        "artist": "The Crew Cuts",
+        "spotifyUrl": "https://open.spotify.com/track/7G2jAmiYUDZKyk7npVrgX8?si=304943693e374c4e"
+      }
     },
     {
       "n": "02",
@@ -62,7 +67,12 @@
       "rt": "04:00",
       "title": "When Night Falls on Sunnydale, Part II",
       "hook": "As night falls, Sunnydale reveals its horrifying secret. At Mrs. Whitaker's dinner party, Pat watches the guests transform into monsters and realizes he's the main course. Alex rejects Johnny Malone's offer to live in Sunnydale forever, escaping as the townspeople begin their nightly feeding. Meanwhile, Georgie's innocent playdate turns into a nightmare when he's locked in a room with his new friend Tommy, who transforms into a monster and bites him.\n\nHaving learned from Emily Whitaker how the townspeople became immortal thralls, Sycamore helps his father rescue Georgie, while Alex discovers that their family car has been sabotaged. The family reunites at the garage, but Georgie's infected wound is spreading, and only the blood of the Ancient can save him. Alex takes Georgie to the catacombs beneath the auto plant, while Sycamore convinces the guilt-ridden Reverend Whitaker, Mrs. Whitaker’s husband, to give them his car keys, offering the family a chance to escape.",
-      "img": "/uploads/1795266106788-cover_sunnydale02.png"
+      "img": "/uploads/1795266472393-cover_sunnydale02.png",
+      "song": {
+        "title": "Twilight Time",
+        "artist": "The Platters",
+        "spotifyUrl": "https://open.spotify.com/track/6qsRKJJHLGSCPsdt2jEs2t?si=bc69e18608dc488e"
+      }
     },
     {
       "n": "03",
@@ -70,7 +80,12 @@
       "rt": "02:30",
       "title": "When Night Falls on Sunnydale, Part IIII",
       "hook": "Pursued by monstrous thralls, Alex and Georgie descend into the catacombs beneath Sunnydale, where they hope the blood of the Ancient will save Georgie's life. Pat and Sycamore arrive just in time to help them fight off their pursuers.\n\nThe children discover that the Ancient's blood can grant them immortality, and after confirming they won't become mindless thralls, all three decide to become vampires. Georgie then kills the Ancient with an obsidian dagger, destroying its remaining thralls.\n\nArmed with their newfound powers, the family confronts Mrs. Whitaker. Alex stabs her with the dagger, and Georgie uses his telekinesis to blow her head up. The Woods celebrate their victory with a game of bowling, and while Pat is at first upset that his children have chosen to become creatures of the night, he soon finds comfort in one thought: that their family road trip might never have to end.",
-      "img": "/uploads/1795266108378-cover_sunnydale03.png"
+      "img": "/uploads/1795266473817-cover_sunnydale03.png",
+      "song": {
+        "title": "Everybody Wants To Rule The World",
+        "artist": "Tears for Fears",
+        "spotifyUrl": "https://open.spotify.com/track/4RvWPyQ5RL0ao9LPZeSouE?si=d0cdd25014574eb7"
+      }
     }
   ]
 }
