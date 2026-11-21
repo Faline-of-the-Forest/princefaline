@@ -301,23 +301,30 @@
       '<div class="two-up">' + fld("Material", '<select name="type"><option>System</option><option>Module</option><option>Supplement</option><option>Resource</option></select>') +
       fld("Stars", inp("stars", 'type="number" min="0" max="5" required')) + "</div>" +
       fld("Reviewed", inp("date", 'placeholder="2026-08" required'), "YYYY-MM") +
-      fld("Verdict", inp("verdict", "required"), "one line") +
-      fld("Review", area("body", 7)) +
+      fld("Description", area("verdict", 4), "what the book is; blank line between paragraphs") +
+      fld("Thoughts", area("body", 7), "blank line between paragraphs") +
       fld("Tags", inp("tags"), "comma-separated") +
-      fld("Put to the table in", inp("used"), "campaign names, or One-Shots, comma-separated") +
+      '<p class="meta">"Put to the table in" fills itself from the campaigns and one-shots played with this book.</p>' +
       imgField("Cover", "coverFile", item.cover) +
       inp("slug", 'type="hidden"');
     openModal(slug ? "Edit Review" : "New Review", html, async function () {
-      if (!val("t") || !val("sys") || !val("verdict") || !/^\d{4}-\d{2}$/.test(val("date"))) throw new Error("Title, system, verdict and a YYYY-MM date are required.");
+      var missing = [];
+      if (!val("t").trim()) missing.push("Title");
+      if (!val("sys").trim()) missing.push("System");
+      if (val("stars") === "") missing.push("Stars");
+      if (missing.length) throw new Error("Please fill in: " + missing.join(", ") + ".");
+      var date = val("date").trim();
+      if (!/^\d{4}-\d{2}(-\d{2})?$/.test(date)) throw new Error("Reviewed should be a date like 2026-08.");
+      setVal("date", date.slice(0, 7));
       var data = {};
-      ["t", "ed", "slug", "sys", "type", "stars", "date", "tags", "verdict", "body", "used"].forEach(function (k) { data[k] = val(k); });
+      ["t", "ed", "slug", "sys", "type", "stars", "date", "tags", "verdict", "body"].forEach(function (k) { data[k] = val(k); });
       data.cover = (await upload(form.elements.coverFile)) || item.cover || "";
       await api("POST", "/api/review", data);
       saved("Review");
     });
     ["t", "ed", "slug", "sys", "type", "stars", "date", "verdict", "body"].forEach(function (k) { setVal(k, item[k]); });
+    setVal("date", String(item.date || "").slice(0, 7));
     setVal("tags", (item.tags || []).join(", "));
-    setVal("used", (item.used || []).join(", "));
   }
 
   // ---------- Games ----------

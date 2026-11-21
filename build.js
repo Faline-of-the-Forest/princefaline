@@ -436,22 +436,27 @@ function renderReviewsIndex() {
   write("reviews/index.html", layout({ title: "Shelf — Prince Faline's RPG Diaries", active: "Shelf", body }));
 }
 function renderReviewDetail(r) {
+  // "Put to the table": campaigns run in this system (same edition when both
+  // say one) or listing this book in their materials, plus one-shots in this
+  // system. Hand-listed names in r.used still count.
   const used = r.used || [];
-  const camps = used.map(u => campaigns.find(c => same(c.name, u))).filter(Boolean);
-  const shots = used.some(u => same(u, "One-Shots")) && SYS[r.t] ? SYS[r.t] : (used.some(u => same(u, "One-Shots")) ? OS.filter(s => same(s.sys, r.sys)) : []);
+  const isSys = r.type === "System";
+  const edOk = c => !r.ed || !c.ed || same(c.ed, r.ed);
+  const camps = campaigns.filter(c => used.some(u => same(c.name, u)) || (c.materials || []).some(m => same(m, r.t)) || (isSys && same(c.sys, r.t) && edOk(c)));
+  const shots = OS.filter(s => (isSys && same(s.sys, r.t)) || (used.some(u => same(u, "One-Shots")) && same(s.sys, r.sys)));
   const body = `<div class="wrap page"><a class="back dark" href="/reviews/">Shelf</a>
   <article class="review"${editAttr("review", r.slug, r.t)}><div class="rv-cover">${pic(bookCover(r), r.t, "p34 contain")}</div>
    <div class="rv-main">
     <p class="chips">${chip(esc(TYPE_LABEL(r.type)), "g")}${chip(esc(r.sys) + (r.ed ? " " + esc(r.ed) : ""))}</p>
     <h1>${esc(r.t)}</h1>
-    <p class="rv-rate">${starsHtml(r.stars)}<span>${r.date ? "Reviewed " + fMonth(r.date + "-01") : ""}</span></p>
-    ${r.verdict ? `<p class="rv-blurb">${esc(r.verdict)}</p>` : ""}
+    <p class="rv-rate">${starsHtml(r.stars)}<span>${r.date ? "Reviewed " + fMonth(String(r.date).slice(0, 7) + "-01") : ""}</span></p>
+    ${r.verdict ? `<div class="rv-blurb">${paraHtml(r.verdict)}</div>` : ""}
     <h2>My thoughts</h2>
-    ${String(r.body || "").split(/\n\s*\n/).filter(Boolean).map(p => `<p class="rv-thoughts">${esc(p)}</p>`).join("") || `<p class="rv-thoughts ph">No review written yet.</p>`}
+    ${paraHtml(r.body || "", "rv-thoughts") || `<p class="rv-thoughts ph">No review written yet.</p>`}
     ${(r.tags || []).length ? `<p class="chips" style="margin-top:18px">${r.tags.map(t => chip(esc(t))).join("")}</p>` : ""}
-    ${camps.length || shots.length ? `<h2>Featured in</h2><div class="rv-feat">${camps.map(c => `<a href="/campaigns/${c.slug}/">${pic(cover(c), c.name, "sq tiny")}<span><b>${esc(c.name)}</b><small>Campaign, ${plural(c.S.length, "session")}</small></span></a>`).join("")}${shots.length ? `<a href="${sysHref(shots[0].sys)}">${pic(shots[0].img, shots[0].sys, "sq tiny")}<span><b>${plural(shots.length, "one-shot")}</b><small>${esc(shots[0].sys)}</small></span></a>` : ""}</div>` : ""}
+    ${camps.length || shots.length ? `<h2>Featured in</h2><div class="rv-feat">${camps.map(c => `<a href="/campaigns/${c.slug}/">${pic(cover(c), c.name, "sq tiny")}<span><b>${esc(c.name)}</b><small>Campaign, ${plural(c.S.length, "session")}</small></span></a>`).join("")}${shots.map(s => `<a href="${s.href}">${pic(s.img, s.title, "sq tiny")}<span><b>${esc(s.title)}</b><small>One-shot, ${fShort(s.date)}</small></span></a>`).join("")}</div>` : ""}
    </div></article></div>`;
-  write(`reviews/${r.slug}/index.html`, layout({ title: r.t + " — Prince Faline's RPG Diaries", active: "Shelf", body, description: r.verdict }));
+  write(`reviews/${r.slug}/index.html`, layout({ title: r.t + " — Prince Faline's RPG Diaries", active: "Shelf", body, description: String(r.verdict || "").replace(/\s+/g, " ").trim() }));
 }
 
 // ---------- GAMES ----------

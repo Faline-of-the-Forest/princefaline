@@ -384,7 +384,9 @@ async function handleApi(request, env, url) {
         stars: Number(body.stars), date: body.date,
         tags: (body.tags || "").split(",").map(s => s.trim()).filter(Boolean),
         verdict: body.verdict, body: body.body,
-        used: (body.used || "").split(",").map(s => s.trim()).filter(Boolean),
+        // "Put to the table" is worked out at build time from campaigns and
+        // one-shots; any hand-listed names are kept unless a form sends new ones.
+        used: body.used !== undefined ? String(body.used).split(",").map(s => s.trim()).filter(Boolean) : (existing ? existing.content.used || [] : []),
         cover: body.cover || (existing ? existing.content.cover : "") || "",
       };
       await putFile(`content/reviews/${slug}.json`, out, existing ? existing.sha : null, `${existing ? "Update" : "Add"} review: ${body.t}`, env);
@@ -591,8 +593,8 @@ function adminPage() {
       </div>
       <label>Date reviewed (YYYY-MM)</label><input name="date" placeholder="2026-08" required>
       <label>Tags (comma-separated)</label><input name="tags">
-      <label>Verdict (one line)</label><input name="verdict" required>
-      <label>Body</label><textarea name="body" required></textarea>
+      <label>Description</label><textarea name="verdict"></textarea>
+      <label>Thoughts</label><textarea name="body"></textarea>
       <label>Used in (comma-separated campaign names, or One-Shots)</label><input name="used">
       <label>Cover image</label>
       <img class="thumb hidden">
