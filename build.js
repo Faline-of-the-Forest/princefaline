@@ -128,6 +128,19 @@ function pic(url, label, cls) {
 
 // Signed-in editing hooks (assets/edit.js): "+ New" buttons and per-item edit tools.
 function addBtn(type, text, campaign) { return `<button type="button" class="add admin-only" data-add="${type}"${campaign ? ` data-campaign="${esc(campaign)}"` : ""}>+ ${text}</button>`; }
+// Episode theme song: a Spotify share link becomes its embed URL (track, album
+// or playlist; ?si= and other query bits dropped). Anything else gives "".
+function spotifyEmbed(url) {
+  const m = String(url || "").match(/open\.spotify\.com\/(?:intl-[a-z-]+\/)?(?:embed\/)?(track|album|playlist)\/([A-Za-z0-9]+)/);
+  return m ? `https://open.spotify.com/embed/${m[1]}/${m[2]}` : "";
+}
+function songBtn(song) {
+  const src = song && spotifyEmbed(song.spotifyUrl);
+  if (!src) return "";
+  const label = [song.title, song.artist].filter(Boolean).join(" · ") || "Theme song";
+  const aria = "Play theme song: " + (song.title || "theme song") + (song.artist ? " by " + song.artist : "");
+  return `<span class="song"><button type="button" class="song-btn" aria-expanded="false" aria-label="${esc(aria)}" data-embed="${esc(src)}"><i aria-hidden="true"></i><span>${esc(label)}</span></button></span>`;
+}
 function editAttr(type, id, name) { return ` data-edit="${type}:${esc(id)}" data-name="${esc(name)}"`; }
 
 // ---------- derived model ----------
@@ -143,6 +156,7 @@ const S = sessions.map(s => {
     o.img = ep.img || (camp.covers || [])[i] || "";
     o.recap = ep.hook || "";
     o.epTitle = ep.title || s.t;
+    o.song = ep.song && ep.song.spotifyUrl ? ep.song : null;
     o.href = `/campaigns/${camp.slug}/#ep-${i + 1}`;
   } else {
     o.img = s.cover || "";
@@ -274,7 +288,7 @@ function renderHome() {
   S.forEach(s => (tipData[s.date] = tipData[s.date] || []).push([s.title, s.camp ? s.camp.name : "One-shot, " + s.sys, dur(s.min)]));
   const body = `
 <section class="hero band"><div class="wrap hero-grid">
-  <a class="hero-art" href="${L.href}"${editAttr("session", L.n, L.title)}>${pic(L.img, L.title, "sq")}</a>
+  <a class="hero-art" href="${L.href}"${editAttr("session", L.n, L.title)}>${L.camp ? pic(L.camp.banner, L.camp.name, "p45") : pic(L.img, L.title, "sq")}</a>
   <div class="hero-main">
     <p class="over">Latest session, #${L.n}</p>
     <h1>${esc(L.title)}</h1>
@@ -284,7 +298,7 @@ function renderHome() {
     ${addBtn("session", "Log session")}
   </div>
   <div class="hero-prev"><h2>Recent sessions</h2>
-    ${prev.map(s => `<a href="${s.href}" class="mini"${editAttr("session", s.n, s.title)}>${pic(s.img, s.camp ? s.camp.name : s.sys, "sq tiny")}<span><b>${esc(s.title)}</b><small>${where(s)}, ${fShort(s.date)}</small></span></a>`).join("")}
+    ${prev.map(s => `<a href="${s.href}" class="mini"${editAttr("session", s.n, s.title)}>${s.camp ? pic(s.camp.banner, s.camp.name, "p45 tiny") : pic(s.img, s.sys, "sq tiny")}<span><b>${esc(s.title)}</b><small>${where(s)}, ${fShort(s.date)}</small></span></a>`).join("")}
     <a class="more" href="#ledger-sec">The whole ledger</a></div>
 </div></section>
 <section class="wrap sec"><header class="sec-h"><h2>At the table now</h2>${addBtn("campaign", "New campaign")}<a class="more" href="/campaigns/">All ${campaigns.length} campaigns</a></header>
@@ -350,7 +364,7 @@ function renderCampaignDetail(c) {
       <div class="cast">${cast.map(p => `<article>${pic(p.portrait, String(p.name).replace(/"[^"]+" /, ""), "sq")}<h3>${esc(p.name)}</h3>${p.role ? `<p class="sub">${esc(p.role)}</p>` : ""}<p class="by">Played by <a href="${playerHref(p.player)}">${esc(p.player)}</a></p><p>${esc(p.bio)}</p></article>`).join("")}</div></section>` : ""}
     <section id="episodes"><header class="sec-h"><h2>Episodes</h2><span class="note">${plural(c.S.length, "session")}</span>${addBtn("session", "Log session", c.slug)}</header>
       <ol class="eps">${c.S.map(s => { const full = s.recap || s.img; return `<li id="ep-${s.ep}" class="${full ? "full" : "bare"}"${editAttr("session", s.n, s.title)}>${full ? pic(s.img, s.epTitle, "sq") : ""}
-        <div><p class="ep-n">Episode ${s.ep}</p><h3>${esc(s.epTitle)}</h3><p class="sub">${fDate(s.date)}, ${dur(s.min)}</p>${s.recap ? `<p class="ep-recap">${esc(s.recap)}</p>` : ""}</div></li>`; }).join("")}</ol></section>
+        <div><p class="ep-n">Episode ${s.ep}</p><h3>${esc(s.epTitle)}</h3><p class="sub ep-when">${fDate(s.date)}, ${dur(s.min)}${songBtn(s.song)}</p>${s.recap ? `<p class="ep-recap">${esc(s.recap)}</p>` : ""}</div></li>`; }).join("")}</ol></section>
    </div>
    <aside class="c-side">
     ${c.influences ? `<h3>Influences</h3><ul>${influenceList(c.influences).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}

@@ -210,9 +210,15 @@
       '<p class="kicker">Episode ' + esc(ep.n) + " · " + esc(ep.date) + " · " + esc(ep.rt) + "</p>" +
       '<label>Title<input data-f="title"></label>' +
       '<label>Summary<textarea data-f="hook" rows="3"></textarea></label>' +
-      '<label>Image <span class="pf-img">' + (ep.img ? '<img src="' + esc(ep.img) + '" alt="">' : "") + '<input type="file" accept="image/*" data-f="file"></span></label>';
+      '<label>Image <span class="pf-img">' + (ep.img ? '<img src="' + esc(ep.img) + '" alt="">' : "") + '<input type="file" accept="image/*" data-f="file"></span></label>' +
+      '<div class="two-up"><label>Song title<input data-f="songTitle"></label><label>Artist<input data-f="songArtist"></label></div>' +
+      '<label>Spotify link<input data-f="songUrl" type="url" placeholder="https://open.spotify.com/track/…"></label>';
     $('[data-f="title"]', d).value = ep.title || "";
     $('[data-f="hook"]', d).value = ep.hook || "";
+    var song = ep.song || {};
+    $('[data-f="songTitle"]', d).value = song.title || "";
+    $('[data-f="songArtist"]', d).value = song.artist || "";
+    $('[data-f="songUrl"]', d).value = song.spotifyUrl || "";
     return d;
   }
   async function campaignForm(slug) {
@@ -244,7 +250,13 @@
       }
       var eps = [];
       for (var er of $$("#pf-eps .pf-row", form)) {
-        eps.push({ n: er.dataset.n, date: er.dataset.date, rt: er.dataset.rt, title: $('[data-f="title"]', er).value, hook: $('[data-f="hook"]', er).value, img: (await upload($('[data-f="file"]', er))) || er.dataset.img });
+        var ep = { n: er.dataset.n, date: er.dataset.date, rt: er.dataset.rt, title: $('[data-f="title"]', er).value, hook: $('[data-f="hook"]', er).value, img: (await upload($('[data-f="file"]', er))) || er.dataset.img };
+        var songUrl = $('[data-f="songUrl"]', er).value.trim();
+        if (songUrl) {
+          if (!/open\.spotify\.com\/(?:intl-[a-z-]+\/)?(?:embed\/)?(track|album|playlist)\/[A-Za-z0-9]+/.test(songUrl)) throw new Error("Episode " + er.dataset.n + ": the song link should be a Spotify track, album or playlist link.");
+          ep.song = { title: $('[data-f="songTitle"]', er).value.trim(), artist: $('[data-f="songArtist"]', er).value.trim(), spotifyUrl: songUrl };
+        }
+        eps.push(ep);
       }
       var data = {
         name: val("name"), slug: val("slug"), sys: val("sys"), ed: val("ed"), status: val("status"),

@@ -271,6 +271,88 @@
     addEventListener("keydown", function (e) { if (!dlg.open) return; if (e.key === "ArrowLeft") step(-1); if (e.key === "ArrowRight") step(1); });
   }
 
-  function init() { initSearch(); initLedger(); initCampaigns(); initOneShots(); initShelf(); initGames(); initRecord(); initShots(); }
+
+  // Episode theme songs: each pill opens a popover with the Spotify embed.
+  // The player is only created on first open and kept afterwards so music
+  // carries on when the popover closes. With Spotify's iFrame API the pill
+  // also stays crimson while the song is actually playing.
+  function initSongs() {
+    var btns = $$(".song-btn[data-embed]");
+    if (!btns.length) return;
+    var openPop = null, api = null, apiWait = [];
+    var ALLOW = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+    function loadApi(cb) {
+      if (api !== null) return cb(api);
+      apiWait.push(cb);
+      if (apiWait.length > 1) return;
+      var done = false;
+      var finish = function (a) { if (done) return; done = true; api = a; apiWait.splice(0).forEach(function (f) { f(a); }); };
+      window.onSpotifyIframeApiReady = function (IFrameAPI) { finish(IFrameAPI); };
+      var sc = document.createElement("script");
+      sc.src = "https://open.spotify.com/embed/iframe-api/v1"; sc.async = true;
+      sc.onerror = function () { finish(false); };
+      document.head.appendChild(sc);
+      setTimeout(function () { finish(false); }, 5000);
+    }
+    function paint(b) { b.classList.toggle("on", !!(b._open || b._playing)); }
+    function place(b, pop) {
+      var li = b.closest("li") || b.parentNode, lr = li.getBoundingClientRect(), br = b.getBoundingClientRect();
+      pop.style.top = (br.bottom - lr.top + 6) + "px";
+      if (innerWidth < 600) { pop.style.left = "0"; pop.style.width = "100%"; }
+      else { pop.style.width = ""; pop.style.left = Math.max(0, Math.min(br.left - lr.left, lr.width - 340)) + "px"; }
+    }
+    function plainFrame(src) {
+      var f = document.createElement("iframe");
+      f.src = src; f.loading = "lazy"; f.title = "Spotify player";
+      f.setAttribute("allow", ALLOW);
+      return f;
+    }
+    function swap(slot, node) { slot.parentNode.insertBefore(node, slot); slot.parentNode.removeChild(slot); }
+    function build(b) {
+      var pop = document.createElement("div");
+      pop.className = "song-pop"; pop.id = "song-pop-" + Math.random().toString(36).slice(2, 8);
+      pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", b.getAttribute("aria-label"));
+      b.setAttribute("aria-controls", pop.id);
+      (b.closest("li") || b.parentNode).appendChild(pop);
+      var slot = document.createElement("div"); pop.appendChild(slot);
+      var src = b.dataset.embed, m = src.match(/embed\/(track|album|playlist)\/([A-Za-z0-9]+)/);
+      loadApi(function (A) {
+        if (!A || !m) { swap(slot, plainFrame(src)); return; }
+        try {
+          A.createController(slot, { uri: "spotify:" + m[1] + ":" + m[2], width: "100%", height: 152 }, function (ctl) {
+            var f = pop.querySelector("iframe");
+            if (f) { f.setAttribute("allow", ALLOW); f.setAttribute("loading", "lazy"); }
+            ctl.addListener("playback_update", function (e) {
+              var d = e.data || {};
+              b._playing = !d.isPaused && !(d.duration && d.position >= d.duration);
+              paint(b);
+            });
+          });
+        } catch (err) { if (slot.parentNode) swap(slot, plainFrame(src)); }
+      });
+      return pop;
+    }
+    function close(b) {
+      if (!b || !b._pop) return;
+      b._pop.hidden = true; b._open = false; b.setAttribute("aria-expanded", "false"); paint(b);
+      if (openPop === b) openPop = null;
+    }
+    function open(b) {
+      if (openPop && openPop !== b) close(openPop);
+      if (!b._pop) b._pop = build(b);
+      b._pop.hidden = false; b._open = true; b.setAttribute("aria-expanded", "true"); paint(b);
+      place(b, b._pop); openPop = b;
+    }
+    btns.forEach(function (b) {
+      b.addEventListener("click", function (e) { e.stopPropagation(); if (b._open) close(b); else open(b); });
+    });
+    document.addEventListener("click", function (e) {
+      if (openPop && !openPop._pop.contains(e.target) && !openPop.contains(e.target)) close(openPop);
+    });
+    addEventListener("keydown", function (e) { if (e.key === "Escape" && openPop) { var b = openPop; close(b); b.focus(); } });
+    addEventListener("resize", function () { if (openPop) place(openPop, openPop._pop); });
+  }
+
+  function init() { initSearch(); initLedger(); initCampaigns(); initOneShots(); initShelf(); initGames(); initRecord(); initShots(); initSongs(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();

@@ -145,6 +145,7 @@ function syncEpisodes(existing, sessions, slug) {
       title: prev.title || s.t,
       hook: prev.hook || "",
       img: prev.img || "",
+      ...(prev.song && prev.song.spotifyUrl ? { song: prev.song } : {}),
     };
   });
 }
@@ -887,6 +888,7 @@ function episodeRowEl(ep) {
   row.querySelector('[data-f="title"]').value = ep.title || "";
   row.querySelector('[data-f="hook"]').value = ep.hook || "";
   row.dataset.img = ep.img || "";
+  row.dataset.song = ep.song ? JSON.stringify(ep.song) : "";
   const thumb = row.querySelector('[data-thumb]');
   if (ep.img) { thumb.src = ep.img; thumb.classList.remove("hidden"); }
   row.querySelector('[data-f="portraitFile"]').addEventListener("change", async (e) => {
@@ -909,6 +911,7 @@ function collectEpisodeRows() {
     title: row.querySelector('[data-f="title"]').value,
     hook: row.querySelector('[data-f="hook"]').value,
     img: row.dataset.img || "",
+    ...(row.dataset.song ? { song: JSON.parse(row.dataset.song) } : {}),
   }));
 }
 

@@ -63,7 +63,12 @@
       "rt": "04:47",
       "title": "Bloodletting (The Vampire Song)",
       "hook": "Carnival season opens in New Orleans: a Nosferatu musician risks everything to see the woman he loved, a charitable Ventrue is offered a deal by the Lord of the French Quarter, a Daeva vodouisant bargains over secrets buried in her grandmother's notes, and a soldier is given a quiet job by the Prince.",
-      "img": ""
+      "img": "",
+      "song": {
+        "title": "Bloodletting",
+        "artist": "Concrete Blonde",
+        "spotifyUrl": "https://open.spotify.com/track/0p1pDrCazH0eFl6R1W9DsU"
+      }
     },
     {
       "n": "02",
