@@ -294,7 +294,9 @@
       document.head.appendChild(sc);
       setTimeout(function () { finish(false); }, 5000);
     }
-    function paint(b) { b.classList.toggle("on", !!(b._open || b._playing)); }
+    // Crimson + pause icon while the song plays (or is about to, on first click);
+    // without Spotify's API, while the player is open.
+    function paint(b) { b.classList.toggle("on", !!(b._playing || b._pending || (!b._ctl && b._open))); }
     function place(b, pop) {
       var li = b.closest("li") || b.parentNode, lr = li.getBoundingClientRect(), br = b.getBoundingClientRect();
       pop.style.top = (br.bottom - lr.top + 6) + "px";
@@ -317,7 +319,9 @@
       var slot = document.createElement("div"); pop.appendChild(slot);
       var src = b.dataset.embed, m = src.match(/embed\/(track|album|playlist)\/([A-Za-z0-9]+)/);
       loadApi(function (A) {
-        if (!A || !m) { swap(slot, plainFrame(src)); return; }
+        var plain = function () { if (slot.parentNode) swap(slot, plainFrame(src)); b._pending = false; paint(b); };
+        setTimeout(function () { if (b._pending) { b._pending = false; paint(b); } }, 6000);
+        if (!A || !m) { plain(); return; }
         try {
           A.createController(slot, { uri: "spotify:" + m[1] + ":" + m[2], width: "100%", height: 152 }, function (ctl) {
             var f = pop.querySelector("iframe");
@@ -325,26 +329,57 @@
             ctl.addListener("playback_update", function (e) {
               var d = e.data || {};
               b._playing = !d.isPaused && !(d.duration && d.position >= d.duration);
+              b._pending = false;
               paint(b);
             });
+            b._ctl = ctl;
+            ctl.addListener("ready", function () { if (b._wantPlay) { b._wantPlay = false; ctl.play(); } });
           });
-        } catch (err) { if (slot.parentNode) swap(slot, plainFrame(src)); }
+        } catch (err) { plain(); }
       });
       return pop;
     }
+    // The popover fades out after 5s left alone; hovering or focusing it
+    // holds it open, and leaving it starts the 5s again.
+    var IDLE = 5000;
+    function idle(b) {
+      clearTimeout(b._idle);
+      b._pop.classList.remove("fading");
+      if (b._hover) return;
+      b._idle = setTimeout(function () {
+        b._pop.classList.add("fading");
+        b._idle = setTimeout(function () { close(b); }, 400);
+      }, IDLE);
+    }
     function close(b) {
       if (!b || !b._pop) return;
+      clearTimeout(b._idle); b._pop.classList.remove("fading");
       b._pop.hidden = true; b._open = false; b.setAttribute("aria-expanded", "false"); paint(b);
       if (openPop === b) openPop = null;
     }
     function open(b) {
       if (openPop && openPop !== b) close(openPop);
-      if (!b._pop) b._pop = build(b);
+      if (!b._pop) {
+        b._pop = build(b);
+        var hold = function () { b._hover = true; idle(b); }, release = function () { b._hover = false; idle(b); };
+        b._pop.addEventListener("mouseenter", hold); b._pop.addEventListener("mouseleave", release);
+        b._pop.addEventListener("focusin", hold); b._pop.addEventListener("focusout", release);
+      }
       b._pop.hidden = false; b._open = true; b.setAttribute("aria-expanded", "true"); paint(b);
-      place(b, b._pop); openPop = b;
+      place(b, b._pop); openPop = b; idle(b);
+    }
+    // Clicking the pill plays or pauses its song (and shows the player).
+    // Starting one song pauses any other. Without Spotify's API there is no
+    // way to control playback, so the pill just opens and closes the player.
+    function toggle(b) {
+      btns.forEach(function (o) { if (o !== b && o._playing && o._ctl) o._ctl.pause(); });
+      if (!b._pop) { b._wantPlay = true; b._pending = true; open(b); return; }
+      if (b._ctl) { open(b); b._ctl.togglePlay(); return; }
+      if (api === false) { if (b._open) close(b); else open(b); return; }
+      open(b);
     }
     btns.forEach(function (b) {
-      b.addEventListener("click", function (e) { e.stopPropagation(); if (b._open) close(b); else open(b); });
+      b.addEventListener("click", function (e) { e.stopPropagation(); toggle(b); });
     });
     document.addEventListener("click", function (e) {
       if (openPop && !openPop._pop.contains(e.target) && !openPop.contains(e.target)) close(openPop);
